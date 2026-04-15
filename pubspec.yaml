@@ -75,7 +75,6 @@ dependencies:
 
   # QR Code & Scanning
   qr_flutter: ^4.1.0
-  scan: ^1.6.0
 
   # UI Components
   grouped_list: ^5.1.2
@@ -94,6 +93,7 @@ dependencies:
   # Responsive & Preview
   device_preview: ^1.2.0
   responsive_builder: ^0.7.0
+  get: ^4.7.3
 dev_dependencies:
   flutter_test:
     sdk: flutter

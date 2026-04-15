@@ -549,6 +549,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.5"
+  get:
+    dependency: "direct main"
+    description:
+      name: get
+      sha256: "5ed34a7925b85336e15d472cc4cfe7d9ebf4ab8e8b9f688585bf6b50f4c3d79a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.7.3"
   get_x:
     dependency: "direct main"
     description:
@@ -1005,14 +1013,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
-  scan:
-    dependency: "direct main"
-    description:
-      name: scan
-      sha256: b343ec36f863a88d41eb4c174b810c055c6bd1f1822b2188ab31aab684fb7cdb
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.6.0"
   shared_preferences:
     dependency: "direct main"
     description:
