@@ -1,41 +1,39 @@
-import 'package:e_commerce/controller/auth/login_controller.dart';
+import 'package:e_commerce/controller/auth/forgetpassword_controller.dart';
 import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/view/widget/auth/custombuttonauth.dart';
 import 'package:e_commerce/view/widget/auth/customtextbodyauth.dart';
 import 'package:e_commerce/view/widget/auth/customtextformauth.dart';
 import 'package:e_commerce/view/widget/auth/customtexttitleauth.dart';
-import 'package:e_commerce/view/widget/auth/logoauth.dart';
-import 'package:e_commerce/view/widget/auth/textsignup.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class Login extends StatelessWidget {
-  const Login({Key? key}) : super(key: key);
+class ForgetPassword extends StatelessWidget {
+  const ForgetPassword({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    LoginControllerImp controller = Get.put(LoginControllerImp());
+    ForgetPasswordControllerImp controller =
+    Get.put(ForgetPasswordControllerImp());
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: AppColor.backgroundcolor,
         elevation: 0.0,
-        title: Text('Sign In',
+        title: Text('Forget Password',
             style: Theme.of(context)
                 .textTheme
-                .displayLarge!
+                 .displayLarge!
                 .copyWith(color: AppColor.grey)),
       ),
       body: Container(
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
         child: ListView(children: [
-          const LogoAuth(),
           const SizedBox(height: 20),
-          const CustomTextTitleAuth(text: "Welcome Back"),
+          const CustomTextTitleAuth(text: "Check Email"),
           const SizedBox(height: 10),
           const CustomTextBodyAuth(
               text:
-              "Sign In With Your Email And Password OR Continue With Social Media"),
+              "please Enter Your Email Address To Recive A verification code"),
           const SizedBox(height: 15),
           CustonTextFormAuth(
             mycontroller: controller.email,
@@ -44,31 +42,10 @@ class Login extends StatelessWidget {
             labeltext: "Email",
             // mycontroller: ,
           ),
-          CustonTextFormAuth(
-            mycontroller: controller.password,
-            hinttext: "Enter Your Password",
-            iconData: Icons.lock_outline,
-            labeltext: "Password",
-            // mycontroller: ,
-          ),
-          InkWell(
-            onTap: () {
-              controller.goToForgetPassword();
-            },
-            child: const Text(
-              "Forget Password",
-              textAlign: TextAlign.end,
-            ),
-          ),
-          CustomButtomAuth(text: "Sign In", onPressed: () {}),
+          CustomButtomAuth(text: "Check", onPressed: () {
+            controller.goToVerfiyCode() ;
+          }),
           const SizedBox(height: 40),
-          CustomTextSignUpOrSignIn(
-            textone: "Don't have an account ? ",
-            texttwo: "SignUp",
-            onTap: () {
-              controller.goToSignUp();
-            },
-          )
         ]),
       ),
     );
