@@ -1,21 +1,18 @@
-import 'package:e_commerce/controller/auth/forgetpassword_controller.dart';
-import 'package:e_commerce/controller/auth/verifycode_controller.dart';
+import 'package:e_commerce/controller/auth/verfiycodesignup_controller.dart';
 import 'package:e_commerce/core/constant/color.dart';
-import 'package:e_commerce/view/widget/auth/custombuttonauth.dart';
 import 'package:e_commerce/view/widget/auth/customtextbodyauth.dart';
-import 'package:e_commerce/view/widget/auth/customtextformauth.dart';
 import 'package:e_commerce/view/widget/auth/customtexttitleauth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:get/get.dart';
 
-class VerfiyCode extends StatelessWidget {
-  const VerfiyCode({Key? key}) : super(key: key);
+class VerfiyCodeSignUp extends StatelessWidget {
+  const VerfiyCodeSignUp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    VerifyCodeControllerImp controller =
-    Get.put(VerifyCodeControllerImp());
+    VerifyCodeSignUpControllerImp controller =
+    Get.put(VerifyCodeSignUpControllerImp());
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -34,15 +31,13 @@ class VerfiyCode extends StatelessWidget {
           const CustomTextTitleAuth(text: "Check code"),
           const SizedBox(height: 10),
           const CustomTextBodyAuth(
-              text:
-              "Please Enter The Digit Code Sent To wael@gmail.com"),
+              text: "Please Enter The Digit Code Sent To wael@gmail.com"),
           const SizedBox(height: 15),
           OtpTextField(
-
             fieldWidth: 50.0,
             borderRadius: BorderRadius.circular(20),
             numberOfFields: 5,
-            borderColor: Color(0xFF512DA8),
+            borderColor: const Color(0xFF512DA8),
             //set to true to show as box or false to show as dash
             showFieldAsBox: true,
             //runs when a code is typed in
@@ -51,7 +46,7 @@ class VerfiyCode extends StatelessWidget {
             },
             //runs when every textfield is filled
             onSubmit: (String verificationCode) {
-              controller.goToResetPassword() ;
+              controller.goToSuccessSignUp();
             }, // end onSubmit
           ),
           const SizedBox(height: 40),

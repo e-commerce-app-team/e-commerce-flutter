@@ -1,11 +1,9 @@
-import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/core/localization/translation.dart';
 import 'package:e_commerce/core/services/services.dart';
 import 'package:e_commerce/routes.dart';
-import 'package:e_commerce/view/screen/onboarding.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import 'core/localization/changelocal.dart';
 
 void main() async {
@@ -16,8 +14,6 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     LocaleController controller = Get.put(LocaleController());
@@ -26,29 +22,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       locale: controller.language,
-      theme: ThemeData(
-        fontFamily: "PlayfairDisplay",
-        textTheme: const TextTheme(
-            displayLarge: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 22,
-                color: AppColor.black),
-            displayMedium: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 26,
-                color: AppColor.black),
-            bodyLarge: TextStyle(
-                height: 2,
-                color: AppColor.grey,
-                fontWeight: FontWeight.bold,
-                fontSize: 14),
-            bodyMedium: TextStyle(
-                height: 2,
-                color: AppColor.grey,
-                fontSize: 14)),
-        primarySwatch: Colors.blue,
-      ),
-      home: const OnBoarding(),
-      routes: routes,
+      theme: controller.appTheme,
+      // routes: routes,
+      getPages: routes,
     );
-  }}
+  }
+}
