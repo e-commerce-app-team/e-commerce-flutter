@@ -1,6 +1,6 @@
 import 'package:e_commerce/controller/auth/resetpassword_controller.dart';
 import 'package:e_commerce/core/constant/color.dart';
-import 'package:e_commerce/core/functions/validinput.dart';
+import 'package:e_commerce/core/functions/valid_input.dart';
 import 'package:e_commerce/view/widget/auth/custombuttonauth.dart';
 import 'package:e_commerce/view/widget/auth/customtextbodyauth.dart';
 import 'package:e_commerce/view/widget/auth/customtextformauth.dart';
@@ -42,9 +42,9 @@ class ResetPassword extends StatelessWidget {
                 return validInput(val!, 3, 40, "password");
               },
               mycontroller: controller.password,
-              hinttext: "13".tr,
+              hint_text: "13".tr,
               iconData: Icons.lock_outline,
-              labeltext: "19".tr,
+              label_text: "19".tr,
               // mycontroller: ,
             ),
             CustomTextFormAuth(
@@ -54,9 +54,9 @@ class ResetPassword extends StatelessWidget {
                 return validInput(val!, 3, 40, "password");
               },
               mycontroller: controller.password,
-              hinttext: "Re" + " " + "13".tr,
+              hint_text: "Re" + " " + "13".tr,
               iconData: Icons.lock_outline,
-              labeltext: "19".tr,
+              label_text: "19".tr,
               // mycontroller: ,
             ),
             CustomButtomAuth(

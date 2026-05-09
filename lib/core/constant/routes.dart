@@ -2,6 +2,11 @@ class AppRoute {
   static const String login = "/login";
   static const String onBoarding = "/onboarding";
   static const String signUp = "/signup";
+  static const String selectAccountType = "/selectAccountType";
+
+  static const String signUpBuyer = "/signupbuyer";
+  static const String signUpSeller = "/signupseller";
+  static const String signUpCompany = "/signupcompany";
   static const String forgetPassword = "/forgetpassword";
   static const String verfiyCode = "/verfiycode";
   static const String resetPassword = "/resetpassword";
@@ -9,4 +14,5 @@ class AppRoute {
   static const String successResetpassword = "/successresetpassword";
   static const String checkemail = "/checkemail";
   static const String verfiyCodeSignUp = "/verfiycodesignup";
+
 }

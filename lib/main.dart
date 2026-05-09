@@ -4,6 +4,7 @@ import 'package:e_commerce/routes.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'core/class/crud.dart';
 import 'core/localization/changelocal.dart';
 
 void main() async {
@@ -23,6 +24,9 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       locale: controller.language,
       theme: controller.appTheme,
+      initialBinding: BindingsBuilder(() {
+        Get.put(Crud());
+      }),
       // routes: routes,
       getPages: routes,
     );

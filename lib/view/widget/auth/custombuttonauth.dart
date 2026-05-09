@@ -11,11 +11,15 @@ class CustomButtomAuth extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin:const EdgeInsets.only(top: 10),
+      decoration: BoxDecoration(
+        gradient: AppColor.mainGradient,
+        borderRadius: BorderRadius.circular(30),
+      ),
       child: MaterialButton(
+        minWidth: 70,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         padding:const EdgeInsets.symmetric(vertical: 13),
         onPressed: onPressed,
-        color: AppColor.primaryColor,
         textColor: Colors.white,
         child: Text(text , style:const TextStyle(fontWeight: FontWeight.bold , fontSize: 16)),
       ),

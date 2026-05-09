@@ -3,6 +3,7 @@ import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/data/datasource/static/static.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 
 class CustomSliderOnBoarding extends GetView<OnBoardingControllerImp> {
   const CustomSliderOnBoarding({Key? key}) : super(key: key);
@@ -10,39 +11,49 @@ class CustomSliderOnBoarding extends GetView<OnBoardingControllerImp> {
   @override
   Widget build(BuildContext context) {
     return PageView.builder(
-        controller: controller.pageController,
-        onPageChanged: (val) {
-          controller.onPageChanged(val);
-        },
-        itemCount: onBoardingList.length,
-        itemBuilder: (context, i) => Column(
-          children: [
-            Image.asset(
+      controller: controller.pageController,
+      onPageChanged: (val) {
+        controller.onPageChanged(val);
+      },
+      itemCount: onBoardingList.length,
+      itemBuilder: (context, i) => Column(
+        children: [
+          const SizedBox(height: 20),
+
+
+          Transform.translate(
+            offset: const Offset(-40, 0),
+          child: SizedBox(
+
+            height: Get.height * 0.35,
+            width: Get.width * 0.85,
+            child: Lottie.asset(
               onBoardingList[i].image!,
-              // width: ,
-              height: Get.width / 1.3,
-              fit: BoxFit.fill,
+              fit: BoxFit.contain,
+              repeat: true,
             ),
-            const SizedBox(height: 60),
-            Text(onBoardingList[i].title!,
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 22,
-                    color: AppColor.black)),
-            const SizedBox(height: 20),
-            Container(
-                width: double.infinity,
-                alignment: Alignment.center,
-                child: Text(
-                  onBoardingList[i].body!,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      height: 2,
-                      color: AppColor.grey,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14),
-                )),
-          ],
-        ));
+          ),
+),
+          const Spacer(),
+
+          Text(
+            onBoardingList[i].title!,
+            style: Theme.of(context).textTheme.displayLarge
+          ),
+          const SizedBox(height: 9),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 30),
+            width: double.infinity,
+            alignment: Alignment.center,
+            child: Text(
+              onBoardingList[i].body!,
+              textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyLarge
+            ),
+          ),
+         // const SizedBox(height: 10),
+        ],
+      ),
+    );
   }
 }
