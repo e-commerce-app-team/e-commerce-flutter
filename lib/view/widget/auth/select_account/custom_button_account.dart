@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/controller/auth/select_account_type_controller.dart';
 import 'package:e_commerce/core/constant/color.dart';
@@ -27,4 +27,4 @@ class CustomButtonAccount extends GetView<SelectAccountTypeController> {
       ),
     );
   }
-}
+}*/

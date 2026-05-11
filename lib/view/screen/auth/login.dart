@@ -16,7 +16,6 @@ import '../../../core/localization/changelocal.dart';
 
 class Login extends StatelessWidget {
   const Login({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     LoginControllerImp controller = Get.put(LoginControllerImp());
@@ -28,7 +27,7 @@ class Login extends StatelessWidget {
         centerTitle: true,
         backgroundColor: AppColor.backgroundcolor,
         elevation: 0.0,
-        title: Text('Sign In'.tr,
+        title: Text('15'.tr,
             style: Theme.of(context)
                 .textTheme
                 .displayLarge!
@@ -84,10 +83,12 @@ class Login extends StatelessWidget {
                       onTapIcon: () {
                         controller.showPassword();
                       },
+
                       isNumber: false,
                       valid: (val) {
                         return validInput(val!, 5, 30, "password");
                       },
+
                       mycontroller: controller.password,
                       hint_text: "13".tr,
                       iconData: Icons.lock_outline,

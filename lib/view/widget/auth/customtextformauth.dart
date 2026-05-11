@@ -55,7 +55,7 @@ class CustomTextFormAuth extends StatelessWidget {
               contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
               suffixIcon: InkWell(onTap: onTapIcon, child: Icon(iconData,color:AppColor.primaryColor,)),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(25),
+                borderRadius: BorderRadius.circular(45),
               ),
               // filled: true,
               // fillColor: Colors.grey[100],

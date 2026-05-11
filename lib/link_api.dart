@@ -5,5 +5,4 @@ class AppLink{
   static const String signUpSeller = "$server/register/seller";
   static const String login        = "$server/login";
 
-
 }

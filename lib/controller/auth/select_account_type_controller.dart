@@ -1,38 +1,30 @@
-import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../core/constant/routes.dart';
+import '../../core/functions/custom_snackbar.dart';
 
-class SelectAccountTypeController extends GetxController{
+abstract class SelectAccountTypeController extends GetxController {
+  void chooseUserType(String type);
+  void goToNext();
+}
 
-  late PageController pageController;
-  int currentPage= 0;
+class SelectAccountTypeControllerImp extends SelectAccountTypeController {
+  String selectedType = "";
+
   @override
-  void onInit() {
-    pageController = PageController();
-    super.onInit();
-  }
-
-  void onPageChanged (int index)
-  {
-    currentPage = index;
+  void chooseUserType(String type) {
+    selectedType = type;
     update();
   }
 
-void goToSignUp(){
-
-    if(currentPage == 0){
-      Get.toNamed(AppRoute.signUpBuyer);
-    }else if(currentPage == 1){
-      Get.toNamed(AppRoute.signUpSeller);
+  @override
+  void goToNext() {
+    if (selectedType.isEmpty) {
+      customSnackbar("Alert".tr,"Please choose the account type".tr,);
+    } else if (selectedType == "buyer") {
+       Get.toNamed(AppRoute.signUpBuyer);
+    } else if (selectedType == "seller") {
+       Get.toNamed(AppRoute.signUpSeller);
     }
-}
-@override
-  void dispose(){
-    pageController.dispose();
-    super.dispose();
-
-}
-
-
+  }
 }

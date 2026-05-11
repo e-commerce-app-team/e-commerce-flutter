@@ -88,6 +88,26 @@ class MyTranslation extends Translations {
       "vat_number_hint": "أدخل الرقم الضريبي (إن وجد)",
       "next_step": "التالي",
       "submit_account": "تأكيد وإنشاء الحساب",
+      //////////////////SelectAccountType/////////////////
+      "SelectAccountType":"اختر نوع الحساب",
+      "bodySelectAccountType":"من فضلك قم بتحديد نوع حسابك \nالذي تريد انشائه .",
+      "buyer": "مشتري",
+      "buyerDesc": "تصفح آلاف المنتجات وتسوق بكل سهولة وأمان",
+      "seller": "بائع",
+      "sellerDesc": "أنشئ متجرك الخاص وابدأ ببيع منتجاتك الآن"  ,
+      "continue": "متابعة",
+      "Alert":"تنبيه",
+      "Please choose the account type":"الرجاء ختيار نوع الحساب ",
+      ///////bottomSheet////////////////
+      "chooseImageSource": "اختر مصدر الصورة",
+      "camera": "التقاط بالكاميرا",
+      "gallery": "اختيار من الاستديو",
+      ////////////alert_exitapp//////////////
+      "warning":"تنبيه",
+      "exitConfirm": "هل تريد الخروج من التطبيق؟",
+      "cancel": "الغاء",
+      "confirm": "تأكيد",
+
     },
     "en": {
       "2": "Choose Product",
@@ -172,6 +192,26 @@ class MyTranslation extends Translations {
       "vat_number_hint": "Enter your VAT number (if any)",
       "next_step": "Next",
       "submit_account": "Submit and Create Account",
+      ////////////////////"SelectAccountType"///////////////////////
+      "SelectAccountType":"Select Account Type",
+      "bodySelectAccountType":"Please select the type of account you\n would like to create.",
+      "buyer": "Buyer",
+      "buyerDesc": "Browse thousands of products and shop with ease and security.",
+      "seller": "seller",
+      "sellerDesc": "Create your own store and start selling your products now."  ,
+      "continue": "continue",
+      "Alert": "Alert",
+      "Please choose the account type": "Please choose the account type",
+      ///////bottomSheet////////////////
+      "chooseImageSource": "Choose the image source",
+      "camera": "Capture with camera",
+      "gallery": "Selection from the studio",
+      ////////////alert_exitapp//////////////
+      "warning":"warning",
+      "exitConfirm": "Do you want to exit the app?",
+      "cancel": "cancel",
+      "confirm": "confirm",
+
     }
   };
 }

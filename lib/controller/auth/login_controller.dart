@@ -6,6 +6,8 @@ import '../../core/functions/custom_snackbar.dart';
 import '../../core/functions/handling_data_controller.dart';
 import '../../core/services/services.dart';
 import '../../data/datasource/remote/auth/login_data.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
 abstract class LoginController extends GetxController {
   login();
   goToSignUp();
@@ -48,7 +50,9 @@ class LoginControllerImp extends LoginController {
           myServices.sharedPreferences.setString("role", response['user']['role']);
           myServices.sharedPreferences.setString("token", response['access_token']);
           myServices.sharedPreferences.setString("email", response['user']['email']);
-          // myServices.sharedPreferences.setString("step", "2");
+         // myServices.sharedPreferences.setString("name", response['user']['name']);
+
+         // myServices.sharedPreferences.setString("step", "2");
 
           String role = response['user']['role'];
           if (role == 'buyer') {
@@ -74,6 +78,7 @@ class LoginControllerImp extends LoginController {
 
   @override
   void onInit() {
+
     email = TextEditingController();
     password = TextEditingController();
     super.onInit();
@@ -91,3 +96,4 @@ class LoginControllerImp extends LoginController {
     Get.toNamed(AppRoute.forgetPassword);
   }
 }
+

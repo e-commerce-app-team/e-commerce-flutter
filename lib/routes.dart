@@ -14,19 +14,33 @@ import 'package:e_commerce/view/screen/onboarding.dart';
 import 'package:get/get.dart';
 
 List<GetPage<dynamic>>? routes = [
+
   GetPage(name: "/", page: () => const OnBoarding(), middlewares: [
+
     MyMiddleWare()
+
   ]),
+
   GetPage(name: AppRoute.login, page: () => const Login()),
+
   GetPage(name: AppRoute.selectAccountType, page: () => const SelectAccountType()),
+
   GetPage(name: AppRoute.signUpBuyer, page: () => const SignUpBuyer()),
+
   GetPage(name: AppRoute.signUpSeller, page: () => const SignUpSeller()),
+
   GetPage(name: AppRoute.forgetPassword, page: () => const ForgetPassword()),
+
   GetPage(name: AppRoute.verfiyCode, page: () => const VerfiyCode()),
+
   GetPage(name: AppRoute.resetPassword, page: () => const ResetPassword()),
+
   GetPage(name: AppRoute.successResetpassword, page: () => const SuccessResetPassword()),
+
   GetPage(name: AppRoute.successSignUp, page: () => const SuccessSignUp()),
+
   GetPage(name: AppRoute.verfiyCodeSignUp, page: () => const VerfiyCodeSignUp()),
+
   GetPage(name: AppRoute.successSignUp, page: () => const SuccessSignUp()),
 
 ];

@@ -1,6 +1,7 @@
 import 'package:e_commerce/core/localization/translation.dart';
 import 'package:e_commerce/core/services/services.dart';
 import 'package:e_commerce/routes.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

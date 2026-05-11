@@ -16,7 +16,7 @@ class CustomButtomAuth extends StatelessWidget {
         borderRadius: BorderRadius.circular(30),
       ),
       child: MaterialButton(
-        minWidth: 70,
+        minWidth: 300,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         padding:const EdgeInsets.symmetric(vertical: 13),
         onPressed: onPressed,

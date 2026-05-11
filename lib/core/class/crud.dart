@@ -28,6 +28,7 @@ class Crud {
     } catch (_) {
       return Left(StatusRequest.serverfailure);
     }
+
   }
 
   //****************************

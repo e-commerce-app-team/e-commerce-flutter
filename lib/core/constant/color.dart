@@ -4,12 +4,9 @@ class AppColor {
   static const Color black = Color(0xff000000);
   static const Color grey = Color(0xff8e8e8e);
 
-
   static const Color backgroundcolor = Color(0xffffffff);
 
-
   static const Color secondBackground = Color(0xffF8F9FD);
-
 
   static const Color primaryColor = Color(0xffff6300);
 
@@ -26,7 +23,6 @@ class AppColor {
     ],
   );
 
-
   static const LinearGradient backgroundGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
@@ -35,4 +31,9 @@ class AppColor {
       Color(0xfffff0e6),
     ],
   );
+  //************
+  static const Color snackbarSuccessBg = Color(0xFFF1FDF5);
+  static const Color snackbarSuccessText = Color(0xFF2E7D32);
+  static const Color snackbarErrorBg = Color(0xFFFFF4F4);
+  static const Color snackbarErrorText = Color(0xFFD32F2F);
 }
