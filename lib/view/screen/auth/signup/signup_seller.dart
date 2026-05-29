@@ -7,7 +7,6 @@ import 'package:e_commerce/core/functions/valid_input.dart';
 import 'package:e_commerce/view/widget/auth/custombuttonauth.dart';
 import 'package:e_commerce/view/widget/auth/customtextformauth.dart';
 import 'package:e_commerce/data/datasource/static/categories_data.dart';
-
 import '../../../../core/class/handling_dataview.dart';
 
 class SignUpSeller extends StatelessWidget {
@@ -49,10 +48,7 @@ class SignUpSeller extends StatelessWidget {
                       builder: (contr) => Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          InkWell(
-                            onTap: () => contr.back(),
-                            child: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 24),
-                          ),
+
                           const SizedBox(height: 20),
                           Text(
                             contr.currentPage == 0
@@ -91,7 +87,7 @@ class SignUpSeller extends StatelessWidget {
                   borderRadius: BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40)),
                 ),
                 child: GetBuilder<SignUpSellerControllerImp>(
-                  builder: (controllerView) => HandlingDataView(
+                  builder: (controllerView) => HandlingDataRequest(
                     statusRequest: controllerView.statusRequest,
                     widget: Form(
                   key: controller.formstate,
@@ -109,13 +105,14 @@ class SignUpSeller extends StatelessWidget {
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Expanded(child: CustomTextFormAuth(isNumber: false, valid: (val) => validInput(val!, 2, 20, "username"),
+                                    Expanded(child: CustomTextFormAuth(isNumber: false,
+                                        valid: (val) => validInput(val!, 2, 20, "name"),
                                         mycontroller: controller.firstName,
                                         hint_text: "first_name_hint".tr,
                                         iconData: Icons.person_outline,
                                         label_text: "first_name".tr)),
                                     const SizedBox(width: 15),
-                                    Expanded(child: CustomTextFormAuth(isNumber: false, valid: (val) => validInput(val!, 2, 20, "username"),
+                                    Expanded(child: CustomTextFormAuth(isNumber: false, valid: (val) => validInput(val!, 2, 20, "name"),
                                         mycontroller: controller.lastName,
                                         hint_text: "last_name_hint".tr,
                                         iconData: Icons.person_outline,
@@ -154,7 +151,7 @@ class SignUpSeller extends StatelessWidget {
                               padding: const EdgeInsets.only(top: 30, left: 30, right: 30, bottom: 20),
                               children: [
                                 CustomTextFormAuth(
-                                    isNumber: false, valid: (val) => validInput(val!, 2, 50, "text"),
+                                    isNumber: false, valid: (val) => validInput(val!, 2, 50, "store_name"),
                                     mycontroller: controller.storeName,
                                     hint_text: "store_name_hint".tr,
                                     iconData: Icons.storefront_outlined,
@@ -229,7 +226,7 @@ class SignUpSeller extends StatelessWidget {
                                   ListTile(
                                     leading: const Icon(Icons.image, color: AppColor.primaryColor),
                                     title: Text("upload_logo".tr),
-                                    trailing: contr.logoImage != null ? const Icon(Icons.check_circle, color: AppColor.primaryColor) : const Icon(Icons.upload_file),
+                                    trailing: contr.logoImage != null ? const Icon(Icons.check_circle, color: Colors.green) : const Icon(Icons.upload_file),
                                     onTap: () => contr.pickDocument('logo'),
                                   ),
                                   const Divider(),
@@ -244,12 +241,12 @@ class SignUpSeller extends StatelessWidget {
 
                                   if (contr.accountType == 'wholesale') ...[
                                     const SizedBox(height: 20),
-                                    CustomTextFormAuth(isNumber: true, valid: (val) => validInput(val!, 5, 20, "number"),
+                                    CustomTextFormAuth(isNumber: true, valid: (val) => validInput(val!, 5, 20, "commercial_registe"),
                                         mycontroller: controller.crNumber,
                                         hint_text: "cr_number_hint".tr,
                                         iconData: Icons.numbers_outlined,
                                         label_text: "cr_number".tr),
-                                    CustomTextFormAuth(isNumber: true, valid: (val) => validInput(val!, 5, 20, "number"),
+                                    CustomTextFormAuth(isNumber: true, valid: (val) => validInput(val!, 11, 13, "tax_number"),
                                         mycontroller: controller.vatNumber,
                                         hint_text: "vat_number_hint".tr,
                                         iconData: Icons.receipt_long_outlined,

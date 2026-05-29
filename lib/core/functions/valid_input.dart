@@ -1,51 +1,69 @@
 import 'package:get/get.dart';
-validInput(String val, int min, int max, String type) {
+
+String? validInput(String val, int min, int max, String type) {
+
   if (val.isEmpty) {
-    return "can't be Empty";
+
+    return "هذا الحقل مطلوب".tr;
+
   }
+
   if (val.length < min) {
-    return "can't be less than $min";
+    return "لا يمكن أن يكون أقل من $min".tr;
+
   }
 
   if (val.length > max) {
-    return "can't be larger than $max";
+    return "لا يمكن أن يكون أكبر من $max".tr;
   }
 
-  if (type == "username") {
-    if (!GetUtils.isUsername(val)) {
-      return "not valid username";
+  if (type == "name" || type == "store_name" || type == "company_name" || type == "rep_name") {
+
+    RegExp validNameRegex = RegExp(r"^[a-zA-Z\u0600-\u06FF\s]+$");
+
+    if (!validNameRegex.hasMatch(val)) {
+
+      return "يجب أن يحتوي على أحرف فقط (بدون أرقام أو رموز)".tr;
+
     }
+
   }
+
   if (type == "email") {
+
     if (!GetUtils.isEmail(val)) {
-      return "not valid email";
+
+      return "البريد الإلكتروني غير صالح".tr;
+
     }
+
   }
 
   if (type == "phone") {
+
     if (!GetUtils.isPhoneNumber(val)) {
-      return "not valid phone";
+
+      return "رقم الهاتف غير صالح".tr;
+
     }
     if (val.length != 10) {
-      return "رقم الهاتف يجب أن يكون 10 أرقام بالضبط";
+      return "رقم الهاتف يجب أن يكون 10 أرقام بالضبط".tr;
     }
-
   }
   if (type == "password") {
     RegExp passwordRegex = RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$');
     if (!passwordRegex.hasMatch(val)) {
-      return "يجب أن تحتوي الكلمة على حرف كبير وصغير ورقم";
+      return "يجب أن تحتوي الكلمة على حرف كبير وصغير ورقم".tr;
+
     }
+
   }
 
   if (type == "commercial_register" || type == "tax_number") {
+
     if (!GetUtils.isNumericOnly(val)) {
-      return "must be numbers only";
+      return "يجب أن يحتوي على أرقام فقط".tr;
     }
   }
-
-  if (type == "username" || type == "store_name" || type == "company_name" || type == "rep_name") {
-    // RegExp validNameRegex = RegExp(r"^[a-zA-Z\u0600-\u06FF\s]+$");
-    // if (!validNameRegex.hasMatch(val)) return "invalid name format";
-  }
+  return null;
 }

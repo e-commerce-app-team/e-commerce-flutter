@@ -11,7 +11,6 @@ import 'package:e_commerce/view/widget/auth/logoauth.dart';
 import 'package:e_commerce/view/widget/auth/textsignup.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../../../core/localization/changelocal.dart';
 
 class Login extends StatelessWidget {
@@ -57,7 +56,7 @@ class Login extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
             child: GetBuilder<LoginControllerImp>(
-              builder: (controller) => HandlingDataView(
+              builder: (controller) => HandlingDataRequest(
                 statusRequest: controller.statusRequest,
                 widget: Form(
                   key: controller.formstate,

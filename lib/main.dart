@@ -7,11 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'core/class/crud.dart';
 import 'core/localization/changelocal.dart';
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
+}
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initialServices();
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   runApp(const MyApp());
+
 }
 
 class MyApp extends StatelessWidget {

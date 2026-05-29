@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:dartz/dartz.dart';
@@ -8,15 +9,18 @@ import 'package:path/path.dart';
 
 class Crud {
 
-  Future<Either<StatusRequest, Map>> postData(String linkurl, Map data,) async {
+  Future<Either<StatusRequest, Map>> postData(String linkurl,
+      Map <String, String> data) async {
     try {
       if (await checkInternet()) {
-        var response = await http.post(Uri.parse(linkurl), body: data,headers: {
-          'Accept': 'application/json',
-        });
-        print("========**** STATUS CODE: ${response.statusCode} ****========");
-        print("========**** RESPONSE BODY: ${response.body} ****========");
-        if (response.statusCode >= 200 && response.statusCode < 500) {
+        var response = await http.post(
+            Uri.parse(linkurl), body: data, headers: {
+          'Accept': 'application/json',}).timeout(Duration(seconds: 15));
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          Map responsebody = jsonDecode(response.body);
+          return Right(responsebody);
+        } else if
+         (response.statusCode == 422 || response.statusCode == 401 || response.statusCode == 403 || response.statusCode == 429|| response.statusCode == 400) {
           Map responsebody = jsonDecode(response.body);
           return Right(responsebody);
         } else {
@@ -25,14 +29,21 @@ class Crud {
       } else {
         return Left(StatusRequest.offlinefailure);
       }
-    } catch (_) {
-      return Left(StatusRequest.serverfailure);
+    } on TimeoutException {
+      return const Left(StatusRequest.serverfailure);
+    } on SocketException {
+      return const Left(StatusRequest.offlinefailure);
+    } catch (e) {
+      return const Left(StatusRequest.serverfailure);
     }
-
   }
 
+
   //****************************
-  Future<Either<StatusRequest, Map>> postDataWithFiles(String linkurl, Map<String, String> data, Map<String, File> files) async {
+
+
+  Future<Either<StatusRequest, Map>> postDataWithFiles(String linkurl,
+      Map<String, String> data, Map<String, File> files) async {
     try {
       if (await checkInternet()) {
         var request = http.MultipartRequest("POST", Uri.parse(linkurl));
@@ -56,23 +67,27 @@ class Crud {
           request.files.add(multipartFile);
         }
 
-        var myrequest = await request.send();
+        var myrequest = await request.send().timeout(const Duration(seconds: 15));;
         var response = await http.Response.fromStream(myrequest);
-        print("********************* STATUS CODE: ${response.statusCode}///////////////////////// ");
-        print("*********************** RESPONSE BODY: ${response.body}//////////////////////////");
-        if (response.statusCode >= 200 && response.statusCode < 500) {
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          Map responsebody = jsonDecode(response.body);
+          return Right(responsebody);
+        } else if
+        (response.statusCode == 422 || response.statusCode == 401 || response.statusCode == 403 || response.statusCode == 429 || response.statusCode == 400) {
           Map responsebody = jsonDecode(response.body);
           return Right(responsebody);
         } else {
-          print("Server Error Details: ${response.body}");
           return Left(StatusRequest.serverfailure);
         }
       } else {
         return Left(StatusRequest.offlinefailure);
       }
+    } on TimeoutException {
+      return const Left(StatusRequest.serverfailure);
+    } on SocketException {
+      return const Left(StatusRequest.offlinefailure);
     } catch (e) {
-      print("=======@@@@@@ EXCEPTION CAUGHT IN CRUD: $e @@@@@@@@@@@@========");
-      return Left(StatusRequest.serverfailure);
+      return const Left(StatusRequest.serverfailure);
     }
   }
 }

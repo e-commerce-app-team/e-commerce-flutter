@@ -168,19 +168,21 @@ class SignUpSellerControllerImp extends SignUpSellerController {
       if (accountType == 'wholesale' ) {
         fileData["commercial_record_photo"] = crImage!;
       }
-     var response = await signupSellerData.postData(textData, fileData);
-     print("============= RESPONSE FROM SERVER: $response =============");
-     statusRequest=handlingData(response);
-     if (StatusRequest.success == statusRequest) {
-       if (response["success"] == true) {
-         customSnackbar("تنبيه", response["message"]);
-         Get.offAllNamed(AppRoute.login);
-       } else {
-         customSnackbar("تنبيه", response["message"]);
-         statusRequest = StatusRequest.failure;
-       }
-     }
-     update();
+      var response = await signupSellerData.postData(textData, fileData);
+      response.fold((lift){
+        statusRequest=lift;
+      }, (right){
+        if(right["success"]==true){
+          statusRequest=StatusRequest.success;
+          customSnackbar("32".tr, right['message'], isError: false);
+          Get.offAllNamed(AppRoute.login);
+        }else{
+          statusRequest=StatusRequest.failure;
+          customSnackbar("warning".tr, right['message'], isError: true);
+        }
+      }
+      );
+      update();
 
     }
   }

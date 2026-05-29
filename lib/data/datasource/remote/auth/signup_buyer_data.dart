@@ -8,6 +8,6 @@ class SignUpBuyerData {
 
   postData(Map<String, String> data, Map<String, File> files) async {
     var response = await crud.postDataWithFiles(AppLink.signUpBuyer, data, files);
-    return response.fold((l) => l, (r) => r);
+    return response;
   }
 }

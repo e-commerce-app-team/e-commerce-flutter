@@ -107,7 +107,26 @@ class MyTranslation extends Translations {
       "exitConfirm": "هل تريد الخروج من التطبيق؟",
       "cancel": "الغاء",
       "confirm": "تأكيد",
-
+          //***********************************valid input********************
+      "هذا الحقل مطلوب": "هذا الحقل مطلوب",
+      "لا يمكن أن يكون أقل من ":"لا يمكن أن يكون أقل من ",
+      "لا يمكن أن يكون أكبر من ":"لا يمكن أن يكون أكبر من ",
+      "يجب أن يحتوي على أحرف فقط (بدون أرقام أو رموز)":"يجب أن يحتوي على أحرف فقط (بدون أرقام أو رموز)",
+      "البريد الإلكتروني غير صالح":"البريد الإلكتروني غير صالح",
+      "رقم الهاتف غير صالح":"رقم الهاتف غير صالح",
+      "رقم الهاتف يجب أن يكون 10 أرقام بالضبط": "رقم الهاتف يجب أن يكون 10 أرقام بالضبط",
+      "يجب أن تحتوي الكلمة على حرف كبير وصغير ورقم":"يجب أن تحتوي الكلمة على حرف كبير وصغير ورقم",
+      "يجب أن يحتوي على أرقام فقط":"يجب أن يحتوي على أرقام فقط",
+     //***********home*******************
+      "Home":"الرئيسية",
+      //*************Inventory****************
+      "Inventory":"المخزون",
+      //***************Requests***************
+      "Requests":"الطلبات",
+      //*************Messages**************
+      "Messages":"الرسائل",
+      //***********account************
+      "Account":"حسابي",
     },
     "en": {
       "2": "Choose Product",
@@ -147,7 +166,6 @@ class MyTranslation extends Translations {
       "36": "Password has been reset successfully",
       "37": "congratulations",
       "38": "successfully registered",
-
       // ================= sign up buyer =================
       "new_account": "Create Account",
       "welcome_with_us": "Welcome with us!",
@@ -168,7 +186,6 @@ class MyTranslation extends Translations {
       "already_have_account": "Already have an account? ",
       "sign_in": "Sign In",
       "password_not_match": "Passwords do not match",
-
       // ================= sign up seller (PageView) =================
       "step1_title": "Account Information",
       "step1_body": "Please enter your login details as a seller.",
@@ -211,7 +228,26 @@ class MyTranslation extends Translations {
       "exitConfirm": "Do you want to exit the app?",
       "cancel": "cancel",
       "confirm": "confirm",
-
+      //***********************************valid input********************
+      "هذا الحقل مطلوب": "This field is required",
+      "لا يمكن أن يكون أقل من ":"It cannot be less than ",
+      "لا يمكن أن يكون أكبر من ":"It cannot be bigger than ",
+      "يجب أن يحتوي على أحرف فقط (بدون أرقام أو رموز)":"It must contain only letters (no numbers or symbols).",
+      "البريد الإلكتروني غير صالح":"Email is invalid",
+      "رقم الهاتف غير صالح":"Invalid phone number",
+      "رقم الهاتف يجب أن يكون 10 أرقام بالضبط": "The phone number must be exactly 10 digits.",
+      "يجب أن تحتوي الكلمة على حرف كبير وصغير ورقم":"The word must contain a capital letter, a lowercase letter, and a number.",
+      "يجب أن يحتوي على أرقام فقط":"It should contain only numbers.",
+      //***********home*******************
+      "Home":"Home",
+      //*************Inventory****************
+      "Inventory":"Inventory",
+      //***************Requests***************
+      "Requests":"Requests",
+      //*************Messages**************
+      "Messages":"Messages",
+      //***********account************
+      "Account":"Account",
     }
   };
 }

@@ -14,5 +14,6 @@ class AppImageAsset {
   static const String onBoardingLottieOne     = "$rootLottie/shoppingcart.json" ;
   static const String onBoardingLottieTow     = "$rootLottie/Credit Card.json" ;
   static const String onBoardingLottieThree    = "$rootLottie/Delivery guy.json" ;
+  static const String noData                 = "$rootLottie/noData.json" ;
 
 }

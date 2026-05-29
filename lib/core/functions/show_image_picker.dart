@@ -14,7 +14,6 @@ Future<ImageSource?> showImagePickerBottomSheet() async {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // ================= مؤشر السحب (Drag Handle) =================
           Container(
             width: 50,
             height: 5,
@@ -25,7 +24,6 @@ Future<ImageSource?> showImagePickerBottomSheet() async {
           ),
           const SizedBox(height: 20),
 
-          // ================= العنوان =================
           Text(
             "chooseImageSource".tr,
             style: const TextStyle(

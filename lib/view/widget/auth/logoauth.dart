@@ -1,3 +1,4 @@
+import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/core/constant/imgaeasset.dart';
 import 'package:flutter/material.dart';
 
@@ -8,15 +9,16 @@ class LogoAuth extends StatelessWidget {
   Widget build(BuildContext context) {
     return CircleAvatar(
         radius: 70,
-        backgroundColor: Colors.red,
+        backgroundColor: AppColor.primaryColor,
         child: Padding(
-          padding: const EdgeInsets.all(0),
+          padding: const EdgeInsets.all(2),
           child: ClipOval(
             child: Image.asset(
 
               AppImageAsset.logo,
             ),
           ),
-        ));
+        ),
+    );
   }
 }

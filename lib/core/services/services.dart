@@ -1,6 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../class/crud.dart';
+import 'fcm_service.dart';
 
 class MyServices extends GetxService{
 
@@ -15,6 +19,13 @@ class MyServices extends GetxService{
 
 
 }
-initialServices() async  {
-  await Get.putAsync(() => MyServices().init()) ;
+Future<void> initialServices() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Get.putAsync(() => MyServices().init());
+
+  Get.put(Crud());
+
+
+  Get.put(FCMService()).init();
 }

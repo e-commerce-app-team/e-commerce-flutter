@@ -11,11 +11,13 @@ import 'package:e_commerce/view/screen/auth/success_signup.dart';
 import 'package:e_commerce/view/screen/auth/forgetpassword/verifycode.dart';
 import 'package:e_commerce/view/screen/auth/verifycodesignup.dart';
 import 'package:e_commerce/view/screen/onboarding.dart';
+import 'package:e_commerce/view/screen/seller/seller_main_screen.dart';
+import 'package:e_commerce/view/widget/seller/seller_drawer.dart';
 import 'package:get/get.dart';
 
 List<GetPage<dynamic>>? routes = [
 
-  GetPage(name: "/", page: () => const OnBoarding(), middlewares: [
+  GetPage(name: "/", page: () => const SellerMainScreen(), middlewares: [
 
     MyMiddleWare()
 
@@ -42,5 +44,6 @@ List<GetPage<dynamic>>? routes = [
   GetPage(name: AppRoute.verfiyCodeSignUp, page: () => const VerfiyCodeSignUp()),
 
   GetPage(name: AppRoute.successSignUp, page: () => const SuccessSignUp()),
-
+  GetPage(name: AppRoute.sellerMain, page: () => const SellerMainScreen()),
+  GetPage(name: AppRoute.sellerDrawer, page: () => const SellerDrawer())
 ];

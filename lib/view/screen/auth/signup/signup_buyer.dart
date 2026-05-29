@@ -80,7 +80,7 @@ class SignUpBuyer extends StatelessWidget {
                   ),
                 ),
                 child: GetBuilder<SignUpBuyerControllerImp>(
-                  builder: (controllerView) => HandlingDataView(
+                  builder: (controllerView) => HandlingDataRequest(
                     statusRequest: controllerView.statusRequest,
                     widget:  Form(
                   key: controller.formstate,
@@ -126,7 +126,7 @@ class SignUpBuyer extends StatelessWidget {
                           Expanded(
                             child: CustomTextFormAuth(
                               isNumber: false,
-                              valid: (val) => validInput(val!, 2, 20, "username"),
+                              valid: (val) => validInput(val!, 2, 20, "name"),
                               mycontroller: controller.firstName,
                               hint_text: "first_name_hint".tr,
                               iconData: Icons.person_outline,
@@ -137,7 +137,7 @@ class SignUpBuyer extends StatelessWidget {
                           Expanded(
                             child: CustomTextFormAuth(
                               isNumber: false,
-                              valid: (val) => validInput(val!, 2, 20, "username"),
+                              valid: (val) => validInput(val!, 2, 20, "name"),
                               mycontroller: controller.lastName,
                               hint_text: "last_name_hint".tr,
                               iconData: Icons.person_outline,

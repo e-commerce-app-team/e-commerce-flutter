@@ -1,3 +1,4 @@
+import 'package:dartz/dartz.dart';
 import 'package:e_commerce/core/constant/routes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -39,38 +40,38 @@ class LoginControllerImp extends LoginController {
       update();
 
       var response = await loginData.postData(email.text, password.text);
-      print("============= RESPONSE FROM SERVER: $response =============");
+      response.fold((left){
+      statusRequest=left;
+      update();}, (right){
+        if(right["success"]==true) {
+          myServices.sharedPreferences.setString("id", right['user']['id'].toString());
+          myServices.sharedPreferences.setString("role", right['user']['role']);
+          myServices.sharedPreferences.setString("token", right['access_token']);
+          myServices.sharedPreferences.setString("email", right['user']['email']);
 
-      statusRequest = handlingData(response);
-
-      if (StatusRequest.success == statusRequest) {
-        if (response["success"] == true) {
-
-          myServices.sharedPreferences.setString("id", response['user']['id'].toString());
-          myServices.sharedPreferences.setString("role", response['user']['role']);
-          myServices.sharedPreferences.setString("token", response['access_token']);
-          myServices.sharedPreferences.setString("email", response['user']['email']);
-         // myServices.sharedPreferences.setString("name", response['user']['name']);
-
-         // myServices.sharedPreferences.setString("step", "2");
-
-          String role = response['user']['role'];
-          if (role == 'buyer') {
+          String role = right['user']['role'];
+          if (role == "buyer") {
+            myServices.sharedPreferences.setString("onboarding", "1");
             Get.offAllNamed(AppRoute.successSignUp);
-          } else  {
-
-            Get.offAllNamed(AppRoute.successSignUp);
+          } else if (role == "vendor") {
+            myServices.sharedPreferences.setString("onboarding", "1");
+            Get.offAllNamed(AppRoute.sellerMain);
+          } else {
+            customSnackbar("تنبيه".tr, "${right['message']}");
+            statusRequest = StatusRequest.failure;
+            update();
           }
-
-        } else {
-          customSnackbar("تنبيه","${response['message']}");
+        }else {
           statusRequest = StatusRequest.failure;
+          customSnackbar("warning".tr, right['message'] ?? "login_failed".tr);
+          update();
         }
       }
-      update();
+      );
     }
-  }
 
+   // Get.offNamed(AppRoute.sellerMain);
+  }
   @override
   goToSignUp() {
     Get.offNamed(AppRoute.selectAccountType);
