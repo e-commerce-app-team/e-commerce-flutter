@@ -1,12 +1,11 @@
-
 class DashboardStatsModel {
   final int revenue;
   final double revenueChange;
   final int ordersCount;
   final int ordersNew;
-  final int storeViews;
+  final int viewsCount;
   final double viewsChange;
-  final int avgOrderValue;
+  final int inventoryValue;
   final int walletBalance;
   final int heldBalance;
 
@@ -15,9 +14,9 @@ class DashboardStatsModel {
     required this.revenueChange,
     required this.ordersCount,
     required this.ordersNew,
-    required this.storeViews,
+    required this.viewsCount,
     required this.viewsChange,
-    required this.avgOrderValue,
+    required this.inventoryValue,
     required this.walletBalance,
     required this.heldBalance,
   });
@@ -28,9 +27,9 @@ class DashboardStatsModel {
       revenueChange: (json['revenue_change'] ?? 0).toDouble(),
       ordersCount:   json['orders_count']    ?? 0,
       ordersNew:     json['orders_new']      ?? 0,
-      storeViews:    json['store_views']     ?? 0,
+      viewsCount:    json['views_count']     ?? 0,
       viewsChange:   (json['views_change']   ?? 0).toDouble(),
-      avgOrderValue: json['avg_order_value'] ?? 0,
+      inventoryValue: json['inventory_value'] ?? 0,
       walletBalance: json['wallet_balance']  ?? 0,
       heldBalance:   json['held_balance']    ?? 0,
     );
@@ -42,9 +41,9 @@ class DashboardStatsModel {
       revenueChange: 18.5,
       ordersCount:   47,
       ordersNew:     3,
-      storeViews:    1240,
+      viewsCount:    1240,
       viewsChange:   -3.1,
-      avgOrderValue: 38000,
+      inventoryValue: 38000,
       walletBalance: 342000,
       heldBalance:   45000,
     );
@@ -79,11 +78,11 @@ class RecentOrderModel {
 
   static List<RecentOrderModel> mockList() {
     return [
-      RecentOrderModel(subOrderId: '#ORD-2847', buyerName: 'محمد الراشد',    total: 45000, status: 'pending',    createdAt: 'منذ دقيقتين'),
-      RecentOrderModel(subOrderId: '#ORD-2846', buyerName: 'سارة إبراهيم',   total: 28000, status: 'processing', createdAt: 'منذ 15 دقيقة'),
-      RecentOrderModel(subOrderId: '#ORD-2845', buyerName: 'أحمد خليل',      total: 57500, status: 'shipped',    createdAt: 'منذ ساعة'),
-      RecentOrderModel(subOrderId: '#ORD-2844', buyerName: 'فاطمة حسن',      total: 15000, status: 'delivered',  createdAt: 'منذ 3 ساعات'),
-      RecentOrderModel(subOrderId: '#ORD-2843', buyerName: 'رانيا الأمين',   total: 32000, status: 'cancelled',  createdAt: 'أمس'),
+      RecentOrderModel(subOrderId: '#ORD-2847', buyerName: 'Alaa aldoos',    total: 45000, status: 'pending',    createdAt: 'منذ دقيقتين'),
+      RecentOrderModel(subOrderId: '#ORD-2846', buyerName: 'Sdra safar',   total: 28000, status: 'processing', createdAt: 'منذ 15 دقيقة'),
+      RecentOrderModel(subOrderId: '#ORD-2845', buyerName: 'Ahmad almokdad',      total: 57500, status: 'shipped',    createdAt: 'منذ ساعة'),
+      RecentOrderModel(subOrderId: '#ORD-2844', buyerName: 'maream ',      total: 15000, status: 'delivered',  createdAt: 'منذ 3 ساعات'),
+      RecentOrderModel(subOrderId: '#ORD-2843', buyerName: 'Sedra',   total: 32000, status: 'cancelled',  createdAt: 'أمس'),
     ];
   }
 }

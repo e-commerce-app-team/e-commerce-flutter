@@ -40,12 +40,12 @@ class _StatsCardState extends State<StatsCard>
     super.initState();
     _ctrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 500),
     );
 
     _fadeAnim  = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
     _slideAnim = Tween<Offset>(
-      begin: const Offset(0, 5),
+      begin: const Offset(0,3),
       end:   Offset.zero,
     ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOutCubic));
     _scaleAnim = Tween<double>(begin: 0.4, end: 1.0)
@@ -86,12 +86,12 @@ if (mounted) _ctrl.forward();
         borderRadius: BorderRadius.circular(16),
         boxShadow: AppColor.cardShadow,
         border: Border.all(
-          color: widget.accentColor.withOpacity(0.08),
+          color: widget.accentColor.withOpacity(0.4),
           width: 1,
         ),
       ),
       child: Column(
-        
+
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
@@ -172,7 +172,7 @@ if (mounted) _ctrl.forward();
           Text(
             widget.period,
             style: AppTextStyle.labelSmall.copyWith(
-              fontSize: 9,
+              fontSize: 11,
               color: AppColor.greyLight,
             ),
             maxLines: 1,

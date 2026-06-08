@@ -1,5 +1,3 @@
-// lib/view/widget/seller/dashboard/recent_order_card.dart
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
@@ -54,13 +52,14 @@ class _RecentOrderCardState extends State<RecentOrderCard>
     super.dispose();
   }
 
+
   static const Map<String, _StatusConfig> _statusMap = {
-    'pending':    _StatusConfig(label: 'status_pending',    bg: Color(0xffFFF3E0), text: Color(0xffE65100)),
-    'processing': _StatusConfig(label: 'status_processing', bg: Color(0xffE3F2FD), text: Color(0xff1565C0)),
-    'shipped':    _StatusConfig(label: 'status_shipped',    bg: Color(0xffEEEDFE), text: Color(0xff553C9A)),
-    'delivered':  _StatusConfig(label: 'status_delivered',  bg: Color(0xffE8F8F0), text: Color(0xff1B5E20)),
-    'cancelled':  _StatusConfig(label: 'status_cancelled',  bg: Color(0xffFEECEC), text: Color(0xffB71C1C)),
-    'returned':   _StatusConfig(label: 'status_returned',   bg: Color(0xffFFF8E1), text: Color(0xffF39C12)),
+    'pending':    _StatusConfig(label: 'status_pending',    bg: AppColor.pendingBg,    text: AppColor.pendingText),
+    'processing': _StatusConfig(label: 'status_processing', bg: AppColor.processingBg, text: AppColor.processingText),
+    'shipped':    _StatusConfig(label: 'status_shipped',    bg: AppColor.shippedBg,    text: AppColor.shippedText),
+    'delivered':  _StatusConfig(label: 'status_delivered',  bg: AppColor.deliveredBg,  text: AppColor.deliveredText),
+    'cancelled':  _StatusConfig(label: 'status_cancelled',  bg: AppColor.cancelledBg,  text: AppColor.cancelledText),
+    'returned':   _StatusConfig(label: 'status_returned',   bg: AppColor.returnedBg,   text: AppColor.returnedText),
   };
 
   _StatusConfig get _config =>

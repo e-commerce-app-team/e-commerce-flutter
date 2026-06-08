@@ -42,7 +42,7 @@ class SellerDrawer extends StatelessWidget {
                         badgeColor: AppColor.primaryColor,
                         onTap: () {
                           Get.back();
-                          // TODO: Get.toNamed(AppRoute.storePreview)
+                          //  Get.toNamed(AppRoute.storePreview)
                         },
                       ),
 
@@ -52,7 +52,7 @@ class SellerDrawer extends StatelessWidget {
                         label: "دولاب الحظ",
                         onTap: () {
                           Get.back();
-                          // TODO: Get.toNamed(AppRoute.spinWheel)
+                            Get.toNamed(AppRoute.spinWheele);
                         },
                       ),
                       _DrawerItem(

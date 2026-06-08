@@ -53,7 +53,7 @@ class LoginControllerImp extends LoginController {
           if (role == "buyer") {
             myServices.sharedPreferences.setString("onboarding", "1");
             Get.offAllNamed(AppRoute.successSignUp);
-          } else if (role == "vendor") {
+          } else if (role == "vendor"||role == "wholesale") {
             myServices.sharedPreferences.setString("onboarding", "1");
             Get.offAllNamed(AppRoute.sellerMain);
           } else {

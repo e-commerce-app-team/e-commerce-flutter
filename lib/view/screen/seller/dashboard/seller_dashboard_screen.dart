@@ -225,8 +225,8 @@ class _StatsGrid extends StatelessWidget {
           animationDelay: 80,
         ),
         StatsCard(
-          label:          'store_views'.tr,
-          value:          _formatVal(stats.storeViews),
+          label:          'views_count'.tr,
+          value:          _formatVal(stats.viewsCount),
           change:         stats.viewsChange,
           period:         'vs_yesterday'.tr,
           icon:           Icons.remove_red_eye_outlined,
@@ -236,7 +236,7 @@ class _StatsGrid extends StatelessWidget {
         ),
         StatsCard(
           label:          'inventory_value'.tr,
-          value:          'SP ${_formatVal(stats.avgOrderValue)}',
+          value:          'SP ${_formatVal(stats.inventoryValue)}',
           change:         12.0,
           period:         'vs_last_week'.tr,
           icon:           Icons.trending_up_rounded,
