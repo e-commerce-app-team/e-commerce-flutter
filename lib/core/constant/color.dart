@@ -9,6 +9,7 @@ class AppColor {
 
   // ****** Neutrals ************************************************************
   static const Color black      = Color(0xff1A1A1A);
+  static const Color white      = Color(0xffefeaea);
   static const Color grey       = Color(0xff8E8E8E);
   static const Color greyLight  = Color(0xffC7C7CC);
   static const Color greyBorder = Color(0xffE5E5EA);
@@ -65,7 +66,7 @@ class AppColor {
   static const LinearGradient headerGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Color(0xffFF8C42), Color(0xffFF6300), Color(0xffCC4F00)],
+    colors: [Color(0xffb3eca0), Color(0xffff812f), Color(0xffba1e1e)],
     stops: [0.0, 0.55, 1.0],
   );
 
@@ -119,4 +120,23 @@ class AppColor {
   static const Color snackbarSuccessText = Color(0xFF2E7D32);
   static const Color snackbarErrorBg     = Color(0xFFFFF4F4);
   static const Color snackbarErrorText   = Color(0xFFD32F2F);
+
+  // ألوان حالات الطلب
+  static const Color pendingBg      = Color(0xffFFF3E0);
+  static const Color pendingText    = Color(0xffE65100);
+
+  static const Color processingBg   = Color(0xffE3F2FD);
+  static const Color processingText = Color(0xff1565C0);
+
+  static const Color shippedBg      = Color(0xffEEEDFE);
+  static const Color shippedText    = Color(0xff553C9A);
+
+  static const Color deliveredBg    = Color(0xffE8F8F0);
+  static const Color deliveredText  = Color(0xff1B5E20);
+
+  static const Color cancelledBg    = Color(0xffFEECEC);
+  static const Color cancelledText  = Color(0xffB71C1C);
+
+  static const Color returnedBg     = Color(0xffFFF8E1);
+  static const Color returnedText   = Color(0xffF39C12);
 }

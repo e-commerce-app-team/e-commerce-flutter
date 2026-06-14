@@ -10,6 +10,7 @@ class CustomButtomAuth extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+
       margin:const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
         gradient: AppColor.mainGradient,
