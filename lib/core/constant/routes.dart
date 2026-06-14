@@ -17,5 +17,14 @@ class AppRoute {
   static const String sellerMain = "/sellermain";
   static const String sellerDrawer = "/sellerdrawer";
   static const String spinWheele = "/spinwheel";
+  static const String ads = "/ads";
+  static const String sellerInvoices = "/sellerinvoices";
+  static const String changePassword = "/change-password";
+  static const String coupons = "/coupons";
+  static const String sellerWallet = "/wallet";
+  static const String storeEdit = "/storeedit";
+  static const String shippingSettings = "/shippingsettings";
+
+
 
 }

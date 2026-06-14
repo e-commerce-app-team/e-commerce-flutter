@@ -57,7 +57,7 @@ class SellerOrdersController extends GetxController {
     statusRequest = StatusRequest.loading;
     update();
 
-    await Future.delayed(const Duration(milliseconds: 700)); // mock
+    await Future.delayed(const Duration(milliseconds: 700));
     _allOrders = SubOrderModel.mockList();
 
     statusRequest = StatusRequest.success;
@@ -71,7 +71,7 @@ class SellerOrdersController extends GetxController {
     actionStatusRequest = StatusRequest.loading;
     update();
 
-    await Future.delayed(const Duration(milliseconds: 600)); // mock
+    await Future.delayed(const Duration(milliseconds: 600));
 
     // TODO: await ordersData.acceptOrder(order.subOrderId, estimatedMinutes);
 
@@ -91,9 +91,9 @@ class SellerOrdersController extends GetxController {
     actionStatusRequest = StatusRequest.loading;
     update();
 
-    await Future.delayed(const Duration(milliseconds: 600)); // mock
+    await Future.delayed(const Duration(milliseconds: 600));
 
-    // TODO: await ordersData.rejectOrder(order.subOrderId, reason);
+    // await ordersData.rejectOrder(order.subOrderId, reason);
 
     final idx = _allOrders.indexWhere((o) => o.subOrderId == order.subOrderId);
     if (idx != -1) {

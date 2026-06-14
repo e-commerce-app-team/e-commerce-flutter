@@ -60,7 +60,7 @@ class SellerDrawer extends StatelessWidget {
                         label: "كوبونات الخصم",
                         onTap: () {
                           Get.back();
-                          // TODO: Get.toNamed(AppRoute.coupons)
+                          Get.toNamed(AppRoute.coupons);
                         },
                       ),
                       _DrawerItem(
@@ -68,7 +68,7 @@ class SellerDrawer extends StatelessWidget {
                         label: "الإعلانات والرعاية",
                         onTap: () {
                           Get.back();
-                          // TODO: Get.toNamed(AppRoute.ads)
+                           Get.toNamed(AppRoute.ads);
                         },
                       ),
 
@@ -78,7 +78,7 @@ class SellerDrawer extends StatelessWidget {
                         label: "المحفظة والسحب",
                         onTap: () {
                           Get.back();
-                          controller.changeTab(4);
+                          Get.toNamed(AppRoute.sellerWallet);
                         },
                       ),
 
@@ -89,7 +89,7 @@ class SellerDrawer extends StatelessWidget {
                           badge: "شركات",
                           onTap: () {
                             Get.back();
-                            // TODO: Get.toNamed(AppRoute.invoices)
+                             Get.toNamed(AppRoute.sellerInvoices);
                           },
                         ),
 

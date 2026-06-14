@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/view/widget/seller/dashboard/shimmer_box.dart';
 
@@ -11,9 +12,9 @@ class InventoryShimmer extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount:  2,
+        crossAxisCount: 2,
         crossAxisSpacing: 12,
-        mainAxisSpacing:  12,
+        mainAxisSpacing: 12,
         childAspectRatio: 0.72,
       ),
       itemCount: 6,
@@ -27,10 +28,15 @@ class InventoryShimmer extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              child: Container(
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(14)),
-                  color: AppColor.secondBackground,
+              child: Shimmer.fromColors(
+                baseColor: const Color(0xffEBEBF4),
+                highlightColor: const Color(0xffF8F8FF),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius:
+                    BorderRadius.vertical(top: Radius.circular(14)),
+                  ),
                 ),
               ),
             ),
@@ -39,15 +45,15 @@ class InventoryShimmer extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [
-                  ShimmerBox(width: double.infinity, height: 12),
-                  SizedBox(height: 6),
-                  ShimmerBox(width: 80, height: 10),
+                  ShimmerBox(width: double.infinity, height: 11),
+                  SizedBox(height: 5),
+                  ShimmerBox(width: 70, height: 9),
                   SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      ShimmerBox(width: 60, height: 14),
-                      ShimmerBox(width: 30, height: 22, radius: 8),
+                      ShimmerBox(width: 65, height: 14),
+                      ShimmerBox(width: 28, height: 22, radius: 8),
                     ],
                   ),
                 ],
