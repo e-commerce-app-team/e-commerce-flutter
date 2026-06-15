@@ -11,6 +11,9 @@ import 'package:e_commerce/view/screen/auth/success_signup.dart';
 import 'package:e_commerce/view/screen/auth/forgetpassword/verifycode.dart';
 import 'package:e_commerce/view/screen/auth/verifycodesignup.dart';
 import 'package:e_commerce/view/screen/onboarding.dart';
+import 'package:e_commerce/view/screen/seller/branches/branch_form_screen.dart';
+import 'package:e_commerce/view/screen/seller/branches/branch_location_picker_screen.dart';
+import 'package:e_commerce/view/screen/seller/branches/branches_screen.dart';
 import 'package:e_commerce/view/screen/seller/dashboard/drawer/ads_screen.dart';
 import 'package:e_commerce/view/screen/seller/dashboard/drawer/seller_coupons_screen.dart';
 import 'package:e_commerce/view/screen/seller/dashboard/drawer/spin_wheel_screen.dart';
@@ -62,5 +65,13 @@ List<GetPage<dynamic>>? routes = [
   GetPage(name: AppRoute.sellerWallet, page: () => const WalletScreen()),
   GetPage(name: AppRoute.storeEdit, page: () => const StoreEditScreen()),
   GetPage(name: AppRoute.shippingSettings, page: () => const ShippingSettingsScreen()),
-
+  GetPage(name: AppRoute.sellerBranches, page: () => const BranchesScreen()),
+  GetPage(name: AppRoute.branchForm,page: () => const BranchFormScreen()),
+  GetPage(name: AppRoute.branchLocationPicker, page: () {
+     final args = Get.arguments;
+     return BranchLocationPickerScreen(
+       initialLat: args?.latitude,
+       initialLng: args?.longitude,
+     );
+   }),
 ];

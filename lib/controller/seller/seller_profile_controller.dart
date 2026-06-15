@@ -15,13 +15,11 @@ class SellerProfileController extends GetxController {
   String get sellerType => myServices.sharedPreferences.getString('seller_type') ?? 'vendor';
   bool get isWholesale => sellerType == 'wholesale';
 
-  // إدارة حالات الطلبات المنفصلة للبروفايل والشحن
   StatusRequest statusRequest     = StatusRequest.none;
   StatusRequest saveStatusRequest = StatusRequest.none;
 
   SellerProfileModel? profile;
 
-  // الحقول النصية الخاصة بالملف الشخصي والبيانات العامة للمتجر فقط
   late final TextEditingController firstNameCtrl;
   late final TextEditingController lastNameCtrl;
   late final TextEditingController storeNameCtrl;
@@ -30,12 +28,10 @@ class SellerProfileController extends GetxController {
   late final TextEditingController phoneCtrl;
   late final TextEditingController returnPolicyCtrl;
 
-  // ملفات رفع الصور
   File? newLogo;
   File? newCover;
   File? newProfilePhoto;
 
-  // حقول إعدادات الشحن الخاصة بالبائع
   String shippingMethod = 'our_delivery';
   String whoPaysShipping = 'buyer';
   late final TextEditingController baseFeeCtrl;
@@ -59,7 +55,6 @@ class SellerProfileController extends GetxController {
     phoneCtrl        = TextEditingController();
     returnPolicyCtrl = TextEditingController();
 
-    // قيم افتراضية آمنة لحساب الشحن لتجنب الفراغات المفاجئة
     baseFeeCtrl   = TextEditingController(text: '2000');
     perKmCtrl     = TextEditingController(text: '100');
     perKgCtrl     = TextEditingController(text: '500');
@@ -70,7 +65,6 @@ class SellerProfileController extends GetxController {
     statusRequest = StatusRequest.loading;
     update();
 
-    // محاكاة استجابة الخادم لتهيئة البيانات
     await Future.delayed(const Duration(milliseconds: 600));
 
     profile = SellerProfileModel.mock();
@@ -110,9 +104,8 @@ class SellerProfileController extends GetxController {
   void setWhoPays(String w)        { whoPaysShipping = w; update(); }
 
   Future<void> saveProfile() async {
-    // التحقق الأساسي من صحة البيانات (Edge Case Validation) قبل بدء الـ Loading
     if (storeNameCtrl.text.trim().isEmpty) {
-      customSnackbar('warning'.tr, 'store_name_required'.tr); // استخدام الترجمة لحفظ الاحترافية العالمية
+      customSnackbar('warning'.tr, 'store_name_required'.tr);
       return;
     }
 
@@ -144,7 +137,6 @@ class SellerProfileController extends GetxController {
 
   @override
   void onClose() {
-    // تنظيف مؤكد لجميع الـ Controllers لحماية ذاكرة الهاتف من التسريب (Memory Leak)
     firstNameCtrl.dispose();
     lastNameCtrl.dispose();
     storeNameCtrl.dispose();

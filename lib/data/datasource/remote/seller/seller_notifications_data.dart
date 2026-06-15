@@ -6,12 +6,11 @@ class SellerNotificationsData {
   Crud crud;
   SellerNotificationsData(this.crud);
 
-  // POST /auth/fcm-token
-  // Body: { fcm_token: "...", device: "android"|"ios" }
+
   Future<void> saveFCMToken(String fcmToken) async {
     try {
       await crud.postData(
-        AppLink.fcmToken, // "https://api.yourapp.sy/v1/auth/fcm-token"
+        AppLink.fcmToken,
         {
           "fcm_token": fcmToken,
           "device": "android",

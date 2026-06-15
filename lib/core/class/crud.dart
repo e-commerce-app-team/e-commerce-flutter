@@ -9,25 +9,29 @@ import 'package:path/path.dart';
 
 class Crud {
 
-  Future<Either<StatusRequest, Map>> postData(String linkurl,
-      Map <String, String> data) async {
+  Map<String, String> _setHeaders(Map<String, String>? customHeaders) {
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };
+    if (customHeaders != null) {
+      headers.addAll(customHeaders);
+    }
+    return headers;
+  }
+
+
+  Future<Either<StatusRequest, Map>> getData(String linkurl, {Map<String, String>? headers}) async {
     try {
       if (await checkInternet()) {
-        var response = await http.post(
-            Uri.parse(linkurl), body: data, headers: {
-          'Accept': 'application/json',}).timeout(Duration(seconds: 15));
-        if (response.statusCode == 200 || response.statusCode == 201) {
-          Map responsebody = jsonDecode(response.body);
-          return Right(responsebody);
-        } else if
-         (response.statusCode == 422 || response.statusCode == 401 || response.statusCode == 403 || response.statusCode == 429|| response.statusCode == 400) {
-          Map responsebody = jsonDecode(response.body);
-          return Right(responsebody);
-        } else {
-          return Left(StatusRequest.serverfailure);
-        }
+        var response = await http.get(
+          Uri.parse(linkurl),
+          headers: _setHeaders(headers),
+        ).timeout(const Duration(seconds: 15));
+
+        return _handleResponse(response);
       } else {
-        return Left(StatusRequest.offlinefailure);
+        return const Left(StatusRequest.offlinefailure);
       }
     } on TimeoutException {
       return const Left(StatusRequest.serverfailure);
@@ -39,17 +43,38 @@ class Crud {
   }
 
 
-  //****************************
+  Future<Either<StatusRequest, Map>> postData(String linkurl, Map<String, dynamic> data, {Map<String, String>? headers}) async {
+    try {
+      if (await checkInternet()) {
+        var response = await http.post(
+          Uri.parse(linkurl),
+          body: jsonEncode(data),
+          headers: _setHeaders(headers),
+        ).timeout(const Duration(seconds: 15));
+
+        return _handleResponse(response);
+      } else {
+        return const Left(StatusRequest.offlinefailure);
+      }
+    } on TimeoutException {
+      return const Left(StatusRequest.serverfailure);
+    } on SocketException {
+      return const Left(StatusRequest.offlinefailure);
+    } catch (e) {
+      return const Left(StatusRequest.serverfailure);
+    }
+  }
 
 
-  Future<Either<StatusRequest, Map>> postDataWithFiles(String linkurl,
-      Map<String, String> data, Map<String, File> files) async {
+  Future<Either<StatusRequest, Map>> postDataWithFiles(String linkurl, Map<String, String> data, Map<String, File> files, {Map<String, String>? headers}) async {
     try {
       if (await checkInternet()) {
         var request = http.MultipartRequest("POST", Uri.parse(linkurl));
-        request.headers.addAll({
-          'Accept': 'application/json',
-        });
+
+        Map<String, String> finalHeaders = {'Accept': 'application/json'};
+        if (headers != null) finalHeaders.addAll(headers);
+        request.headers.addAll(finalHeaders);
+
         request.fields.addAll(data);
 
         for (var entry in files.entries) {
@@ -59,34 +84,38 @@ class Crud {
           var length = await file.length();
 
           var multipartFile = http.MultipartFile(
-              entry.key,
-              stream,
-              length,
-              filename: basename(file.path)
+            entry.key,
+            stream,
+            length,
+            filename: basename(file.path),
           );
           request.files.add(multipartFile);
         }
 
-        var myrequest = await request.send().timeout(const Duration(seconds: 15));;
+        var myrequest = await request.send().timeout(const Duration(seconds: 15));
         var response = await http.Response.fromStream(myrequest);
-        if (response.statusCode == 200 || response.statusCode == 201) {
-          Map responsebody = jsonDecode(response.body);
-          return Right(responsebody);
-        } else if
-        (response.statusCode == 422 || response.statusCode == 401 || response.statusCode == 403 || response.statusCode == 429 || response.statusCode == 400) {
-          Map responsebody = jsonDecode(response.body);
-          return Right(responsebody);
-        } else {
-          return Left(StatusRequest.serverfailure);
-        }
+
+        return _handleResponse(response);
       } else {
-        return Left(StatusRequest.offlinefailure);
+        return const Left(StatusRequest.offlinefailure);
       }
     } on TimeoutException {
       return const Left(StatusRequest.serverfailure);
     } on SocketException {
       return const Left(StatusRequest.offlinefailure);
     } catch (e) {
+      return const Left(StatusRequest.serverfailure);
+    }
+  }
+
+  Either<StatusRequest, Map> _handleResponse(http.Response response) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      Map responsebody = jsonDecode(response.body);
+      return Right(responsebody);
+    } else if (response.statusCode == 422 || response.statusCode == 401 || response.statusCode == 403 || response.statusCode == 429 || response.statusCode == 400) {
+      Map responsebody = jsonDecode(response.body);
+      return Right(responsebody);
+    } else {
       return const Left(StatusRequest.serverfailure);
     }
   }

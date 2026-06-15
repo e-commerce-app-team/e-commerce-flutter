@@ -140,7 +140,6 @@ class SellerAdsController extends GetxController {
     update();
   }
 
-  // ── Submit ────────────────────────────────────────────────────────────────────
   Future<void> submitAd() async {
     if (!canAfford) {
       customSnackbar('رصيد غير كافٍ',

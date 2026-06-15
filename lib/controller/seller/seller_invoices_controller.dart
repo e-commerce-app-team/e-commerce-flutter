@@ -117,7 +117,6 @@ class SellerInvoicesController extends GetxController {
     );
   }
 
-  // ── Data Loading ──────────────────────────────────────────
 
   Future<void> loadData() async {
     statusRequest = StatusRequest.loading;
@@ -126,7 +125,7 @@ class SellerInvoicesController extends GetxController {
     await Future.delayed(const Duration(milliseconds: 700));
     // TODO: var res = await invoicesData.getData();
 
-  //  taxSettings = TaxSettingsModel.mock();
+   taxSettings = TaxSettingsModel.mock();
     vatReports  = VatReportModel.mockList();
     invoices    = InvoiceModel.mockList();
 
@@ -141,7 +140,7 @@ class SellerInvoicesController extends GetxController {
     update();
   }
 
-  // ── Lifecycle ─────────────────────────────────────────────
+
 
   @override
   void onInit() {

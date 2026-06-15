@@ -14,4 +14,5 @@ class AppLink{
   static const String sellerWalletStats        = "$server/seller/wallet/stats";
   static const String sellerWithdrawRequests   = "$server/seller/wallet/withdrawals";
   static const String sellerWithdraw           = "$server/seller/wallet/withdraw";
+  static const String sellerBranches = "$server/seller/branches";
 }
