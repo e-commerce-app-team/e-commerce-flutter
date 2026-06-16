@@ -101,7 +101,7 @@ class SellerDrawer extends StatelessWidget {
                           badge: "شركات",
                           onTap: () {
                             Get.back();
-                            // TODO: Get.toNamed(AppRoute.staff)
+                           Get.toNamed(AppRoute.sellerStaff);
                           },
                         ),
                         _DrawerItem(

@@ -28,6 +28,6 @@ class AppRoute {
    static const String branchForm            = "/seller/branches/form";
    static const String branchLocationPicker  = "/seller/branches/location";
 
-
+  static const String sellerStaff    = "/seller/staff";
 
 }

@@ -15,4 +15,6 @@ class AppLink{
   static const String sellerWithdrawRequests   = "$server/seller/wallet/withdrawals";
   static const String sellerWithdraw           = "$server/seller/wallet/withdraw";
   static const String sellerBranches = "$server/seller/branches";
+  static const String sellerStaff       = "$server/seller/staff";
+  static const String sellerStaffInvite = "$server/seller/staff/invite";
 }

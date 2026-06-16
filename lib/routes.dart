@@ -23,6 +23,7 @@ import 'package:e_commerce/view/screen/seller/profile/shipping_settings_screen.d
 import 'package:e_commerce/view/screen/seller/profile/store_edit_screen.dart';
 import 'package:e_commerce/view/screen/seller/profile/wallet_screen.dart';
 import 'package:e_commerce/view/screen/seller/seller_main_screen.dart';
+import 'package:e_commerce/view/screen/seller/staff/staff_screen.dart';
 import 'package:e_commerce/view/widget/seller/seller_drawer.dart';
 import 'package:get/get.dart';
 
@@ -73,5 +74,7 @@ List<GetPage<dynamic>>? routes = [
        initialLat: args?.latitude,
        initialLng: args?.longitude,
      );
+
    }),
+  GetPage(name: AppRoute.sellerStaff, page: () => const StaffScreen()),
 ];
