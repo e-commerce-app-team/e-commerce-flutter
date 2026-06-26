@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 
@@ -124,7 +123,7 @@ class ConversationModel {
       id: 'conv_003', sellerId: sellerId, buyerId: 103,
       buyerName: 'maream ',
       orderId: null,
-      lastMessage: 'متى سيصل طلبي رقم 2845؟',
+      lastMessage: 'متى سيصل طلبي؟',
       lastTime: DateTime.now().subtract(const Duration(hours: 1)),
       unreadSeller: 1,
     ),
@@ -132,7 +131,7 @@ class ConversationModel {
       id: 'conv_004', sellerId: sellerId, buyerId: 104,
       buyerName: 'ahmad',
       orderId: null,
-      lastMessage: 'هل تقدمون خدمة النقش المخصص؟',
+      lastMessage: 'ما بحبك',
       lastTime: DateTime.now().subtract(const Duration(hours: 3)),
       unreadSeller: 0,
     ),
@@ -140,7 +139,7 @@ class ConversationModel {
       id: 'conv_005', sellerId: sellerId, buyerId: 105,
       buyerName: 'sdrah safar',
       orderId: '#ORD-2843',
-      lastMessage: 'ما هي سياسة الإرجاع للهدايا؟',
+      lastMessage:'',
       lastTime: DateTime.now().subtract(const Duration(hours: 5)),
       unreadSeller: 0,
     ),

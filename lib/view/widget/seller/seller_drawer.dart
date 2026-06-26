@@ -121,7 +121,8 @@ class SellerDrawer extends StatelessWidget {
                         label: "مركز دعم التجار",
                         onTap: () {
                           Get.back();
-                          // TODO: Get.toNamed(AppRoute.support)
+                           Get.toNamed(AppRoute.sellerSupport
+                           );
                         },
                       ),
                       _DrawerItem(

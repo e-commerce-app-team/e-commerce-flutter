@@ -68,7 +68,7 @@ class SellerInvoicesController extends GetxController {
     update();
 
     await Future.delayed(const Duration(milliseconds: 700));
-    // TODO: await invoicesData.updateTaxSettings(data);
+    // await invoicesData.updateTaxSettings(data);
 
     taxSettings = taxSettings!.copyWith(
       vatNumber:  vatCtrl.text.trim(),
@@ -88,7 +88,7 @@ class SellerInvoicesController extends GetxController {
     update();
 
     await Future.delayed(const Duration(milliseconds: 900));
-    // TODO: final path = await invoicesData.downloadPdf(invoice.id);
+    //  final path = await invoicesData.downloadPdf(invoice.id);
 
     downloadingIds.remove(invoice.id);
     update();
@@ -105,7 +105,7 @@ class SellerInvoicesController extends GetxController {
     update();
 
     await Future.delayed(const Duration(milliseconds: 900));
-    // TODO: final path = await invoicesData.downloadMonthlyReport(currentReport!.monthKey);
+    // final path = await invoicesData.downloadMonthlyReport(currentReport!.monthKey);
     // await OpenFile.open(path);
 
     isDownloadingReport = false;
@@ -123,7 +123,7 @@ class SellerInvoicesController extends GetxController {
     update();
 
     await Future.delayed(const Duration(milliseconds: 700));
-    // TODO: var res = await invoicesData.getData();
+    // var res = await invoicesData.getData();
 
    taxSettings = TaxSettingsModel.mock();
     vatReports  = VatReportModel.mockList();
@@ -135,7 +135,7 @@ class SellerInvoicesController extends GetxController {
 
   Future<void> _loadInvoicesForMonth() async {
     await Future.delayed(const Duration(milliseconds: 300));
-    // TODO: invoices = await invoicesData.getInvoices(monthKey: vatReports[selectedMonthIndex].monthKey);
+    //  invoices = await invoicesData.getInvoices(monthKey: vatReports[selectedMonthIndex].monthKey);
     invoices = InvoiceModel.mockList();
     update();
   }

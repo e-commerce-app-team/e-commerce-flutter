@@ -87,7 +87,7 @@ class StaffModel {
   static List<StaffModel> mockList() => [
         const StaffModel(
           id: 1,
-          name: 'سارة حسن',
+          name: 'سدرة سفر ',
           email: 'sara@example.com',
           role: StaffRole.manager,
           permissions: [
@@ -101,7 +101,7 @@ class StaffModel {
         ),
         const StaffModel(
           id: 2,
-          name: 'خالد إبراهيم',
+          name: 'علاء الدوس ',
           email: 'khalid@example.com',
           role: StaffRole.warehouse,
           permissions: [
@@ -113,7 +113,7 @@ class StaffModel {
         ),
         const StaffModel(
           id: 3,
-          name: 'نور الدين',
+          name: 'مريم ',
           email: 'nour@example.com',
           role: StaffRole.support,
           permissions: [

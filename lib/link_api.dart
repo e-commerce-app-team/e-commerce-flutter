@@ -17,4 +17,8 @@ class AppLink{
   static const String sellerBranches = "$server/seller/branches";
   static const String sellerStaff       = "$server/seller/staff";
   static const String sellerStaffInvite = "$server/seller/staff/invite";
+
+  static const String sellerSupportTickets = "$server/seller/support/tickets";
+  static const String sellerOrders        = "$server/seller/orders";
+static const String sellerConversations = "$server/conversations";
 }

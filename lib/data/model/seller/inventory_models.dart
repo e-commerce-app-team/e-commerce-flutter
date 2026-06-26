@@ -162,14 +162,14 @@ class ProductModel {
   );
 
   static List<ProductModel> mockList() => const [
-    ProductModel(id: 1, name: 'حقيبة جلدية يدوية', sku: 'SKU-0041', price: 45000, stock: 12, lowStockAlert: 5, category: 'إكسسوارات', categoryId: 5, status: 'active', hasVariants: true, wholesaleEnabled: false, isFreeShipping: false, weightGrams: 900),
-    ProductModel(id: 2, name: 'ساعة حائط خشبية', sku: 'SKU-0038', price: 14000, stock: 8, lowStockAlert: 5, category: 'ديكور المنزل', categoryId: 7, status: 'active', hasVariants: false, wholesaleEnabled: false, isFreeShipping: false, weightGrams: 1200),
-    ProductModel(id: 3, name: 'إناء خزفي للزهور', sku: 'SKU-0036', price: 15000, salePrice: 11000, stock: 2, lowStockAlert: 5, category: 'ديكور المنزل', categoryId: 8, status: 'active', hasVariants: false, wholesaleEnabled: false, isFreeShipping: false, weightGrams: 800),
-    ProductModel(id: 4, name: 'سوار فضي', sku: 'SKU-0029', price: 32000, stock: 20, lowStockAlert: 3, category: 'مجوهرات', categoryId: 3, status: 'active', hasVariants: true, wholesaleEnabled: true, isFreeShipping: false, weightGrams: 150),
-    ProductModel(id: 5, name: 'طقم شموع يدوية', sku: 'SKU-0025', price: 8500, stock: 0, lowStockAlert: 5, category: 'نمط الحياة', categoryId: 4, status: 'draft', hasVariants: false, wholesaleEnabled: false, isFreeShipping: true, weightGrams: 400),
-    ProductModel(id: 6, name: 'سلة تخزين منسوجة', sku: 'SKU-0021', price: 22000, stock: 5, lowStockAlert: 5, category: 'ديكور المنزل', categoryId: 8, status: 'active', hasVariants: false, wholesaleEnabled: false, isFreeShipping: false, weightGrams: 600),
-    ProductModel(id: 7, name: 'مرآة إطار خشبي', sku: 'SKU-0018', price: 38000, stock: 7, lowStockAlert: 3, category: 'ديكور المنزل', categoryId: 8, status: 'active', hasVariants: false, wholesaleEnabled: true, isFreeShipping: false, weightGrams: 2100),
-    ProductModel(id: 8, name: 'طفاية شمع ذهبية', sku: 'SKU-0015', price: 5500, stock: 30, lowStockAlert: 10, category: 'نمط الحياة', categoryId: 4, status: 'hidden', hasVariants: false, wholesaleEnabled: false, isFreeShipping: false, weightGrams: 200),
+    ProductModel(id: 1, name: 'لابتب غيمنغ', sku: 'SKU-0041', price: 45000, stock: 12, lowStockAlert: 5, category: 'الكترونيات', categoryId: 5, status: 'active', hasVariants: true, wholesaleEnabled: false, isFreeShipping: false, weightGrams: 900),
+    ProductModel(id: 2, name: 'ساعة يد', sku: 'SKU-0038', price: 14000, stock: 8, lowStockAlert: 5, category: 'اكسسوارات', categoryId: 7, status: 'active', hasVariants: false, wholesaleEnabled: false, isFreeShipping: false, weightGrams: 1200),
+    ProductModel(id: 3, name: 'سوار فضة', sku: 'SKU-0036', price: 15000, salePrice: 11000, stock: 2, lowStockAlert: 5, category: 'اكسسوارات', categoryId: 8, status: 'active', hasVariants: false, wholesaleEnabled: false, isFreeShipping: false, weightGrams: 800),
+    ProductModel(id: 4, name: 'كنزة صيفية', sku: 'SKU-0029', price: 32000, stock: 20, lowStockAlert: 3, category: 'ملابس', categoryId: 3, status: 'active', hasVariants: true, wholesaleEnabled: true, isFreeShipping: false, weightGrams: 150),
+    ProductModel(id: 5, name: 'كنزة شتوية', sku: 'SKU-0025', price: 8500, stock: 0, lowStockAlert: 5, category: 'ملابس', categoryId: 4, status: 'draft', hasVariants: false, wholesaleEnabled: false, isFreeShipping: true, weightGrams: 400),
+    ProductModel(id: 6, name: 'شورت', sku: 'SKU-0021', price: 22000, stock: 5, lowStockAlert: 5, category: 'ملابس', categoryId: 8, status: 'active', hasVariants: false, wholesaleEnabled: false, isFreeShipping: false, weightGrams: 600),
+    ProductModel(id: 7, name: 'سشوار', sku: 'SKU-0018', price: 38000, stock: 7, lowStockAlert: 3, category: 'ديكور المنزل', categoryId: 8, status: 'active', hasVariants: false, wholesaleEnabled: true, isFreeShipping: false, weightGrams: 2100),
+    ProductModel(id: 8, name: 'ايفوم اسود', sku: 'SKU-0015', price: 5500, stock: 30, lowStockAlert: 10, category: 'مبايلات', categoryId: 4, status: 'hidden', hasVariants: false, wholesaleEnabled: false, isFreeShipping: false, weightGrams: 200),
   ];
 }
 
@@ -265,15 +265,15 @@ class CategoryModel {
       CategoryModel(id: 5, name: 'حقائب', parentId: 1, productCount: 2),
       CategoryModel(id: 6, name: 'أحذية', parentId: 1, productCount: 1),
     ]),
-    CategoryModel(id: 2, name: 'ديكور المنزل', productCount: 7, children: [
-      CategoryModel(id: 7, name: 'إضاءة', parentId: 2, productCount: 2, children: [
-        CategoryModel(id: 10, name: 'طاولة', parentId: 7, productCount: 1),
-        CategoryModel(id: 11, name: 'حائطية', parentId: 7, productCount: 1),
+    CategoryModel(id: 2, name: 'ملابس', productCount: 7, children: [
+      CategoryModel(id: 7, name: 'شتوية', parentId: 2, productCount: 2, children: [
+        CategoryModel(id: 10, name: 'رجالي', parentId: 7, productCount: 1),
+        CategoryModel(id: 11, name: 'اطفال', parentId: 7, productCount: 1),
       ]),
       CategoryModel(id: 8, name: 'أثاث', parentId: 2, productCount: 5),
     ]),
     CategoryModel(id: 3, name: 'مجوهرات', productCount: 2),
-    CategoryModel(id: 4, name: 'نمط الحياة', productCount: 2),
+    CategoryModel(id: 4, name: 'الكترونيات ', productCount: 2),
   ];
 }
 

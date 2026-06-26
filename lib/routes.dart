@@ -24,6 +24,9 @@ import 'package:e_commerce/view/screen/seller/profile/store_edit_screen.dart';
 import 'package:e_commerce/view/screen/seller/profile/wallet_screen.dart';
 import 'package:e_commerce/view/screen/seller/seller_main_screen.dart';
 import 'package:e_commerce/view/screen/seller/staff/staff_screen.dart';
+import 'package:e_commerce/view/screen/seller/support/support_center_screen.dart';
+import 'package:e_commerce/view/screen/seller/support/ticket_details_screen.dart';
+import 'package:e_commerce/view/screen/seller/support/tickets_screen.dart';
 import 'package:e_commerce/view/widget/seller/seller_drawer.dart';
 import 'package:get/get.dart';
 
@@ -77,4 +80,7 @@ List<GetPage<dynamic>>? routes = [
 
    }),
   GetPage(name: AppRoute.sellerStaff, page: () => const StaffScreen()),
+  GetPage(name: AppRoute.sellerSupport, page: () => const SupportCenterScreen()),
+  GetPage(name: AppRoute.sellerTickets, page: () => const TicketsScreen()),
+  GetPage(name: AppRoute.ticketDetails, page: () => const TicketDetailsScreen()),
 ];

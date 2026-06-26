@@ -10,28 +10,45 @@ class LocaleController extends GetxController {
   MyServices myServices = Get.find();
 
   ThemeData appTheme = themeEnglish;
+  bool isDarkMode = false;
+
+  ThemeData get getCurrentTheme {
+    String? lang = language?.languageCode ?? myServices.sharedPreferences.getString("lang") ?? Get.deviceLocale!.languageCode;
+    if (lang == "ar") {
+      return isDarkMode ? themeArabicDark : themeArabic;
+    } else {
+      return isDarkMode ? themeEnglishDark : themeEnglish;
+    }
+  }
 
   changeLang(String langcode) {
     Locale locale = Locale(langcode);
     myServices.sharedPreferences.setString("lang", langcode);
-appTheme = langcode == "ar" ? themeArabic : themeEnglish;
+    appTheme = getCurrentTheme;
     Get.changeTheme(appTheme);
     Get.updateLocale(locale);
   }
 
+  void changeThemeMode() {
+    isDarkMode = !isDarkMode;
+    myServices.sharedPreferences.setBool("isDarkMode", isDarkMode);
+    appTheme = getCurrentTheme;
+    Get.changeTheme(appTheme);
+    update();
+  }
+
   @override
   void onInit() {
+    isDarkMode = myServices.sharedPreferences.getBool("isDarkMode") ?? false;
     String? sharedPrefLang = myServices.sharedPreferences.getString("lang");
     if (sharedPrefLang == "ar") {
       language = const Locale("ar");
-appTheme = themeArabic;
     } else if (sharedPrefLang == "en") {
-language = const Locale("en");
-      appTheme=themeEnglish;
+      language = const Locale("en");
     } else {
       language = Locale(Get.deviceLocale!.languageCode);
-     appTheme = themeEnglish;
     }
+    appTheme = getCurrentTheme;
     super.onInit();
   }
 }

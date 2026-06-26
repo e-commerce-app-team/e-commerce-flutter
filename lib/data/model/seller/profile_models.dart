@@ -82,11 +82,11 @@ class SellerProfileModel {
   }
 
   static SellerProfileModel mock() => const SellerProfileModel(
-    userId: 143, firstName: 'أحمد', lastName: 'حسن',
+    userId: 143, firstName: 'علاء', lastName: 'الدوس',
     email: 'ahmad@mail.com', phone: '0911234567',
-    storeId: 55, storeName: 'متجر أحمد للحرف اليدوية',
-    description: 'متجر متخصص في الحرف اليدوية والمنتجات الأصيلة',
-    category: 'حرف يدوية', city: 'دمشق',
+    storeId: 55, storeName: 'متجر علاء للملابس',
+    description: 'متجر متخصص في الملابس الرجالية',
+    category: 'ملابس ', city: 'دمشق',
     lat: 33.510, lng: 36.291,
     returnPolicy: '7 أيام للمنتجات المعيبة',
     sellerType: 'wholesale', status: 'active',

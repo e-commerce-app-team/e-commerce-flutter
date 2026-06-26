@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/controller/seller/seller_profile_controller.dart';
+import 'package:e_commerce/core/localization/changelocal.dart';
 import 'package:e_commerce/core/class/status_request.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
 import 'package:e_commerce/core/constant/color.dart';
@@ -13,12 +14,11 @@ class SellerProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // يفضل دائماً حقن الكنترولر عبر الـ Bindings، ولكن إذا استخدمت Get.put هنا تأكد من تنظيفها
     Get.put(SellerProfileController());
 
     return GetBuilder<SellerProfileController>(
       builder: (ctrl) => Scaffold(
-        backgroundColor: AppColor.secondBackground,
+        backgroundColor: Get.isDarkMode ? AppColor.darkSecondBackground : AppColor.secondBackground,
         body: ctrl.statusRequest == StatusRequest.loading
             ? const _ProfileShimmer()
             : ctrl.profile == null
@@ -158,16 +158,32 @@ class SellerProfileScreen extends StatelessWidget {
                         icon: Icons.lock_outline_rounded,
                         title: 'change_password'.tr, // تغيير كلمة المرور
                         iconColor: AppColor.grey,
-                        iconBg: AppColor.secondBackground,
+                        iconBg: Get.isDarkMode ? AppColor.darkSecondBackground : AppColor.secondBackground,
                         onTap: () {
                           Get.toNamed(AppRoute.changePassword);
+                        },
+                      ),
+                      ProfileMenuTile(
+                        icon: Icons.dark_mode_outlined,
+                        title: 'الوضع الليلي', // dark mode
+                        iconColor: AppColor.grey,
+                        iconBg: Get.isDarkMode ? AppColor.darkSecondBackground : AppColor.secondBackground,
+                        trailing: GetBuilder<LocaleController>(
+                          builder: (locCtrl) => Switch(
+                            value: locCtrl.isDarkMode,
+                            onChanged: (val) => locCtrl.changeThemeMode(),
+                            activeColor: AppColor.primaryColor,
+                          ),
+                        ),
+                        onTap: () {
+                          Get.find<LocaleController>().changeThemeMode();
                         },
                       ),
                       ProfileMenuTile(
                         icon: Icons.devices_outlined,
                         title: 'active_devices'.tr, // الأجهزة النشطة
                         iconColor: AppColor.grey,
-                        iconBg: AppColor.secondBackground,
+                        iconBg: Get.isDarkMode ? AppColor.darkSecondBackground : AppColor.secondBackground,
                         onTap: () {
                           // TODO: Get.toNamed(AppRoute.devices)
                         },
@@ -176,7 +192,7 @@ class SellerProfileScreen extends StatelessWidget {
                         icon: Icons.notifications_outlined,
                         title: 'notification_settings'.tr, // إعدادات الإشعارات
                         iconColor: AppColor.grey,
-                        iconBg: AppColor.secondBackground,
+                        iconBg: Get.isDarkMode ? AppColor.darkSecondBackground : AppColor.secondBackground,
                         showDivider: false,
                         onTap: () {
                           // TODO: Get.toNamed(AppRoute.notifSettings)
@@ -203,7 +219,7 @@ class SellerProfileScreen extends StatelessWidget {
                         title: 'about_app'.tr, // حول التطبيق
                         subtitle: 'الإصدار 1.0.0', // يمكن تركها هكذا أو وضعها بالـ Info
                         iconColor: AppColor.grey,
-                        iconBg: AppColor.secondBackground,
+                        iconBg: Get.isDarkMode ? AppColor.darkSecondBackground : AppColor.secondBackground,
                         showDivider: false,
                         onTap: () {},
                       ),
@@ -276,7 +292,7 @@ class _ProfileShimmer extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Get.isDarkMode ? AppColor.darkCard : Colors.white,
             borderRadius: BorderRadius.circular(16),
           ),
           child: const Column(children: [
@@ -303,7 +319,7 @@ class _ProfileShimmer extends StatelessWidget {
         child: Container(
           height: 150,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Get.isDarkMode ? AppColor.darkCard : Colors.white,
             borderRadius: BorderRadius.circular(16),
           ),
         ),

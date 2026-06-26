@@ -198,7 +198,7 @@ class ChatRoomController extends GetxController {
       'created_at': DateTime.now(),
     });
     update();
-    // TODO: Upload to storage then Firestore
+    //  Upload to storage then Firestore
   }
 
   @override

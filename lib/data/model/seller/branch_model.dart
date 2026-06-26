@@ -133,23 +133,23 @@ class BranchModel {
 
   static List<BranchModel> mockList() => [
         BranchModel(
-          id: 1, name: 'الفرع الرئيسي', address: 'دمشق، المزة، شارع الزهراء',
+          id: 1, name: 'الفرع الرئيسي', address: 'دمشق، المز ',
           lat: 33.5138, lng: 36.2765,
-          phone: '0911234567', managerName: 'أحمد محمد',
+          phone: '0947989738', managerName: 'alaa aldoos',
           workingHours: defaultWorkingHours(),
           isActive: true, productCount: 48, createdAt: '01 يناير 2025',
         ),
         BranchModel(
-          id: 2, name: 'فرع الميدان', address: 'دمشق، الميدان، شارع الثلاثين',
+          id: 2, name: 'فرع الميدان', address: 'دمشق، الميدان',
           lat: 33.4950, lng: 36.2980,
-          phone: '0917654321', managerName: 'سارة علي',
+          phone: '0917654321', managerName: 'sdra safar',
           workingHours: defaultWorkingHours(),
           isActive: true, productCount: 31, createdAt: '15 فبراير 2025',
         ),
         BranchModel(
-          id: 3, name: 'مستودع حلب', address: 'حلب، العزيزية',
+          id: 3, name: 'مستودع درعا', address: 'درعا،بصرى ',
           lat: 36.2021, lng: 37.1343,
-          phone: '0944112233', managerName: 'خالد إبراهيم',
+          phone: '095555555', managerName: 'علاء الدوس',
           workingHours: defaultWorkingHours(),
           isActive: false, productCount: 72, createdAt: '10 مارس 2025',
         ),

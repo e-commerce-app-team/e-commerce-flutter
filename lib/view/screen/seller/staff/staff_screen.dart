@@ -1,5 +1,3 @@
-// lib/view/screen/seller/staff/staff_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/controller/seller/seller_staff_controller.dart';
@@ -58,8 +56,6 @@ class StaffScreen extends StatelessWidget {
   }
 }
 
-// ─── AppBar ────────────────────────────────────────────────────────────────────
-
 class _StaffAppBar extends StatelessWidget implements PreferredSizeWidget {
   final SellerStaffController ctrl;
   const _StaffAppBar({required this.ctrl});
@@ -102,7 +98,6 @@ class _StaffAppBar extends StatelessWidget implements PreferredSizeWidget {
       );
 }
 
-// ─── Header Stats ─────────────────────────────────────────────────────────────
 
 class _StaffSummaryHeader extends StatelessWidget {
   final SellerStaffController ctrl;
@@ -177,7 +172,7 @@ class _StatBox extends StatelessWidget {
       );
 }
 
-// ─── Staff Card ────────────────────────────────────────────────────────────────
+
 
 class _StaffCard extends StatefulWidget {
   final StaffModel              member;
@@ -242,7 +237,6 @@ class _StaffCardState extends State<_StaffCard>
               ),
             ),
             child: Column(children: [
-              // ── Header Row ──────────────────────────────────────────────
               Padding(
                 padding: const EdgeInsets.fromLTRB(14, 14, 14, 0),
                 child: Row(children: [
@@ -281,7 +275,6 @@ class _StaffCardState extends State<_StaffCard>
                 ]),
               ),
 
-              // ── Permissions Row ─────────────────────────────────────────
               if (m.permissions.isNotEmpty) ...[
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 14),
@@ -293,7 +286,6 @@ class _StaffCardState extends State<_StaffCard>
                 ),
               ],
 
-              // ── Footer Actions ──────────────────────────────────────────
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 14),
                 child: Divider(height: 14, color: AppColor.greyBorder),
@@ -365,7 +357,6 @@ class _StaffCardState extends State<_StaffCard>
   }
 }
 
-// ─── Sub-widgets ───────────────────────────────────────────────────────────────
 
 class _AvatarCircle extends StatelessWidget {
   final String name;
@@ -582,7 +573,6 @@ class _CardAction extends StatelessWidget {
       );
 }
 
-// ─── FAB ───────────────────────────────────────────────────────────────────────
 
 class _InviteFab extends StatelessWidget {
   final SellerStaffController ctrl;
@@ -614,7 +604,6 @@ class _InviteFab extends StatelessWidget {
       );
 }
 
-// ─── Empty State ───────────────────────────────────────────────────────────────
 
 class _EmptyStaff extends StatelessWidget {
   const _EmptyStaff();
@@ -642,7 +631,7 @@ class _EmptyStaff extends StatelessWidget {
       );
 }
 
-// ─── Shimmer ───────────────────────────────────────────────────────────────────
+
 
 class _StaffShimmer extends StatelessWidget {
   const _StaffShimmer();

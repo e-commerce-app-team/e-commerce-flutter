@@ -30,4 +30,8 @@ class AppRoute {
 
   static const String sellerStaff    = "/seller/staff";
 
+  static const String sellerSupport = "/seller/support";
+  static const String sellerTickets = "/seller/tickets";
+  static const String ticketDetails = "/seller/tickets/details";
+
 }
