@@ -28,6 +28,8 @@ import 'package:e_commerce/view/screen/seller/support/support_center_screen.dart
 import 'package:e_commerce/view/screen/seller/support/ticket_details_screen.dart';
 import 'package:e_commerce/view/screen/seller/support/tickets_screen.dart';
 import 'package:e_commerce/view/widget/seller/seller_drawer.dart';
+import 'package:e_commerce/controller/seller/seller_chat_controller.dart';
+import 'package:e_commerce/view/screen/seller/chat/chat_settings_screen.dart';
 import 'package:get/get.dart';
 
 List<GetPage<dynamic>>? routes = [
@@ -83,4 +85,7 @@ List<GetPage<dynamic>>? routes = [
   GetPage(name: AppRoute.sellerSupport, page: () => const SupportCenterScreen()),
   GetPage(name: AppRoute.sellerTickets, page: () => const TicketsScreen()),
   GetPage(name: AppRoute.ticketDetails, page: () => const TicketDetailsScreen()),
+  GetPage(name: AppRoute.chatSettings, page: () => ChatSettingsScreen(
+    ctrl: Get.find<SellerChatController>(),
+  )),
 ];

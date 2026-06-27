@@ -34,4 +34,5 @@ class AppRoute {
   static const String sellerTickets = "/seller/tickets";
   static const String ticketDetails = "/seller/tickets/details";
 
+  static const String chatSettings = "/chat-settings";
 }

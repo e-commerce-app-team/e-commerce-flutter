@@ -1,3 +1,4 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 
@@ -123,7 +124,7 @@ class ConversationModel {
       id: 'conv_003', sellerId: sellerId, buyerId: 103,
       buyerName: 'maream ',
       orderId: null,
-      lastMessage: 'متى سيصل طلبي؟',
+      lastMessage: 'متى سيصل طلبي رقم 2845؟',
       lastTime: DateTime.now().subtract(const Duration(hours: 1)),
       unreadSeller: 1,
     ),
@@ -131,7 +132,7 @@ class ConversationModel {
       id: 'conv_004', sellerId: sellerId, buyerId: 104,
       buyerName: 'ahmad',
       orderId: null,
-      lastMessage: 'ما بحبك',
+      lastMessage: 'هل تقدمون خدمة النقش المخصص؟',
       lastTime: DateTime.now().subtract(const Duration(hours: 3)),
       unreadSeller: 0,
     ),
@@ -139,7 +140,7 @@ class ConversationModel {
       id: 'conv_005', sellerId: sellerId, buyerId: 105,
       buyerName: 'sdrah safar',
       orderId: '#ORD-2843',
-      lastMessage:'',
+      lastMessage: 'ما هي سياسة الإرجاع للهدايا؟',
       lastTime: DateTime.now().subtract(const Duration(hours: 5)),
       unreadSeller: 0,
     ),
@@ -199,5 +200,71 @@ class MockMessages {
       'type': 'text', 'read_at': null,
       'created_at': DateTime.now().subtract(const Duration(minutes: 2)),
     },
+  ];
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AutoReplyModel
+// ─────────────────────────────────────────────────────────────────────────────
+class AutoReplyModel {
+  final String  id;
+  final String  trigger; // 'welcome' | 'away' | 'instant_ack'
+  final String  content;
+  final bool    isEnabled;
+  final String? startTime;
+  final String? endTime;
+
+  const AutoReplyModel({
+    required this.id,
+    required this.trigger,
+    required this.content,
+    required this.isEnabled,
+    this.startTime,
+    this.endTime,
+  });
+
+  AutoReplyModel copyWith({
+    String? content,
+    bool?   isEnabled,
+    String? startTime,
+    String? endTime,
+  }) => AutoReplyModel(
+    id:        id,
+    trigger:   trigger,
+    content:   content   ?? this.content,
+    isEnabled: isEnabled ?? this.isEnabled,
+    startTime: startTime ?? this.startTime,
+    endTime:   endTime   ?? this.endTime,
+  );
+
+  factory AutoReplyModel.fromJson(Map<String, dynamic> j) => AutoReplyModel(
+    id:        j['id']        ?? '',
+    trigger:   j['trigger']   ?? 'away',
+    content:   j['content']   ?? '',
+    isEnabled: j['isEnabled'] ?? false,
+    startTime: j['startTime'],
+    endTime:   j['endTime'],
+  );
+
+  Map<String, dynamic> toJson() => {
+    'id': id, 'trigger': trigger, 'content': content,
+    'isEnabled': isEnabled, 'startTime': startTime, 'endTime': endTime,
+  };
+
+  static List<AutoReplyModel> defaults() => const [
+    AutoReplyModel(
+      id: 'welcome', trigger: 'welcome', isEnabled: true,
+      content: 'أهلاً بك في متجرنا! 🛍️ كيف يمكنني مساعدتك اليوم؟',
+    ),
+    AutoReplyModel(
+      id: 'away', trigger: 'away', isEnabled: false,
+      content: 'شكراً لتواصلك معنا ⏰ نحن خارج أوقات الدوام حالياً. سنرد عليك في أقرب وقت.',
+      startTime: '09:00', endTime: '21:00',
+    ),
+    AutoReplyModel(
+      id: 'instant_ack', trigger: 'instant_ack', isEnabled: true,
+      content: 'استلمنا رسالتك ✅ سنرد عليك خلال دقائق.',
+    ),
   ];
 }

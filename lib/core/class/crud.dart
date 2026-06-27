@@ -108,6 +108,76 @@ class Crud {
     }
   }
 
+  /// HTTP DELETE — used for deleting products.
+  Future<Either<StatusRequest, Map>> deleteData(
+    String linkurl, {
+    Map<String, String>? headers,
+  }) async {
+    try {
+      if (await checkInternet()) {
+        var response = await http
+            .delete(Uri.parse(linkurl), headers: _setHeaders(headers))
+            .timeout(const Duration(seconds: 15));
+        return _handleResponse(response);
+      } else {
+        return const Left(StatusRequest.offlinefailure);
+      }
+    } on TimeoutException {
+      return const Left(StatusRequest.serverfailure);
+    } on SocketException {
+      return const Left(StatusRequest.offlinefailure);
+    } catch (e) {
+      return const Left(StatusRequest.serverfailure);
+    }
+  }
+
+  /// HTTP PUT multipart — used for updating products with images.
+  Future<Either<StatusRequest, Map>> putDataWithFiles(
+    String linkurl,
+    Map<String, String> data,
+    Map<String, File> files, {
+    Map<String, String>? headers,
+  }) async {
+    try {
+      if (await checkInternet()) {
+        var request = http.MultipartRequest("PUT", Uri.parse(linkurl));
+
+        Map<String, String> finalHeaders = {'Accept': 'application/json'};
+        if (headers != null) finalHeaders.addAll(headers);
+        request.headers.addAll(finalHeaders);
+
+        request.fields.addAll(data);
+
+        for (var entry in files.entries) {
+          var file = entry.value;
+          var stream = http.ByteStream(file.openRead());
+          stream.cast();
+          var length = await file.length();
+          var multipartFile = http.MultipartFile(
+            entry.key,
+            stream,
+            length,
+            filename: basename(file.path),
+          );
+          request.files.add(multipartFile);
+        }
+
+        var myrequest =
+            await request.send().timeout(const Duration(seconds: 30));
+        var response = await http.Response.fromStream(myrequest);
+        return _handleResponse(response);
+      } else {
+        return const Left(StatusRequest.offlinefailure);
+      }
+    } on TimeoutException {
+      return const Left(StatusRequest.serverfailure);
+    } on SocketException {
+      return const Left(StatusRequest.offlinefailure);
+    } catch (e) {
+      return const Left(StatusRequest.serverfailure);
+    }
+  }
+
   Either<StatusRequest, Map> _handleResponse(http.Response response) {
     if (response.statusCode == 200 || response.statusCode == 201) {
       Map responsebody = jsonDecode(response.body);
