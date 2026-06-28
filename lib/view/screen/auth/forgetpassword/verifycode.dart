@@ -18,7 +18,7 @@ class VerfiyCode extends StatelessWidget {
         centerTitle: true,
         backgroundColor: AppColor.backgroundcolor,
         elevation: 0.0,
-        title: Text('Verification Code',
+        title: Text('Verification Code'.tr,
             style: Theme.of(context)
                 .textTheme
                 .displayLarge!
@@ -28,18 +28,20 @@ class VerfiyCode extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
         child: ListView(children: [
           const SizedBox(height: 20),
-          const CustomTextTitleAuth(text: "Check code"),
+          const Icon(Icons.mark_email_read_outlined, size: 80, color: AppColor.primaryColor),
+          const SizedBox(height: 20),
+          CustomTextTitleAuth(text: "Check code".tr),
           const SizedBox(height: 10),
-          const CustomTextBodyAuth(
+          CustomTextBodyAuth(
               text:
-              "Please Enter The Digit Code Sent To wael@gmail.com"),
-          const SizedBox(height: 15),
+              "${"Please Enter The Digit Code Sent To".tr} \n ${controller.email ?? ''}"),
+          const SizedBox(height: 30),
           OtpTextField(
-
             fieldWidth: 50.0,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(15),
             numberOfFields: 5,
-            borderColor:const  Color(0xFF512DA8),
+            borderColor: AppColor.primaryColor,
+            focusedBorderColor: AppColor.primaryColor,
             showFieldAsBox: true,
             onCodeChanged: (String code) {
             },

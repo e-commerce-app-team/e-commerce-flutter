@@ -39,6 +39,14 @@ String? validInput(String val, int min, int max, String type) {
 
   }
 
+  if (type == "email_or_phone") {
+    bool isEmail = GetUtils.isEmail(val);
+    bool isPhone = GetUtils.isPhoneNumber(val) && val.length == 10;
+    if (!isEmail && !isPhone) {
+      return "البريد الإلكتروني أو رقم الهاتف غير صالح".tr;
+    }
+  }
+
   if (type == "phone") {
 
     if (!GetUtils.isPhoneNumber(val)) {
