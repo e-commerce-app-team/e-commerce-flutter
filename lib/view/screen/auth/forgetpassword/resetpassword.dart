@@ -20,7 +20,7 @@ class ResetPassword extends StatelessWidget {
         centerTitle: true,
         backgroundColor: AppColor.backgroundcolor,
         elevation: 0.0,
-        title: Text('ResetPassword',
+        title: Text('35'.tr, // Usually title is "Reset Password" or similar, "35" might be new password.
             style: Theme.of(context)
                 .textTheme
                 .displayLarge!
@@ -32,10 +32,12 @@ class ResetPassword extends StatelessWidget {
           key: controller.formstate,
           child: ListView(children: [
             const SizedBox(height: 20),
+            const Icon(Icons.password_outlined, size: 80, color: AppColor.primaryColor),
+            const SizedBox(height: 20),
             CustomTextTitleAuth(text: "35".tr),
             const SizedBox(height: 10),
-            CustomTextBodyAuth(text: "35".tr),
-            const SizedBox(height: 15),
+            CustomTextBodyAuth(text: "Please enter your new password".tr),
+            const SizedBox(height: 30),
             CustomTextFormAuth(
               isNumber: false ,
               valid: (val) {
@@ -45,19 +47,19 @@ class ResetPassword extends StatelessWidget {
               hint_text: "13".tr,
               iconData: Icons.lock_outline,
               label_text: "19".tr,
-              // mycontroller: ,
             ),
             CustomTextFormAuth(
               isNumber: false ,
-
               valid: (val) {
+                if (val != controller.password.text) {
+                  return "Passwords do not match".tr;
+                }
                 return validInput(val!, 3, 40, "password");
               },
-              mycontroller: controller.password,
+              mycontroller: controller.repassword,
               hint_text: "Re" + " " + "13".tr,
               iconData: Icons.lock_outline,
               label_text: "19".tr,
-              // mycontroller: ,
             ),
             CustomButtomAuth(
                 text: "33".tr,

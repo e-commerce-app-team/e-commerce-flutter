@@ -34,7 +34,7 @@ import 'package:get/get.dart';
 
 List<GetPage<dynamic>>? routes = [
 
-  GetPage(name: "/", page: () => const SellerMainScreen(), middlewares: [
+  GetPage(name: "/", page: () => const OnBoarding(), middlewares: [
 
     MyMiddleWare()
 
