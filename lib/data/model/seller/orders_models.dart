@@ -1,4 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+String _formatDateTime(String? raw) {
+  if (raw == null || raw.isEmpty) return '';
+  try {
+    final dt = DateTime.parse(raw).toLocal();
+    return DateFormat('yyyy-MM-dd hh:mm a').format(dt);
+  } catch (e) {
+    return raw;
+  }
+}
 
 class DiscountInfo {
   final String source;
@@ -36,26 +47,44 @@ class OrderItemModel {
     this.variant,
   });
 
-  factory OrderItemModel.fromJson(Map json) => OrderItemModel(
-    name: json['name'] ?? '',
-    qty: json['qty'] ?? 1,
-    price: json['price'] ?? 0,
-    variant: json['variant'],
-  );
+  factory OrderItemModel.fromJson(Map json) {
+    int parseInt(dynamic val) {
+      if (val == null) return 0;
+      if (val is int) return val;
+      if (val is double) return val.toInt();
+      if (val is String) return double.tryParse(val)?.toInt() ?? 0;
+      return 0;
+    }
+    return OrderItemModel(
+      name: json['name'] ?? '',
+      qty: parseInt(json['pivot']?['quantity'] ?? json['qty']),
+      price: parseInt(json['pivot']?['price'] ?? json['price']),
+      variant: json['variant'],
+    );
+  }
 
   int get subtotal => qty * price;
 }
 
 class TimelineStep {
+  final String status;
   final String step;
   final String time;
   final bool isDone;
 
   const TimelineStep({
+    required this.status,
     required this.step,
     required this.time,
     required this.isDone,
   });
+
+  factory TimelineStep.fromJson(Map json) => TimelineStep(
+    status: json['status'] ?? '',
+    step: json['title'] ?? json['step'] ?? '',
+    time: _formatDateTime(json['time']),
+    isDone: json['is_done'] ?? true,
+  );
 }
 
 class SubOrderModel {
@@ -70,6 +99,9 @@ class SubOrderModel {
   final int discount;
   final int subtotal;
   final String status;
+  final String? paymentStatus;
+  final String? paymentMethod;
+  final String? customerNotes;
   final String shippingType;
   final String createdAt;
   final String? qrToken;
@@ -90,6 +122,9 @@ class SubOrderModel {
     required this.discount,
     required this.subtotal,
     required this.status,
+    this.paymentStatus,
+    this.paymentMethod,
+    this.customerNotes,
     required this.shippingType,
     required this.createdAt,
     this.qrToken,
@@ -100,36 +135,50 @@ class SubOrderModel {
   });
 
   factory SubOrderModel.fromJson(Map json) {
-    final itemsList = (json['items'] as List? ?? [])
-        .map((i) => OrderItemModel.fromJson(i))
+    int parseInt(dynamic val) {
+      if (val == null) return 0;
+      if (val is int) return val;
+      if (val is double) return val.toInt();
+      if (val is String) return double.tryParse(val)?.toInt() ?? 0;
+      return 0;
+    }
+    
+    final rawProducts = json['products'] ?? json['items'];
+    final itemsList = (rawProducts is List ? rawProducts : [])
+        .map((i) => OrderItemModel.fromJson(i is Map ? i : {}))
         .toList();
-    final timelineList = (json['tracking_timeline'] as List? ?? [])
-        .map((t) => TimelineStep(
-      step: t['step'] ?? '',
-      time: t['time'] ?? '',
-      isDone: t['is_done'] ?? true,
-    ))
+        
+    final rawTimeline = json['status_timeline'] ?? json['tracking_timeline'];
+    final timelineList = (rawTimeline is List ? rawTimeline : [])
+        .map((t) => TimelineStep.fromJson(t is Map ? t : {}))
         .toList();
     final discountJson = json['discount_info'];
+    
+    final rawBuyer = json['buyer'];
+    final buyerMap = rawBuyer is Map ? rawBuyer : null;
+    final bName = buyerMap != null ? '${buyerMap['first_name']} ${buyerMap['last_name']}' : (json['buyer_name'] ?? '');
+    
     return SubOrderModel(
-      subOrderId: json['sub_order_id'] ?? '',
-      buyerId: json['buyer_id'] ?? 0,
-      buyerName: json['buyer_name'] ?? '',
-      buyerPhone: json['buyer_phone'] ?? '',
-      shippingAddress: json['shipping_address'] ?? '',
+      subOrderId: json['id'] != null ? '#ORD-${json['id']}' : (json['sub_order_id'] ?? ''),
+      buyerId: parseInt(buyerMap?['id'] ?? json['buyer_id']),
+      buyerName: bName,
+      buyerPhone: buyerMap?['phone'] ?? json['buyer_phone'] ?? '',
+      shippingAddress: json['shipping_address_details'] ?? json['shipping_address'] ?? '',
       items: itemsList,
-      itemsTotal: json['items_total'] ?? 0,
-      shippingFee: json['shipping_fee'] ?? 0,
-      discount: json['discount'] ?? 0,
-      subtotal: json['subtotal'] ?? 0,
+      itemsTotal: parseInt(json['total_price'] ?? json['items_total']),
+      shippingFee: parseInt(json['shipping_fee']),
+      discount: parseInt(json['discount']),
+      subtotal: parseInt(json['total_price'] ?? json['subtotal']),
       status: json['status'] ?? 'pending',
+      paymentStatus: json['payment_status'],
+      paymentMethod: json['payment_method'],
+      customerNotes: json['customer_notes'],
       shippingType: json['shipping_type'] ?? 'our_delivery',
-      createdAt: json['created_at'] ?? '',
+      createdAt: _formatDateTime(json['created_at']),
       qrToken: json['qr_token'],
       escrowReleaseAt: json['escrow_release_at'],
       timeline: timelineList,
-      discountInfo:
-      discountJson != null ? DiscountInfo.fromJson(discountJson) : null,
+      discountInfo: discountJson is Map ? DiscountInfo.fromJson(discountJson) : null,
     );
   }
 
@@ -150,6 +199,9 @@ class SubOrderModel {
         discount: discount,
         subtotal: subtotal,
         status: status ?? this.status,
+        paymentStatus: paymentStatus,
+        paymentMethod: paymentMethod,
+        customerNotes: customerNotes,
         shippingType: shippingType,
         createdAt: createdAt,
         qrToken: qrToken ?? this.qrToken,
@@ -158,11 +210,13 @@ class SubOrderModel {
         discountInfo: discountInfo ?? this.discountInfo,
       );
 
+  int get rawId => int.tryParse(subOrderId.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
+
   bool get isPending => status == 'pending';
   bool get isProcessing => status == 'processing';
   bool get isShipped => status == 'shipped';
   bool get isDelivered => status == 'delivered';
-  bool get isCancelled => status == 'cancelled';
+  bool get isCancelled => status == 'cancelled' || status == 'cancelled_returned';
   bool get isReturned => status == 'returned';
   bool get isOurDelivery => shippingType == 'our_delivery';
   bool get isSelfShipping => shippingType == 'self_shipping';
@@ -261,12 +315,12 @@ class SubOrderModel {
       createdAt: 'منذ 3 ساعات',
       escrowReleaseAt: 'بعد 18 ساعة',
       timeline: const [
-        TimelineStep(step: 'تم الدفع', time: '09:42', isDone: true),
+        TimelineStep(status: 'pending', step: 'تم الدفع', time: '09:42', isDone: true),
         TimelineStep(
-            step: 'قيد التجهيز', time: '09:50', isDone: true),
+            status: 'processing', step: 'قيد التجهيز', time: '09:50', isDone: true),
         TimelineStep(
-            step: 'استلم المندوب', time: '10:30', isDone: true),
-        TimelineStep(step: 'تم التسليم', time: '11:15', isDone: true),
+            status: 'shipped', step: 'استلم المندوب', time: '10:30', isDone: true),
+        TimelineStep(status: 'delivered', step: 'تم التسليم', time: '11:15', isDone: true),
       ],
     ),
     SubOrderModel(
@@ -327,6 +381,12 @@ class OrderStatusConfig {
       bg: Color(0xffE8F8F0),
       text: Color(0xff1B5E20),
       accent: Color(0xff27AE60),
+    ),
+    'cancelled_returned': const OrderStatusConfig(
+      labelKey: 'status_cancelled',
+      bg: Color(0xffFEECEC),
+      text: Color(0xffB71C1C),
+      accent: Color(0xffE74C3C),
     ),
     'cancelled': const OrderStatusConfig(
       labelKey: 'status_cancelled',

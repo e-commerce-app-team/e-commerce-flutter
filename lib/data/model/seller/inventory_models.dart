@@ -251,9 +251,8 @@ class ProductModel {
       saleEndsAt: json['offer_expires_at']?.toString(),
       stock: parseInt(json['quantity']),
       lowStockAlert: parseInt(json['alert_threshold']),
-      // 'category' name is enriched in the controller using the local tree
       category: '',
-      categoryId: parseInt(json['category_id']),
+      categoryId: parseInt(json['department_id'] ?? json['category_id']),
       status: json['status']?.toString() ?? 'active',
       thumbnail: buildThumbnail(json['images']),
       hasVariants: variants.isNotEmpty,
@@ -382,6 +381,10 @@ class CategoryModel {
   final String name;
   final int? parentId;
   final int productCount;
+  final bool isVisible;
+  final String? imageUrl;
+  final String? iconUrl;
+  final int orderPosition;
   final List<CategoryModel> children;
 
   const CategoryModel({
@@ -389,6 +392,10 @@ class CategoryModel {
     required this.name,
     this.parentId,
     required this.productCount,
+    this.isVisible = true,
+    this.imageUrl,
+    this.iconUrl,
+    this.orderPosition = 0,
     this.children = const [],
   });
 
@@ -404,12 +411,23 @@ class CategoryModel {
       if (val is String) return double.tryParse(val)?.toInt() ?? 0;
       return 0;
     }
+    bool parseBool(dynamic val) {
+      if (val == null) return true; // default visible
+      if (val is bool) return val;
+      if (val is int) return val == 1;
+      if (val is String) return val == '1' || val.toLowerCase() == 'true';
+      return true;
+    }
     return CategoryModel(
       id: parseInt(json['id']),
       name: json['name']?.toString() ?? '',
       parentId: json['parent_id'] != null ? parseInt(json['parent_id']) : null,
-      productCount: parseInt(json['product_count']),
-      children: ((json['recursiveChildren'] ?? json['children']) as List? ?? [])
+      productCount: parseInt(json['product_count'] ?? json['products_count']),
+      isVisible: parseBool(json['is_visible']),
+      imageUrl: json['image_url']?.toString(),
+      iconUrl: json['icon_url']?.toString(),
+      orderPosition: parseInt(json['order_position']),
+      children: ((json['recursive_children'] ?? json['recursiveChildren'] ?? json['children']) as List? ?? [])
           .map((c) => CategoryModel.fromJson(c as Map))
           .toList(),
     );
@@ -420,6 +438,10 @@ class CategoryModel {
         name: newName,
         parentId: parentId,
         productCount: productCount,
+        isVisible: isVisible,
+        imageUrl: imageUrl,
+        iconUrl: iconUrl,
+        orderPosition: orderPosition,
         children: children,
       );
 

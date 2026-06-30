@@ -199,6 +199,72 @@ class InventoryData {
   Future<Either<StatusRequest, Map>> getCategories(String token) async =>
       await crud.getData(AppLink.categories, headers: _auth(token));
 
+  // ─── Departments (Merchant Categories) ──────────────────────────────────
+
+  /// Fetches the seller's department tree (GET /merchant/departments).
+  Future<Either<StatusRequest, Map>> getDepartments(String token) async =>
+      await crud.getData(AppLink.departments, headers: _auth(token));
+
+  /// Creates a new department (POST /merchant/departments/store).
+  Future<Either<StatusRequest, Map>> createDepartment(
+    String token,
+    String name,
+    int? parentId,
+  ) async =>
+      await crud.postData(
+        AppLink.departmentsStore,
+        {
+          'name': name,
+          if (parentId != null) 'parent_id': parentId,
+        },
+        headers: _auth(token),
+      );
+
+  /// Updates an existing department (POST /merchant/departments/{id}/update).
+  Future<Either<StatusRequest, Map>> updateDepartment(
+    String token,
+    int departmentId,
+    String name,
+  ) async =>
+      await crud.postData(
+        '${AppLink.departments}/$departmentId/update',
+        {'name': name},
+        headers: _auth(token),
+      );
+
+  /// Deletes a department (DELETE /merchant/departments/{id}).
+  Future<Either<StatusRequest, Map>> deleteDepartment(
+    String token,
+    int departmentId,
+  ) async =>
+      await crud.deleteData(
+        '${AppLink.departments}/$departmentId',
+        headers: _auth(token),
+      );
+
+  /// Reorders departments (PATCH /merchant/departments/reorder).
+  Future<Either<StatusRequest, Map>> reorderDepartments(
+    String token,
+    List<Map<String, int>> positions,
+  ) async =>
+      await crud.patchData(
+        AppLink.departmentsReorder,
+        {'positions': positions},
+        headers: _auth(token),
+      );
+
+  /// Toggles department visibility (PATCH /merchant/departments/toggle-visibility).
+  Future<Either<StatusRequest, Map>> toggleDepartmentVisibility(
+    String token,
+    int departmentId,
+    String status,
+  ) async =>
+      await crud.patchData(
+        AppLink.departmentsToggle,
+        {'id': departmentId, 'status': status},
+        headers: _auth(token),
+      );
+
   // ─── Private Helpers ───────────────────────────────────────────────────────
 
   Map<String, String> _auth(String token) =>

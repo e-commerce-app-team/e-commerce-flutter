@@ -241,10 +241,24 @@ class _StatusCard extends StatelessWidget {
       case 'delivered':
         return Icons.check_circle_outline_rounded;
       case 'cancelled':
+      case 'cancelled_returned':
         return Icons.cancel_outlined;
       default:
         return Icons.receipt_long_outlined;
     }
+  }
+}
+
+String _timelineStepTranslate(String status, String defaultTitle) {
+  switch (status) {
+    case 'pending': return 'timeline_pending'.tr;
+    case 'processing': return 'timeline_processing'.tr;
+    case 'shipped': return 'timeline_shipped'.tr;
+    case 'delivered': return 'timeline_delivered'.tr;
+    case 'cancelled': 
+    case 'cancelled_returned':
+      return 'timeline_cancelled'.tr;
+    default: return defaultTitle;
   }
 }
 
@@ -282,50 +296,73 @@ class _TimelineRow extends StatelessWidget {
           child: Column(
             children: [
               Container(
-                width: 20,
-                height: 20,
+                width: 24,
+                height: 24,
                 decoration: BoxDecoration(
                   color: step.isDone
                       ? AppColor.primaryColor
-                      : AppColor.greyLight,
+                      : Colors.white,
+                  border: step.isDone ? null : Border.all(color: AppColor.greyLight, width: 2),
                   shape: BoxShape.circle,
+                  boxShadow: step.isDone ? [
+                    BoxShadow(
+                      color: AppColor.primaryColor.withOpacity(0.3),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    )
+                  ] : null,
                 ),
-                child: Icon(
-                  step.isDone
-                      ? Icons.check_rounded
-                      : Icons.circle_outlined,
-                  size: 12,
+                child: step.isDone ? const Icon(
+                  Icons.check_rounded,
+                  size: 14,
                   color: Colors.white,
-                ),
+                ) : null,
               ),
               if (!isLast)
                 Container(
                   width: 2,
                   height: 32,
-                  color: step.isDone
-                      ? AppColor.primaryColor.withOpacity(0.25)
-                      : AppColor.greyBorder,
+                  margin: const EdgeInsets.symmetric(vertical: 4),
+                  decoration: BoxDecoration(
+                    color: step.isDone
+                        ? AppColor.primaryColor.withOpacity(0.4)
+                        : AppColor.greyBorder,
+                    borderRadius: BorderRadius.circular(1),
+                  ),
                 ),
             ],
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 14),
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.only(bottom: 14),
+            padding: const EdgeInsets.only(bottom: 16, top: 2),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  step.step,
-                  style: AppTextStyle.labelLarge.copyWith(
-                    fontSize: 13,
-                    color: step.isDone
-                        ? AppColor.black
-                        : AppColor.greyLight,
+                Expanded(
+                  child: Text(
+                    _timelineStepTranslate(step.status, step.step),
+                    style: AppTextStyle.labelLarge.copyWith(
+                      fontSize: 13,
+                      height: 1.4,
+                      color: step.isDone
+                          ? AppColor.black
+                          : AppColor.greyLight,
+                    ),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                Text(step.time, style: AppTextStyle.timestamp),
+                const SizedBox(width: 12),
+                Text(
+                  step.time, 
+                  style: AppTextStyle.timestamp.copyWith(
+                    color: step.isDone ? AppColor.grey : AppColor.greyLight,
+                    fontWeight: step.isDone ? FontWeight.w600 : FontWeight.w400,
+                  ),
+                ),
               ],
             ),
           ),

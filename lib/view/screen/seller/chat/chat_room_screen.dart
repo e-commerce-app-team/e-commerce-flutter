@@ -32,7 +32,7 @@ class ChatRoomScreen extends StatelessWidget {
             // ── المحتوى ───────────────────────────────────────────────────
             Column(children: [
               Expanded(
-                child: ctrl.messages.isEmpty
+                child: ctrl.messagesList.isEmpty
                     ? const _EmptyChat()
                     : _MessagesList(ctrl: ctrl),
               ),
@@ -604,7 +604,7 @@ class _MessagesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final msgs = ctrl.messages;
+    final msgs = ctrl.messagesList;
     final myId = ctrl.myId;
 
     return ListView.builder(
@@ -615,19 +615,19 @@ class _MessagesList extends StatelessWidget {
       itemCount: msgs.length,
       itemBuilder: (_, i) {
         final msg    = msgs[i];
-        final isMine = msg['sender_id'] == myId;
+        final isMine = msg.senderId == myId;
 
         bool showTime = i == 0;
         if (!showTime && i < msgs.length - 1) {
-          final curr = msg['created_at'] as DateTime?;
-          final next = msgs[i + 1]['created_at'] as DateTime?;
+          final curr = msg.createdAt;
+          final next = msgs[i + 1].createdAt;
           if (curr != null && next != null) {
             showTime = curr.difference(next).inMinutes.abs() > 5;
           }
         }
 
         return MessageBubble(
-          message:  msg,
+          message:  msg, // Note: We need to make sure MessageBubble expects MessageModel
           isMine:   isMine,
           showTime: showTime,
         );

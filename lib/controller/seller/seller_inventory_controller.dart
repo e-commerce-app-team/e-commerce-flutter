@@ -218,18 +218,18 @@ class SellerInventoryController extends GetxController {
     );
   }
 
-  /// Fetches categories from the backend and builds the local tree.
+  /// Fetches departments from the backend and builds the local tree.
   Future<void> _loadCategories() async {
-    final result = await inventoryData.getCategories(_token);
+    final result = await inventoryData.getDepartments(_token);
     result.fold(
       (failure) {}, // Silently fail; category tree remains empty
       (response) {
         if (response['success'] == true) {
           final rawList = (response['data'] as List?) ?? [];
-          final flat = rawList
+          categoryTree = rawList
               .map((c) => CategoryModel.fromJson(c as Map))
               .toList();
-          categoryTree = _buildCategoryTree(flat);
+          // No need for _buildCategoryTree since backend returns nested structure
         }
       },
     );
@@ -418,40 +418,52 @@ class SellerInventoryController extends GetxController {
   }
 
   Future<void> addCategory(String name, int? parentId) async {
-    // NOTE: Category creation requires super_admin on the backend.
-    // This update is reflected locally in the UI only.
-    final newCat = CategoryModel(
-      id: DateTime.now().millisecondsSinceEpoch,
-      name: name,
-      parentId: parentId,
-      productCount: 0,
+    final result = await inventoryData.createDepartment(_token, name, parentId);
+    result.fold(
+      (failure) => customSnackbar('error'.tr, 'server_error'.tr),
+      (response) async {
+        if (response['success'] == true) {
+          await refreshCategories();
+          customSnackbar('success'.tr, 'category_added'.tr, isError: false);
+        } else {
+          customSnackbar('warning'.tr, (response['message'] ?? '').toString());
+        }
+      },
     );
-    if (parentId == null) {
-      categoryTree = [...categoryTree, newCat];
-    } else {
-      categoryTree = _insertChild(categoryTree, parentId, newCat);
-    }
-    update();
-    customSnackbar('success'.tr, 'category_added'.tr, isError: false);
   }
 
   Future<void> updateCategory(int id, String newName) async {
-    // NOTE: Category update requires super_admin on the backend.
-    categoryTree = _updateName(categoryTree, id, newName);
-    update();
-    customSnackbar('success'.tr, 'category_updated'.tr, isError: false);
+    final result = await inventoryData.updateDepartment(_token, id, newName);
+    result.fold(
+      (failure) => customSnackbar('error'.tr, 'server_error'.tr),
+      (response) async {
+        if (response['success'] == true) {
+          await refreshCategories();
+          customSnackbar('success'.tr, 'category_updated'.tr, isError: false);
+        } else {
+          customSnackbar('warning'.tr, (response['message'] ?? '').toString());
+        }
+      },
+    );
   }
 
-  void deleteCategory(CategoryModel cat) {
-    // NOTE: Category deletion requires super_admin on the backend.
+  void deleteCategory(CategoryModel cat) async {
     if (cat.productCount > 0) {
       customSnackbar('warning'.tr, 'cannot_delete_with_products'.tr);
       return;
     }
-    categoryTree = _deleteNode(categoryTree, cat.id);
-    update();
-    customSnackbar('delete_success_title'.tr, 'category_deleted'.tr,
-        isError: false);
+    final result = await inventoryData.deleteDepartment(_token, cat.id);
+    result.fold(
+      (failure) => customSnackbar('error'.tr, 'server_error'.tr),
+      (response) async {
+        if (response['success'] == true) {
+          await refreshCategories();
+          customSnackbar('delete_success_title'.tr, 'category_deleted'.tr, isError: false);
+        } else {
+          customSnackbar('warning'.tr, (response['message'] ?? '').toString());
+        }
+      },
+    );
   }
 
   void reorderRootCategories(int oldIndex, int newIndex) {
@@ -461,10 +473,18 @@ class SellerInventoryController extends GetxController {
     roots.insert(newIndex, item);
     categoryTree = roots;
     update();
+
+    // Send reorder to backend
+    final positions = <Map<String, int>>[];
+    for (int i = 0; i < categoryTree.length; i++) {
+      positions.add({'id': categoryTree[i].id, 'order_position': i});
+    }
+    inventoryData.reorderDepartments(_token, positions);
   }
 
   Future<void> refreshCategories() async {
     await _loadCategories();
+    _enrichProductsWithCategoryNames();
     update();
   }
 
@@ -864,7 +884,7 @@ class SellerInventoryController extends GetxController {
     final fields = <String, String>{
       'name': nameCtrl.text.trim(),
       'description': descCtrl.text.trim(),
-      'category_id': formCategoryId.toString(),
+      'department_id': formCategoryId.toString(),
       'original_price': priceCtrl.text.trim(),
       'sku': skuCtrl.text.trim(),
       'quantity': stockCtrl.text.trim(),
