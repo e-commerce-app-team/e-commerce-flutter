@@ -19,8 +19,11 @@ class VerifyCodeControllerImp extends VerifyCodeController {
     Get.offNamed(AppRoute.resetPassword);
   }
 
+  String? email;
+
   @override
   void onInit() {
+    email = Get.arguments?['email'];
     super.onInit();
   }
 

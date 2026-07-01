@@ -101,7 +101,7 @@ class SellerDrawer extends StatelessWidget {
                           badge: "شركات",
                           onTap: () {
                             Get.back();
-                            // TODO: Get.toNamed(AppRoute.staff)
+                           Get.toNamed(AppRoute.sellerStaff);
                           },
                         ),
                         _DrawerItem(
@@ -110,7 +110,7 @@ class SellerDrawer extends StatelessWidget {
                           badge: "شركات",
                           onTap: () {
                             Get.back();
-                            // TODO: Get.toNamed(AppRoute.branches)
+                            Get.toNamed(AppRoute.sellerBranches);
                           },
                         ),
                       ],
@@ -121,7 +121,8 @@ class SellerDrawer extends StatelessWidget {
                         label: "مركز دعم التجار",
                         onTap: () {
                           Get.back();
-                          // TODO: Get.toNamed(AppRoute.support)
+                           Get.toNamed(AppRoute.sellerSupport
+                           );
                         },
                       ),
                       _DrawerItem(

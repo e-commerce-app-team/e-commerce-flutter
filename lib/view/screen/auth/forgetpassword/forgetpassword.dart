@@ -7,6 +7,8 @@ import 'package:e_commerce/view/widget/auth/customtexttitleauth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/functions/valid_input.dart';
+
 class ForgetPassword extends StatelessWidget {
   const ForgetPassword({Key? key}) : super(key: key);
 
@@ -31,20 +33,22 @@ class ForgetPassword extends StatelessWidget {
           key: controller.formstate,
           child: ListView(children: [
             const SizedBox(height: 20),
+            const Icon(Icons.lock_reset, size: 80, color: AppColor.primaryColor),
+            const SizedBox(height: 20),
             CustomTextTitleAuth(text: "27".tr),
             const SizedBox(height: 10),
             CustomTextBodyAuth(
-              // please Enter Your Email Address To Recive A verification code
                 text: "29".tr),
-            const SizedBox(height: 15),
+            const SizedBox(height: 30),
             CustomTextFormAuth(
               isNumber: false,
-              valid: (val) {},
+              valid: (val) {
+                return validInput(val!, 5, 100, "email_or_phone");
+              },
               mycontroller: controller.email,
               hint_text: "12".tr,
-              iconData: Icons.email_outlined,
+              iconData: Icons.person_outline,
               label_text: "18".tr,
-              // mycontroller: ,
             ),
             CustomButtomAuth(
                 text: "30".tr,

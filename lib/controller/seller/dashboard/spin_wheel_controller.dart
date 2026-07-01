@@ -130,7 +130,7 @@ class SpinWheelController extends GetxController {
     saveStatusRequest = StatusRequest.loading;
     update();
     await Future.delayed(const Duration(milliseconds: 700));
-    // TODO: await spinData.updateConfig(config, segments);
+    //  await spinData.updateConfig(config, segments);
     saveStatusRequest = StatusRequest.success;
     customSnackbar('success'.tr, 'spin_saved'.tr, isError: false);
     update();

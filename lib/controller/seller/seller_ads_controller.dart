@@ -1,5 +1,3 @@
-// ─── lib/controller/seller/seller_ads_controller.dart ────────────────────────
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/class/status_request.dart';
@@ -13,10 +11,9 @@ class SellerAdsController extends GetxController {
 
   List<AdModel> ads = [];
   List<ProductModel> products = [];
-  int walletBalance = 342000; // loaded from wallet
+  int walletBalance = 342000;
 
-  // ── Filter ──────────────────────────────────────────────────────────────────
-  String selectedTab = 'all'; // all / active / pending / expired
+  String selectedTab = 'all';
   List<AdModel> get filteredAds {
     if (selectedTab == 'all') return ads;
     if (selectedTab == 'active') {
@@ -43,7 +40,6 @@ class SellerAdsController extends GetxController {
   int get pendingCount =>
       ads.where((a) => a.status == AdStatus.pending).length;
 
-  // ── Form State ───────────────────────────────────────────────────────────────
   int currentStep = 0;
 
   String selectedAdType = 'banner';
@@ -65,7 +61,7 @@ class SellerAdsController extends GetxController {
   AdTypeModel get currentAdType => AdTypeModel.all()
       .firstWhere((t) => t.id == selectedAdType);
 
-  // ── Load ──────────────────────────────────────────────────────────────────────
+
   Future<void> loadAds() async {
     statusRequest = StatusRequest.loading;
     update();
@@ -76,10 +72,8 @@ class SellerAdsController extends GetxController {
     update();
   }
 
-  // ── Form Steps ────────────────────────────────────────────────────────────────
   void selectAdType(String type) {
     selectedAdType = type;
-    // reset product if switching away from product type
     if (type != 'product') {
       selectedProductId = null;
       selectedProductName = null;
@@ -101,7 +95,6 @@ class SellerAdsController extends GetxController {
 
   void nextStep() {
     if (currentStep == 0) {
-      // validate step 1: type selected
       currentStep = 1;
       update();
       return;
@@ -140,7 +133,6 @@ class SellerAdsController extends GetxController {
     update();
   }
 
-  // ── Submit ────────────────────────────────────────────────────────────────────
   Future<void> submitAd() async {
     if (!canAfford) {
       customSnackbar('رصيد غير كافٍ',
@@ -150,10 +142,8 @@ class SellerAdsController extends GetxController {
     submitStatus = StatusRequest.loading;
     update();
     await Future.delayed(const Duration(milliseconds: 900));
-    // TODO: await adsData.createAd(...)
-    // Deduct from wallet
+    // await adsData.createAd(...)
     walletBalance -= computedPrice;
-    // Add mock new ad
     ads.insert(
       0,
       AdModel(
@@ -178,7 +168,7 @@ class SellerAdsController extends GetxController {
         'إعلانك قيد المراجعة، سيُفعَّل خلال ساعات قليلة',
         isError: false);
     resetForm();
-    Get.back(); // close sheet
+    Get.back();
     update();
   }
 

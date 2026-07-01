@@ -97,14 +97,14 @@ class ProfileInfoCard extends StatelessWidget {
     margin: const EdgeInsets.fromLTRB(16, 56, 16, 0),
     padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: Get.isDarkMode ? AppColor.darkCard : Colors.white,
       borderRadius: BorderRadius.circular(16),
       boxShadow: AppColor.cardShadow,
     ),
     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Row(children: [
         Expanded(
-          child: Text(profile.storeName, style: AppTextStyle.heading2.copyWith(fontSize: 17)),
+          child: Text(profile.storeName, style: AppTextStyle.heading2.copyWith(fontSize: 17, color: Get.isDarkMode ? Colors.white : AppColor.black)),
         ),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -176,7 +176,7 @@ class _Stat extends StatelessWidget {
     Row(mainAxisSize: MainAxisSize.min, children: [
       Icon(icon, size: 14, color: color),
       const SizedBox(width: 4),
-      Text(value, style: AppTextStyle.statNumberSmall.copyWith(fontSize: 16, color: AppColor.black)),
+      Text(value, style: AppTextStyle.statNumberSmall.copyWith(fontSize: 16, color: Get.isDarkMode ? Colors.white : AppColor.black)),
     ]),
     const SizedBox(height: 2),
     Text(label, style: AppTextStyle.statLabel),
@@ -204,7 +204,7 @@ class ProfileMenuSection extends StatelessWidget {
         ),
       Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Get.isDarkMode ? AppColor.darkCard : Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: AppColor.cardShadow,
         ),
@@ -260,7 +260,7 @@ class ProfileMenuTile extends StatelessWidget {
               Text(title,
                   style: AppTextStyle.labelLarge.copyWith(
                     fontSize: 13,
-                    color: isDestructive ? AppColor.error : AppColor.black,
+                    color: isDestructive ? AppColor.error : (Get.isDarkMode ? Colors.white : AppColor.black),
                   )),
               if (subtitle != null)
                 Text(subtitle!, style: AppTextStyle.labelSmall.copyWith(fontSize: 11)),

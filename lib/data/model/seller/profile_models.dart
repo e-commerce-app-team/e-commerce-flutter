@@ -24,14 +24,28 @@ class SellerProfileModel {
   final String? taxNumber;
 
   const SellerProfileModel({
-    required this.userId, required this.firstName, required this.lastName,
-    required this.email, required this.phone, this.profilePhoto,
-    required this.storeId, required this.storeName, this.description,
-    this.logo, this.cover, required this.category, required this.city,
-    this.lat, this.lng, required this.returnPolicy,
-    required this.sellerType, required this.status,
-    required this.ratingAvg, required this.reviewCount,
-    required this.followersCount, this.crNumber, this.taxNumber,
+    required this.userId,
+    required this.firstName,
+    required this.lastName,
+    required this.email,
+    required this.phone,
+    this.profilePhoto,
+    required this.storeId,
+    required this.storeName,
+    this.description,
+    this.logo, this.cover,
+    required this.category,
+    required this.city,
+    this.lat,
+    this.lng,
+    required this.returnPolicy,
+    required this.sellerType,
+    required this.status,
+    required this.ratingAvg,
+    required this.reviewCount,
+    required this.followersCount,
+    this.crNumber,
+    this.taxNumber,
   });
 
   String get fullName    => '$firstName $lastName';
@@ -41,12 +55,19 @@ class SellerProfileModel {
     final u = json['user']  as Map? ?? {};
     final s = json['store'] as Map? ?? {};
     return SellerProfileModel(
-      userId: u['id'] ?? 0, firstName: u['first_name'] ?? '',
-      lastName: u['last_name'] ?? '', email: u['email'] ?? '',
-      phone: u['phone'] ?? '', profilePhoto: u['profile_photo'],
-      storeId: s['id'] ?? 0, storeName: s['name'] ?? '',
-      description: s['description'], logo: s['logo'], cover: s['cover'],
-      category: s['category'] ?? '', city: s['city'] ?? '',
+      userId: u['id'] ?? 0,
+      firstName: u['first_name'] ?? '',
+      lastName: u['last_name'] ?? '',
+      email: u['email'] ?? '',
+      phone: u['phone'] ?? '',
+      profilePhoto: u['profile_photo'],
+      storeId: s['id'] ?? 0,
+      storeName: s['name'] ?? '',
+      description: s['description'],
+      logo: s['logo'],
+      cover: s['cover'],
+      category: s['category'] ?? '',
+      city: s['city'] ?? '',
       lat: (s['lat'] as num?)?.toDouble(),
       lng: (s['lng'] as num?)?.toDouble(),
       returnPolicy: s['return_policy'] ?? '',
@@ -61,11 +82,11 @@ class SellerProfileModel {
   }
 
   static SellerProfileModel mock() => const SellerProfileModel(
-    userId: 143, firstName: 'أحمد', lastName: 'حسن',
+    userId: 143, firstName: 'علاء', lastName: 'الدوس',
     email: 'ahmad@mail.com', phone: '0911234567',
-    storeId: 55, storeName: 'متجر أحمد للحرف اليدوية',
-    description: 'متجر متخصص في الحرف اليدوية والمنتجات الأصيلة',
-    category: 'حرف يدوية', city: 'دمشق',
+    storeId: 55, storeName: 'متجر علاء للملابس',
+    description: 'متجر متخصص في الملابس الرجالية',
+    category: 'ملابس ', city: 'دمشق',
     lat: 33.510, lng: 36.291,
     returnPolicy: '7 أيام للمنتجات المعيبة',
     sellerType: 'wholesale', status: 'active',

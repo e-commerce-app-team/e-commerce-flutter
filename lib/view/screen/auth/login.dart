@@ -44,12 +44,19 @@ class Login extends StatelessWidget {
             },
           )
         ],
+
+
+
+
+
+
       ),
       body: PopScope(
           canPop: false,
           onPopInvoked: (didPop) {
             if (didPop) {
               return;
+
             }
             alertExitApp();
           },
@@ -70,11 +77,11 @@ class Login extends StatelessWidget {
                     CustomTextFormAuth(
                       isNumber: false,
                       valid: (val) {
-                        return validInput(val!, 5, 100, "email");
+                        return validInput(val!, 5, 100, "email_or_phone");
                       },
                       mycontroller: controller.email,
                       hint_text: "12".tr,
-                      iconData: Icons.email_outlined,
+                      iconData: Icons.person_outline,
                       label_text: "18".tr,
                     ),
                     CustomTextFormAuth(

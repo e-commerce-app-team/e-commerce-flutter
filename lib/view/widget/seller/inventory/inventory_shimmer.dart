@@ -9,6 +9,7 @@ class InventoryShimmer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
+      shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

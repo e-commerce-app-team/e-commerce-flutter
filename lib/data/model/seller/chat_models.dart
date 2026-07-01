@@ -202,3 +202,69 @@ class MockMessages {
     },
   ];
 }
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AutoReplyModel
+// ─────────────────────────────────────────────────────────────────────────────
+class AutoReplyModel {
+  final String  id;
+  final String  trigger; // 'welcome' | 'away' | 'instant_ack'
+  final String  content;
+  final bool    isEnabled;
+  final String? startTime;
+  final String? endTime;
+
+  const AutoReplyModel({
+    required this.id,
+    required this.trigger,
+    required this.content,
+    required this.isEnabled,
+    this.startTime,
+    this.endTime,
+  });
+
+  AutoReplyModel copyWith({
+    String? content,
+    bool?   isEnabled,
+    String? startTime,
+    String? endTime,
+  }) => AutoReplyModel(
+    id:        id,
+    trigger:   trigger,
+    content:   content   ?? this.content,
+    isEnabled: isEnabled ?? this.isEnabled,
+    startTime: startTime ?? this.startTime,
+    endTime:   endTime   ?? this.endTime,
+  );
+
+  factory AutoReplyModel.fromJson(Map<String, dynamic> j) => AutoReplyModel(
+    id:        j['id']        ?? '',
+    trigger:   j['trigger']   ?? 'away',
+    content:   j['content']   ?? '',
+    isEnabled: j['isEnabled'] ?? false,
+    startTime: j['startTime'],
+    endTime:   j['endTime'],
+  );
+
+  Map<String, dynamic> toJson() => {
+    'id': id, 'trigger': trigger, 'content': content,
+    'isEnabled': isEnabled, 'startTime': startTime, 'endTime': endTime,
+  };
+
+  static List<AutoReplyModel> defaults() => const [
+    AutoReplyModel(
+      id: 'welcome', trigger: 'welcome', isEnabled: true,
+      content: 'أهلاً بك في متجرنا! 🛍️ كيف يمكنني مساعدتك اليوم؟',
+    ),
+    AutoReplyModel(
+      id: 'away', trigger: 'away', isEnabled: false,
+      content: 'شكراً لتواصلك معنا ⏰ نحن خارج أوقات الدوام حالياً. سنرد عليك في أقرب وقت.',
+      startTime: '09:00', endTime: '21:00',
+    ),
+    AutoReplyModel(
+      id: 'instant_ack', trigger: 'instant_ack', isEnabled: true,
+      content: 'استلمنا رسالتك ✅ سنرد عليك خلال دقائق.',
+    ),
+  ];
+}

@@ -3,6 +3,9 @@ import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
 import 'package:e_commerce/core/constant/color.dart';
 
+import '../../../../core/constant/routes.dart';
+import '../../../screen/seller/inventory/add_edit_product_screen.dart';
+
 class QuickActionsRow extends StatelessWidget {
   const QuickActionsRow({super.key});
 
@@ -15,8 +18,7 @@ class QuickActionsRow extends StatelessWidget {
         color: AppColor.primaryColor,
         lightColor: AppColor.primarySurface,
         onTap: () {
-          // TODO: Get.toNamed(AppRoute.addProduct)
-        },
+          Get.to(() => const AddEditProductScreen(), transition: Transition.cupertino);        },
       ),
       _QuickAction(
         icon: Icons.local_offer_outlined,
@@ -24,7 +26,7 @@ class QuickActionsRow extends StatelessWidget {
         color: AppColor.statOrders,
         lightColor: const Color(0xffEEEDFE),
         onTap: () {
-          // TODO: Get.toNamed(AppRoute.coupons)
+         Get.toNamed(AppRoute.coupons);
         },
       ),
       _QuickAction(
@@ -33,7 +35,7 @@ class QuickActionsRow extends StatelessWidget {
         color: AppColor.statViews,
         lightColor: AppColor.infoLight,
         onTap: () {
-          // TODO: Get.toNamed(AppRoute.reports)
+       Get.toNamed(AppRoute.sellerInvoices);
         },
       ),
       _QuickAction(
@@ -42,7 +44,7 @@ class QuickActionsRow extends StatelessWidget {
         color: AppColor.statAvg,
         lightColor: AppColor.successLight,
         onTap: () {
-          // TODO: Get.toNamed(AppRoute.ads)
+           Get.toNamed(AppRoute.ads);
         },
       ),
     ];

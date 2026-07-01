@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
 import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/data/model/seller/inventory_models.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ProductGridCard extends StatefulWidget {
 final ProductModel product;
@@ -95,11 +96,13 @@ AppColor.primaryColor.withOpacity(0.06),
 ],
 ),
 ),
-child: Icon(
-Icons.inventory_2_outlined,
-size: 34,
-color: AppColor.primaryColor.withOpacity(0.3),
-),
+child: p.thumbnail != null
+    ? CachedNetworkImage(
+        imageUrl: p.thumbnail!,
+        fit: BoxFit.cover,
+        errorWidget: (context, url, error) => _buildFallbackIcon(),
+      )
+    : _buildFallbackIcon(),
 ),
 Positioned(top: 8, right: 8, child: _StatusBadge(status: p.status)),
 if (p.hasVariants)
@@ -300,11 +303,14 @@ AppColor.primaryColor.withOpacity(0.06),
 ]),
 borderRadius: BorderRadius.circular(12),
 ),
-child: Icon(
-Icons.inventory_2_outlined,
-size: 22,
-color: AppColor.primaryColor.withOpacity(0.45),
-),
+clipBehavior: Clip.antiAlias,
+child: p.thumbnail != null
+    ? CachedNetworkImage(
+        imageUrl: p.thumbnail!,
+        fit: BoxFit.cover,
+        errorWidget: (context, url, error) => _buildFallbackIconSmall(),
+      )
+    : _buildFallbackIconSmall(),
 ),
 const SizedBox(width: 12),
 Expanded(
@@ -452,4 +458,20 @@ title: Text(label, style: AppTextStyle.labelLarge),
 trailing: Icon(Icons.chevron_right_rounded, color: AppColor.greyLight),
 onTap: onTap,
 );
+}
+
+Widget _buildFallbackIcon() {
+  return Icon(
+    Icons.inventory_2_outlined,
+    size: 34,
+    color: AppColor.primaryColor.withOpacity(0.3),
+  );
+}
+
+Widget _buildFallbackIconSmall() {
+  return Icon(
+    Icons.inventory_2_outlined,
+    size: 22,
+    color: AppColor.primaryColor.withOpacity(0.45),
+  );
 }

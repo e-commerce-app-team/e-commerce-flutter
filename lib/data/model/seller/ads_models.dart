@@ -1,12 +1,10 @@
-// ─── lib/data/model/seller/ads_models.dart ───────────────────────────────────
-
 class AdTypeModel {
   final String id;
   final String title;
   final String description;
   final String icon;
-  final Map<String, int> pricing; // duration_key → price SP
-  final String placement; // where it appears
+  final Map<String, int> pricing;
+  final String placement;
 
   const AdTypeModel({
     required this.id,
@@ -123,7 +121,7 @@ extension AdStatusExt on AdStatus {
 
 class AdModel {
   final int id;
-  final String adType; // banner / product / store / notification
+  final String adType;
   final String title;
   final String? description;
   final String? imageUrl;

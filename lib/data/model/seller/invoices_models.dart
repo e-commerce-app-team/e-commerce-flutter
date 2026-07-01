@@ -46,14 +46,13 @@ class TaxSettingsModel {
   static TaxSettingsModel mock() => const TaxSettingsModel(
     vatNumber:     '300123456789012',
     crNumber:      '1234567890',
-    legalName:     'شركة أحمد للحرف اليدوية',
-    address:       'دمشق، المزة، شارع الزهراء، بناء 7',
+    legalName:     'شركة علاء',
+    address:       'دمشق، المزة',
     vatRate:       0.11,
     vatRegistered: true,
   );
 }
 
-// ─────────────────────────────────────────────────────────────
 
 class InvoiceModel {
   final int    id;
@@ -66,7 +65,7 @@ class InvoiceModel {
   final int    total;
   final int    commission;
   final String issuedAt;
-  final String status; // issued | cancelled
+  final String status;
 
   const InvoiceModel({
     required this.id,
@@ -145,11 +144,10 @@ class InvoiceModel {
   ];
 }
 
-// ─────────────────────────────────────────────────────────────
 
 class VatReportModel {
   final String monthLabel;
-  final String monthKey; // YYYY-MM
+  final String monthKey;
   final int    totalSales;
   final int    totalVat;
   final int    invoiceCount;

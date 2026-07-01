@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
+import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -7,26 +9,27 @@ import 'package:e_commerce/core/class/status_request.dart';
 import 'package:e_commerce/core/functions/custom_snackbar.dart';
 import 'package:e_commerce/core/functions/show_image_picker.dart';
 import 'package:e_commerce/core/services/services.dart';
+import 'package:e_commerce/data/datasource/remote/seller/inventory_data.dart';
 import 'package:e_commerce/data/model/seller/inventory_models.dart';
 
 class SellerInventoryController extends GetxController {
   MyServices myServices = Get.find();
+  InventoryData inventoryData = InventoryData(Get.find());
 
   String get sellerType =>
       myServices.sharedPreferences.getString('seller_type') ?? 'wholesale';
   bool get isWholesale => sellerType == 'wholesale';
+  String get _token => myServices.sharedPreferences.getString('token') ?? '';
 
   StatusRequest statusRequest = StatusRequest.none;
-
   StatusRequest formStatusRequest = StatusRequest.none;
 
   List<ProductModel> _allProducts = [];
-
   List<ProductModel> displayedProducts = [];
-
   List<CategoryModel> categoryTree = [];
-
   List<WarehouseModel> warehouses = [];
+
+  // ─── Search ────────────────────────────────────────────────────────────────
 
   final searchCtrl = TextEditingController();
   String _searchQuery = '';
@@ -46,11 +49,15 @@ class SellerInventoryController extends GetxController {
     _applyFilters();
   }
 
+  // ─── View Mode ─────────────────────────────────────────────────────────────
+
   bool isGridView = true;
   void toggleViewMode() {
     isGridView = !isGridView;
     update();
   }
+
+  // ─── Filters ───────────────────────────────────────────────────────────────
 
   ProductFilter _filter = const ProductFilter();
   ProductFilter get filter => _filter;
@@ -75,6 +82,8 @@ class SellerInventoryController extends GetxController {
 
   void _applyFilters() {
     var list = List<ProductModel>.from(_allProducts);
+
+    // Tab filter
     switch (selectedTabIndex) {
       case 1:
         list = list.where((p) => p.status == 'active').toList();
@@ -86,26 +95,36 @@ class SellerInventoryController extends GetxController {
         list = list.where((p) => p.status == 'draft').toList();
         break;
     }
+
+    // Category filter (includes descendants)
     if (_filter.categoryId != null) {
       final ids = _collectDescendantIds(_filter.categoryId!, categoryTree);
       list = list.where((p) => ids.contains(p.categoryId)).toList();
     }
+
+    // Status filter
     if (_filter.status != null) {
       list = list.where((p) => p.status == _filter.status).toList();
     }
+
+    // Stock filter
     if (_filter.stock == 'low') {
       list = list.where((p) => p.isLowStock).toList();
     } else if (_filter.stock == 'out') {
       list = list.where((p) => p.isOutOfStock).toList();
     }
+
+    // Search filter (local)
     if (_searchQuery.isNotEmpty) {
       final q = _searchQuery.toLowerCase();
       list = list
           .where((p) =>
-      p.name.toLowerCase().contains(q) ||
-          p.sku.toLowerCase().contains(q))
+              p.name.toLowerCase().contains(q) ||
+              p.sku.toLowerCase().contains(q))
           .toList();
     }
+
+    // Sort
     switch (_filter.sort) {
       case 'price_asc':
         list.sort((a, b) => a.price.compareTo(b.price));
@@ -116,6 +135,7 @@ class SellerInventoryController extends GetxController {
       default:
         list.sort((a, b) => b.id.compareTo(a.id));
     }
+
     displayedProducts = list;
     update();
   }
@@ -146,66 +166,219 @@ class SellerInventoryController extends GetxController {
     return _findInTree(id, categoryTree)?.name;
   }
 
+  // ─── Counts (derived from loaded data) ────────────────────────────────────
+
   int get allCount => _allProducts.length;
-  int get activeCount => _allProducts.where((p) => p.status == 'active').length;
-  int get lowStockCount => _allProducts.where((p) => p.isLowStock || p.isOutOfStock).length;
+  int get activeCount =>
+      _allProducts.where((p) => p.status == 'active').length;
+  int get lowStockCount =>
+      _allProducts.where((p) => p.isLowStock || p.isOutOfStock).length;
   int get draftCount => _allProducts.where((p) => p.status == 'draft').length;
+
+  // ─── Data Loading (Real API) ───────────────────────────────────────────────
 
   Future<void> loadProducts() async {
     statusRequest = StatusRequest.loading;
     update();
-    await Future.delayed(const Duration(milliseconds: 700));
-    _allProducts = ProductModel.mockList();
-    categoryTree = CategoryModel.mockTree();
-    if (isWholesale) await _loadWarehouses();
-    _applyFilters();
-    statusRequest = StatusRequest.success;
-    update();
+
+    // 1. Load categories first (needed for name enrichment)
+    await _loadCategories();
+
+    // 2. Load products from server
+    final result = await inventoryData.getProducts(_token);
+    result.fold(
+      (failure) {
+        statusRequest = failure;
+        update();
+      },
+      (response) {
+        if (response['success'] == true) {
+          final rawData = response['data'];
+          // Handle both paginated ({ data: [...] }) and direct list responses
+          final List rawList = rawData is Map
+              ? ((rawData['data'] as List?) ?? [])
+              : ((rawData as List?) ?? []);
+
+          _allProducts =
+              rawList.map((p) => ProductModel.fromJson(p as Map)).toList();
+
+          // Enrich with category names from local tree
+          _enrichProductsWithCategoryNames();
+
+          // Load warehouses locally (no dedicated backend endpoint yet)
+          if (isWholesale) _loadWarehousesLocal();
+
+          _applyFilters();
+          statusRequest = StatusRequest.success;
+        } else {
+          statusRequest = StatusRequest.none;
+        }
+        update();
+      },
+    );
   }
 
-  Future<void> refreshProducts() => loadProducts();
+  /// Fetches departments from the backend and builds the local tree.
+  Future<void> _loadCategories() async {
+    final result = await inventoryData.getDepartments(_token);
+    result.fold(
+      (failure) {}, // Silently fail; category tree remains empty
+      (response) {
+        if (response['success'] == true) {
+          final rawList = (response['data'] as List?) ?? [];
+          categoryTree = rawList
+              .map((c) => CategoryModel.fromJson(c as Map))
+              .toList();
+          // No need for _buildCategoryTree since backend returns nested structure
+        }
+      },
+    );
+  }
 
-  Future<void> _loadWarehouses() async {
-    await Future.delayed(const Duration(milliseconds: 300));
+  /// Builds a tree from a flat list (with parentId) or a pre-nested list
+  /// (with children). Handles both response formats from the backend.
+  List<CategoryModel> _buildCategoryTree(List<CategoryModel> flat) {
+    // If server already returned a nested structure
+    if (flat.any((c) => c.hasChildren)) {
+      return flat.where((c) => c.isRoot).toList();
+    }
+
+    // Build tree from flat list using parentId
+    final childrenMap = <int, List<CategoryModel>>{};
+    for (final cat in flat) {
+      if (cat.parentId != null) {
+        childrenMap.putIfAbsent(cat.parentId!, () => []).add(cat);
+      }
+    }
+
+    CategoryModel addChildren(CategoryModel cat) {
+      final children = childrenMap[cat.id] ?? [];
+      return CategoryModel(
+        id: cat.id,
+        name: cat.name,
+        parentId: cat.parentId,
+        productCount: cat.productCount,
+        children: children.map(addChildren).toList(),
+      );
+    }
+
+    return flat.where((c) => c.isRoot).map(addChildren).toList();
+  }
+
+  /// Replaces each product's empty `category` field with the name looked up
+  /// from the local category tree.
+  void _enrichProductsWithCategoryNames() {
+    for (int i = 0; i < _allProducts.length; i++) {
+      final catName = getCategoryName(_allProducts[i].categoryId);
+      if (catName != null) {
+        _allProducts[i] = _allProducts[i].copyWith(category: catName);
+      }
+    }
+  }
+
+  /// Loads warehouse list locally (static mock) until a backend endpoint
+  /// for warehouses is implemented.
+  void _loadWarehousesLocal() {
     warehouses = WarehouseModel.mockList();
     for (final w in warehouses) {
       formData.warehouseQty.putIfAbsent(w.id, () => '');
     }
   }
 
+  Future<void> refreshProducts() => loadProducts();
+
+  // ─── Product Actions (Real API) ────────────────────────────────────────────
+
   Future<void> toggleProductStatus(ProductModel p) async {
     final newStatus = p.status == 'active' ? 'hidden' : 'active';
+    final action = newStatus == 'active' ? 'activate' : 'hide';
+
+    // Optimistic UI update
     final idx = _allProducts.indexWhere((x) => x.id == p.id);
     if (idx != -1) {
       _allProducts[idx] = p.copyWith(status: newStatus);
       _applyFilters();
     }
-    customSnackbar(
-      'warning'.tr,
-      newStatus == 'active' ? 'product_activated'.tr : 'product_hidden_msg'.tr,
-      isError: false,
+
+    final result = await inventoryData.bulkAction(_token, [p.id], action);
+    result.fold(
+      (failure) {
+        // Revert on network failure
+        if (idx != -1) _allProducts[idx] = p;
+        _applyFilters();
+        customSnackbar('error'.tr, 'server_error'.tr);
+      },
+      (response) {
+        if (response['success'] == true) {
+          customSnackbar(
+            'warning'.tr,
+            newStatus == 'active'
+                ? 'product_activated'.tr
+                : 'product_hidden_msg'.tr,
+            isError: false,
+          );
+        } else {
+          // Revert on server error
+          if (idx != -1) _allProducts[idx] = p;
+          _applyFilters();
+          customSnackbar(
+              'warning'.tr, (response['message'] ?? '').toString());
+        }
+      },
     );
   }
 
   Future<void> deleteProduct(ProductModel p) async {
+    // Optimistic removal
+    final idx = _allProducts.indexWhere((x) => x.id == p.id);
     _allProducts.removeWhere((x) => x.id == p.id);
     _applyFilters();
-    customSnackbar('delete_success_title'.tr, 'delete_success_msg'.tr, isError: false);
+
+    final result = await inventoryData.deleteProduct(_token, p.id);
+    result.fold(
+      (failure) {
+        // Revert
+        if (idx != -1) _allProducts.insert(idx, p);
+        else _allProducts.add(p);
+        _applyFilters();
+        customSnackbar('error'.tr, 'server_error'.tr);
+      },
+      (response) {
+        if (response['success'] == true) {
+          customSnackbar(
+              'delete_success_title'.tr, 'delete_success_msg'.tr,
+              isError: false);
+        } else {
+          // Revert
+          if (idx != -1) _allProducts.insert(idx, p);
+          else _allProducts.add(p);
+          _applyFilters();
+          customSnackbar(
+              'warning'.tr, (response['message'] ?? '').toString());
+        }
+      },
+    );
   }
+
+  // ─── Category Actions (local-only — backend requires super_admin) ──────────
 
   List<CategoryModel> _insertChild(
       List<CategoryModel> cats, int parentId, CategoryModel newCat) {
     return cats.map((cat) {
       if (cat.id == parentId) {
         return CategoryModel(
-          id: cat.id, name: cat.name, parentId: cat.parentId,
+          id: cat.id,
+          name: cat.name,
+          parentId: cat.parentId,
           productCount: cat.productCount,
           children: [...cat.children, newCat],
         );
       }
       if (cat.hasChildren) {
         return CategoryModel(
-          id: cat.id, name: cat.name, parentId: cat.parentId,
+          id: cat.id,
+          name: cat.name,
+          parentId: cat.parentId,
           productCount: cat.productCount,
           children: _insertChild(cat.children, parentId, newCat),
         );
@@ -214,12 +387,15 @@ class SellerInventoryController extends GetxController {
     }).toList();
   }
 
-  List<CategoryModel> _updateName(List<CategoryModel> cats, int id, String name) {
+  List<CategoryModel> _updateName(
+      List<CategoryModel> cats, int id, String name) {
     return cats.map((cat) {
       if (cat.id == id) return cat.copyWithName(name);
       if (cat.hasChildren) {
         return CategoryModel(
-          id: cat.id, name: cat.name, parentId: cat.parentId,
+          id: cat.id,
+          name: cat.name,
+          parentId: cat.parentId,
           productCount: cat.productCount,
           children: _updateName(cat.children, id, name),
         );
@@ -232,43 +408,62 @@ class SellerInventoryController extends GetxController {
     return cats
         .where((c) => c.id != id)
         .map((c) => CategoryModel(
-      id: c.id, name: c.name, parentId: c.parentId,
-      productCount: c.productCount,
-      children: _deleteNode(c.children, id),
-    ))
+              id: c.id,
+              name: c.name,
+              parentId: c.parentId,
+              productCount: c.productCount,
+              children: _deleteNode(c.children, id),
+            ))
         .toList();
   }
 
   Future<void> addCategory(String name, int? parentId) async {
-    await Future.delayed(const Duration(milliseconds: 400));
-    final newCat = CategoryModel(
-      id: DateTime.now().millisecondsSinceEpoch,
-      name: name, parentId: parentId, productCount: 0,
+    final result = await inventoryData.createDepartment(_token, name, parentId);
+    result.fold(
+      (failure) => customSnackbar('error'.tr, 'server_error'.tr),
+      (response) async {
+        if (response['success'] == true) {
+          await refreshCategories();
+          customSnackbar('success'.tr, 'category_added'.tr, isError: false);
+        } else {
+          customSnackbar('warning'.tr, (response['message'] ?? '').toString());
+        }
+      },
     );
-    if (parentId == null) {
-      categoryTree = [...categoryTree, newCat];
-    } else {
-      categoryTree = _insertChild(categoryTree, parentId, newCat);
-    }
-    update();
-    customSnackbar('success'.tr, 'category_added'.tr, isError: false);
   }
 
   Future<void> updateCategory(int id, String newName) async {
-    await Future.delayed(const Duration(milliseconds: 300));
-    categoryTree = _updateName(categoryTree, id, newName);
-    update();
-    customSnackbar('success'.tr, 'category_updated'.tr, isError: false);
+    final result = await inventoryData.updateDepartment(_token, id, newName);
+    result.fold(
+      (failure) => customSnackbar('error'.tr, 'server_error'.tr),
+      (response) async {
+        if (response['success'] == true) {
+          await refreshCategories();
+          customSnackbar('success'.tr, 'category_updated'.tr, isError: false);
+        } else {
+          customSnackbar('warning'.tr, (response['message'] ?? '').toString());
+        }
+      },
+    );
   }
 
-  void deleteCategory(CategoryModel cat) {
+  void deleteCategory(CategoryModel cat) async {
     if (cat.productCount > 0) {
       customSnackbar('warning'.tr, 'cannot_delete_with_products'.tr);
       return;
     }
-    categoryTree = _deleteNode(categoryTree, cat.id);
-    update();
-    customSnackbar('delete_success_title'.tr, 'category_deleted'.tr, isError: false);
+    final result = await inventoryData.deleteDepartment(_token, cat.id);
+    result.fold(
+      (failure) => customSnackbar('error'.tr, 'server_error'.tr),
+      (response) async {
+        if (response['success'] == true) {
+          await refreshCategories();
+          customSnackbar('delete_success_title'.tr, 'category_deleted'.tr, isError: false);
+        } else {
+          customSnackbar('warning'.tr, (response['message'] ?? '').toString());
+        }
+      },
+    );
   }
 
   void reorderRootCategories(int oldIndex, int newIndex) {
@@ -278,13 +473,22 @@ class SellerInventoryController extends GetxController {
     roots.insert(newIndex, item);
     categoryTree = roots;
     update();
+
+    // Send reorder to backend
+    final positions = <Map<String, int>>[];
+    for (int i = 0; i < categoryTree.length; i++) {
+      positions.add({'id': categoryTree[i].id, 'order_position': i});
+    }
+    inventoryData.reorderDepartments(_token, positions);
   }
 
   Future<void> refreshCategories() async {
-    await Future.delayed(const Duration(milliseconds: 300));
-    categoryTree = CategoryModel.mockTree();
+    await _loadCategories();
+    _enrichProductsWithCategoryNames();
     update();
   }
+
+  // ─── Form State ────────────────────────────────────────────────────────────
 
   final formKey = GlobalKey<FormState>();
   final nameCtrl = TextEditingController();
@@ -306,6 +510,7 @@ class SellerInventoryController extends GetxController {
   final List<File> productImages = [];
   ProductModel? _editingProduct;
   bool get isEditing => _editingProduct != null;
+  ProductModel? get editingProduct => _editingProduct;
   final formData = ProductFormData();
 
   bool get formVariantsEnabled => formData.variantsEnabled;
@@ -388,11 +593,11 @@ class SellerInventoryController extends GetxController {
     formData.attributeTypes[idx].values.add(trimmed);
     update();
   }
+
   void removeAttributeValue(String uid, String value) {
     final idx = formData.attributeTypes.indexWhere((a) => a.uid == uid);
     if (idx != -1) {
       formData.attributeTypes[idx].values.remove(value);
-
       update();
     }
   }
@@ -411,18 +616,12 @@ class SellerInventoryController extends GetxController {
 
     final valueLists = formData.attributeTypes.map((a) => a.values).toList();
     final attrNames = formData.attributeTypes.map((a) => a.name).toList();
-
     final combinations = _cartesian(valueLists);
 
     final Map<String, String> oldStockValues = {};
     final Map<String, String> oldPriceValues = {};
-
-    variantStockCtrls.forEach((key, ctrl) {
-      oldStockValues[key] = ctrl.text;
-    });
-    variantPriceCtrls.forEach((key, ctrl) {
-      oldPriceValues[key] = ctrl.text;
-    });
+    variantStockCtrls.forEach((key, ctrl) => oldStockValues[key] = ctrl.text);
+    variantPriceCtrls.forEach((key, ctrl) => oldPriceValues[key] = ctrl.text);
 
     variantStockCtrls.clear();
     variantPriceCtrls.clear();
@@ -430,10 +629,10 @@ class SellerInventoryController extends GetxController {
     formData.variants = combinations.map((combo) {
       final key = combo.join(' / ');
       final attrs = Map<String, String>.fromIterables(attrNames, combo);
-
-      variantStockCtrls[key] = TextEditingController(text: oldStockValues[key] ?? '');
-      variantPriceCtrls[key] = TextEditingController(text: oldPriceValues[key] ?? '');
-
+      variantStockCtrls[key] =
+          TextEditingController(text: oldStockValues[key] ?? '');
+      variantPriceCtrls[key] =
+          TextEditingController(text: oldPriceValues[key] ?? '');
       return ProductVariantModel(
         combinationKey: key,
         attributes: attrs,
@@ -456,16 +655,18 @@ class SellerInventoryController extends GetxController {
   }
 
   void _initVariantControllers(
-      List<ProductVariantModel> variants,
-      Map<String, TextEditingController> oldStock,
-      Map<String, TextEditingController> oldPrice,
-      ) {
+    List<ProductVariantModel> variants,
+    Map<String, TextEditingController> oldStock,
+    Map<String, TextEditingController> oldPrice,
+  ) {
     for (final v in variants) {
       variantStockCtrls[v.combinationKey] = TextEditingController(
-        text: oldStock[v.combinationKey]?.text ?? (v.stock > 0 ? v.stock.toString() : ''),
+        text: oldStock[v.combinationKey]?.text ??
+            (v.stock > 0 ? v.stock.toString() : ''),
       );
       variantPriceCtrls[v.combinationKey] = TextEditingController(
-        text: oldPrice[v.combinationKey]?.text ?? (v.price != null ? v.price.toString() : ''),
+        text: oldPrice[v.combinationKey]?.text ??
+            (v.price != null ? v.price.toString() : ''),
       );
     }
   }
@@ -494,9 +695,11 @@ class SellerInventoryController extends GetxController {
     if (src == null) return;
     final f = await ImagePicker().pickImage(source: src, imageQuality: 80);
     if (f == null) return;
-    final idx = formData.variants.indexWhere((v) => v.combinationKey == combinationKey);
+    final idx =
+        formData.variants.indexWhere((v) => v.combinationKey == combinationKey);
     if (idx != -1) {
-      formData.variants[idx] = formData.variants[idx].copyWith(localImage: File(f.path));
+      formData.variants[idx] =
+          formData.variants[idx].copyWith(localImage: File(f.path));
       update();
     }
   }
@@ -509,7 +712,8 @@ class SellerInventoryController extends GetxController {
     final source = await showImagePickerBottomSheet();
     if (source == null) return;
     if (source == ImageSource.camera) {
-      final f = await ImagePicker().pickImage(source: source, imageQuality: 80);
+      final f =
+          await ImagePicker().pickImage(source: source, imageQuality: 80);
       if (f != null) {
         productImages.add(File(f.path));
         update();
@@ -540,6 +744,7 @@ class SellerInventoryController extends GetxController {
   void prepareEditForm(ProductModel p) {
     _editingProduct = p;
     nameCtrl.text = p.name;
+    descCtrl.text = p.description;
     priceCtrl.text = p.price.toString();
     if (p.salePrice != null) salePriceCtrl.text = p.salePrice.toString();
     skuCtrl.text = p.sku;
@@ -548,8 +753,12 @@ class SellerInventoryController extends GetxController {
     weightCtrl.text = p.weightGrams.toString();
     formCategoryId = p.categoryId;
     formStatus = p.status;
-    formFreeShipping = p.isFreeShipping; 
+    formFreeShipping = p.isFreeShipping;
     formWholesale = p.wholesaleEnabled;
+    if (formWholesale) {
+      if (p.wholesalePrice != null) wsPrice.text = p.wholesalePrice.toString();
+      if (p.minWholesaleQty != null) wsMinQty.text = p.minWholesaleQty.toString();
+    }
     formData.variantsEnabled = p.hasVariants;
     if (p.hasVariants && p.variants.isNotEmpty) {
       formData.variants = List.from(p.variants);
@@ -565,8 +774,10 @@ class SellerInventoryController extends GetxController {
   }
 
   void _clearForm() {
-    for (final c in [nameCtrl, descCtrl, priceCtrl, salePriceCtrl,
-      skuCtrl, stockCtrl, wsPrice, wsMinQty, weightCtrl]) {
+    for (final c in [
+      nameCtrl, descCtrl, priceCtrl, salePriceCtrl,
+      skuCtrl, stockCtrl, wsPrice, wsMinQty, weightCtrl
+    ]) {
       c.clear();
     }
     alertCtrl.text = '5';
@@ -582,6 +793,8 @@ class SellerInventoryController extends GetxController {
     formData.variants.clear();
     _disposeVariantCtrls();
   }
+
+  // ─── Form Submission (Real API) ────────────────────────────────────────────
 
   Future<void> submitForm() async {
     if (!formKey.currentState!.validate()) return;
@@ -604,23 +817,117 @@ class SellerInventoryController extends GetxController {
         return;
       }
     }
-    if (isWholesale && warehouses.isNotEmpty && formData.totalWarehouseQty == 0) {
+    if (isWholesale &&
+        warehouses.isNotEmpty &&
+        formData.totalWarehouseQty == 0) {
       customSnackbar('warning'.tr, 'warehouse_qty_required'.tr);
       return;
     }
+
     formStatusRequest = StatusRequest.loading;
     update();
-    await Future.delayed(const Duration(milliseconds: 800));
-    formStatusRequest = StatusRequest.success;
-    customSnackbar(
-      'success'.tr,
-      isEditing ? 'product_updated_success'.tr : 'product_saved_success'.tr,
-      isError: false,
+
+    final fields = _buildProductFields();
+    final variants =
+        formData.variantsEnabled ? formData.variants : <ProductVariantModel>[];
+
+    final Either<StatusRequest, Map> result;
+    if (isEditing) {
+      result = await inventoryData.updateProduct(
+        _token, _editingProduct!.id, fields, productImages, variants,
+      );
+    } else {
+      result = await inventoryData.createProduct(
+        _token, fields, productImages, variants,
+      );
+    }
+
+    result.fold(
+      (failure) {
+        formStatusRequest = failure;
+        update();
+        customSnackbar('error'.tr, 'server_error'.tr);
+      },
+      (response) async {
+        if (response['success'] == true) {
+          formStatusRequest = StatusRequest.success;
+          update();
+          _clearForm();
+          await loadProducts();
+          Get.back(); // Close the add/edit screen
+          customSnackbar(
+            'success'.tr,
+            isEditing
+                ? 'product_updated_success'.tr
+                : 'product_saved_success'.tr,
+            isError: false,
+          );
+        } else {
+          formStatusRequest = StatusRequest.none;
+          update();
+          // Show the first validation error from the backend (if any)
+          final errors = response['errors'] as Map?;
+          final message = errors != null
+              ? (errors.values.first as List).first.toString()
+              : (response['message'] ?? 'unknown_error'.tr).toString();
+          customSnackbar('warning'.tr, message);
+        }
+      },
     );
-    _clearForm();
-    await loadProducts();
-    Get.back();
   }
+
+  /// Builds the product fields map with the correct backend field names.
+  ///
+  /// Backend field mapping:
+  ///   original_price  ← priceCtrl
+  ///   offer_price     ← salePriceCtrl
+  ///   offer_expires_at← formSaleEndsAt
+  ///   quantity        ← stockCtrl
+  ///   alert_threshold ← alertCtrl
+  ///   weight          ← weightCtrl
+  Map<String, String> _buildProductFields() {
+    final fields = <String, String>{
+      'name': nameCtrl.text.trim(),
+      'description': descCtrl.text.trim(),
+      'department_id': formCategoryId.toString(),
+      'original_price': priceCtrl.text.trim(),
+      'sku': skuCtrl.text.trim(),
+      'quantity': stockCtrl.text.trim(),
+      'alert_threshold': alertCtrl.text.trim(),
+      'status': formStatus,
+      'is_free_shipping': formFreeShipping ? '1' : '0',
+    };
+
+    if (salePriceCtrl.text.isNotEmpty) {
+      fields['offer_price'] = salePriceCtrl.text.trim();
+    }
+    if (formSaleEndsAt != null) {
+      fields['offer_expires_at'] = formSaleEndsAt!;
+    }
+    if (weightCtrl.text.isNotEmpty) {
+      fields['weight'] = weightCtrl.text.trim();
+    }
+
+    if (isWholesale) {
+      if (wsPrice.text.isNotEmpty) {
+        fields['wholesale_price'] = wsPrice.text.trim();
+      }
+      if (wsMinQty.text.isNotEmpty) {
+        fields['min_wholesale_qty'] = wsMinQty.text.trim();
+      }
+      final stockList = formData.warehouseQty.entries
+          .where((e) => e.value.isNotEmpty && (int.tryParse(e.value) ?? 0) > 0)
+          .toList();
+      for (int i = 0; i < stockList.length; i++) {
+        fields['warehouse_stock[$i][warehouse_id]'] = stockList[i].key.toString();
+        fields['warehouse_stock[$i][qty]'] = stockList[i].value;
+      }
+    }
+
+    return fields;
+  }
+
+  // ─── Lifecycle ─────────────────────────────────────────────────────────────
 
   @override
   void onInit() {
@@ -631,8 +938,10 @@ class SellerInventoryController extends GetxController {
   @override
   void onClose() {
     searchCtrl.dispose();
-    for (final c in [nameCtrl, descCtrl, priceCtrl, salePriceCtrl,
-      skuCtrl, stockCtrl, alertCtrl, weightCtrl, wsPrice, wsMinQty]) {
+    for (final c in [
+      nameCtrl, descCtrl, priceCtrl, salePriceCtrl,
+      skuCtrl, stockCtrl, alertCtrl, weightCtrl, wsPrice, wsMinQty
+    ]) {
       c.dispose();
     }
     _debounce?.cancel();

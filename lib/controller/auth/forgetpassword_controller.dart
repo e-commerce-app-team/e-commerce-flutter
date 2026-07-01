@@ -17,7 +17,9 @@ class ForgetPasswordControllerImp extends ForgetPasswordController {
   @override
   goToVerfiyCode() {
     if (formstate.currentState!.validate()) {
-      Get.offNamed(AppRoute.verfiyCode);
+      Get.offNamed(AppRoute.verfiyCode, arguments: {
+        'email': email.text
+      });
     } else {
       print("Not Valid");
     }
