@@ -34,7 +34,7 @@ class SellerMainController extends GetxController {
   String get sellerEmail =>
       myServices.sharedPreferences.getString("email") ?? "";
   String get sellerType =>
-      myServices.sharedPreferences.getString("seller_type") ?? "vendor";
+      myServices.sharedPreferences.getString("seller_type") ?? "wholesale";
   String get token =>
       myServices.sharedPreferences.getString("token") ?? "";
 

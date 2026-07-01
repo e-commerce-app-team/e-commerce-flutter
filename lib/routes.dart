@@ -11,7 +11,14 @@ import 'package:e_commerce/view/screen/auth/success_signup.dart';
 import 'package:e_commerce/view/screen/auth/forgetpassword/verifycode.dart';
 import 'package:e_commerce/view/screen/auth/verifycodesignup.dart';
 import 'package:e_commerce/view/screen/onboarding.dart';
+import 'package:e_commerce/view/screen/seller/dashboard/drawer/ads_screen.dart';
+import 'package:e_commerce/view/screen/seller/dashboard/drawer/seller_coupons_screen.dart';
 import 'package:e_commerce/view/screen/seller/dashboard/drawer/spin_wheel_screen.dart';
+import 'package:e_commerce/view/screen/seller/profile/change_password_screen.dart';
+import 'package:e_commerce/view/screen/seller/profile/invoices_screen.dart';
+import 'package:e_commerce/view/screen/seller/profile/shipping_settings_screen.dart';
+import 'package:e_commerce/view/screen/seller/profile/store_edit_screen.dart';
+import 'package:e_commerce/view/screen/seller/profile/wallet_screen.dart';
 import 'package:e_commerce/view/screen/seller/seller_main_screen.dart';
 import 'package:e_commerce/view/widget/seller/seller_drawer.dart';
 import 'package:get/get.dart';
@@ -48,5 +55,12 @@ List<GetPage<dynamic>>? routes = [
   GetPage(name: AppRoute.sellerMain, page: () => const SellerMainScreen()),
   GetPage(name: AppRoute.sellerDrawer, page: () => const SellerDrawer()),
   GetPage(name: AppRoute.spinWheele, page: () => const SpinWheelScreen()),
+  GetPage(name: AppRoute.ads, page: () => const AdsScreen()),
+  GetPage(name: AppRoute.sellerInvoices, page: () => const InvoicesScreen()),
+  GetPage(name: AppRoute.changePassword, page: () => const ChangePasswordScreen()),
+  GetPage(name: AppRoute.coupons, page: () => const SellerCouponsScreen()),
+  GetPage(name: AppRoute.sellerWallet, page: () => const WalletScreen()),
+  GetPage(name: AppRoute.storeEdit, page: () => const StoreEditScreen()),
+  GetPage(name: AppRoute.shippingSettings, page: () => const ShippingSettingsScreen()),
 
 ];

@@ -1,20 +1,40 @@
-import 'package:e_commerce/view/screen/buyer/BuyerMainScreen.dart';
+import 'package:e_commerce/core/localization/translation.dart';
+import 'package:e_commerce/core/services/services.dart';
+import 'package:e_commerce/routes.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:e_commerce/view/screen/buyer/home/buyer_home_screen.dart';
+import 'core/class/crud.dart';
+import 'core/localization/changelocal.dart';
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
-void main() {
+}
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initialServices();
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   runApp(const MyApp());
+
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+  const MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return const GetMaterialApp(
+    LocaleController controller = Get.put(LocaleController());
+    return GetMaterialApp(
+      translations: MyTranslation(),
       debugShowCheckedModeBanner: false,
-      home: BuyerMainScreen(),
+      title: 'Flutter Demo',
+      locale: controller.language,
+      theme: controller.appTheme,
+      initialBinding: BindingsBuilder(() {
+        Get.put(Crud());
+      }),
+      // routes: routes,
+      getPages: routes,
     );
   }
 }

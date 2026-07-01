@@ -17,101 +17,226 @@ class CategoryManagementScreen extends StatelessWidget {
           backgroundColor: AppColor.primaryColor,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_rounded,
-                color: Colors.white, size: 20),
+            icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white, size: 20),
             onPressed: () => Get.back(),
           ),
-          title: Text('إدارة الأقسام', style: AppTextStyle.appBarTitle),
+          title: Text('category_management'.tr, style: AppTextStyle.appBarTitle),
           centerTitle: true,
           actions: [
             IconButton(
-              icon: const Icon(Icons.add_rounded,
-                  color: Colors.white, size: 24),
-              onPressed: () =>
-                  _showAddEditSheet(context, ctrl, null),
+              icon: const Icon(Icons.add_rounded, color: Colors.white, size: 24),
+              onPressed: () => _showSheet(context, ctrl, null, null),
             ),
           ],
         ),
-        body: ctrl.categories.isEmpty
-            ? _EmptyCategories(ctrl: ctrl)
-            : _CategoriesList(ctrl: ctrl),
+        body: ctrl.categoryTree.isEmpty
+            ? _EmptyView(ctrl: ctrl)
+            : _CategoryTreeView(ctrl: ctrl),
       ),
     );
   }
 
-  void _showAddEditSheet(
-    BuildContext context,
-    SellerInventoryController ctrl,
-    CategoryModel? existing,
-  ) {
+  static void _showSheet(
+      BuildContext context,
+      SellerInventoryController ctrl,
+      CategoryModel? existing,
+      int? parentId,
+      ) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => _AddEditCategorySheet(
-        ctrl: ctrl,
-        existing: existing,
+      builder: (_) => _AddEditSheet(ctrl: ctrl, existing: existing, parentId: parentId),
+    );
+  }
+}
+
+class _CategoryTreeView extends StatelessWidget {
+  final SellerInventoryController ctrl;
+  const _CategoryTreeView({required this.ctrl});
+
+  @override
+  Widget build(BuildContext context) {
+    return RefreshIndicator(
+      onRefresh: ctrl.refreshCategories,
+      color: AppColor.primaryColor,
+      backgroundColor: Colors.white,
+      child: ReorderableListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+        padding: const EdgeInsets.fromLTRB(16, 14, 16, 100),
+        itemCount: ctrl.categoryTree.length,
+        onReorder: (oldIndex, newIndex) {
+          ctrl.reorderRootCategories(oldIndex, newIndex);
+        },
+        itemBuilder: (context, index) {
+          final cat = ctrl.categoryTree[index];
+          return _TreeNode(
+            key: ValueKey(cat.id),
+            ctrl: ctrl,
+            category: cat,
+            depth: 0,
+          );
+        },
       ),
     );
   }
 }
 
-class _CategoriesList extends StatelessWidget {
+class _TreeNode extends StatefulWidget {
   final SellerInventoryController ctrl;
-  const _CategoriesList({required this.ctrl});
+  final CategoryModel category;
+  final int depth;
+  const _TreeNode({super.key,
+    required this.ctrl,
+    required this.category,
+    required this.depth});
+
+  @override
+  State<_TreeNode> createState() => _TreeNodeState();
+}
+
+class _TreeNodeState extends State<_TreeNode> {
+  bool _expanded = true;
 
   @override
   Widget build(BuildContext context) {
-    return ReorderableListView.builder(
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 100),
-      physics: const BouncingScrollPhysics(),
-      itemCount: ctrl.categories.length,
-      onReorder: ctrl.reorderCategory,
-      proxyDecorator: (child, index, animation) => Material(
-        elevation: 6,
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(14),
-        child: child,
-      ),
-      itemBuilder: (_, i) {
-        final cat = ctrl.categories[i];
-        return _CategoryTile(
-          key: ValueKey(cat.id),
-          category: cat,
-          index: i,
-          onEdit:   () => _showAddEditSheet(context, ctrl, cat),
-          onToggle: () => ctrl.toggleCategoryVisibility(cat),
-          onDelete: () => _confirmDelete(context, ctrl, cat),
-        );
-      },
-    );
-  }
+    final cat = widget.category;
+    final d = widget.depth;
+    final hasChildren = cat.hasChildren;
+    final maxDepth = d < 2;
 
-  void _showAddEditSheet(
-    BuildContext context,
-    SellerInventoryController ctrl,
-    CategoryModel? existing,
-  ) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => _AddEditCategorySheet(
-        ctrl: ctrl,
-        existing: existing,
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          margin: EdgeInsets.only(
+            bottom: 8,
+            left: d * 20.0,
+          ),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: d == 0
+                  ? AppColor.primaryColor.withOpacity(0.2)
+                  : d == 1
+                  ? AppColor.greyBorder
+                  : AppColor.greyBorder.withOpacity(0.5),
+              width: d == 0 ? 1 : 0.8,
+            ),
+            boxShadow: d == 0 ? AppColor.cardShadow : null,
+          ),
+          child: Column(children: [
+            InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: hasChildren ? () => setState(() => _expanded = !_expanded) : null,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                child: Row(children: [
+                  Container(
+                    width: 32, height: 32,
+                    decoration: BoxDecoration(
+                      color: d == 0
+                          ? AppColor.primarySurface
+                          : d == 1
+                          ? AppColor.secondBackground
+                          : AppColor.greyBorder.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      hasChildren ? Icons.folder_outlined : Icons.label_outline_rounded,
+                      size: 16,
+                      color: d == 0 ? AppColor.primaryColor : AppColor.grey,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text(cat.name, style: AppTextStyle.labelLarge.copyWith(fontSize: 13)),
+                      Text(
+                        hasChildren
+                            ? '${cat.children.length} ${'subcategories_lbl'.tr}'
+                            : '${cat.productCount} ${'products_count'.tr}',
+                        style: AppTextStyle.labelSmall.copyWith(fontSize: 10),
+                      ),
+                    ]),
+                  ),
+                  if (hasChildren)
+                    AnimatedRotation(
+                      turns: _expanded ? 0.5 : 0,
+                      duration: const Duration(milliseconds: 200),
+                      child: const Icon(Icons.keyboard_arrow_down_rounded,
+                          size: 18, color: AppColor.grey),
+                    ),
+                  const SizedBox(width: 4),
+                  _NodeActions(
+                    ctrl: widget.ctrl,
+                    category: cat,
+                    canAddChild: maxDepth,
+                  ),
+              if (d == 0) ...[
+             const SizedBox(width: 8),
+             const Icon(Icons.drag_indicator_rounded, color: AppColor.greyLight, size: 20),]
+                ]),
+              ),
+            ),
+          ]),
+        ),
+        if (hasChildren && _expanded)
+          ...cat.children.map((child) => _TreeNode(
+            key: ValueKey(child.id),
+            ctrl: widget.ctrl,
+            category: child,
+            depth: d + 1,
+          )),
+      ],
     );
   }
+}
+
+class _NodeActions extends StatelessWidget {
+  final SellerInventoryController ctrl;
+  final CategoryModel category;
+  final bool canAddChild;
+  const _NodeActions({
+    required this.ctrl,
+    required this.category,
+    required this.canAddChild,
+  });
+
+  @override
+  Widget build(BuildContext context) => Row(mainAxisSize: MainAxisSize.min, children: [
+    if (canAddChild)
+      _ActionBtn(
+        icon: Icons.add_rounded,
+        color: AppColor.success,
+        bg: AppColor.successLight,
+        onTap: () => CategoryManagementScreen._showSheet(
+            context, ctrl, null, category.id),
+      ),
+    const SizedBox(width: 4),
+    _ActionBtn(
+      icon: Icons.edit_outlined,
+      color: AppColor.primaryColor,
+      bg: AppColor.primarySurface,
+      onTap: () =>
+          CategoryManagementScreen._showSheet(context, ctrl, category, category.parentId),
+    ),
+    const SizedBox(width: 4),
+    _ActionBtn(
+      icon: Icons.delete_outline_rounded,
+      color: AppColor.error,
+      bg: AppColor.errorLight,
+      onTap: () => _confirmDelete(context, ctrl, category),
+    ),
+  ]);
 
   void _confirmDelete(
-    BuildContext context,
-    SellerInventoryController ctrl,
-    CategoryModel cat,
-  ) {
+      BuildContext context, SellerInventoryController ctrl, CategoryModel cat) {
     if (cat.productCount > 0) {
       Get.snackbar(
-        'تنبيه',
-        'لا يمكن حذف قسم يحتوي على ${cat.productCount} منتج',
+        'warning'.tr,
+        'cannot_delete_with_products'.tr,
         backgroundColor: AppColor.warningLight,
         colorText: AppColor.warningDark,
         snackPosition: SnackPosition.TOP,
@@ -123,19 +248,17 @@ class _CategoriesList extends StatelessWidget {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16)),
-        title: Text('حذف القسم', style: AppTextStyle.heading3),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text('delete_category_title'.tr, style: AppTextStyle.heading3),
         content: Text(
-          'هل أنت متأكد من حذف قسم "${cat.name}"؟',
+          '"${cat.name}"',
           style: AppTextStyle.bodyMedium,
         ),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text('إلغاء',
-                style: AppTextStyle.buttonSmall
-                    .copyWith(color: AppColor.grey)),
+            child: Text('cancel'.tr,
+                style: AppTextStyle.buttonSmall.copyWith(color: AppColor.grey)),
           ),
           ElevatedButton(
             onPressed: () {
@@ -145,10 +268,9 @@ class _CategoriesList extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColor.error,
               elevation: 0,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
-            child: Text('حذف', style: AppTextStyle.buttonSmall),
+            child: Text('delete'.tr, style: AppTextStyle.buttonSmall),
           ),
         ],
       ),
@@ -156,171 +278,83 @@ class _CategoriesList extends StatelessWidget {
   }
 }
 
-class _CategoryTile extends StatelessWidget {
-  final CategoryModel category;
-  final int           index;
-  final VoidCallback  onEdit;
-  final VoidCallback  onToggle;
-  final VoidCallback  onDelete;
-
-  const _CategoryTile({
-    required super.key,
-    required this.category,
-    required this.index,
-    required this.onEdit,
-    required this.onToggle,
-    required this.onDelete,
-  });
+class _ActionBtn extends StatelessWidget {
+  final IconData icon;
+  final Color color, bg;
+  final VoidCallback onTap;
+  const _ActionBtn({required this.icon, required this.color, required this.bg, required this.onTap});
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: AppColor.cardShadow,
-        border: Border.all(color: AppColor.greyBorder, width: 0.8),
-      ),
-      child: ListTile(
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-        leading: const Icon(Icons.drag_handle_rounded,
-            color: AppColor.greyLight, size: 22),
-
-        title: Text(
-          category.name,
-          style: AppTextStyle.labelLarge.copyWith(fontSize: 14),
-        ),
-        subtitle: Text(
-          '${category.productCount} منتج',
-          style: AppTextStyle.labelSmall.copyWith(fontSize: 11),
-        ),
-
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            GestureDetector(
-              onTap: onToggle,
-              child: Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: AppColor.secondBackground,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.visibility_outlined,
-                  size: 18,
-                  color: AppColor.grey,
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-
-            GestureDetector(
-              onTap: onEdit,
-              child: Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: AppColor.primarySurface,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(Icons.edit_outlined,
-                    size: 18, color: AppColor.primaryColor),
-              ),
-            ),
-            const SizedBox(width: 8),
-
-            GestureDetector(
-              onTap: onDelete,
-              child: Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: AppColor.errorLight,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(Icons.delete_outline_rounded,
-                    size: 18, color: AppColor.error),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => GestureDetector(
+    onTap: onTap,
+    child: Container(
+      padding: const EdgeInsets.all(6),
+      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(7)),
+      child: Icon(icon, size: 14, color: color),
+    ),
+  );
 }
 
-class _EmptyCategories extends StatelessWidget {
+class _EmptyView extends StatelessWidget {
   final SellerInventoryController ctrl;
-  const _EmptyCategories({required this.ctrl});
+  const _EmptyView({required this.ctrl});
 
   @override
   Widget build(BuildContext context) => Center(
     child: Column(mainAxisSize: MainAxisSize.min, children: [
-      Icon(Icons.category_outlined,
-          size: 60, color: AppColor.greyLight),
+      Icon(Icons.category_outlined, size: 56, color: AppColor.greyLight),
       const SizedBox(height: 14),
-      Text('لا توجد أقسام بعد',
+      Text('add_first_category'.tr,
           style: AppTextStyle.heading3.copyWith(color: AppColor.grey)),
       const SizedBox(height: 8),
-      Text('اضغط + لإضافة قسم جديد',
-          style: AppTextStyle.bodyMedium),
+      Text('tap_plus_to_add'.tr, style: AppTextStyle.bodyMedium),
       const SizedBox(height: 20),
       ElevatedButton.icon(
-        onPressed: () => showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          backgroundColor: Colors.transparent,
-          builder: (_) => _AddEditCategorySheet(ctrl: ctrl, existing: null),
-        ),
+        onPressed: () => CategoryManagementScreen._showSheet(context, ctrl, null, null),
         icon: const Icon(Icons.add_rounded, color: Colors.white),
-        label: Text('إضافة قسم', style: AppTextStyle.buttonMedium),
+        label: Text('add_category_btn'.tr, style: AppTextStyle.buttonMedium),
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColor.primaryColor, elevation: 0,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12)),
-          padding: const EdgeInsets.symmetric(
-              horizontal: 24, vertical: 12),
+          backgroundColor: AppColor.primaryColor,
+          elevation: 0,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         ),
       ),
     ]),
   );
 }
 
-class _AddEditCategorySheet extends StatefulWidget {
+class _AddEditSheet extends StatefulWidget {
   final SellerInventoryController ctrl;
-  final CategoryModel?            existing;
-  const _AddEditCategorySheet({required this.ctrl, this.existing});
+  final CategoryModel? existing;
+  final int? parentId;
+  const _AddEditSheet({required this.ctrl, this.existing, this.parentId});
 
   @override
-  State<_AddEditCategorySheet> createState() =>
-      _AddEditCategorySheetState();
+  State<_AddEditSheet> createState() => _AddEditSheetState();
 }
 
-class _AddEditCategorySheetState extends State<_AddEditCategorySheet> {
+class _AddEditSheetState extends State<_AddEditSheet> {
   final _nameCtrl = TextEditingController();
-  int?  _parentId;
-  bool  _isLoading = false;
-
-  bool get isEdit => widget.existing != null;
+  bool _loading = false;
+  bool get _isEdit => widget.existing != null;
 
   @override
   void initState() {
     super.initState();
-    if (isEdit) {
-      _nameCtrl.text = widget.existing!.name;
-      _parentId      = widget.existing!.parentId;
-    }
+    if (_isEdit) _nameCtrl.text = widget.existing!.name;
   }
 
   @override
-  void dispose() { _nameCtrl.dispose(); super.dispose(); }
+  void dispose() {
+    _nameCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Container(
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
         decoration: const BoxDecoration(
@@ -336,7 +370,6 @@ class _AddEditCategorySheetState extends State<_AddEditCategorySheet> {
             ),
           ),
           const SizedBox(height: 16),
-
           Row(children: [
             Container(
               width: 36, height: 36,
@@ -344,107 +377,66 @@ class _AddEditCategorySheetState extends State<_AddEditCategorySheet> {
                 color: AppColor.primarySurface,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.category_outlined,
-                  size: 18, color: AppColor.primaryColor),
+              child: const Icon(Icons.category_outlined, size: 18, color: AppColor.primaryColor),
             ),
             const SizedBox(width: 10),
             Text(
-              isEdit ? 'تعديل القسم' : 'إضافة قسم جديد',
+              _isEdit
+                  ? 'edit_category'.tr
+                  : widget.parentId != null
+                  ? 'add_subcategory'.tr
+                  : 'add_main_category'.tr,
               style: AppTextStyle.heading3,
             ),
           ]),
           const SizedBox(height: 20),
-
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('اسم القسم *', style: AppTextStyle.inputLabel),
+            Text('category_name_label'.tr, style: AppTextStyle.inputLabel),
             const SizedBox(height: 6),
             TextField(
               controller: _nameCtrl,
               autofocus: true,
               style: AppTextStyle.inputText,
               decoration: InputDecoration(
-                hintText: 'مثال: إكسسوارات',
+                hintText: 'category_name_hint_text'.tr,
                 hintStyle: AppTextStyle.inputHint,
-                filled: true, fillColor: AppColor.secondBackground,
-                contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 14, vertical: 12),
+                filled: true,
+                fillColor: AppColor.secondBackground,
+                contentPadding:
+                const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                 border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                        color: AppColor.greyBorder)),
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: AppColor.greyBorder),
+                ),
                 enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                        color: AppColor.greyBorder)),
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: AppColor.greyBorder),
+                ),
                 focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                        color: AppColor.primaryColor, width: 1.5)),
-              ),
-            ),
-          ]),
-          const SizedBox(height: 14),
-
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('قسم رئيسي (اختياري)',
-                style: AppTextStyle.inputLabel),
-            const SizedBox(height: 6),
-            Container(
-              decoration: BoxDecoration(
-                color: AppColor.secondBackground,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColor.greyBorder),
-              ),
-              child: DropdownButtonHideUnderline(
-                child: ButtonTheme(
-                  alignedDropdown: true,
-                  child: DropdownButton<int?>(
-                    value: _parentId,
-                    isExpanded: true,
-                    hint: Text('بدون قسم رئيسي',
-                        style: AppTextStyle.inputHint),
-                    icon: const Icon(Icons.keyboard_arrow_down_rounded,
-                        color: AppColor.grey),
-                    borderRadius: BorderRadius.circular(12),
-                    items: [
-                      const DropdownMenuItem<int?>(
-                        value: null,
-                        child: Text('بدون قسم رئيسي'),
-                      ),
-                      ...widget.ctrl.categories
-                          .where((c) => c.id != widget.existing?.id)
-                          .map((c) => DropdownMenuItem<int?>(
-                                value: c.id,
-                                child: Text(c.name),
-                              )),
-                    ],
-                    onChanged: (v) => setState(() => _parentId = v),
-                  ),
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: AppColor.primaryColor, width: 1.5),
                 ),
               ),
             ),
           ]),
           const SizedBox(height: 20),
-
           SizedBox(
             width: double.infinity, height: 50,
             child: ElevatedButton(
-              onPressed: _isLoading ? null : _save,
+              onPressed: _loading ? null : _save,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColor.primaryColor,
                 elevation: 0,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               ),
-              child: _isLoading
+              child: _loading
                   ? const SizedBox(
-                      width: 22, height: 22,
-                      child: CircularProgressIndicator(
-                          color: Colors.white, strokeWidth: 2.5))
+                  width: 22, height: 22,
+                  child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5))
                   : Text(
-                      isEdit ? 'حفظ التعديلات' : 'إضافة القسم',
-                      style: AppTextStyle.buttonLarge,
-                    ),
+                _isEdit ? 'save_category_btn'.tr : 'add_category_submit'.tr,
+                style: AppTextStyle.buttonLarge,
+              ),
             ),
           ),
         ]),
@@ -455,16 +447,18 @@ class _AddEditCategorySheetState extends State<_AddEditCategorySheet> {
   Future<void> _save() async {
     final name = _nameCtrl.text.trim();
     if (name.isEmpty) {
-      Get.snackbar('تنبيه', 'اسم القسم مطلوب',
-          snackPosition: SnackPosition.TOP,
-          margin: const EdgeInsets.all(16));
+      Get.snackbar(
+        'warning'.tr, 'category_name_required'.tr,
+        snackPosition: SnackPosition.TOP,
+        margin: const EdgeInsets.all(16),
+      );
       return;
     }
-    setState(() => _isLoading = true);
-    if (isEdit) {
-      await widget.ctrl.updateCategory(widget.existing!, name, _parentId);
+    setState(() => _loading = true);
+    if (_isEdit) {
+      await widget.ctrl.updateCategory(widget.existing!.id, name);
     } else {
-      await widget.ctrl.addCategory(name, _parentId);
+      await widget.ctrl.addCategory(name, widget.parentId);
     }
     if (mounted) Get.back();
   }
