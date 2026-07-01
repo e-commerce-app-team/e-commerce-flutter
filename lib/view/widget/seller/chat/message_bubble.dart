@@ -10,7 +10,7 @@ import 'package:e_commerce/data/model/seller/chat_models.dart';
 // MessageBubble
 // ─────────────────────────────────────────────────────────────────────────────
 class MessageBubble extends StatelessWidget {
-  final Map<String, dynamic> message;
+  final MessageModel message;
   final bool isMine;
   final bool showTime;
 
@@ -23,11 +23,11 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final type      = message['type'] as String? ?? 'text';
-    final content   = message['content'] as String? ?? '';
-    final localPath = message['local_path'] as String?;
-    final readAt    = message['read_at'];
-    final createdAt = message['created_at'] as DateTime?;
+    final type      = message.type;
+    final content   = message.content;
+    final localPath = message.imageUrl; // Treat imageUrl as localPath for now to avoid extensive changes
+    final readAt    = message.readAt;
+    final createdAt = message.createdAt;
 
     return Padding(
       padding: EdgeInsets.only(

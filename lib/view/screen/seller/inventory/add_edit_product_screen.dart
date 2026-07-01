@@ -155,6 +155,48 @@ class _ImagesSection extends StatelessWidget {
         ),
         const SizedBox(height: 10),
       ],
+      if (ctrl.productImages.isEmpty && ctrl.isEditing && ctrl.editingProduct!.serverImages.isNotEmpty) ...[
+        SizedBox(
+          height: 90,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: ctrl.editingProduct!.serverImages.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 10),
+            itemBuilder: (_, i) => Stack(
+              children: [
+                Container(
+                  width: 90,
+                  height: 90,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColor.greyBorder),
+                    image: DecorationImage(
+                      image: NetworkImage(ctrl.editingProduct!.serverImages[i]),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 0, left: 0, right: 0,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.6),
+                      borderRadius: const BorderRadius.vertical(bottom: Radius.circular(12)),
+                    ),
+                    child: Text(
+                      'current_image_hint'.tr,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.white, fontSize: 8),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+      ],
       GestureDetector(
         onTap: ctrl.pickProductImages,
         child: Container(

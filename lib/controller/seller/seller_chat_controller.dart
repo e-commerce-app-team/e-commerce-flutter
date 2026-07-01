@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:e_commerce/core/class/status_request.dart';
 import 'package:e_commerce/data/model/seller/chat_models.dart';
 import 'package:e_commerce/core/services/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -130,38 +131,48 @@ class SellerChatController extends GetxController {
   }
 
   // ── Conversations ──────────────────────────────────────────────────────────
+  StreamSubscription? _conversationsSub;
+
   Future<void> loadConversations() async {
     statusRequest = StatusRequest.loading;
     update();
-    await Future.delayed(const Duration(milliseconds: 600));
-    conversations = ConversationModel.mockList(myId);
-    statusRequest = StatusRequest.success;
-    update();
+
+    final firestore = FirebaseFirestore.instance;
+    _conversationsSub?.cancel();
+    _conversationsSub = firestore
+        .collection('conversations')
+        .where('seller_id', isEqualTo: myId)
+        .orderBy('last_time', descending: true)
+        .snapshots()
+        .listen((snapshot) {
+      conversations = snapshot.docs
+          .map((doc) => ConversationModel.fromFirestore(doc))
+          .toList();
+      statusRequest = StatusRequest.success;
+      update();
+    }, onError: (e) {
+      statusRequest = StatusRequest.failure;
+      update();
+      print("Error loading conversations: $e");
+    });
   }
 
-  void markAsRead(String convId) {
+  Future<void> markAsRead(String convId) async {
     final idx = conversations.indexWhere((c) => c.id == convId);
     if (idx != -1 && conversations[idx].unreadSeller > 0) {
-      // TODO: Firestore update
-      conversations[idx] = ConversationModel(
-        id:           conversations[idx].id,
-        sellerId:     conversations[idx].sellerId,
-        buyerId:      conversations[idx].buyerId,
-        buyerName:    conversations[idx].buyerName,
-        buyerAvatar:  conversations[idx].buyerAvatar,
-        orderId:      conversations[idx].orderId,
-        lastMessage:  conversations[idx].lastMessage,
-        lastTime:     conversations[idx].lastTime,
-        unreadSeller: 0,
-      );
-      update();
+      await FirebaseFirestore.instance
+          .collection('conversations')
+          .doc(convId)
+          .update({'unread_seller': 0});
     }
   }
 
   Future<void> archiveConversation(String convId) async {
-    conversations.removeWhere((c) => c.id == convId);
-    // TODO: POST /api/conversations/{convId}/archive
-    update();
+    // Optional: add 'is_archived_by_seller': true in Firestore instead of deleting
+    await FirebaseFirestore.instance
+        .collection('conversations')
+        .doc(convId)
+        .update({'is_archived_by_seller': true});
   }
 
   @override
@@ -185,12 +196,24 @@ class ChatRoomController extends GetxController {
   int get myId =>
       int.tryParse(myServices.sharedPreferences.getString('id') ?? '0') ?? 0;
 
-  List<Map<String, dynamic>> messages = [];
+  StreamSubscription? _messagesSub;
+  List<MessageModel> messagesList = [];
 
   Future<void> loadMessages() async {
-    await Future.delayed(const Duration(milliseconds: 400));
-    messages = MockMessages.forConversation(myId);
-    update();
+    final firestore = FirebaseFirestore.instance;
+    _messagesSub?.cancel();
+    _messagesSub = firestore
+        .collection('conversations')
+        .doc(conversation.id)
+        .collection('messages')
+        .orderBy('created_at', descending: true)
+        .snapshots()
+        .listen((snapshot) {
+      messagesList = snapshot.docs
+          .map((doc) => MessageModel.fromFirestore(doc))
+          .toList();
+      update();
+    });
   }
 
   final messageCtrl     = TextEditingController();
@@ -231,32 +254,74 @@ class ChatRoomController extends GetxController {
     messageCtrl.clear();
     showQuickReplies = false;
     isTyping         = false;
-    messages.insert(0, {
-      'id':         'msg_${DateTime.now().millisecondsSinceEpoch}',
-      'sender_id':  myId,
-      'content':    text,
-      'type':       'text',
-      'read_at':    null,
-      'created_at': DateTime.now(),
-    });
     update();
-    // TODO: Firestore write
+
+    final firestore = FirebaseFirestore.instance;
+    final batch = firestore.batch();
+
+    // 1. Add message
+    final msgRef = firestore
+        .collection('conversations')
+        .doc(conversation.id)
+        .collection('messages')
+        .doc();
+
+    final newMsg = MessageModel(
+      id: msgRef.id,
+      senderId: myId,
+      content: text,
+      type: 'text',
+      createdAt: DateTime.now(),
+    );
+    batch.set(msgRef, newMsg.toMap(myId, text, 'text'));
+
+    // 2. Update conversation last message & unread buyer count
+    final convRef = firestore.collection('conversations').doc(conversation.id);
+    batch.update(convRef, {
+      'last_message': text,
+      'last_time': FieldValue.serverTimestamp(),
+      'unread_buyer': FieldValue.increment(1),
+    });
+
+    await batch.commit();
   }
 
   Future<void> sendImage() async {
     final picked = await ImagePicker()
         .pickImage(source: ImageSource.gallery, imageQuality: 75);
     if (picked == null) return;
-    messages.insert(0, {
-      'id':         'img_${DateTime.now().millisecondsSinceEpoch}',
+    
+    // Typically you upload to FirebaseStorage here and get the URL.
+    // For now, we simulate the firestore write assuming image is uploaded.
+    // final imageUrl = await uploadImage(picked.path);
+    final String text = '📷 صورة';
+
+    final firestore = FirebaseFirestore.instance;
+    final batch = firestore.batch();
+
+    final msgRef = firestore
+        .collection('conversations')
+        .doc(conversation.id)
+        .collection('messages')
+        .doc();
+
+    batch.set(msgRef, {
       'sender_id':  myId,
-      'content':    '📷 صورة',
+      'content':    text,
       'type':       'image',
-      'local_path': picked.path,
+      'image_url':  picked.path, // Should be network URL in real app
       'read_at':    null,
-      'created_at': DateTime.now(),
+      'created_at': FieldValue.serverTimestamp(),
     });
-    update();
+
+    final convRef = firestore.collection('conversations').doc(conversation.id);
+    batch.update(convRef, {
+      'last_message': text,
+      'last_time': FieldValue.serverTimestamp(),
+      'unread_buyer': FieldValue.increment(1),
+    });
+
+    await batch.commit();
   }
 
   // ── Report ─────────────────────────────────────────────────────────────────

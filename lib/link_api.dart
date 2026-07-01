@@ -35,6 +35,20 @@ class AppLink {
   static const String variants               = "$server/variants";
   static const String categories             = "$server/categories";
 
+  // ─── Departments (Merchant Categories) ──────────────────────────────────
+  static const String departments           = "$server/merchant/departments";
+  static const String departmentsStore      = "$server/merchant/departments/store";
+  static const String departmentsToggle     = "$server/merchant/departments/toggle-visibility";
+  static const String departmentsReorder    = "$server/merchant/departments/reorder";
+
+  // ─── Orders ─────────────────────────────────────────────────────────────
+  static const String orders              = "$server/my-orders";
+  static const String ordersBadges        = "$server/orders/badges";
+  static const String ordersAccept        = "$server/orders/accept";
+  static const String ordersReject        = "$server/orders/reject";
+  static const String ordersUpdateTime    = "$server/orders/update-time";
+  static const String ordersReadyShipping = "$server/orders/ready-shipping";
+
   // ─── Helpers ──────────────────────────────────────────────────────────────
   /// Constructs a full URL to a Laravel storage-hosted file.
   /// Example: AppLink.storageUrl('products/images/abc.jpg')

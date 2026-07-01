@@ -40,6 +40,7 @@ List<GetPage<dynamic>>? routes = [
 
   ]),
 
+
   GetPage(name: AppRoute.login, page: () => const Login()),
 
   GetPage(name: AppRoute.selectAccountType, page: () => const SelectAccountType()),

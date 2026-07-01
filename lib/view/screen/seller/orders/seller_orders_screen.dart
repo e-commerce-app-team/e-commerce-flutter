@@ -83,12 +83,11 @@ class _OrdersSliverAppBar extends StatelessWidget {
         collapseMode: CollapseMode.pin,
         background: Container(
           decoration: const BoxDecoration(gradient: AppColor.headerGradient),
-          child: SafeArea(
-            bottom: false,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-              child: Row(
-                children: [
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(16, MediaQuery.of(context).padding.top + 12, 16, 0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                   Text(
                     'orders_title'.tr,
                     style: AppTextStyle.appBarTitle
@@ -131,7 +130,7 @@ class _OrdersSliverAppBar extends StatelessWidget {
             ),
           ),
         ),
-      ),
+
       bottom: _OrdersAppBarBottom(ctrl: ctrl),
     );
   }

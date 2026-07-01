@@ -149,8 +149,11 @@ class ProductModel {
   final int categoryId;
   final String status;
   final String? thumbnail;
+  final List<String> serverImages;
   final bool hasVariants;
   final bool wholesaleEnabled;
+  final int? wholesalePrice;
+  final int? minWholesaleQty;
   final bool isFreeShipping;
   final int weightGrams;      // Backend field: weight
   final List<WarehouseStockEntry> warehouseStock;
@@ -171,8 +174,11 @@ class ProductModel {
     required this.categoryId,
     required this.status,
     this.thumbnail,
+    this.serverImages = const [],
     required this.hasVariants,
     required this.wholesaleEnabled,
+    this.wholesalePrice,
+    this.minWholesaleQty,
     required this.isFreeShipping,
     required this.weightGrams,
     this.warehouseStock = const [],
@@ -237,6 +243,21 @@ class ProductModel {
       return null;
     }
 
+    List<String> buildServerImages(dynamic images) {
+      if (images is List) {
+        return images.map((e) => AppLink.storageUrl(e.toString())).toList();
+      }
+      if (images is String) {
+        try {
+          final decoded = jsonDecode(images);
+          if (decoded is List) {
+            return decoded.map((e) => AppLink.storageUrl(e.toString())).toList();
+          }
+        } catch (_) {}
+      }
+      return [];
+    }
+
     final variants = (json['variants'] as List? ?? [])
         .map((v) => ProductVariantModel.fromJson(v as Map))
         .toList();
@@ -251,13 +272,15 @@ class ProductModel {
       saleEndsAt: json['offer_expires_at']?.toString(),
       stock: parseInt(json['quantity']),
       lowStockAlert: parseInt(json['alert_threshold']),
-      // 'category' name is enriched in the controller using the local tree
       category: '',
-      categoryId: parseInt(json['category_id']),
+      categoryId: parseInt(json['department_id'] ?? json['category_id']),
       status: json['status']?.toString() ?? 'active',
       thumbnail: buildThumbnail(json['images']),
+      serverImages: buildServerImages(json['images']),
       hasVariants: variants.isNotEmpty,
       wholesaleEnabled: json['wholesale_price'] != null,
+      wholesalePrice: json['wholesale_price'] != null ? parseInt(json['wholesale_price']) : null,
+      minWholesaleQty: json['min_wholesale_qty'] != null ? parseInt(json['min_wholesale_qty']) : null,
       isFreeShipping: parseBool(json['is_free_shipping']),
       weightGrams: parseInt(json['weight']),
       warehouseStock: parseWarehouseStock(json['warehouse_stock']),
@@ -286,8 +309,11 @@ class ProductModel {
         categoryId: categoryId,
         status: status ?? this.status,
         thumbnail: thumbnail,
+        serverImages: serverImages,
         hasVariants: hasVariants,
         wholesaleEnabled: wholesaleEnabled,
+        wholesalePrice: wholesalePrice,
+        minWholesaleQty: minWholesaleQty,
         isFreeShipping: isFreeShipping,
         weightGrams: weightGrams,
         warehouseStock: warehouseStock,
@@ -382,6 +408,10 @@ class CategoryModel {
   final String name;
   final int? parentId;
   final int productCount;
+  final bool isVisible;
+  final String? imageUrl;
+  final String? iconUrl;
+  final int orderPosition;
   final List<CategoryModel> children;
 
   const CategoryModel({
@@ -389,6 +419,10 @@ class CategoryModel {
     required this.name,
     this.parentId,
     required this.productCount,
+    this.isVisible = true,
+    this.imageUrl,
+    this.iconUrl,
+    this.orderPosition = 0,
     this.children = const [],
   });
 
@@ -404,12 +438,23 @@ class CategoryModel {
       if (val is String) return double.tryParse(val)?.toInt() ?? 0;
       return 0;
     }
+    bool parseBool(dynamic val) {
+      if (val == null) return true; // default visible
+      if (val is bool) return val;
+      if (val is int) return val == 1;
+      if (val is String) return val == '1' || val.toLowerCase() == 'true';
+      return true;
+    }
     return CategoryModel(
       id: parseInt(json['id']),
       name: json['name']?.toString() ?? '',
       parentId: json['parent_id'] != null ? parseInt(json['parent_id']) : null,
-      productCount: parseInt(json['product_count']),
-      children: ((json['recursiveChildren'] ?? json['children']) as List? ?? [])
+      productCount: parseInt(json['product_count'] ?? json['products_count']),
+      isVisible: parseBool(json['is_visible']),
+      imageUrl: json['image_url']?.toString(),
+      iconUrl: json['icon_url']?.toString(),
+      orderPosition: parseInt(json['order_position']),
+      children: ((json['recursive_children'] ?? json['recursiveChildren'] ?? json['children']) as List? ?? [])
           .map((c) => CategoryModel.fromJson(c as Map))
           .toList(),
     );
@@ -420,6 +465,10 @@ class CategoryModel {
         name: newName,
         parentId: parentId,
         productCount: productCount,
+        isVisible: isVisible,
+        imageUrl: imageUrl,
+        iconUrl: iconUrl,
+        orderPosition: orderPosition,
         children: children,
       );
 

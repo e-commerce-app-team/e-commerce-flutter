@@ -8,6 +8,7 @@ import 'package:e_commerce/data/model/seller/orders_models.dart';
 import 'package:e_commerce/data/datasource/remote/seller/seller_orders_data.dart';
 import 'package:e_commerce/view/screen/seller/chat/chat_room_screen.dart';
 import 'package:e_commerce/controller/seller/seller_chat_controller.dart';
+import 'package:dartz/dartz.dart';
 
 class SellerOrdersController extends GetxController {
   final MyServices _myServices = Get.find();
@@ -26,7 +27,7 @@ class SellerOrdersController extends GetxController {
     'processing',
     'shipped',
     'delivered',
-    'cancelled',
+    'cancelled_returned',
   ];
 
   String searchQuery = '';
@@ -70,10 +71,35 @@ class SellerOrdersController extends GetxController {
   Future<void> loadOrders() async {
     statusRequest = StatusRequest.loading;
     update();
-    await Future.delayed(const Duration(milliseconds: 700));
-    _allOrders = SubOrderModel.mockList();
-    statusRequest = StatusRequest.success;
-    update();
+    
+    final result = await _ordersData.getOrders(token: _token);
+    result.fold(
+      (failure) {
+        statusRequest = failure;
+        update();
+      },
+      (response) {
+        if (response['success'] == true) {
+          try {
+            final rawData = response['data'];
+            // Handle both paginated ({ data: [...] }) and direct list responses
+            final List rawList = rawData is Map
+                ? ((rawData['data'] as List?) ?? [])
+                : ((rawData as List?) ?? []);
+            _allOrders = rawList.map((o) => SubOrderModel.fromJson(o as Map)).toList();
+            statusRequest = StatusRequest.success;
+          } catch (e, stacktrace) {
+            print('Error parsing orders: $e');
+            print(stacktrace);
+            Get.snackbar('Error', 'Failed to parse orders: $e');
+            statusRequest = StatusRequest.serverfailure;
+          }
+        } else {
+          statusRequest = StatusRequest.none;
+        }
+        update();
+      },
+    );
   }
 
   Future<void> refreshOrders() => loadOrders();
@@ -84,48 +110,66 @@ class SellerOrdersController extends GetxController {
       }) async {
     actionStatusRequest = StatusRequest.loading;
     update();
-    await Future.delayed(const Duration(milliseconds: 600));
-    final idx = _allOrders.indexWhere((o) => o.subOrderId == order.subOrderId);
-    if (idx != -1) {
-      _allOrders[idx] = order.copyWith(
-        status: 'processing',
-        qrToken: order.isOurDelivery
-            ? 'QR_${order.subOrderId}_${DateTime.now().millisecondsSinceEpoch}'
-            : null,
-      );
-    }
-    actionStatusRequest = StatusRequest.success;
-    update();
-    if (order.isOurDelivery) {
-      customSnackbar(
-        'order_accept'.tr,
-        'order_accept_qr_msg'.tr,
-        isError: false,
-      );
-    } else {
-      customSnackbar(
-        'order_accept'.tr,
-        'order_accept_self_msg'.tr,
-        isError: false,
-      );
-    }
+    
+    final result = await _ordersData.acceptOrder(
+      orderId: order.rawId,
+      token: _token,
+    );
+    result.fold(
+      (failure) {
+        actionStatusRequest = failure;
+        update();
+        customSnackbar('error'.tr, 'server_error'.tr);
+      },
+      (response) {
+        if (response['success'] == true) {
+          actionStatusRequest = StatusRequest.success;
+          customSnackbar(
+            'order_accept'.tr,
+            response['message']?.toString() ?? 'order_accept_msg'.tr,
+            isError: false,
+          );
+          loadOrders(); // Refresh from server
+        } else {
+          actionStatusRequest = StatusRequest.none;
+          customSnackbar('warning'.tr, response['message']?.toString() ?? '');
+        }
+        update();
+      },
+    );
   }
 
   Future<void> rejectOrder(SubOrderModel order, String reason) async {
     actionStatusRequest = StatusRequest.loading;
     update();
-    await Future.delayed(const Duration(milliseconds: 600));
-    final idx = _allOrders.indexWhere((o) => o.subOrderId == order.subOrderId);
-    if (idx != -1) {
-      _allOrders[idx] = order.copyWith(status: 'cancelled');
-    }
-    actionStatusRequest = StatusRequest.success;
-    customSnackbar(
-      'order_reject'.tr,
-      'order_reject_msg'.tr,
-      isError: false,
+    
+    final result = await _ordersData.rejectOrder(
+      orderId: order.rawId,
+      reason: reason,
+      token: _token,
     );
-    update();
+    result.fold(
+      (failure) {
+        actionStatusRequest = failure;
+        update();
+        customSnackbar('error'.tr, 'server_error'.tr);
+      },
+      (response) {
+        if (response['success'] == true) {
+          actionStatusRequest = StatusRequest.success;
+          customSnackbar(
+            'order_reject'.tr,
+            response['message']?.toString() ?? 'order_reject_msg'.tr,
+            isError: false,
+          );
+          loadOrders(); // Refresh from server
+        } else {
+          actionStatusRequest = StatusRequest.none;
+          customSnackbar('warning'.tr, response['message']?.toString() ?? '');
+        }
+        update();
+      },
+    );
   }
 
   void messageBuyer(SubOrderModel order) {
