@@ -149,8 +149,11 @@ class ProductModel {
   final int categoryId;
   final String status;
   final String? thumbnail;
+  final List<String> serverImages;
   final bool hasVariants;
   final bool wholesaleEnabled;
+  final int? wholesalePrice;
+  final int? minWholesaleQty;
   final bool isFreeShipping;
   final int weightGrams;      // Backend field: weight
   final List<WarehouseStockEntry> warehouseStock;
@@ -171,8 +174,11 @@ class ProductModel {
     required this.categoryId,
     required this.status,
     this.thumbnail,
+    this.serverImages = const [],
     required this.hasVariants,
     required this.wholesaleEnabled,
+    this.wholesalePrice,
+    this.minWholesaleQty,
     required this.isFreeShipping,
     required this.weightGrams,
     this.warehouseStock = const [],
@@ -237,6 +243,21 @@ class ProductModel {
       return null;
     }
 
+    List<String> buildServerImages(dynamic images) {
+      if (images is List) {
+        return images.map((e) => AppLink.storageUrl(e.toString())).toList();
+      }
+      if (images is String) {
+        try {
+          final decoded = jsonDecode(images);
+          if (decoded is List) {
+            return decoded.map((e) => AppLink.storageUrl(e.toString())).toList();
+          }
+        } catch (_) {}
+      }
+      return [];
+    }
+
     final variants = (json['variants'] as List? ?? [])
         .map((v) => ProductVariantModel.fromJson(v as Map))
         .toList();
@@ -255,8 +276,11 @@ class ProductModel {
       categoryId: parseInt(json['department_id'] ?? json['category_id']),
       status: json['status']?.toString() ?? 'active',
       thumbnail: buildThumbnail(json['images']),
+      serverImages: buildServerImages(json['images']),
       hasVariants: variants.isNotEmpty,
       wholesaleEnabled: json['wholesale_price'] != null,
+      wholesalePrice: json['wholesale_price'] != null ? parseInt(json['wholesale_price']) : null,
+      minWholesaleQty: json['min_wholesale_qty'] != null ? parseInt(json['min_wholesale_qty']) : null,
       isFreeShipping: parseBool(json['is_free_shipping']),
       weightGrams: parseInt(json['weight']),
       warehouseStock: parseWarehouseStock(json['warehouse_stock']),
@@ -285,8 +309,11 @@ class ProductModel {
         categoryId: categoryId,
         status: status ?? this.status,
         thumbnail: thumbnail,
+        serverImages: serverImages,
         hasVariants: hasVariants,
         wholesaleEnabled: wholesaleEnabled,
+        wholesalePrice: wholesalePrice,
+        minWholesaleQty: minWholesaleQty,
         isFreeShipping: isFreeShipping,
         weightGrams: weightGrams,
         warehouseStock: warehouseStock,

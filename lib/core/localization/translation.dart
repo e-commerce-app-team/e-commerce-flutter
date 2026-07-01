@@ -606,6 +606,7 @@ class MyTranslation extends Translations {
       'timeline_cancelled':           'تم إلغاء الطلب من قبل النظام أو التاجر',
       'minute_label':                 'دقيقة',
       'hour_label':                   'ساعة',
+      'current_image_hint':           'الصورة الحالية (استبدل للرفع)',
       //*************Messages**************
       "Messages":"الرسائل",
       //***********account************
@@ -1635,6 +1636,14 @@ class MyTranslation extends Translations {
       'timeline_shipped':             'Order is on its way and handed to courier',
       'timeline_delivered':           'Order delivered successfully to buyer',
       'timeline_cancelled':           'Order cancelled by system or seller',
+      'current_image_hint':           'Current image (replace to update)',
+      'section_order_items':          'Ordered Products',
+      'section_price_summary':        'Price Summary',
+      'price_items_total':            'Items Total',
+      'price_shipping':               'Shipping Fee',
+      'price_discount':               'Discount',
+      'price_total':                  'Total',
+      'order_free_ship_label':        'Free',
       "2": "Choose Product",
       "3": "We Have a 100k Product , Choose \n Your Product From  Our \n E-commerce Shop",
       "4": "Easy And Safe Paymnet",

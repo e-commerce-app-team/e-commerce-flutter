@@ -470,7 +470,7 @@ class _ProductRow extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           Text(
-            'SP ${item.price ~/ 1000}k',
+            item.price >= 1000 ? 'SP ${item.price ~/ 1000}k' : 'SP ${item.price}',
             style: AppTextStyle.price.copyWith(fontSize: 13),
           ),
         ],
@@ -492,13 +492,13 @@ class _PriceCard extends StatelessWidget {
         children: [
           _PriceRow(
             label: 'price_items_total'.tr,
-            value: 'SP ${order.itemsTotal ~/ 1000}k',
+            value: order.itemsTotal >= 1000 ? 'SP ${order.itemsTotal ~/ 1000}k' : 'SP ${order.itemsTotal}',
           ),
           _PriceRow(
             label: 'price_shipping'.tr,
             value: order.shippingFee == 0
                 ? 'order_free_ship_label'.tr
-                : 'SP ${order.shippingFee ~/ 1000}k',
+                : (order.shippingFee >= 1000 ? 'SP ${order.shippingFee ~/ 1000}k' : 'SP ${order.shippingFee}'),
             valueColor: order.shippingFee == 0
                 ? AppColor.success
                 : null,
@@ -506,7 +506,7 @@ class _PriceCard extends StatelessWidget {
           if (order.discount > 0) ...[
             _PriceRow(
               label: _discountLabel(order),
-              value: '- SP ${order.discount ~/ 1000}k',
+              value: order.discount >= 1000 ? '- SP ${order.discount ~/ 1000}k' : '- SP ${order.discount}',
               valueColor: AppColor.success,
             ),
             if (order.discountInfo != null)
@@ -521,7 +521,7 @@ class _PriceCard extends StatelessWidget {
                 style: AppTextStyle.heading3.copyWith(fontSize: 14),
               ),
               Text(
-                'SP ${order.subtotal ~/ 1000}k',
+                order.subtotal >= 1000 ? 'SP ${order.subtotal ~/ 1000}k' : 'SP ${order.subtotal}',
                 style: AppTextStyle.priceLarge.copyWith(fontSize: 18),
               ),
             ],

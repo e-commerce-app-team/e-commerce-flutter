@@ -510,6 +510,7 @@ class SellerInventoryController extends GetxController {
   final List<File> productImages = [];
   ProductModel? _editingProduct;
   bool get isEditing => _editingProduct != null;
+  ProductModel? get editingProduct => _editingProduct;
   final formData = ProductFormData();
 
   bool get formVariantsEnabled => formData.variantsEnabled;
@@ -754,6 +755,10 @@ class SellerInventoryController extends GetxController {
     formStatus = p.status;
     formFreeShipping = p.isFreeShipping;
     formWholesale = p.wholesaleEnabled;
+    if (formWholesale) {
+      if (p.wholesalePrice != null) wsPrice.text = p.wholesalePrice.toString();
+      if (p.minWholesaleQty != null) wsMinQty.text = p.minWholesaleQty.toString();
+    }
     formData.variantsEnabled = p.hasVariants;
     if (p.hasVariants && p.variants.isNotEmpty) {
       formData.variants = List.from(p.variants);
@@ -847,6 +852,9 @@ class SellerInventoryController extends GetxController {
         if (response['success'] == true) {
           formStatusRequest = StatusRequest.success;
           update();
+          _clearForm();
+          await loadProducts();
+          Get.back(); // Close the add/edit screen
           customSnackbar(
             'success'.tr,
             isEditing
@@ -854,9 +862,6 @@ class SellerInventoryController extends GetxController {
                 : 'product_saved_success'.tr,
             isError: false,
           );
-          _clearForm();
-          await loadProducts();
-          Get.back();
         } else {
           formStatusRequest = StatusRequest.none;
           update();

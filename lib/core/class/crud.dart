@@ -166,7 +166,9 @@ class Crud {
   }) async {
     try {
       if (await checkInternet()) {
-        var request = http.MultipartRequest("PUT", Uri.parse(linkurl));
+        // Use POST with _method=PUT to bypass Laravel multipart PUT limitation
+        var request = http.MultipartRequest("POST", Uri.parse(linkurl));
+        data['_method'] = 'PUT';
 
         Map<String, String> finalHeaders = {'Accept': 'application/json'};
         if (headers != null) finalHeaders.addAll(headers);
