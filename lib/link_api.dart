@@ -5,24 +5,61 @@ class AppLink {
   static const String signUpBuyer        = "$server/register/buyer";
   static const String signUpSeller       = "$server/register/seller";
   static const String login              = "$server/login";
+  
+  // ─── OTP & 2FA ────────────────────────────────────────────────────────
+  static const String verifyLoginOtp     = "$server/auth/login/verify-otp";
+  
+  // Pre-Registration OTP (التحقق قبل إنشاء الحساب)
+  static const String sendSignupOtp      = "$server/auth/signup/send-otp";
+  static const String verifySignupOtp    = "$server/auth/signup/verify-otp-pre";
+  
   static const String fcmToken           = "$server/auth/fcm-token";
   static const String changePassword     = "$server/auth/change-password";
   static const String forgotPasswordOTP  = "$server/auth/forgot-password";
   static const String verifyResetOTP     = "$server/auth/verify-otp";
   static const String resetPasswordOTP   = "$server/auth/reset-password";
+  
+  // Resend OTP (موحد لجميع العمليات)
+  static const String resendOtp          = "$server/auth/resend-otp";
+
+  // Toggle 2FA
+  static const String toggle2FA          = "$server/user/toggle-2fa";
 
   // ─── Seller ───────────────────────────────────────────────────────────────
-  static const String sellerWallet             = "$server/seller/wallet";
-  static const String sellerWalletTransactions = "$server/seller/wallet/transactions";
-  static const String sellerWalletStats        = "$server/seller/wallet/stats";
-  static const String sellerWithdrawRequests   = "$server/seller/wallet/withdrawals";
-  static const String sellerWithdraw           = "$server/seller/wallet/withdraw";
-  static const String sellerBranches           = "$server/seller/branches";
-  static const String sellerStaff              = "$server/seller/staff";
-  static const String sellerStaffInvite        = "$server/seller/staff/invite";
-  static const String sellerSupportTickets     = "$server/seller/support/tickets";
-  static const String sellerOrders             = "$server/seller/orders";
+  // Wallet - الـ endpoints الموجودة فعلاً على الباك
+  static const String sellerWalletBalance      = "$server/balance";         // GET - رصيد البائع
+  static const String sellerWalletHistory      = "$server/history";         // GET - سجل السحوبات
+  static const String sellerWithdraw           = "$server/payouts/instant-withdraw"; // POST - سحب
+  // Wallet - endpoints مطلوبة من الباك تيم (لم تُنفَّذ بعد)
+  static const String sellerWallet             = "$server/seller/wallet";       // TODO: غير موجود بعد
+  static const String sellerWalletTransactions = "$server/seller/wallet/transactions"; // TODO: غير موجود بعد
+  static const String sellerWalletStats        = "$server/seller/wallet/stats"; // TODO: غير موجود بعد
+  static const String sellerWithdrawRequests   = "$server/seller/wallet/withdrawals"; // TODO: غير موجود بعد
+  static const String sellerBranches           = "$server/seller/branches"; // TODO: غير موجود بعد
+  static const String sellerStaff              = "$server/seller/staff"; // TODO: غير موجود بعد
+  static const String sellerStaffInvite        = "$server/seller/staff/invite"; // TODO: غير موجود بعد
+  static const String sellerSupportTickets     = "$server/seller/support/tickets"; // TODO: غير موجود بعد
+  static const String sellerOrders             = "$server/seller/orders"; // TODO: غير موجود
   static const String sellerConversations      = "$server/conversations";
+
+  // ─── Ads (Vendor) ──────────────────────────────────────────────────────
+  static const String sellerAdTypes      = "$server/ads/types";
+  static const String sellerAdsIndex     = "$server/ads/indexAd";
+  static const String sellerAdsStore     = "$server/ads/storeAd";
+  static const String sellerAdsShow      = "$server/ads"; // append: /{id}/showAd
+  static const String sellerAdsUpdate    = "$server/ads"; // append: /{id}/updateAd
+  static const String sellerAdsDestroy   = "$server/ads"; // append: /{id}/destroyAd
+  static const String sellerAdsDashboard = "$server/ads/dashboard/stats";
+
+  // ─── Coupons (Vendor) ──────────────────────────────────────────────────
+  static const String sellerCouponsIndex   = "$server/vendor/coupons/index";
+  static const String sellerCouponsStore   = "$server/vendor/coupons/store";
+  static const String sellerCouponsShow    = "$server/vendor/coupons"; // append: /{id}/show
+  static const String sellerCouponsUpdate  = "$server/vendor/coupons"; // append: /{id}/update
+  static const String sellerCouponsToggle  = "$server/vendor/coupons"; // append: /{id}/toggle
+  static const String sellerCouponsDestroy = "$server/vendor/coupons"; // append: /{id}/destroy
+  static const String sellerCouponsStats   = "$server/vendor/coupons"; // append: /{id}/stats
+
 
   // ─── Inventory (Products & Categories) ───────────────────────────────────
   static const String products               = "$server/products";
@@ -54,4 +91,19 @@ class AppLink {
   /// Example: AppLink.storageUrl('products/images/abc.jpg')
   static String storageUrl(String path) =>
       "${server.replaceAll('/api', '')}/storage/$path";
+  // ─── Profile (Store Settings) ──────────────────────────────────────────────
+  // الباك يستخدم /seller/store-settings - نوجّه إليها
+  static const String sellerProfile          = "$server/seller/store-settings"; // GET
+  static const String sellerProfileUpdate    = "$server/seller/store-settings/update"; // POST
+  // Shipping - مطلوب من الباك تيم (غير موجود بعد)
+  static const String sellerShippingSettings = "$server/seller/shipping-settings"; // TODO: غير موجود بعد
+
+  // ─── Chat ──────────────────────────────────────────────────────────────────
+  static const String chatQuickReplies    = "$server/chat/quick-replies";
+  static const String chatAutoReplies     = "$server/chat/auto-replies";
+  static const String chatBlockUser       = "$server/chat/block-user";
+  static const String chatUnblockUser     = "$server/chat/unblock-user";
+  static const String chatBlockedUsers    = "$server/chat/blocked-users";
+  static const String chatReportUser      = "$server/chat/report-user";
+  static const String chatFirebaseAuth    = "$server/chat/firebase-token";
 }

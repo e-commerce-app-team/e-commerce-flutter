@@ -10,6 +10,7 @@ import 'package:e_commerce/view/screen/auth/signup/signup_seller.dart';
 import 'package:e_commerce/view/screen/auth/success_signup.dart';
 import 'package:e_commerce/view/screen/auth/forgetpassword/verifycode.dart';
 import 'package:e_commerce/view/screen/auth/verifycodesignup.dart';
+import 'package:e_commerce/view/screen/auth/signup/verifycodesignupseller.dart';
 import 'package:e_commerce/view/screen/onboarding.dart';
 import 'package:e_commerce/view/screen/seller/branches/branch_form_screen.dart';
 import 'package:e_commerce/view/screen/seller/branches/branch_location_picker_screen.dart';
@@ -19,8 +20,10 @@ import 'package:e_commerce/view/screen/seller/dashboard/drawer/seller_coupons_sc
 import 'package:e_commerce/view/screen/seller/dashboard/drawer/spin_wheel_screen.dart';
 import 'package:e_commerce/view/screen/seller/profile/change_password_screen.dart';
 import 'package:e_commerce/view/screen/seller/profile/invoices_screen.dart';
+import 'package:e_commerce/view/screen/seller/profile/language_settings_screen.dart';
 import 'package:e_commerce/view/screen/seller/profile/shipping_settings_screen.dart';
 import 'package:e_commerce/view/screen/seller/profile/store_edit_screen.dart';
+import 'package:e_commerce/view/screen/seller/profile/theme_settings_screen.dart';
 import 'package:e_commerce/view/screen/seller/profile/wallet_screen.dart';
 import 'package:e_commerce/view/screen/seller/seller_main_screen.dart';
 import 'package:e_commerce/view/screen/seller/staff/staff_screen.dart';
@@ -39,8 +42,6 @@ List<GetPage<dynamic>>? routes = [
     MyMiddleWare()
 
   ]),
-
-
   GetPage(name: AppRoute.login, page: () => const Login()),
 
   GetPage(name: AppRoute.selectAccountType, page: () => const SelectAccountType()),
@@ -61,10 +62,14 @@ List<GetPage<dynamic>>? routes = [
 
   GetPage(name: AppRoute.verfiyCodeSignUp, page: () => const VerfiyCodeSignUp()),
 
-  GetPage(name: AppRoute.successSignUp, page: () => const SuccessSignUp()),
+  GetPage(name: AppRoute.verifyCodeSellerSignUp, page: () => const VerifyCodeSellerSignUp()),
+
   GetPage(name: AppRoute.sellerMain, page: () => const SellerMainScreen()),
+
   GetPage(name: AppRoute.sellerDrawer, page: () => const SellerDrawer()),
+
   GetPage(name: AppRoute.spinWheele, page: () => const SpinWheelScreen()),
+
   GetPage(name: AppRoute.ads, page: () => const AdsScreen()),
   GetPage(name: AppRoute.sellerInvoices, page: () => const InvoicesScreen()),
   GetPage(name: AppRoute.changePassword, page: () => const ChangePasswordScreen()),
@@ -88,5 +93,8 @@ List<GetPage<dynamic>>? routes = [
   GetPage(name: AppRoute.ticketDetails, page: () => const TicketDetailsScreen()),
   GetPage(name: AppRoute.chatSettings, page: () => ChatSettingsScreen(
     ctrl: Get.find<SellerChatController>(),
+
   )),
+  GetPage(name: AppRoute.languageSettings, page: () => const LanguageSettingsScreen()),
+  GetPage(name: AppRoute.themeSettings, page: () => const ThemeSettingsScreen()),
 ];

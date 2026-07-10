@@ -5,10 +5,13 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:e_commerce/core/functions/show_image_picker.dart';
 
+import '../../../core/constant/color.dart';
 import '../../../core/constant/routes.dart';
 import '../../../core/functions/custom_snackbar.dart';
 import '../../../core/functions/handling_data_controller.dart';
 import '../../../data/datasource/remote/auth/signup_seller_data.dart';
+import '../../../data/datasource/remote/auth/verifycode_signup_data.dart';
+import 'package:e_commerce/data/model/seller/inventory_models.dart';
 
 abstract class SignUpSellerController extends GetxController {
   void next();
@@ -45,6 +48,8 @@ class SignUpSellerControllerImp extends SignUpSellerController {
   StatusRequest statusRequest = StatusRequest.none;
   SignupSellerData signupSellerData = SignupSellerData(Get.find());
 
+  List<CategoryModel> categories = [];
+
   @override
   void onInit() {
     pageController = PageController();
@@ -58,6 +63,27 @@ class SignUpSellerControllerImp extends SignUpSellerController {
     crNumber = TextEditingController();
     vatNumber = TextEditingController();
     super.onInit();
+    loadCategories();
+  }
+
+  Future<void> loadCategories() async {
+    statusRequest = StatusRequest.loading;
+    update();
+
+    var response = await signupSellerData.getCategories();
+    statusRequest = handlingData(response);
+
+    if (StatusRequest.success == statusRequest) {
+      response.fold((l) {}, (data) {
+        if (data['success'] == true) {
+          List responseData = data['data'] ?? [];
+          categories = responseData.map((e) => CategoryModel.fromJson(e)).toList();
+        } else {
+          statusRequest = StatusRequest.failure;
+        }
+      });
+    }
+    update();
   }
 
   @override
@@ -96,25 +122,112 @@ class SignUpSellerControllerImp extends SignUpSellerController {
     }
   }
 
+  VerifyCodeSignUpData verifyCodeSignUpData = VerifyCodeSignUpData(Get.find());
+
   @override
-  void next() {
+  void next() async {
     if (formstate.currentState!.validate()) {
+      if (currentPage == 0) {
+        _showOtpMethodChoice();
+        return; // Wait for OTP verification
+      }
+
       if (currentPage == 1 && selectedCategoryId == null) {
         customSnackbar("تنبيه", "ادخل تصنيف المتجر");
         return;
       }
 
       if (currentPage < 2) {
-        currentPage++;
-        pageController.animateToPage(
-          currentPage,
-          duration: const Duration(milliseconds: 400),
-          curve: Curves.easeInOut,
-        );
-        update();
+        _goToNextPage();
       } else {
         signUp();
       }
+    }
+  }
+
+  void _showOtpMethodChoice() {
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.all(20),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "اختر طريقة استلام الرمز",
+              style: Theme.of(Get.context!).textTheme.displayLarge?.copyWith(fontSize: 18),
+            ),
+            const SizedBox(height: 20),
+            ListTile(
+              leading: const Icon(Icons.email, color: AppColor.primaryColor),
+              title: const Text("البريد الإلكتروني", style: TextStyle(fontWeight: FontWeight.bold)), onTap: () {
+                Get.back();
+                _sendOtpAndNavigate('email');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.chat, color: Colors.green),
+              title: const Text("واتساب (WhatsApp)", style: TextStyle(fontWeight: FontWeight.bold)),
+              subtitle: Text(phone.text),
+              onTap: () {
+                Get.back();
+                _sendOtpAndNavigate('phone'); // phone is handled as WhatsApp in backend
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _sendOtpAndNavigate(String method) async {
+    statusRequest = StatusRequest.loading;
+    update();
+    var response = await verifyCodeSignUpData.sendOtp(
+        email.text, phone.text, firstName.text, method);
+    
+    response.fold((lift) {
+      statusRequest = StatusRequest.none;
+      update();
+      customSnackbar("خطأ", "فشل الاتصال بالخادم. حاول مجدداً.", isError: true);
+    }, (right) {
+      statusRequest = StatusRequest.none;
+      update();
+      if (right["success"] == true) {
+        _navigateToOtpScreen(method);
+      } else {
+        String errorMessage = right['message'] ?? 'حدث خطأ غير متوقع';
+        if (right['errors'] != null) {
+          errorMessage = (right['errors'] as Map).values.first[0];
+        }
+        customSnackbar("warning".tr, errorMessage, isError: true);
+      }
+    });
+  }
+
+  void _goToNextPage() {
+    currentPage++;
+    pageController.animateToPage(
+      currentPage,
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeInOut,
+    );
+    update();
+  }
+
+  void _navigateToOtpScreen(String method) async {
+    var result = await Get.toNamed(AppRoute.verifyCodeSellerSignUp, arguments: {
+      'email': method == 'email' ? email.text : phone.text,
+      'phone': phone.text,
+      'first_name': firstName.text,
+      'method': method,
+    });
+
+    if (result == true) {
+      _goToNextPage();
     }
   }
 

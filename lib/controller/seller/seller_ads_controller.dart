@@ -1,38 +1,36 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/class/status_request.dart';
 import 'package:e_commerce/core/functions/custom_snackbar.dart';
+import 'package:e_commerce/core/functions/handling_data_controller.dart';
 import 'package:e_commerce/data/model/seller/ads_models.dart';
 import 'package:e_commerce/data/model/seller/inventory_models.dart';
+import 'package:e_commerce/data/datasource/remote/seller/seller_ads_data.dart';
+import 'package:e_commerce/core/services/services.dart';
 
 class SellerAdsController extends GetxController {
+  SellerAdsData adsData = SellerAdsData(Get.find());
+  MyServices myServices = Get.find();
+  String get token => myServices.sharedPreferences.getString('token') ?? "";
+
   StatusRequest statusRequest = StatusRequest.none;
   StatusRequest submitStatus = StatusRequest.none;
 
   List<AdModel> ads = [];
   List<ProductModel> products = [];
-  int walletBalance = 342000;
+  int walletBalance = 0;
+  List<AdTypeModel> adTypes = AdTypeModel.all();
 
   String selectedTab = 'all';
   List<AdModel> get filteredAds {
-    if (selectedTab == 'all') return ads;
-    if (selectedTab == 'active') {
-      return ads.where((a) => a.status == AdStatus.active).toList();
-    }
-    if (selectedTab == 'pending') {
-      return ads.where((a) => a.status == AdStatus.pending).toList();
-    }
-    if (selectedTab == 'expired') {
-      return ads
-          .where((a) =>
-              a.status == AdStatus.expired || a.status == AdStatus.rejected)
-          .toList();
-    }
+    // Backend API already handles filtering, but keeping local filtering for instant UI updates if needed
     return ads;
   }
 
   void changeTab(String tab) {
     selectedTab = tab;
+    loadAds();
     update();
   }
 
@@ -43,7 +41,7 @@ class SellerAdsController extends GetxController {
   int currentStep = 0;
 
   String selectedAdType = 'banner';
-  String selectedDuration = '3';
+  String selectedDuration = '3_days';
   int? selectedProductId;
   String? selectedProductName;
 
@@ -51,24 +49,55 @@ class SellerAdsController extends GetxController {
   final descCtrl = TextEditingController();
 
   int get computedPrice {
-    final type = AdTypeModel.all().firstWhere((t) => t.id == selectedAdType,
-        orElse: () => AdTypeModel.all().first);
+    final type = adTypes.firstWhere((t) => t.id == selectedAdType,
+        orElse: () => adTypes.first);
     return type.pricing[selectedDuration] ?? 0;
   }
 
   bool get canAfford => walletBalance >= computedPrice;
 
-  AdTypeModel get currentAdType => AdTypeModel.all()
+  AdTypeModel get currentAdType => adTypes
       .firstWhere((t) => t.id == selectedAdType);
 
+  File? adImage; // added for ad image
+
+  Future<void> loadAdTypesAndBalance() async {
+    var response = await adsData.getAdTypes(token);
+    var status = handlingData(response);
+    if (StatusRequest.success == status) {
+      if (response['success'] == true) {
+        walletBalance = (response['balance'] ?? 0).toInt();
+        if (response['types'] != null) {
+          adTypes = (response['types'] as List).map((t) => AdTypeModel.fromJson(t)).toList();
+        }
+        update();
+      }
+    }
+  }
 
   Future<void> loadAds() async {
     statusRequest = StatusRequest.loading;
     update();
-    await Future.delayed(const Duration(milliseconds: 700));
-    ads = AdModel.mockList();
-    products = ProductModel.mockList();
-    statusRequest = StatusRequest.success;
+
+    String? statusFilter = selectedTab;
+    if (selectedTab == 'all') statusFilter = null;
+
+    var response = await adsData.getAds(token, statusFilter, null);
+    statusRequest = handlingData(response);
+
+    if (StatusRequest.success == statusRequest) {
+      if (response['success'] == true) {
+        List data = [];
+        if (response['data'] is List) {
+          data = response['data'];
+        } else if (response['data'] != null && response['data']['data'] is List) {
+          data = response['data']['data'];
+        }
+        ads = data.map((e) => AdModel.fromJson(e)).toList();
+      } else {
+        statusRequest = StatusRequest.failure;
+      }
+    }
     update();
   }
 
@@ -100,13 +129,16 @@ class SellerAdsController extends GetxController {
       return;
     }
     if (currentStep == 1) {
-      // validate step 2
       if (titleCtrl.text.trim().isEmpty) {
-        customSnackbar('تنبيه', 'الرجاء إدخال عنوان الإعلان');
+        customSnackbar('ads_warn_title'.tr, 'ads_warn_enter_title'.tr);
         return;
       }
-      if (selectedAdType == 'product' && selectedProductId == null) {
-        customSnackbar('تنبيه', 'الرجاء اختيار المنتج المُعلَن عنه');
+      if (selectedAdType == 'promoted_product' && selectedProductId == null) {
+        customSnackbar('ads_warn_title'.tr, 'ads_warn_select_product'.tr);
+        return;
+      }
+      if (selectedAdType == 'banner' && adImage == null) {
+        customSnackbar('ads_warn_title'.tr, 'ads_warn_upload_image'.tr);
         return;
       }
       currentStep = 2;
@@ -125,9 +157,10 @@ class SellerAdsController extends GetxController {
   void resetForm() {
     currentStep = 0;
     selectedAdType = 'banner';
-    selectedDuration = '3';
+    selectedDuration = '3_days';
     selectedProductId = null;
     selectedProductName = null;
+    adImage = null;
     titleCtrl.clear();
     descCtrl.clear();
     update();
@@ -135,46 +168,50 @@ class SellerAdsController extends GetxController {
 
   Future<void> submitAd() async {
     if (!canAfford) {
-      customSnackbar('رصيد غير كافٍ',
-          'رصيد محفظتك لا يكفي لهذا الإعلان — يرجى إضافة رصيد');
+      customSnackbar('ads_warn_no_balance'.tr, 'ads_warn_no_balance_msg'.tr);
       return;
     }
     submitStatus = StatusRequest.loading;
     update();
-    await Future.delayed(const Duration(milliseconds: 900));
-    // await adsData.createAd(...)
-    walletBalance -= computedPrice;
-    ads.insert(
-      0,
-      AdModel(
-        id: DateTime.now().millisecondsSinceEpoch,
-        adType: selectedAdType,
-        title: titleCtrl.text.trim(),
-        description: descCtrl.text.trim().isEmpty ? null : descCtrl.text.trim(),
-        linkedProductId: selectedProductId,
-        linkedProductName: selectedProductName,
-        durationDays: int.parse(selectedDuration),
-        totalCost: computedPrice,
-        status: AdStatus.pending,
-        startDate: '',
-        endDate: '',
-        createdAt: 'الآن',
-        impressions: 0,
-        clicks: 0,
-      ),
-    );
-    submitStatus = StatusRequest.success;
-    customSnackbar('تم إرسال الإعلان',
-        'إعلانك قيد المراجعة، سيُفعَّل خلال ساعات قليلة',
-        isError: false);
-    resetForm();
-    Get.back();
+
+    // Build link based on type
+    String? link;
+    if (selectedAdType == 'promoted_product' && selectedProductId != null) {
+      link = 'app://product/$selectedProductId';
+    }
+
+    Map<String, dynamic> data = {
+      'type': selectedAdType,
+      'title': titleCtrl.text.trim(),
+      'description': descCtrl.text.trim(),
+      'duration': selectedDuration,
+      if (link != null) 'link': link,
+    };
+
+    var response = await adsData.createAd(token, data, adImage);
+    submitStatus = handlingData(response);
+
+    if (StatusRequest.success == submitStatus) {
+      if (response['success'] == true) {
+        walletBalance -= computedPrice;
+        customSnackbar('ads_success_sent'.tr, 'ads_success_msg'.tr, isError: false);
+        resetForm();
+        Get.back();
+        loadAds();
+      } else {
+        customSnackbar('error'.tr, response['message'] ?? 'ads_error_failed'.tr);
+        submitStatus = StatusRequest.failure;
+      }
+    } else {
+      customSnackbar('error'.tr, 'ads_error_connection'.tr);
+    }
     update();
   }
 
   @override
   void onInit() {
     super.onInit();
+    loadAdTypesAndBalance();
     loadAds();
   }
 

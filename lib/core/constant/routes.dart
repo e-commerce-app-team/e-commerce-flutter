@@ -14,6 +14,7 @@ class AppRoute {
   static const String successResetpassword = "/successresetpassword";
   static const String checkemail = "/checkemail";
   static const String verfiyCodeSignUp = "/verfiycodesignup";
+  static const String verifyCodeSellerSignUp = "/verifycodesellersignup";
   static const String sellerMain = "/sellermain";
   static const String sellerDrawer = "/sellerdrawer";
   static const String spinWheele = "/spinwheel";
@@ -35,4 +36,8 @@ class AppRoute {
   static const String ticketDetails = "/seller/tickets/details";
 
   static const String chatSettings = "/chat-settings";
+  static const String languageSettings = "/seller/language-settings";
+  static const String themeSettings    = "/seller/theme-settings";
+  static const String sellerProfile = "/seller/profile";
+
 }

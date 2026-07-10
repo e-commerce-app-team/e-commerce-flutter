@@ -4,14 +4,22 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/class/status_request.dart';
 import 'package:e_commerce/core/functions/custom_snackbar.dart';
+import 'package:e_commerce/core/functions/handling_data_controller.dart';
 import 'package:e_commerce/data/model/seller/coupon_models.dart';
 import 'package:e_commerce/data/model/seller/inventory_models.dart';
+import 'package:e_commerce/data/datasource/remote/seller/seller_coupons_data.dart';
+import 'package:e_commerce/core/services/services.dart';
 
 class SellerCouponsController extends GetxController {
+  SellerCouponsData couponsData = SellerCouponsData(Get.find());
+  MyServices myServices = Get.find();
+  String get token => myServices.sharedPreferences.getString('token') ?? "";
+
   StatusRequest statusRequest     = StatusRequest.none;
   StatusRequest formStatusRequest = StatusRequest.none;
 
-  List<CouponModel>   _allCoupons = [];
+  List<
+      CouponModel>   _allCoupons = [];
   List<CategoryModel> categories  = [];
   int selectedTabIndex = 0;
 
@@ -52,10 +60,24 @@ class SellerCouponsController extends GetxController {
   Future<void> loadCoupons() async {
     statusRequest = StatusRequest.loading;
     update();
-    await Future.delayed(const Duration(milliseconds: 700));
-    _allCoupons = CouponModel.mockList();
-    categories  = CategoryModel.mockTree();
-    statusRequest = StatusRequest.success;
+
+    var response = await couponsData.getCoupons(token);
+    statusRequest = handlingData(response);
+
+    if (StatusRequest.success == statusRequest) {
+      if (response['success'] == true) {
+        List data = [];
+        if (response['data'] is List) {
+          data = response['data'];
+        } else if (response['data'] != null && response['data']['data'] is List) {
+          data = response['data']['data'];
+        }
+        _allCoupons = data.map((e) => CouponModel.fromJson(e)).toList();
+        categories  = CategoryModel.mockTree(); // Or fetch from Categories API if needed
+      } else {
+        statusRequest = StatusRequest.failure;
+      }
+    }
     update();
   }
 
@@ -74,13 +96,13 @@ class SellerCouponsController extends GetxController {
     formType            = c.type;
     valueCtrl.text      = c.type != 'free_shipping' ? c.value.toInt().toString() : '';
     minOrderCtrl.text   = c.minOrderAmount > 0 ? c.minOrderAmount.toString() : '';
-    maxUsageCtrl.text   = c.maxUsage?.toString() ?? '';
-    maxPerUserCtrl.text = c.maxUsagePerUser.toString();
-    formAppliesTo       = c.appliesTo;
-    formCategoryId      = c.categoryId;
-    formStartDate       = c.startDate;
-    formEndDate         = c.endDate;
-    formStatus          = c.status;
+    maxUsageCtrl.text   = c.maxUses?.toString() ?? '';
+    maxPerUserCtrl.text = c.usageLimitPerUser == 'once' ? '1' : 'unlimited';
+    formAppliesTo       = c.applyToAllProducts ? 'all' : 'category'; // Adjust based on how UI is implemented
+    formCategoryId      = null; // Would need product matching
+    formStartDate       = c.startsAt;
+    formEndDate         = c.expiresAt;
+    formStatus          = c.isActive ? 'active' : 'paused';
     update();
   }
 
@@ -138,69 +160,89 @@ class SellerCouponsController extends GetxController {
 
     formStatusRequest = StatusRequest.loading;
     update();
-    await Future.delayed(const Duration(milliseconds: 700));
 
-    final cat = formCategoryId != null
-        ? categories.firstWhereOrNull((c) => c.id == formCategoryId)
-        : null;
+    Map<String, dynamic> data = {
+      'title': '', // UI might not have a title field but backend accepts it
+      'type': formType,
+      'value': valueCtrl.text.isNotEmpty ? valueCtrl.text : '0',
+      'min_order_amount': minOrderCtrl.text.isNotEmpty ? minOrderCtrl.text : '0',
+      if (maxUsageCtrl.text.isNotEmpty) 'max_uses': maxUsageCtrl.text,
+      'usage_limit_per_user': maxPerUserCtrl.text == '1' ? 'once' : 'unlimited',
+      if (formStartDate != null) 'starts_at': formStartDate,
+      'expires_at': formEndDate,
+      'apply_to_all_products': formAppliesTo == 'all' ? '1' : '0',
+      // 'product_ids': ... // If you have specific products
+    };
 
-    final newId = isEditing
-        ? _editingCoupon!.id
-        : (_allCoupons.isEmpty ? 1 : _allCoupons.map((c) => c.id).reduce((a, b) => a > b ? a : b) + 1);
-
-    final coupon = CouponModel(
-      id:              newId,
-      code:            codeCtrl.text.trim().toUpperCase(),
-      type:            formType,
-      value:           double.tryParse(valueCtrl.text) ?? 0,
-      minOrderAmount:  int.tryParse(minOrderCtrl.text) ?? 0,
-      maxUsage:        maxUsageCtrl.text.isNotEmpty ? int.tryParse(maxUsageCtrl.text) : null,
-      maxUsagePerUser: int.tryParse(maxPerUserCtrl.text) ?? 1,
-      usedCount:       isEditing ? _editingCoupon!.usedCount : 0,
-      status:          formStatus,
-      startDate:       formStartDate ?? _todayStr(),
-      endDate:         formEndDate!,
-      appliesTo:       formAppliesTo,
-      categoryId:      formCategoryId,
-      categoryName:    cat?.name,
-    );
-
+    var response;
     if (isEditing) {
-      final idx = _allCoupons.indexWhere((c) => c.id == _editingCoupon!.id);
-      if (idx != -1) _allCoupons[idx] = coupon;
+      response = await couponsData.updateCoupon(token, _editingCoupon!.id.toString(), data);
     } else {
-      _allCoupons.insert(0, coupon);
+      response = await couponsData.createCoupon(token, data);
     }
 
-    formStatusRequest = StatusRequest.success;
-    customSnackbar(
-      isEditing ? 'coupon_updated'.tr : 'coupon_added'.tr,
-      isEditing ? 'coupon_updated_msg'.tr : 'coupon_added_msg'.tr,
-      isError: false,
-    );
-    _clearForm();
+    formStatusRequest = handlingData(response);
+
+    if (StatusRequest.success == formStatusRequest) {
+      if (response['success'] == true) {
+        customSnackbar(
+          isEditing ? 'coupon_updated'.tr : 'coupon_added'.tr,
+          isEditing ? 'coupon_updated_msg'.tr : 'coupon_added_msg'.tr,
+          isError: false,
+        );
+        _clearForm();
+        Get.back();
+        loadCoupons();
+      } else {
+        customSnackbar('خطأ', response['message'] ?? 'فشل حفظ الكوبون');
+        formStatusRequest = StatusRequest.failure;
+      }
+    } else {
+      customSnackbar('خطأ', 'حدث خطأ في الاتصال');
+    }
     update();
-    Get.back();
   }
 
   Future<void> toggleStatus(CouponModel coupon) async {
     if (coupon.isExpired) return;
-    final newStatus = coupon.isActive ? 'paused' : 'active';
-    final idx = _allCoupons.indexWhere((c) => c.id == coupon.id);
-    if (idx != -1) {
-      _allCoupons[idx] = coupon.copyWith(status: newStatus);
-      update();
+    statusRequest = StatusRequest.loading;
+    update();
+
+    var response = await couponsData.toggleCoupon(token, coupon.id.toString());
+    statusRequest = handlingData(response);
+
+    if (StatusRequest.success == statusRequest) {
+      if (response['success'] == true) {
+        customSnackbar(
+          coupon.isActive ? 'coupon_paused_msg'.tr : 'coupon_activated'.tr,
+          '', isError: false,
+        );
+        loadCoupons();
+      } else {
+        customSnackbar('خطأ', response['message'] ?? 'فشل تغيير حالة الكوبون');
+        statusRequest = StatusRequest.failure;
+      }
     }
-    customSnackbar(
-      newStatus == 'active' ? 'coupon_activated'.tr : 'coupon_paused_msg'.tr,
-      '', isError: false,
-    );
+    update();
   }
 
   Future<void> deleteCoupon(CouponModel coupon) async {
-    _allCoupons.removeWhere((c) => c.id == coupon.id);
+    statusRequest = StatusRequest.loading;
     update();
-    customSnackbar('coupon_deleted'.tr, '', isError: false);
+
+    var response = await couponsData.deleteCoupon(token, coupon.id.toString());
+    statusRequest = handlingData(response);
+
+    if (StatusRequest.success == statusRequest) {
+      if (response['success'] == true) {
+        customSnackbar('coupon_deleted'.tr, '', isError: false);
+        loadCoupons();
+      } else {
+        customSnackbar('خطأ', response['message'] ?? 'فشل حذف الكوبون');
+        statusRequest = StatusRequest.failure;
+      }
+    }
+    update();
   }
 
   void copyCode(String code) {
@@ -208,8 +250,8 @@ class SellerCouponsController extends GetxController {
     customSnackbar('coupon_copied'.tr, code, isError: false);
   }
 
-  String formatDate(String date) {
-    if (date.isEmpty) return '';
+  String formatDate(String? date) {
+    if (date == null || date.isEmpty) return '';
     final p = date.split('-');
     return p.length == 3 ? '${p[2]}/${p[1]}/${p[0]}' : date;
   }

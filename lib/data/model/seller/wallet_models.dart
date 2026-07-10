@@ -1,36 +1,64 @@
+/// WalletModel - يُبنى من استجابة GET /balance
+/// { total_balance, locked_balance, available_balance, payout_method, payout_account }
 class WalletModel {
-  final int available;
-  final int reserved;
+  final int available; // available_balance  (قابل للسحب)
+  final int reserved;  // locked_balance     (محجوز بالضمان)
+  final int total;     // total_balance      (الكلي)
+  final String? payoutMethod;
+  final String? payoutAccount;
 
   const WalletModel({
     required this.available,
     required this.reserved,
+    required this.total,
+    this.payoutMethod,
+    this.payoutAccount,
   });
 
-  factory WalletModel.fromJson(Map json) => WalletModel(
-        available: json['available'] ?? 0,
-        reserved:  json['reserved']  ?? 0,
-      );
+  factory WalletModel.fromJson(Map json) {
+    int toInt(dynamic v) {
+      if (v == null) return 0;
+      if (v is int) return v;
+      if (v is double) return v.round();
+      if (v is String) return (double.tryParse(v) ?? 0).round();
+      return 0;
+    }
 
-  WalletModel copyWith({int? available, int? reserved}) => WalletModel(
-        available: available ?? this.available,
-        reserved:  reserved  ?? this.reserved,
+    return WalletModel(
+      available:     toInt(json['available_balance']),
+      reserved:      toInt(json['locked_balance']),
+      total:         toInt(json['total_balance']),
+      payoutMethod:  json['payout_method']?.toString(),
+      payoutAccount: json['payout_account']?.toString(),
+    );
+  }
+
+  WalletModel copyWith({int? available, int? reserved, int? total}) => WalletModel(
+        available:     available     ?? this.available,
+        reserved:      reserved      ?? this.reserved,
+        total:         total         ?? this.total,
+        payoutMethod:  payoutMethod,
+        payoutAccount: payoutAccount,
       );
 
   static WalletModel mock() => const WalletModel(
         available: 315000,
         reserved:  82500,
+        total:     397500,
       );
 }
 
+/// WalletTransaction - يُبنى من عنصر في استجابة GET /history (PayoutRequest)
+/// كل عنصر: { id, user_id, amount, payout_method, payout_account,
+///             sham_code, qr_image, status, admin_notes, created_at }
 class WalletTransaction {
   final int    id;
-  final String type;
+  final String type;        // 'debit' دائماً (سحب)
   final int    amount;
-  final String description;
-  final String reference;
+  final String description; // نُبنيها من payout_method
+  final String reference;   // رقم الطلب
   final String date;
-  final String status;
+  final String status;      // pending / completed / rejected
 
   const WalletTransaction({
     required this.id,
@@ -44,15 +72,53 @@ class WalletTransaction {
 
   bool get isCredit => type == 'credit';
 
+  factory WalletTransaction.fromPayoutJson(Map json) {
+    final method = json['payout_method']?.toString() ?? '';
+    final desc = method == 'sham cash'
+        ? 'سحب - شام كاش'
+        : method == 'bank account'
+            ? 'سحب - تحويل بنكي'
+            : 'طلب سحب';
+
+    int toInt(dynamic v) {
+      if (v == null) return 0;
+      if (v is int) return v;
+      if (v is double) return v.round();
+      if (v is String) return (double.tryParse(v) ?? 0).round();
+      return 0;
+    }
+
+    return WalletTransaction(
+      id:          json['id'] ?? 0,
+      type:        'debit',
+      amount:      toInt(json['amount']),
+      description: desc,
+      reference:   '#WD-${json['id'] ?? 0}',
+      date:        _formatDate(json['created_at']?.toString()),
+      status:      json['status']?.toString() ?? 'pending',
+    );
+  }
+
+  /// للعمليات المحلية المؤقتة (بعد submit ناجح)
   factory WalletTransaction.fromJson(Map json) => WalletTransaction(
         id:          json['id']          ?? 0,
-        type:        json['type']        ?? 'credit',
+        type:        json['type']        ?? 'debit',
         amount:      json['amount']      ?? 0,
         description: json['description'] ?? '',
         reference:   json['reference']   ?? '',
         date:        json['date']        ?? '',
-        status:      json['status']      ?? 'done',
+        status:      json['status']      ?? 'pending',
       );
+
+  static String _formatDate(String? raw) {
+    if (raw == null || raw.isEmpty) return '';
+    try {
+      final dt = DateTime.parse(raw).toLocal();
+      return '${dt.day}/${dt.month}/${dt.year}';
+    } catch (_) {
+      return raw;
+    }
+  }
 
   static List<WalletTransaction> mockList() => const [
         WalletTransaction(
@@ -69,31 +135,6 @@ class WalletTransaction {
           id: 3, type: 'debit', amount: 8800,
           description: 'عمولة منصة (10%)',
           reference: '#COM-2847', date: '5 يونيو 2025', status: 'done',
-        ),
-        WalletTransaction(
-          id: 4, type: 'credit', amount: 38850,
-          description: 'تسليم طلب ناجح',
-          reference: '#ORD-2846', date: '4 يونيو 2025', status: 'done',
-        ),
-        WalletTransaction(
-          id: 5, type: 'debit', amount: 3850,
-          description: 'عمولة منصة (10%)',
-          reference: '#COM-2846', date: '4 يونيو 2025', status: 'done',
-        ),
-        WalletTransaction(
-          id: 6, type: 'debit', amount: 100000,
-          description: 'سحب — تحويل بنكي',
-          reference: '#WD-4798', date: '2 يونيو 2025', status: 'done',
-        ),
-        WalletTransaction(
-          id: 7, type: 'credit', amount: 67155,
-          description: 'تسليم طلب ناجح',
-          reference: '#ORD-2845', date: '3 يونيو 2025', status: 'done',
-        ),
-        WalletTransaction(
-          id: 8, type: 'credit', amount: 47730,
-          description: 'تسليم طلب ناجح',
-          reference: '#ORD-2844', date: '2 يونيو 2025', status: 'done',
         ),
       ];
 }
@@ -140,16 +181,35 @@ class PendingWithdrawalModel {
   });
 
   bool get isPending  => status == 'pending';
-  bool get isApproved => status == 'approved';
+  bool get isApproved => status == 'completed';
   bool get isRejected => status == 'rejected';
 
   String get methodLabel =>
-      method == 'shaam_cash' ? 'شام كاش' : 'تحويل بنكي';
+      method == 'sham cash' ? 'شام كاش' : 'تحويل بنكي';
+
+  factory PendingWithdrawalModel.fromPayoutJson(Map json) {
+    int toInt(dynamic v) {
+      if (v == null) return 0;
+      if (v is int) return v;
+      if (v is double) return v.round();
+      if (v is String) return (double.tryParse(v) ?? 0).round();
+      return 0;
+    }
+
+    return PendingWithdrawalModel(
+      id:          json['id']             ?? 0,
+      amount:      toInt(json['amount']),
+      method:      json['payout_method']  ?? 'bank account',
+      methodInfo:  json['payout_account'] ?? json['sham_code'] ?? '',
+      status:      json['status']         ?? 'pending',
+      requestedAt: WalletTransaction._formatDate(json['created_at']?.toString()),
+    );
+  }
 
   factory PendingWithdrawalModel.fromJson(Map json) => PendingWithdrawalModel(
         id:          json['id']           ?? 0,
         amount:      json['amount']       ?? 0,
-        method:      json['method']       ?? 'bank_transfer',
+        method:      json['method']       ?? 'bank account',
         methodInfo:  json['method_info']  ?? '',
         status:      json['status']       ?? 'pending',
         requestedAt: json['requested_at'] ?? '',
@@ -159,7 +219,7 @@ class PendingWithdrawalModel {
         PendingWithdrawalModel(
           id:          1,
           amount:      50000,
-          method:      'bank_transfer',
+          method:      'bank account',
           methodInfo:  'بنك سورية الدولي',
           status:      'pending',
           requestedAt: 'منذ ساعتين',

@@ -7,6 +7,8 @@ import 'package:e_commerce/data/model/seller/chat_models.dart';
 import 'package:e_commerce/core/services/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:e_commerce/data/datasource/remote/seller/chat_data.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // AutoReplyModel is defined in chat_models.dart
@@ -17,9 +19,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SellerChatController extends GetxController {
 
   MyServices myServices = Get.find();
+  late SellerChatData chatData;
 
   int get myId =>
       int.tryParse(myServices.sharedPreferences.getString('id') ?? '0') ?? 0;
+
+  String get _token => myServices.sharedPreferences.getString('token') ?? '';
 
   StatusRequest statusRequest = StatusRequest.none;
   List<ConversationModel> conversations = [];
@@ -52,45 +57,57 @@ class SellerChatController extends GetxController {
   List<QuickReplyModel> quickReplies = [];
 
   Future<void> loadQuickReplies() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw   = prefs.getStringList('quick_replies_v1');
-    if (raw != null && raw.isNotEmpty) {
-      // TODO: parse from JSON when backend is ready
+    var response = await chatData.getQuickReplies(_token);
+    response.fold((l) {
       quickReplies = QuickReplyModel.mockList();
-    } else {
-      quickReplies = QuickReplyModel.mockList();
-    }
+    }, (r) {
+      if (r['status'] == 'success') {
+        List data = r['data'] ?? [];
+        quickReplies = data.map((e) => QuickReplyModel(id: e['id'], title: e['title'], content: e['content'])).toList();
+      } else {
+        quickReplies = QuickReplyModel.mockList();
+      }
+    });
     update();
   }
 
   Future<void> addQuickReply(String title, String content) async {
     final newId = DateTime.now().millisecondsSinceEpoch;
     quickReplies.add(QuickReplyModel(id: newId, title: title, content: content));
-    // TODO: POST /api/quick-replies
     update();
+    await chatData.addQuickReply(_token, title, content);
   }
 
   Future<void> updateQuickReply(int id, String title, String content) async {
     final idx = quickReplies.indexWhere((r) => r.id == id);
     if (idx != -1) {
       quickReplies[idx] = QuickReplyModel(id: id, title: title, content: content);
-      // TODO: PUT /api/quick-replies/{id}
       update();
+      await chatData.updateQuickReply(_token, id, title, content);
     }
   }
 
   Future<void> deleteQuickReply(int id) async {
     quickReplies.removeWhere((r) => r.id == id);
-    // TODO: DELETE /api/quick-replies/{id}
     update();
+    await chatData.deleteQuickReply(_token, id);
   }
 
   // ── Auto Replies ───────────────────────────────────────────────────────────
   List<AutoReplyModel> autoReplies = [];
 
   Future<void> loadAutoReplies() async {
-    // TODO: GET /api/auto-replies
-    autoReplies = AutoReplyModel.defaults();
+    var response = await chatData.getAutoReplies(_token);
+    response.fold((l) {
+      autoReplies = AutoReplyModel.defaults();
+    }, (r) {
+      if (r['status'] == 'success') {
+        List data = r['data'] ?? [];
+        autoReplies = data.map((e) => AutoReplyModel(id: e['id'].toString(), trigger: e['keyword'] ?? 'welcome', content: e['message'] ?? '', isEnabled: e['is_active'] == 1 || e['is_active'] == true)).toList();
+      } else {
+        autoReplies = AutoReplyModel.defaults();
+      }
+    });
     update();
   }
 
@@ -98,8 +115,8 @@ class SellerChatController extends GetxController {
     final idx = autoReplies.indexWhere((r) => r.id == id);
     if (idx != -1) {
       autoReplies[idx] = autoReplies[idx].copyWith(isEnabled: enabled);
-      // TODO: PATCH /api/auto-replies/{id}
       update();
+      await chatData.toggleAutoReply(_token, id, enabled);
     }
   }
 
@@ -107,27 +124,44 @@ class SellerChatController extends GetxController {
     final idx = autoReplies.indexWhere((r) => r.id == updated.id);
     if (idx != -1) {
       autoReplies[idx] = updated;
-      // TODO: PUT /api/auto-replies/{id}
       update();
+      await chatData.updateAutoReply(_token, updated.id, updated.trigger, updated.content);
     }
   }
 
   // ── Blocked Users ──────────────────────────────────────────────────────────
   List<int> blockedUserIds = [];
+  List<Map<String, dynamic>> blockedUsers = [];
 
   bool isBlocked(int userId) => blockedUserIds.contains(userId);
+
+  Future<void> loadBlockedUsers() async {
+    var response = await chatData.getBlockedUsers(_token);
+    response.fold((l) {
+      print("Error loading blocked users: $l");
+    }, (r) {
+      List data = r is List ? r : (r['data'] ?? []);
+      blockedUsers = List<Map<String, dynamic>>.from(data);
+      blockedUserIds = blockedUsers
+          .map<int>((e) => int.tryParse(e['blocked_id'].toString()) ?? 0)
+          .toList();
+      update();
+    });
+  }
 
   Future<void> blockUser(int userId, String convId) async {
     blockedUserIds.add(userId);
     conversations.removeWhere((c) => c.id == convId);
-    // TODO: POST /api/block/{userId}
     update();
+    await chatData.blockUser(_token, userId);
+    await loadBlockedUsers();
   }
 
   Future<void> unblockUser(int userId) async {
     blockedUserIds.remove(userId);
-    // TODO: DELETE /api/block/{userId}
     update();
+    await chatData.unblockUser(_token, userId);
+    await loadBlockedUsers();
   }
 
   // ── Conversations ──────────────────────────────────────────────────────────
@@ -153,6 +187,7 @@ class SellerChatController extends GetxController {
     }, onError: (e) {
       statusRequest = StatusRequest.failure;
       update();
+      Get.snackbar('Firestore Error', e.toString(), duration: const Duration(seconds: 5));
       print("Error loading conversations: $e");
     });
   }
@@ -167,6 +202,37 @@ class SellerChatController extends GetxController {
     }
   }
 
+  Future<void> simulateBuyerMessage() async {
+    try {
+      final firestore = FirebaseFirestore.instance;
+      String convId = 'test_conv_$myId';
+      
+      // Create or update conversation document
+      await firestore.collection('conversations').doc(convId).set({
+        'seller_id': myId,
+        'buyer_id': 999,
+        'buyer_name': 'مشتري تجريبي (Test)',
+        'last_message': 'مرحباً، هل يمكنني الاستفسار عن هذا المنتج؟',
+        'last_time': FieldValue.serverTimestamp(),
+        'unread_seller': FieldValue.increment(1),
+        'unread_buyer': 0,
+      }, SetOptions(merge: true));
+
+      // Add a message from the buyer
+      await firestore.collection('conversations').doc(convId).collection('messages').add({
+        'sender_id': 999,
+        'content': 'مرحباً، هل يمكنني الاستفسار عن هذا المنتج؟',
+        'type': 'text',
+        'created_at': FieldValue.serverTimestamp(),
+      });
+      
+      Get.snackbar('نجاح', 'تمت محاكاة رسالة المشتري بنجاح!', backgroundColor: Colors.green, colorText: Colors.white);
+    } catch (e) {
+      Get.snackbar('Firestore Error', e.toString(), duration: const Duration(seconds: 5), backgroundColor: Colors.red, colorText: Colors.white);
+      print("Simulation error: $e");
+    }
+  }
+
   Future<void> archiveConversation(String convId) async {
     // Optional: add 'is_archived_by_seller': true in Firestore instead of deleting
     await FirebaseFirestore.instance
@@ -175,12 +241,46 @@ class SellerChatController extends GetxController {
         .update({'is_archived_by_seller': true});
   }
 
+  Future<void> signInWithFirebase() async {
+    statusRequest = StatusRequest.loading;
+    update();
+    var response = await chatData.getFirebaseAuthToken(_token);
+    response.fold((l) {
+      statusRequest = StatusRequest.serverfailure;
+      update();
+      Get.snackbar('Error', 'Failed to connect to chat server.');
+    }, (r) async {
+      if (r['status'] == 'success' || r.containsKey('firebase_token')) {
+        String firebaseToken = r['firebase_token'] ?? r['data']?['firebase_token'] ?? '';
+        if (firebaseToken.isNotEmpty) {
+          try {
+            await FirebaseAuth.instance.signInWithCustomToken(firebaseToken);
+            loadConversations();
+          } catch (e) {
+            statusRequest = StatusRequest.failure;
+            update();
+            Get.snackbar('Firebase Auth Error', e.toString(), duration: const Duration(seconds: 5));
+            print("Firebase auth error: $e");
+          }
+        } else {
+          statusRequest = StatusRequest.failure;
+          update();
+        }
+      } else {
+        statusRequest = StatusRequest.failure;
+        update();
+      }
+    });
+  }
+
   @override
   void onInit() {
     super.onInit();
-    loadConversations();
+    chatData = SellerChatData(Get.find());
+    signInWithFirebase();
     loadQuickReplies();
     loadAutoReplies();
+    loadBlockedUsers();
   }
 }
 
@@ -294,7 +394,7 @@ class ChatRoomController extends GetxController {
     // Typically you upload to FirebaseStorage here and get the URL.
     // For now, we simulate the firestore write assuming image is uploaded.
     // final imageUrl = await uploadImage(picked.path);
-    final String text = '📷 صورة';
+    final String text = 'image_sent_placeholder'.tr;
 
     final firestore = FirebaseFirestore.instance;
     final batch = firestore.batch();
@@ -326,8 +426,10 @@ class ChatRoomController extends GetxController {
 
   // ── Report ─────────────────────────────────────────────────────────────────
   Future<void> reportUser(String reason) async {
-    // TODO: POST /api/reports { buyerId, reason }
-    await Future.delayed(const Duration(milliseconds: 300));
+    final chatData = Get.find<SellerChatController>().chatData;
+    final token = Get.find<SellerChatController>()._token;
+    await chatData.reportUser(token, conversation.buyerId, reason);
+    Get.snackbar('report_submitted'.tr, 'report_submitted_msg'.tr);
   }
 
   @override

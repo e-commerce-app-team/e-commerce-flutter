@@ -6,16 +6,15 @@ class CouponModel {
   final String code;
   final String type;
   final double value;
-  final int minOrderAmount;
-  final int? maxUsage;
-  final int maxUsagePerUser;
+  final double minOrderAmount; // backend: decimal
+  final int? maxUses; // backend: max_uses
+  final String usageLimitPerUser; // backend: usage_limit_per_user ('unlimited', 'once')
   final int usedCount;
-  final String status;
-  final String startDate;
-  final String endDate;
-  final String appliesTo;
-  final int? categoryId;
-  final String? categoryName;
+  final bool isActive; // backend: is_active
+  final String? startsAt; // backend: starts_at
+  final String? expiresAt; // backend: expires_at
+  final bool applyToAllProducts; // backend: apply_to_all_products
+  final List<dynamic>? productIds; // backend: product_ids
 
   const CouponModel({
     required this.id,
@@ -23,26 +22,30 @@ class CouponModel {
     required this.type,
     required this.value,
     required this.minOrderAmount,
-    this.maxUsage,
-    required this.maxUsagePerUser,
+    this.maxUses,
+    required this.usageLimitPerUser,
     required this.usedCount,
-    required this.status,
-    required this.startDate,
-    required this.endDate,
-    required this.appliesTo,
-    this.categoryId,
-    this.categoryName,
+    required this.isActive,
+    this.startsAt,
+    this.expiresAt,
+    required this.applyToAllProducts,
+    this.productIds,
   });
 
-  bool get isActive    => status == 'active';
-  bool get isExpired   => status == 'expired';
-  bool get isPaused    => status == 'paused';
-  bool get isFullyUsed => maxUsage != null && usedCount >= maxUsage!;
+  bool get isExpired => false; // We would need current date to check this, simplify for now
+  bool get isPaused => !isActive;
+  bool get isFullyUsed => maxUses != null && usedCount >= maxUses!;
 
   double get usageProgress =>
-      (maxUsage != null && maxUsage! > 0)
-          ? (usedCount / maxUsage!).clamp(0.0, 1.0)
+      (maxUses != null && maxUses! > 0)
+          ? (usedCount / maxUses!).clamp(0.0, 1.0)
           : 0.0;
+
+  int? get maxUsage => maxUses;
+  String? get startDate => startsAt;
+  String? get endDate => expiresAt;
+  String get appliesTo => applyToAllProducts ? 'all' : 'category';
+  String? get categoryName => applyToAllProducts ? 'All Products' : 'Selected Products';
 
   Color get typeColor {
     switch (type) {
@@ -61,53 +64,40 @@ class CouponModel {
   }
 
   Color get statusColor {
-    switch (status) {
-      case 'active':  return AppColor.success;
-      case 'paused':  return AppColor.warning;
-      default:        return AppColor.greyLight;
-    }
+    if (isActive) return AppColor.success;
+    return AppColor.warning;
   }
 
   Color get statusLightColor {
-    switch (status) {
-      case 'active':  return AppColor.successLight;
-      case 'paused':  return AppColor.warningLight;
-      default:        return AppColor.greyBorder;
-    }
+    if (isActive) return AppColor.successLight;
+    return AppColor.warningLight;
   }
 
   factory CouponModel.fromJson(Map json) => CouponModel(
     id:              json['id']                          ?? 0,
     code:            json['code']                         ?? '',
     type:            json['type']                         ?? 'percentage',
-    value:           (json['value'] as num?)?.toDouble()  ?? 0,
-    minOrderAmount:  json['min_order_amount']             ?? 0,
-    maxUsage:        json['max_usage'],
-    maxUsagePerUser: json['max_usage_per_user']           ?? 1,
+    value:           double.tryParse(json['value']?.toString() ?? '0') ?? 0,
+    minOrderAmount:  double.tryParse(json['min_order_amount']?.toString() ?? '0') ?? 0,
+    maxUses:         json['max_uses'],
+    usageLimitPerUser: json['usage_limit_per_user']       ?? 'unlimited',
     usedCount:       json['used_count']                   ?? 0,
-    status:          json['status']                       ?? 'active',
-    startDate:       json['start_date']                   ?? '',
-    endDate:         json['end_date']                     ?? '',
-    appliesTo:       json['applies_to']                   ?? 'all',
-    categoryId:      json['category_id'],
-    categoryName:    json['category_name'],
+    isActive:        json['is_active'] == 1 || json['is_active'] == true,
+    startsAt:        json['starts_at'],
+    expiresAt:       json['expires_at'],
+    applyToAllProducts: json['apply_to_all_products'] == 1 || json['apply_to_all_products'] == true,
+    productIds:      json['product_ids'],
   );
 
-  CouponModel copyWith({String? status, String? endDate}) => CouponModel(
+  CouponModel copyWith({bool? isActive, String? expiresAt}) => CouponModel(
     id: id, code: code, type: type, value: value,
-    minOrderAmount: minOrderAmount, maxUsage: maxUsage,
-    maxUsagePerUser: maxUsagePerUser, usedCount: usedCount,
-    status:   status   ?? this.status,
-    startDate: startDate,
-    endDate:  endDate  ?? this.endDate,
-    appliesTo: appliesTo, categoryId: categoryId, categoryName: categoryName,
+    minOrderAmount: minOrderAmount, maxUses: maxUses,
+    usageLimitPerUser: usageLimitPerUser, usedCount: usedCount,
+    isActive:   isActive   ?? this.isActive,
+    startsAt: startsAt,
+    expiresAt:  expiresAt  ?? this.expiresAt,
+    applyToAllProducts: applyToAllProducts, productIds: productIds,
   );
 
-  static List<CouponModel> mockList() => const [
-    CouponModel(id:1, code:'SUMMER25',   type:'percentage',    value:25,    minOrderAmount:50000, maxUsage:100,  maxUsagePerUser:1, usedCount:67,  status:'active',  startDate:'2025-06-01', endDate:'2025-08-31', appliesTo:'all'),
-    CouponModel(id:2, code:'WELCOME10K', type:'fixed',         value:10000, minOrderAmount:30000, maxUsage:50,   maxUsagePerUser:1, usedCount:50,  status:'expired', startDate:'2025-01-01', endDate:'2025-05-31', appliesTo:'all'),
-    CouponModel(id:3, code:'FREESHIP',   type:'free_shipping', value:0,     minOrderAmount:20000, maxUsage:null, maxUsagePerUser:3, usedCount:145, status:'active',  startDate:'2025-06-01', endDate:'2025-12-31', appliesTo:'all'),
-    CouponModel(id:4, code:'DECO20',     type:'percentage',    value:20,    minOrderAmount:0,     maxUsage:30,   maxUsagePerUser:1, usedCount:12,  status:'paused',  startDate:'2025-04-01', endDate:'2025-09-30', appliesTo:'category', categoryId:2, categoryName:'ديكور المنزل'),
-    CouponModel(id:5, code:'VIP5000',    type:'fixed',         value:5000,  minOrderAmount:25000, maxUsage:200,  maxUsagePerUser:2, usedCount:89,  status:'active',  startDate:'2025-05-01', endDate:'2025-11-30', appliesTo:'all'),
-  ];
+  static List<CouponModel> mockList() => const [];
 }

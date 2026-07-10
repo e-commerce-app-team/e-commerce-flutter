@@ -6,7 +6,6 @@ import 'package:e_commerce/core/functions/alert_exitapp.dart';
 import 'package:e_commerce/core/functions/valid_input.dart';
 import 'package:e_commerce/view/widget/auth/custombuttonauth.dart';
 import 'package:e_commerce/view/widget/auth/customtextformauth.dart';
-import 'package:e_commerce/data/datasource/static/categories_data.dart';
 import '../../../../core/class/handling_dataview.dart';
 
 class SignUpSeller extends StatelessWidget {
@@ -175,10 +174,10 @@ class SignUpSeller extends StatelessWidget {
                                           border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                                         ),
                                         initialValue: controller.selectedCategoryId,
-                                        items: CategoriesStatic.categoriesData.map((category) {
+                                        items: controller.categories.map((category) {
                                           return DropdownMenuItem<int>(
-                                            value: category['id'],
-                                            child: Text(category['name']),
+                                            value: category.id,
+                                            child: Text(category.name),
                                           );
                                         }).toList(),
                                         onChanged: (val) {
