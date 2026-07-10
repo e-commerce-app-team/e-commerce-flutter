@@ -157,6 +157,32 @@ class Crud {
     }
   }
 
+  /// HTTP PUT — used for resource updates.
+  Future<Either<StatusRequest, Map>> putData(
+    String linkurl,
+    Map<String, dynamic> data, {
+    Map<String, String>? headers,
+  }) async {
+    try {
+      if (await checkInternet()) {
+        var response = await http.put(
+          Uri.parse(linkurl),
+          body: jsonEncode(data),
+          headers: _setHeaders(headers),
+        ).timeout(const Duration(seconds: 15));
+        return _handleResponse(response);
+      } else {
+        return const Left(StatusRequest.offlinefailure);
+      }
+    } on TimeoutException {
+      return const Left(StatusRequest.serverfailure);
+    } on SocketException {
+      return const Left(StatusRequest.offlinefailure);
+    } catch (e) {
+      return const Left(StatusRequest.serverfailure);
+    }
+  }
+
   /// HTTP PUT multipart — used for updating products with images.
   Future<Either<StatusRequest, Map>> putDataWithFiles(
     String linkurl,
@@ -207,11 +233,13 @@ class Crud {
   }
 
   Either<StatusRequest, Map> _handleResponse(http.Response response) {
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      Map responsebody = jsonDecode(response.body);
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      dynamic decoded = jsonDecode(response.body);
+      Map responsebody = decoded is List ? {'data': decoded} : decoded;
       return Right(responsebody);
     } else if (response.statusCode == 422 || response.statusCode == 401 || response.statusCode == 403 || response.statusCode == 429 || response.statusCode == 400) {
-      Map responsebody = jsonDecode(response.body);
+      dynamic decoded = jsonDecode(response.body);
+      Map responsebody = decoded is List ? {'data': decoded} : decoded;
       return Right(responsebody);
     } else {
       return const Left(StatusRequest.serverfailure);

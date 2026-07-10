@@ -12,4 +12,10 @@ class SignupSellerData {
    return response;
  }
 
+  getCategories() async {
+    var response = await crud.getData(AppLink.categories);
+    return response;
+  }
+
+
 }

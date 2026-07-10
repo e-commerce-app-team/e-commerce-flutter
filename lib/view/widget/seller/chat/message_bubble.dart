@@ -29,17 +29,32 @@ class MessageBubble extends StatelessWidget {
     final readAt    = message.readAt;
     final createdAt = message.createdAt;
 
-    return Padding(
-      padding: EdgeInsets.only(
-        left:   isMine ? 56 : 0,
-        right:  isMine ? 0 : 56,
-        bottom: 5,
-      ),
-      child: GestureDetector(
-        onLongPress: () => _showMessageOptions(context, content),
-        child: Column(
-          crossAxisAlignment:
-              isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+    return TweenAnimationBuilder<double>(
+      key: ValueKey(message.id),
+      duration: const Duration(milliseconds: 250),
+      tween: Tween(begin: 0.0, end: 1.0),
+      curve: Curves.easeOutBack,
+      builder: (context, val, child) {
+        return Transform.scale(
+          scale: val,
+          alignment: isMine ? Alignment.bottomRight : Alignment.bottomLeft,
+          child: Opacity(
+            opacity: val.clamp(0.0, 1.0),
+            child: child,
+          ),
+        );
+      },
+      child: Padding(
+        padding: EdgeInsets.only(
+          left:   isMine ? 56 : 0,
+          right:  isMine ? 0 : 56,
+          bottom: 5,
+        ),
+        child: GestureDetector(
+          onLongPress: () => _showMessageOptions(context, content),
+          child: Column(
+            crossAxisAlignment:
+                isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
             // ── Bubble ──────────────────────────────────────────────────────
             Container(
@@ -47,7 +62,7 @@ class MessageBubble extends StatelessWidget {
                 maxWidth: MediaQuery.of(context).size.width * 0.74,
               ),
               decoration: BoxDecoration(
-                color: isMine ? AppColor.primaryColor : Colors.white,
+                color: isMine ? AppColor.primaryColor : AppColor.white,
                 borderRadius: BorderRadius.only(
                   topLeft:     const Radius.circular(18),
                   topRight:    const Radius.circular(18),
@@ -58,7 +73,7 @@ class MessageBubble extends StatelessWidget {
                   BoxShadow(
                     color: isMine
                         ? AppColor.primaryColor.withOpacity(0.18)
-                        : Colors.black.withOpacity(0.07),
+                        : AppColor.black.withOpacity(0.07),
                     blurRadius: 8,
                     offset: const Offset(0, 3),
                   ),
@@ -98,7 +113,7 @@ class MessageBubble extends StatelessWidget {
           ],
         ),
       ),
-    );
+          )  );
   }
 
   String _formatTime(DateTime dt) {
@@ -129,7 +144,7 @@ class _TextBubble extends StatelessWidget {
     child: Text(
       content,
       style: AppTextStyle.bodyMedium.copyWith(
-        color: isMine ? Colors.white : AppColor.black,
+        color: isMine ? AppColor.white : AppColor.black,
         fontSize: 14,
         height: 1.5,
       ),
@@ -179,7 +194,7 @@ class _MessageOptionsSheet extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
       decoration: const BoxDecoration(
-        color: Colors.white,
+        color: AppColor.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
       ),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -296,7 +311,7 @@ class DateSeparator extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColor.white,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: AppColor.greyBorder),
             boxShadow: AppColor.cardShadow,
@@ -330,7 +345,7 @@ class QuickRepliesSheet extends StatelessWidget {
         maxHeight: MediaQuery.of(context).size.height * 0.42,
       ),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColor.white,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         boxShadow: AppColor.bottomNavShadow,
         border: Border(
@@ -439,7 +454,7 @@ class ChatInputBar extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(
           12, 8, 12, MediaQuery.of(context).padding.bottom + 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColor.white,
         boxShadow: AppColor.bottomNavShadow,
         border: Border(
             top: BorderSide(color: AppColor.greyBorder, width: 0.5)),
@@ -517,7 +532,7 @@ class ChatInputBar extends StatelessWidget {
                   child: Icon(
                     Icons.send_rounded,
                     size: 19,
-                    color: isTyping ? Colors.white : AppColor.grey,
+                    color: isTyping ? AppColor.white : AppColor.grey,
                   ),
                 ),
               ),

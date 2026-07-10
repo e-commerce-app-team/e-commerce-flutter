@@ -1,4 +1,4 @@
-import 'package:e_commerce/controller/auth/verfiycodesignup_controller.dart';
+import 'package:e_commerce/controller/auth/signup_controoler/verifycodesignupseller_controller.dart';
 import 'package:e_commerce/core/class/status_request.dart';
 import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/view/widget/auth/customtextbodyauth.dart';
@@ -7,12 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:get/get.dart';
 
-class VerfiyCodeSignUp extends StatelessWidget {
-  const VerfiyCodeSignUp({Key? key}) : super(key: key);
+class VerifyCodeSellerSignUp extends StatelessWidget {
+  const VerifyCodeSellerSignUp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    Get.put(VerifyCodeSignUpControllerImp());
+    Get.put(VerifyCodeSellerSignUpControllerImp());
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -24,7 +24,7 @@ class VerfiyCodeSignUp extends StatelessWidget {
                 .displayLarge!
                 .copyWith(color: AppColor.grey)),
       ),
-      body: GetBuilder<VerifyCodeSignUpControllerImp>(
+      body: GetBuilder<VerifyCodeSellerSignUpControllerImp>(
         builder: (controller) => controller.statusRequest == StatusRequest.loading
             ? const Center(child: CircularProgressIndicator())
             : Container(

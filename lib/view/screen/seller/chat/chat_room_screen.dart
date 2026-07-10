@@ -81,7 +81,7 @@ class _GeometricPatternPainter extends CustomPainter {
     // خلفية أساسية
     canvas.drawRect(
       Rect.fromLTWH(0, 0, size.width, size.height),
-      Paint()..color = const Color(0xffF0F3F8),
+      Paint()..color = AppColor.secondBackground,
     );
 
     final paint = Paint()
@@ -161,7 +161,7 @@ class _ChatRoomAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios_rounded,
-            color: Colors.white, size: 20),
+            color: AppColor.white, size: 20),
         onPressed: () => Get.back(),
       ),
       titleSpacing: 0,
@@ -182,13 +182,13 @@ class _ChatRoomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   Container(
                     width: 7, height: 7,
                     decoration: const BoxDecoration(
-                        color: Color(0xff4ADE80), shape: BoxShape.circle),
+                        color: AppColor.success, shape: BoxShape.circle),
                   ),
                   const SizedBox(width: 4),
                   Text(
                     'online_now'.tr,
                     style: AppTextStyle.labelSmall.copyWith(
-                        color: Colors.white70, fontSize: 10),
+                        color: AppColor.white.withOpacity(0.7), fontSize: 10),
                   ),
                 ]),
               ],
@@ -202,14 +202,14 @@ class _ChatRoomAppBar extends StatelessWidget implements PreferredSizeWidget {
             margin: const EdgeInsets.only(left: 4, top: 10, bottom: 10),
             padding: const EdgeInsets.symmetric(horizontal: 10),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: AppColor.white.withOpacity(0.2),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Center(
               child: Text(
                 conversation.orderId!,
                 style: AppTextStyle.labelSmall.copyWith(
-                    color: Colors.white,
+                    color: AppColor.white,
                     fontFamily: 'PlayfairDisplay',
                     fontWeight: FontWeight.w700,
                     fontSize: 10),
@@ -218,7 +218,7 @@ class _ChatRoomAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         IconButton(
           icon: const Icon(Icons.more_vert_rounded,
-              color: Colors.white, size: 22),
+              color: AppColor.white, size: 22),
           onPressed: () => _showOptions(context),
         ),
       ],
@@ -240,7 +240,7 @@ class _ChatRoomAppBar extends StatelessWidget implements PreferredSizeWidget {
       builder: (_) => Container(
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
         decoration: const BoxDecoration(
-          color: Colors.white,
+          color: AppColor.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
         ),
         child: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -335,8 +335,8 @@ class _HeaderAvatar extends StatelessWidget {
   const _HeaderAvatar({required this.initials});
 
   static const _colors = [
-    Color(0xffFF8C42), Color(0xff185FA5), Color(0xff27AE60),
-    Color(0xff8E44AD), Color(0xffE74C3C), Color(0xff16A085),
+    AppColor.primaryLight, AppColor.info, AppColor.success,
+    AppColor.statOrders, AppColor.error, AppColor.warning,
   ];
 
   @override
@@ -349,13 +349,13 @@ class _HeaderAvatar extends StatelessWidget {
       decoration: BoxDecoration(
         color: color.withOpacity(0.25),
         shape: BoxShape.circle,
-        border: Border.all(color: Colors.white.withOpacity(0.5), width: 1.5),
+        border: Border.all(color: AppColor.white.withOpacity(0.5), width: 1.5),
       ),
       child: Center(
         child: Text(
           initials.toUpperCase(),
           style: AppTextStyle.labelLarge.copyWith(
-              color: Colors.white, fontSize: 14, fontWeight: FontWeight.w800),
+              color: AppColor.white, fontSize: 14, fontWeight: FontWeight.w800),
         ),
       ),
     );
@@ -405,7 +405,7 @@ class _BuyerInfoSheet extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
       decoration: const BoxDecoration(
-        color: Colors.white,
+        color: AppColor.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -648,7 +648,7 @@ class _EmptyChat extends StatelessWidget {
       Container(
         width: 72, height: 72,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColor.white,
           shape: BoxShape.circle,
           boxShadow: AppColor.cardShadow,
         ),

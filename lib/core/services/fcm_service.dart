@@ -40,7 +40,8 @@ Future<void> _setupToken()async{
       _sendFCMTokenToServer(newToken);
     });
 
-    }
+    await _firebaseMessaging.subscribeToTopic('all_users');
+  }
   Future<void> _sendFCMTokenToServer(String fcmToken) async {
     await notificationsData.saveFCMToken(fcmToken);
   }
@@ -74,6 +75,15 @@ Future<void> _setupToken()async{
         case 'new_message':
           sellerController.setUnreadMessages(sellerController.unreadMessagesCount + 1);
           break;
+        case 'ad_notification':
+          customSnackbar(message.notification?.title ?? 'إعلان جديد'.tr,
+              message.notification?.body ?? 'إعلان جديد تم إضافته'.tr, isError: false);
+          break;
+      }
+    } else {
+      if (type == 'ad_notification') {
+        customSnackbar(message.notification?.title ?? 'إعلان جديد'.tr,
+            message.notification?.body ?? 'إعلان جديد تم إضافته'.tr, isError: false);
       }
     }
   }
@@ -89,6 +99,9 @@ Future<void> _setupToken()async{
           break;
         case 'new_message':
           sellerController.changeTab(3);
+          break;
+        case 'ad_notification':
+          // TODO: Navigate to Ads view or launch the ad link
           break;
       }
     } else {

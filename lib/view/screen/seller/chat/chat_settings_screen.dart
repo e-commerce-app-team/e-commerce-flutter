@@ -4,6 +4,7 @@ import 'package:e_commerce/controller/seller/seller_chat_controller.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
 import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/data/model/seller/chat_models.dart';
+import 'package:e_commerce/link_api.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // شاشة إعدادات الدردشة (ردود سريعة + ردود آلية)
@@ -15,7 +16,7 @@ class ChatSettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         backgroundColor: AppColor.secondBackground,
         appBar: AppBar(
@@ -39,6 +40,7 @@ class ChatSettingsScreen extends StatelessWidget {
             tabs: [
               Tab(text: 'quick_replies_tab'.tr),
               Tab(text: 'auto_replies_tab'.tr),
+              Tab(text: 'blocked_users_tab'.tr),
             ],
           ),
         ),
@@ -46,6 +48,7 @@ class ChatSettingsScreen extends StatelessWidget {
           children: [
             _QuickRepliesTab(ctrl: ctrl),
             _AutoRepliesTab(ctrl: ctrl),
+            _BlockedUsersTab(ctrl: ctrl),
           ],
         ),
       ),
@@ -791,3 +794,83 @@ InputDecoration _inputDeco(String hint, IconData icon) => InputDecoration(
 );
 
 // QuickReplyModel & AutoReplyModel are imported from chat_models.dart
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TAB 3 — المستخدمين المحظورين
+// ─────────────────────────────────────────────────────────────────────────────
+class _BlockedUsersTab extends StatelessWidget {
+  final SellerChatController ctrl;
+  const _BlockedUsersTab({required this.ctrl});
+
+  @override
+  Widget build(BuildContext context) {
+    return GetBuilder<SellerChatController>(
+      builder: (c) => Scaffold(
+        backgroundColor: AppColor.secondBackground,
+        body: c.blockedUsers.isEmpty
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.block_rounded, size: 64, color: AppColor.greyLight.withOpacity(0.5)),
+                    const SizedBox(height: 12),
+                    Text(
+                      'no_blocked_users'.tr,
+                      style: AppTextStyle.bodyMedium.copyWith(color: AppColor.greyLight),
+                    ),
+                  ],
+                ),
+              )
+            : ListView.separated(
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.all(16),
+                itemCount: c.blockedUsers.length,
+                separatorBuilder: (context, index) => const Divider(height: 1, color: AppColor.greyBorder),
+                itemBuilder: (context, index) {
+                  final blockedRecord = c.blockedUsers[index];
+                  final blockedUser = blockedRecord['blocked'] ?? {};
+                  final firstName = blockedUser['first_name'] ?? '';
+                  final lastName = blockedUser['last_name'] ?? '';
+                  final name = '$firstName $lastName'.trim().isNotEmpty ? '$firstName $lastName' : 'User #${blockedRecord['blocked_id']}';
+                  final email = blockedUser['email'] ?? '';
+                  final avatar = blockedUser['profile_photo'];
+
+                  return ListTile(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    leading: CircleAvatar(
+                      backgroundColor: AppColor.primarySurface,
+                      backgroundImage: avatar != null ? NetworkImage(AppLink.storageUrl(avatar)) : null,
+                      child: avatar == null ? const Icon(Icons.person_rounded, color: AppColor.primaryColor) : null,
+                    ),
+                    title: Text(name, style: AppTextStyle.labelLarge.copyWith(fontSize: 14)),
+                    subtitle: email.isNotEmpty ? Text(email, style: AppTextStyle.labelSmall.copyWith(color: AppColor.greyLight)) : null,
+                    trailing: TextButton(
+                      onPressed: () => _confirmUnblock(context, c, blockedRecord['blocked_id']),
+                      child: Text('unblock'.tr, style: AppTextStyle.labelLarge.copyWith(fontSize: 14, color: Colors.red)),
+                    ),
+                  );
+                },
+              ),
+      ),
+    );
+  }
+
+  void _confirmUnblock(BuildContext context, SellerChatController c, dynamic userId) {
+    int id = int.tryParse(userId.toString()) ?? 0;
+    if (id == 0) return;
+    Get.defaultDialog(
+      title: 'Alert'.tr,
+      middleText: 'unblock_confirm'.tr,
+      textCancel: 'cancel'.tr,
+      textConfirm: 'confirm'.tr,
+      confirmTextColor: Colors.white,
+      buttonColor: Colors.red,
+      onConfirm: () {
+        c.unblockUser(id);
+        Get.back();
+        Get.snackbar('success'.tr, 'unblocked_success'.tr, backgroundColor: Colors.green, colorText: Colors.white);
+      },
+    );
+  }
+}
+

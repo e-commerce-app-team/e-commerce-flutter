@@ -30,6 +30,12 @@ class SellerChatScreen extends StatelessWidget {
                     ? _EmptyConversations(hasSearch: ctrl.searchQuery.isNotEmpty)
                     : _ConversationsList(ctrl: ctrl),
               ),
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: ctrl.simulateBuyerMessage,
+          label: const Text('محاكاة المشتري', style: TextStyle(color: Colors.white)),
+          icon: const Icon(Icons.bug_report, color: Colors.white),
+          backgroundColor: AppColor.primaryColor,
+        ),
       ),
     );
   }

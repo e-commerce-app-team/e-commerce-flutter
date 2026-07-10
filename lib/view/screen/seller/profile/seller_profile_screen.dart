@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/controller/seller/seller_profile_controller.dart';
 import 'package:e_commerce/core/localization/changelocal.dart';
+import 'package:e_commerce/core/class/handling_dataview.dart';
 import 'package:e_commerce/core/class/status_request.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
 import 'package:e_commerce/core/constant/color.dart';
-import 'package:e_commerce/view/widget/seller/dashboard/shimmer_box.dart';
+import 'package:e_commerce/core/constant/routes.dart';
 import 'package:e_commerce/view/widget/seller/profile/profile_widgets.dart';
-import '../../../../core/constant/routes.dart';
 
 class SellerProfileScreen extends StatelessWidget {
   const SellerProfileScreen({super.key});
@@ -18,233 +18,248 @@ class SellerProfileScreen extends StatelessWidget {
 
     return GetBuilder<SellerProfileController>(
       builder: (ctrl) => Scaffold(
-        backgroundColor: Get.isDarkMode ? AppColor.darkSecondBackground : AppColor.secondBackground,
+        backgroundColor:
+        Get.isDarkMode ? AppColor.darkSecondBackground : AppColor.secondBackground,
         body: ctrl.statusRequest == StatusRequest.loading
-            ? const _ProfileShimmer()
-            : ctrl.profile == null
-            ? const SizedBox.shrink()
-            : CustomScrollView(
-          physics: const BouncingScrollPhysics(),
-          slivers: [
-            SliverToBoxAdapter(
-              child: ProfileHeader(
-                profile:      ctrl.profile!,
-                onEditPhoto:  ctrl.pickProfilePhoto,
-                onEditCover:  ctrl.pickCover,
-              ),
+            ? const _AccountShimmer()
+            : (ctrl.statusRequest == StatusRequest.offlinefailure ||
+            ctrl.statusRequest == StatusRequest.serverfailure ||
+            ctrl.profile == null)
+            ? HandlingDataView(
+          statusRequest: ctrl.statusRequest,
+          widget: const SizedBox.shrink(),
+        )
+            : _AccountBody(ctrl: ctrl),
+      ),
+    );
+  }
+}
+
+class _AccountBody extends StatelessWidget {
+  final SellerProfileController ctrl;
+  const _AccountBody({required this.ctrl});
+
+  @override
+  Widget build(BuildContext context) {
+    final profile = ctrl.profile!;
+    return RefreshIndicator(
+      onRefresh: ctrl.refreshProfile,
+      color: AppColor.primaryColor,
+      backgroundColor: Colors.white,
+      child: CustomScrollView(
+        physics:
+        const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+        slivers: [
+          SliverToBoxAdapter(
+            child: ProfileHeader(
+              profile: profile,
+              onEditPhoto: () => Get.toNamed(AppRoute.storeEdit),
+              onEditCover: () => Get.toNamed(AppRoute.storeEdit),
             ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate([
+                ProfileInfoCard(profile: profile),
+                const SizedBox(height: 20),
 
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
-              sliver: SliverList(
-                delegate: SliverChildListDelegate([
+                ProfileMenuSection(
+                  sectionLabel: 'acct_section_store'.tr,
+                  children: [
+                    ProfileMenuTile(
+                      icon: Icons.storefront_outlined,
+                      title: 'acct_edit_store_title'.tr,
+                      subtitle: profile.storeName,
+                      iconColor: AppColor.primaryColor,
+                      iconBg: AppColor.primarySurface,
+                      onTap: () => Get.toNamed(AppRoute.storeEdit),
+                    ),
+                    ProfileMenuTile(
+                      icon: Icons.local_shipping_outlined,
+                      title: 'acct_shipping_title'.tr,
+                      subtitle: ctrl.shippingMethod == 'our_delivery'
+                          ? 'acct_shipping_sub_platform'.tr
+                          : 'acct_shipping_sub_self'.tr,
+                      iconColor: AppColor.statOrders,
+                      iconBg: const Color(0xffEEEDFE),
+                      onTap: () => Get.toNamed(AppRoute.shippingSettings),
+                    ),
+                    ProfileMenuTile(
+                      icon: Icons.star_outline_rounded,
+                      title: 'acct_reviews_title'.tr,
+                      subtitle: '${profile.reviewCount} ${'acct_reviews_count'.tr}',
+                      iconColor: const Color(0xffF39C12),
+                      iconBg: AppColor.warningLight,
+                      trailing: const ProfileComingSoonChip(),
+                      showDivider: false,
+                      onTap: () {},
+                    ),
+                  ],
+                ),
 
-                  ProfileInfoCard(profile: ctrl.profile!),
-                  const SizedBox(height: 20),
+                ProfileMenuSection(
+                  sectionLabel: 'acct_section_marketing'.tr,
+                  children: [
+                    ProfileMenuTile(
+                      icon: Icons.casino_outlined,
+                      title: 'acct_spin_title'.tr,
+                      subtitle: 'acct_spin_sub'.tr,
+                      iconColor: AppColor.primaryColor,
+                      iconBg: AppColor.primarySurface,
+                      onTap: () => Get.toNamed(AppRoute.spinWheele),
+                    ),
+                    ProfileMenuTile(
+                      icon: Icons.local_offer_outlined,
+                      title: 'acct_coupons_title'.tr,
+                      iconColor: AppColor.success,
+                      iconBg: AppColor.successLight,
+                      onTap: () => Get.toNamed(AppRoute.coupons),
+                    ),
+                    ProfileMenuTile(
+                      icon: Icons.campaign_outlined,
+                      title: 'acct_ads_title'.tr,
+                      iconColor: AppColor.info,
+                      iconBg: AppColor.infoLight,
+                      showDivider: false,
+                      onTap: () => Get.toNamed(AppRoute.ads),
+                    ),
+                  ],
+                ),
 
-                  // ---------------- قسم إعدادات المتجر ----------------
+                if (ctrl.isWholesale)
                   ProfileMenuSection(
-                    sectionLabel: 'my_store'.tr, // متجري
+                    sectionLabel: 'acct_section_enterprise'.tr,
                     children: [
                       ProfileMenuTile(
-                        icon: Icons.storefront_outlined,
-                        title: 'edit_store_details'.tr, // تعديل بيانات المتجر
-                        subtitle: ctrl.profile!.storeName,
-                        iconColor: AppColor.primaryColor,
-                        iconBg: AppColor.primarySurface,
-                        onTap: () => Get.toNamed(AppRoute.storeEdit),
-                      ),
-                      ProfileMenuTile(
-                        icon: Icons.local_shipping_outlined,
-                        title: 'shipping_settings'.tr, // إعدادات الشحن
-                        subtitle: ctrl.shippingMethod == 'our_delivery'
-                            ? 'platform_delivery'.tr  // توصيل المنصة
-                            : 'self_shipping'.tr,     // شحن ذاتي
+                        icon: Icons.people_outline,
+                        title: 'acct_staff_title'.tr,
                         iconColor: AppColor.statOrders,
                         iconBg: const Color(0xffEEEDFE),
-                        onTap: () => Get.toNamed(AppRoute.shippingSettings),
+                        onTap: () => Get.toNamed(AppRoute.sellerStaff),
                       ),
                       ProfileMenuTile(
-                        icon: Icons.star_outline_rounded,
-                        title: 'ratings_and_reviews'.tr, // التقييمات والمراجعات
-                        subtitle: '${ctrl.profile!.reviewCount} ${'review'.tr}',
-                        iconColor: const Color(0xffF39C12),
+                        icon: Icons.store_mall_directory_outlined,
+                        title: 'acct_branches_title'.tr,
+                        iconColor: AppColor.statViews,
+                        iconBg: AppColor.infoLight,
+                        onTap: () => Get.toNamed(AppRoute.sellerBranches),
+                      ),
+                      ProfileMenuTile(
+                        icon: Icons.receipt_long_outlined,
+                        title: 'acct_invoices_title'.tr,
+                        iconColor: AppColor.warning,
                         iconBg: AppColor.warningLight,
                         showDivider: false,
-                        onTap: () {
-                          // TODO: Get.toNamed(AppRoute.reviews)
-                        },
+                        onTap: () => Get.toNamed(AppRoute.sellerInvoices),
                       ),
                     ],
                   ),
 
-                  // ---------------- قسم التسويق ----------------
-                  ProfileMenuSection(
-                    sectionLabel: 'marketing'.tr, // التسويق
-                    children: [
-                      ProfileMenuTile(
-                        icon: Icons.casino_outlined,
-                        title: 'spin_wheel'.tr, // دولاب الحظ
-                        subtitle: 'spin_wheel_desc'.tr, // اشترك لتقديم عروض للمشترين
+                ProfileMenuSection(
+                  sectionLabel: 'acct_section_preferences'.tr,
+                  children: [
+                    GetBuilder<LocaleController>(
+                      builder: (locCtrl) => ProfileMenuTile(
+                        icon: Icons.language_rounded,
+                        title: 'acct_language_title'.tr,
+                        subtitle: 'acct_language_sub'.tr,
                         iconColor: AppColor.primaryColor,
                         iconBg: AppColor.primarySurface,
-                        onTap: () {
-                          Get.toNamed(AppRoute.spinWheele);
-                        },
-                      ),
-                      ProfileMenuTile(
-                        icon: Icons.local_offer_outlined,
-                        title: 'discount_coupons'.tr, // كوبونات الخصم
-                        iconColor: AppColor.success,
-                        iconBg: AppColor.successLight,
-                        onTap: () {
-                          // TODO: Get.toNamed(AppRoute.coupons)
-                        },
-                      ),
-                      ProfileMenuTile(
-                        icon: Icons.campaign_outlined,
-                        title: 'advertisements'.tr, // الإعلانات
-                        iconColor: AppColor.info,
-                        iconBg: AppColor.infoLight,
-                        showDivider: false,
-                        onTap: () {
-                          Get.toNamed(AppRoute.ads);
-                        },
-                      ),
-                    ],
-                  ),
-
-                  // ---------------- قسم المؤسسة (للتجار من نوع شركات) ----------------
-                  if (ctrl.isWholesale)
-                    ProfileMenuSection(
-                      sectionLabel: 'enterprise'.tr, // المؤسسة
-                      children: [
-                        ProfileMenuTile(
-                          icon: Icons.people_outline,
-                          title: 'staff_management'.tr, // إدارة الموظفين
-                          iconColor: AppColor.statOrders,
-                          iconBg: const Color(0xffEEEDFE),
-                          onTap: () {
-                            // TODO: Get.toNamed(AppRoute.staff)
-                          },
+                        trailing: ProfileTrailingChip(
+                          label: (locCtrl.language?.languageCode ?? 'ar') == 'ar'
+                              ? 'acct_lang_arabic_native'.tr
+                              : 'acct_lang_english_native'.tr,
                         ),
-                        ProfileMenuTile(
-                          icon: Icons.store_mall_directory_outlined,
-                          title: 'branches_and_warehouses'.tr, // الفروع والمستودعات
-                          iconColor: AppColor.statViews,
-                          iconBg: AppColor.infoLight,
-                          onTap: () {
-                            // TODO: Get.toNamed(AppRoute.branches)
-                          },
-                        ),
-                        ProfileMenuTile(
-                          icon: Icons.receipt_long_outlined,
-                          title: 'tax_invoices'.tr, // الفواتير الضريبية
-                          iconColor: AppColor.warning,
-                          iconBg: AppColor.warningLight,
-                          showDivider: false,
-                          onTap: () {
-                            Get.toNamed(AppRoute.sellerInvoices);
-                          },
-                        ),
-                      ],
+                        onTap: () => Get.toNamed(AppRoute.languageSettings),
+                      ),
                     ),
-
-                  // ---------------- قسم الحساب والأمان ----------------
-                  ProfileMenuSection(
-                    sectionLabel: 'account_and_security'.tr, // الحساب والأمان
-                    children: [
-                      ProfileMenuTile(
-                        icon: Icons.lock_outline_rounded,
-                        title: 'change_password'.tr, // تغيير كلمة المرور
-                        iconColor: AppColor.grey,
-                        iconBg: Get.isDarkMode ? AppColor.darkSecondBackground : AppColor.secondBackground,
-                        onTap: () {
-                          Get.toNamed(AppRoute.changePassword);
-                        },
-                      ),
-                      ProfileMenuTile(
-                        icon: Icons.dark_mode_outlined,
-                        title: 'الوضع الليلي', // dark mode
-                        iconColor: AppColor.grey,
-                        iconBg: Get.isDarkMode ? AppColor.darkSecondBackground : AppColor.secondBackground,
-                        trailing: GetBuilder<LocaleController>(
-                          builder: (locCtrl) => Switch(
-                            value: locCtrl.isDarkMode,
-                            onChanged: (val) => locCtrl.changeThemeMode(),
-                            activeColor: AppColor.primaryColor,
-                          ),
+                    GetBuilder<LocaleController>(
+                      builder: (locCtrl) => ProfileMenuTile(
+                        icon: Icons.palette_outlined,
+                        title: 'acct_theme_title'.tr,
+                        subtitle: 'acct_theme_sub'.tr,
+                        iconColor: AppColor.statAvg,
+                        iconBg: AppColor.successLight,
+                        trailing: ProfileTrailingChip(
+                          label: locCtrl.isDarkMode
+                              ? 'acct_theme_dark'.tr
+                              : 'acct_theme_light'.tr,
                         ),
-                        onTap: () {
-                          Get.find<LocaleController>().changeThemeMode();
-                        },
-                      ),
-                      ProfileMenuTile(
-                        icon: Icons.devices_outlined,
-                        title: 'active_devices'.tr, // الأجهزة النشطة
-                        iconColor: AppColor.grey,
-                        iconBg: Get.isDarkMode ? AppColor.darkSecondBackground : AppColor.secondBackground,
-                        onTap: () {
-                          // TODO: Get.toNamed(AppRoute.devices)
-                        },
-                      ),
-                      ProfileMenuTile(
-                        icon: Icons.notifications_outlined,
-                        title: 'notification_settings'.tr, // إعدادات الإشعارات
-                        iconColor: AppColor.grey,
-                        iconBg: Get.isDarkMode ? AppColor.darkSecondBackground : AppColor.secondBackground,
                         showDivider: false,
-                        onTap: () {
-                          // TODO: Get.toNamed(AppRoute.notifSettings)
-                        },
+                        onTap: () => Get.toNamed(AppRoute.themeSettings),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
+                ),
 
-                  // ---------------- قسم الدعم الفني ----------------
-                  ProfileMenuSection(
-                    sectionLabel: 'support'.tr, // الدعم
-                    children: [
-                      ProfileMenuTile(
-                        icon: Icons.headset_mic_outlined,
-                        title: 'seller_support_center'.tr, // مركز دعم التجار
-                        iconColor: AppColor.info,
-                        iconBg: AppColor.infoLight,
-                        onTap: () {
-                          // TODO: Get.toNamed(AppRoute.support)
-                        },
-                      ),
-                      ProfileMenuTile(
-                        icon: Icons.info_outline_rounded,
-                        title: 'about_app'.tr, // حول التطبيق
-                        subtitle: 'الإصدار 1.0.0', // يمكن تركها هكذا أو وضعها بالـ Info
-                        iconColor: AppColor.grey,
-                        iconBg: Get.isDarkMode ? AppColor.darkSecondBackground : AppColor.secondBackground,
-                        showDivider: false,
-                        onTap: () {},
-                      ),
-                    ],
-                  ),
+                ProfileMenuSection(
+                  sectionLabel: 'acct_section_security'.tr,
+                  children: [
+                    ProfileMenuTile(
+                      icon: Icons.lock_outline_rounded,
+                      title: 'acct_change_password_title'.tr,
+                      iconColor: AppColor.grey,
+                      iconBg: Get.isDarkMode
+                          ? AppColor.darkSecondBackground
+                          : AppColor.secondBackground,
+                      onTap: () => Get.toNamed(AppRoute.changePassword),
+                    ),
+                    ProfileMenuTile(
+                      icon: Icons.notifications_outlined,
+                      title: 'acct_notifications_title'.tr,
+                      iconColor: AppColor.grey,
+                      iconBg: Get.isDarkMode
+                          ? AppColor.darkSecondBackground
+                          : AppColor.secondBackground,
+                      trailing: const ProfileComingSoonChip(),
+                      showDivider: false,
+                      onTap: () {},
+                    ),
+                  ],
+                ),
 
-                  // ---------------- تسجيل الخروج ----------------
-                  ProfileMenuSection(
-                    children: [
-                      ProfileMenuTile(
-                        icon: Icons.logout_rounded,
-                        title: 'logout'.tr, // تسجيل الخروج
-                        iconColor: AppColor.error,
-                        iconBg: AppColor.errorLight,
-                        isDestructive: true,
-                        showDivider: false,
-                        onTap: () => _confirmLogout(context, ctrl),
-                      ),
-                    ],
-                  ),
-                ]),
-              ),
+                ProfileMenuSection(
+                  sectionLabel: 'acct_section_support'.tr,
+                  children: [
+                    ProfileMenuTile(
+                      icon: Icons.headset_mic_outlined,
+                      title: 'acct_support_title'.tr,
+                      iconColor: AppColor.info,
+                      iconBg: AppColor.infoLight,
+                      onTap: () => Get.toNamed(AppRoute.sellerSupport),
+                    ),
+                    ProfileMenuTile(
+                      icon: Icons.info_outline_rounded,
+                      title: 'acct_about_title'.tr,
+                      subtitle: 'acct_about_version'.tr,
+                      iconColor: AppColor.grey,
+                      iconBg: Get.isDarkMode
+                          ? AppColor.darkSecondBackground
+                          : AppColor.secondBackground,
+                      showDivider: false,
+                      onTap: () {},
+                    ),
+                  ],
+                ),
+
+                ProfileMenuSection(
+                  children: [
+                    ProfileMenuTile(
+                      icon: Icons.logout_rounded,
+                      title: 'acct_logout_title'.tr,
+                      iconColor: AppColor.error,
+                      iconBg: AppColor.errorLight,
+                      isDestructive: true,
+                      showDivider: false,
+                      onTap: () => _confirmLogout(context, ctrl),
+                    ),
+                  ],
+                ),
+              ]),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -254,8 +269,8 @@ class SellerProfileScreen extends StatelessWidget {
       context: context,
       builder: (_) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('logout'.tr, style: AppTextStyle.heading3),
-        content: Text('logout_confirm_msg'.tr, style: AppTextStyle.bodyMedium),
+        title: Text('acct_logout_confirm_title'.tr, style: AppTextStyle.heading3),
+        content: Text('acct_logout_confirm_body'.tr, style: AppTextStyle.bodyMedium),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
@@ -272,7 +287,7 @@ class SellerProfileScreen extends StatelessWidget {
               elevation: 0,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
-            child: Text('logout_button'.tr, style: AppTextStyle.buttonSmall),
+            child: Text('acct_logout_confirm_btn'.tr, style: AppTextStyle.buttonSmall),
           ),
         ],
       ),
@@ -280,49 +295,21 @@ class SellerProfileScreen extends StatelessWidget {
   }
 }
 
-class _ProfileShimmer extends StatelessWidget {
-  const _ProfileShimmer();
+class _AccountShimmer extends StatelessWidget {
+  const _AccountShimmer();
+
   @override
   Widget build(BuildContext context) => SingleChildScrollView(
     physics: const NeverScrollableScrollPhysics(),
     child: Column(children: [
-      const ShimmerBox(width: double.infinity, height: 130),
-      Padding(
-        padding: const EdgeInsets.fromLTRB(16, 56, 16, 0),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Get.isDarkMode ? AppColor.darkCard : Colors.white,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: const Column(children: [
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ShimmerBox(width: 140, height: 16),
-                  ShimmerBox(width: 60,  height: 24, radius: 12),
-                ]),
-            SizedBox(height: 12),
-            ShimmerBox(width: double.infinity, height: 10),
-            SizedBox(height: 16),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  ShimmerBox(width: 50, height: 36),
-                  ShimmerBox(width: 50, height: 36),
-                  ShimmerBox(width: 50, height: 36),
-                ]),
-          ]),
-        ),
-      ),
-      const SizedBox(height: 16),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Container(
-          height: 150,
-          decoration: BoxDecoration(
-            color: Get.isDarkMode ? AppColor.darkCard : Colors.white,
-            borderRadius: BorderRadius.circular(16),
-          ),
-        ),
+      const ProfileHeaderShimmer(),
+      const Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: Column(children: [
+          ProfileMenuSectionShimmer(itemCount: 3),
+          ProfileMenuSectionShimmer(itemCount: 3),
+          ProfileMenuSectionShimmer(itemCount: 2),
+        ]),
       ),
     ]),
   );
