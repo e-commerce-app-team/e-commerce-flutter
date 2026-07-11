@@ -33,11 +33,14 @@ import 'package:e_commerce/view/screen/seller/support/tickets_screen.dart';
 import 'package:e_commerce/view/widget/seller/seller_drawer.dart';
 import 'package:e_commerce/controller/seller/seller_chat_controller.dart';
 import 'package:e_commerce/view/screen/seller/chat/chat_settings_screen.dart';
+import 'package:e_commerce/view/screen/buyer/buyer_home_screen.dart';
+import 'package:e_commerce/view/screen/buyer/explore/explore_screen.dart';
+import 'package:e_commerce/view/screen/buyer/buyer_main_screen.dart';
 import 'package:get/get.dart';
 
 List<GetPage<dynamic>>? routes = [
 
-  GetPage(name: "/", page: () => const OnBoarding(), middlewares: [
+  GetPage(name: "/", page: () => const  BuyerMainScreen(), middlewares: [
 
     MyMiddleWare()
 
@@ -97,4 +100,6 @@ List<GetPage<dynamic>>? routes = [
   )),
   GetPage(name: AppRoute.languageSettings, page: () => const LanguageSettingsScreen()),
   GetPage(name: AppRoute.themeSettings, page: () => const ThemeSettingsScreen()),
+  GetPage(name: AppRoute.buyerMain, page: () => const BuyerMainScreen()),
+  GetPage(name: AppRoute.explore, page: () => const ExploreScreen()),
 ];
