@@ -39,5 +39,6 @@ class AppRoute {
   static const String languageSettings = "/seller/language-settings";
   static const String themeSettings    = "/seller/theme-settings";
   static const String sellerProfile = "/seller/profile";
-
+  static const String buyerMain = "/buyerMain";
+  static const String explore = "/explore";
 }
