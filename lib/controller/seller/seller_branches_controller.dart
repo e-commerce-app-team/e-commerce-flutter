@@ -49,13 +49,18 @@ class SellerBranchesController extends GetxController {
     String token = myServices.sharedPreferences.getString("token") ?? "";
     final response = await branchesData.getBranches(token);
 
-    if (response is List) {
-      branches = response.map((e) => BranchModel.fromJson(e)).toList();
-      statusRequest = StatusRequest.success;
-    } else {
-      branches      = BranchModel.mockList();
-      statusRequest = StatusRequest.success;
-    }
+    response.fold((failure) {
+      statusRequest = failure;
+    }, (resData) {
+      if (resData['success'] == true) {
+        List data = resData['data'] ?? [];
+        branches = data.map((e) => BranchModel.fromJson(e)).toList();
+        statusRequest = StatusRequest.success;
+      } else {
+        branches      = [];
+        statusRequest = StatusRequest.success;
+      }
+    });
 
     update();
   }
@@ -90,15 +95,11 @@ class SellerBranchesController extends GetxController {
   }
 
   Future<void> openMap() async {
-
     final result = await Get.toNamed('/seller/branches/location');
-
-
     if (result != null && result is LatLng) {
       setLocation(result.latitude, result.longitude);
     }
   }
-
 
   void setLocation(double lat, double lng) {
     selectedLat       = lat;
@@ -153,6 +154,8 @@ class SellerBranchesController extends GetxController {
     );
 
     dynamic response;
+    final bool wasEditing = isEditing;
+    final int? editedId   = editingBranch?.id;
     String token = myServices.sharedPreferences.getString("token") ?? "";
 
     if (isEditing) {
@@ -161,33 +164,35 @@ class SellerBranchesController extends GetxController {
       response = await branchesData.addBranch(token, branch);
     }
 
-    if (response != null) {
-      if (isEditing) {
-        final idx = branches.indexWhere((b) => b.id == editingBranch!.id);
-        if (idx != -1) {
-          branches[idx] = response is Map
-              ? BranchModel.fromJson(response as Map<String, dynamic>)
-              : branch.copyWith(id: editingBranch!.id);
+    bool success = false;
+    response.fold((failure) {
+      formStatusRequest = failure;
+    }, (resData) {
+      if (resData['success'] == true) {
+        final Map<String, dynamic> data = Map<String, dynamic>.from(resData['data'] ?? {});
+        if (wasEditing) {
+          final idx = branches.indexWhere((b) => b.id == editedId);
+          if (idx != -1) branches[idx] = BranchModel.fromJson(data);
+        } else {
+          branches.insert(0, BranchModel.fromJson(data));
         }
+        formStatusRequest = StatusRequest.success;
+        success = true;
       } else {
-        branches.insert(
-          0,
-          response is Map
-              ? BranchModel.fromJson(response as Map<String, dynamic>)
-              : branch.copyWith(id: DateTime.now().millisecondsSinceEpoch),
-        );
+        formStatusRequest = StatusRequest.serverfailure;
       }
-    }
+    });
 
-    formStatusRequest = StatusRequest.success;
     update();
 
-    Get.back();
-    customSnackbar(
-      isEditing ? 'branch_updated_title'.tr : 'branch_added_title'.tr,
-      isEditing ? 'branch_updated_body'.tr  : 'branch_added_body'.tr,
-      isError: false,
-    );
+    if (success) {
+      Get.back();
+      customSnackbar(
+        wasEditing ? 'branch_updated_title'.tr : 'branch_added_title'.tr,
+        wasEditing ? 'branch_updated_body'.tr  : 'branch_added_body'.tr,
+        isError: false,
+      );
+    }
   }
 
   Future<void> toggleActive(int id) async {
@@ -196,15 +201,18 @@ class SellerBranchesController extends GetxController {
     togglingIds.add(id);
     update();
 
-    final idx     = branches.indexWhere((b) => b.id == id);
+    final idx = branches.indexWhere((b) => b.id == id);
     if (idx == -1) { togglingIds.remove(id); update(); return; }
 
     final newState = !branches[idx].isActive;
     String token = myServices.sharedPreferences.getString("token") ?? "";
 
-    await branchesData.toggleActive(token, id, newState);
-
-    branches[idx] = branches[idx].copyWith(isActive: newState);
+    final response = await branchesData.toggleActive(token, id, newState);
+    response.fold((l) {}, (r) {
+      if (r['success'] == true) {
+        branches[idx] = branches[idx].copyWith(isActive: newState);
+      }
+    });
     togglingIds.remove(id);
     update();
   }
@@ -222,9 +230,14 @@ class SellerBranchesController extends GetxController {
     update();
 
     String token = myServices.sharedPreferences.getString("token") ?? "";
-    await branchesData.deleteBranch(token, id);
+    final response = await branchesData.deleteBranch(token, id);
 
-    branches.removeWhere((b) => b.id == id);
+    response.fold((l) {}, (r) {
+      if (r['success'] == true) {
+        branches.removeWhere((b) => b.id == id);
+      }
+    });
+
     deletingIds.remove(id);
     update();
 

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/controller/seller/seller_main_controller.dart';
@@ -19,19 +19,22 @@ class SellerMainScreen extends StatelessWidget {
 
     return GetBuilder<SellerMainController>(
       builder: (controller) {
-        return Scaffold(
+        // Build the list of screens that this user can access.
+        // All 5 screens exist; we filter by permission so
+        // the IndexedStack still works correctly.
+        final allScreens = const [
+          SellerDashboardScreen(), // index 0
+          SellerInventoryScreen(), // index 1
+          SellerOrdersScreen(),    // index 2
+          SellerChatScreen(),      // index 3
+          SellerProfileScreen(),   // index 4
+        ];
 
+        return Scaffold(
           body: IndexedStack(
             index: controller.currentIndex,
-            children: const [
-              SellerDashboardScreen(),
-              SellerInventoryScreen(),
-              SellerOrdersScreen(),
-              SellerChatScreen(),
-              SellerProfileScreen(),
-            ],
+            children: allScreens,
           ),
-
           bottomNavigationBar: _SellerBottomNavBar(controller: controller),
         );
       },
@@ -45,6 +48,59 @@ class _SellerBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Build nav items list based on what this user has access to.
+    final items = <_NavItemData>[];
+
+    if (controller.showDashboard) {
+      items.add(_NavItemData(
+        icon:       Icons.dashboard_outlined,
+        iconActive: Icons.dashboard,
+        labelKey:   "Home",
+        screenIdx:  0,
+        badgeCount: 0,
+      ));
+    }
+
+    if (controller.showInventory) {
+      items.add(_NavItemData(
+        icon:       Icons.inventory_2_outlined,
+        iconActive: Icons.inventory_2,
+        labelKey:   "Inventory",
+        screenIdx:  1,
+        badgeCount: 0,
+      ));
+    }
+
+    if (controller.showOrders) {
+      items.add(_NavItemData(
+        icon:       Icons.shopping_cart_outlined,
+        iconActive: Icons.shopping_cart,
+        labelKey:   "Requests",
+        screenIdx:  2,
+        badgeCount: controller.newOrdersCount,
+        onTapExtra: controller.clearOrdersBadge,
+      ));
+    }
+
+    if (controller.showChat) {
+      items.add(_NavItemData(
+        icon:       Icons.chat_bubble_outline,
+        iconActive: Icons.chat_bubble,
+        labelKey:   "Messages",
+        screenIdx:  3,
+        badgeCount: controller.unreadMessagesCount,
+      ));
+    }
+
+    // Profile is always visible
+    items.add(_NavItemData(
+      icon:       Icons.person_outline,
+      iconActive: Icons.person,
+      labelKey:   "Account",
+      screenIdx:  4,
+      badgeCount: 0,
+    ));
+
     return Container(
       decoration: BoxDecoration(
         color: AppColor.backgroundcolor,
@@ -53,9 +109,9 @@ class _SellerBottomNavBar extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color:      Colors.black.withOpacity(0.1),
             blurRadius: 10,
-            offset: const Offset(0, -2),
+            offset:     const Offset(0, -2),
           ),
         ],
       ),
@@ -64,53 +120,43 @@ class _SellerBottomNavBar extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 6),
           child: Row(
-            children: [
-              _NavItem(
-                icon: Icons.dashboard_outlined,
-                iconActive: Icons.dashboard,
-                label: "Home".tr,
-                isActive: controller.currentIndex == 0,
-                onTap: () => controller.changeTab(0),
-              ),
-              _NavItem(
-                icon: Icons.inventory_2_outlined,
-                iconActive: Icons.inventory_2,
-                label: "Inventory".tr,
-                isActive: controller.currentIndex == 1,
-                onTap: () => controller.changeTab(1),
-              ),
-              _NavItem(
-                icon: Icons.shopping_cart_outlined,
-                iconActive: Icons.shopping_cart,
-                label: "Requests".tr,
-                isActive: controller.currentIndex == 2,
-                badgeCount: controller.newOrdersCount,
-                onTap: () {
-                  controller.clearOrdersBadge();
-                  controller.changeTab(2);
-                },
-              ),
-              _NavItem(
-                icon: Icons.chat_bubble_outline,
-                iconActive: Icons.chat_bubble,
-                label: "Messages".tr,
-                isActive: controller.currentIndex == 3,
-                badgeCount: controller.unreadMessagesCount,
-                onTap: () => controller.changeTab(3),
-              ),
-              _NavItem(
-                icon: Icons.person_outline,
-                iconActive: Icons.person,
-                label: "Account".tr,
-                isActive: controller.currentIndex == 4,
-                onTap: () => controller.changeTab(4),
-              ),
-            ],
+            children: items
+                .map((item) => _NavItem(
+                      icon:       item.icon,
+                      iconActive: item.iconActive,
+                      label:      item.labelKey.tr,
+                      isActive:   controller.currentIndex == item.screenIdx,
+                      badgeCount: item.badgeCount,
+                      onTap: () {
+                        item.onTapExtra?.call();
+                        controller.changeTab(item.screenIdx);
+                      },
+                    ))
+                .toList(),
           ),
         ),
       ),
     );
   }
+}
+
+/// Simple data holder for nav items
+class _NavItemData {
+  final IconData icon;
+  final IconData iconActive;
+  final String   labelKey;
+  final int      screenIdx;
+  final int      badgeCount;
+  final VoidCallback? onTapExtra;
+
+  const _NavItemData({
+    required this.icon,
+    required this.iconActive,
+    required this.labelKey,
+    required this.screenIdx,
+    required this.badgeCount,
+    this.onTapExtra,
+  });
 }
 
 class _NavItem extends StatelessWidget {
@@ -149,33 +195,31 @@ class _NavItem extends StatelessWidget {
                     duration: const Duration(milliseconds: 300),
                     child: Icon(
                       isActive ? iconActive : icon,
-                      key: ValueKey(isActive),
-                      size: 24,
+                      key:   ValueKey(isActive),
+                      size:  24,
                       color: isActive ? AppColor.primaryColor : AppColor.grey,
                     ),
                   ),
                   if (badgeCount > 0)
                     Positioned(
-                      top: -10,
+                      top:   -10,
                       right: -12,
                       child: Container(
-                        padding: const EdgeInsets.all(3),
+                        padding:     const EdgeInsets.all(3),
                         constraints: const BoxConstraints(
-                          minWidth: 28,
+                          minWidth:  28,
                           minHeight: 25,
-                         // maxHeight:25 ,
-                          //maxWidth: 25,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColor.primaryColor.withOpacity(0.9),
+                          color:        AppColor.primaryColor.withOpacity(0.9),
                           borderRadius: BorderRadius.circular(15),
-                          border: Border.all(color: Colors.white, width: 1.5),
+                          border:       Border.all(color: Colors.white, width: 1.5),
                         ),
                         child: Text(
                           badgeCount > 99 ? "99+" : badgeCount.toString(),
                           style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
+                            color:      Colors.white,
+                            fontSize:   10,
                             fontWeight: FontWeight.bold,
                           ),
                           textAlign: TextAlign.center,
@@ -188,19 +232,19 @@ class _NavItem extends StatelessWidget {
               AnimatedDefaultTextStyle(
                 duration: const Duration(milliseconds: 200),
                 style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                  fontSize: 10,
+                  fontSize:   10,
                   fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
-                  color: isActive ? AppColor.primaryColor : AppColor.grey,
+                  color:      isActive ? AppColor.primaryColor : AppColor.grey,
                 ),
                 child: Text(label),
               ),
               const SizedBox(height: 2),
               AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                width: isActive ? 20 : 0,
+                width:  isActive ? 20 : 0,
                 height: 3,
                 decoration: BoxDecoration(
-                  color: AppColor.primaryColor,
+                  color:        AppColor.primaryColor,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),

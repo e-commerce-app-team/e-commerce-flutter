@@ -312,6 +312,16 @@ class _StaffCardState extends State<_StaffCard>
                     },
                   ),
                   const SizedBox(width: 8),
+                  if (!m.isPending) ...[
+                    _CardAction(
+                      icon: m.isActive ? Icons.block_flipped : Icons.check_circle_outline,
+                      color: m.isActive ? AppColor.warning : AppColor.success,
+                      bg:    m.isActive ? AppColor.warningLight : AppColor.successLight,
+                      label: m.isActive ? 'Deactivate' : 'Activate',
+                      onTap: () => ctrl.toggleStaffStatus(m),
+                    ),
+                    const SizedBox(width: 8),
+                  ],
                   _CardAction(
                     icon: isDeleting
                         ? Icons.hourglass_empty_rounded

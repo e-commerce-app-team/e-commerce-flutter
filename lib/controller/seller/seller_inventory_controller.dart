@@ -11,6 +11,7 @@ import 'package:e_commerce/core/functions/show_image_picker.dart';
 import 'package:e_commerce/core/services/services.dart';
 import 'package:e_commerce/data/datasource/remote/seller/inventory_data.dart';
 import 'package:e_commerce/data/model/seller/inventory_models.dart';
+import 'package:e_commerce/link_api.dart';
 
 class SellerInventoryController extends GetxController {
   MyServices myServices = Get.find();
@@ -191,7 +192,7 @@ class SellerInventoryController extends GetxController {
         statusRequest = failure;
         update();
       },
-      (response) {
+      (response) async {
         if (response['success'] == true) {
           final rawData = response['data'];
           // Handle both paginated ({ data: [...] }) and direct list responses
@@ -205,8 +206,8 @@ class SellerInventoryController extends GetxController {
           // Enrich with category names from local tree
           _enrichProductsWithCategoryNames();
 
-          // Load warehouses locally (no dedicated backend endpoint yet)
-          if (isWholesale) _loadWarehousesLocal();
+          // Load warehouses from backend API
+          if (isWholesale) await _loadWarehouses();
 
           _applyFilters();
           statusRequest = StatusRequest.success;
@@ -276,10 +277,27 @@ class SellerInventoryController extends GetxController {
     }
   }
 
-  /// Loads warehouse list locally (static mock) until a backend endpoint
-  /// for warehouses is implemented.
-  void _loadWarehousesLocal() {
-    warehouses = WarehouseModel.mockList();
+  /// Loads warehouse list from backend API
+  Future<void> _loadWarehouses() async {
+    final response = await inventoryData.crud.getData(AppLink.sellerBranches, headers: {"Authorization": "Bearer $_token"});
+    
+    // Always include the main branch
+    final mainBranch = const WarehouseModel(
+      id: 0, 
+      name: 'المستودع الرئيسي', 
+      type: 'warehouse', 
+      city: '', 
+      isActive: true
+    );
+    warehouses = [mainBranch];
+
+    response.fold((l) {}, (r) {
+      if (r['success'] == true) {
+        List data = r['data'];
+        warehouses.addAll(data.map((e) => WarehouseModel.fromJson(e)));
+      }
+    });
+
     for (final w in warehouses) {
       formData.warehouseQty.putIfAbsent(w.id, () => '');
     }
@@ -506,7 +524,9 @@ class SellerInventoryController extends GetxController {
   String formStatus = 'active';
   bool formFreeShipping = false;
   bool formWholesale = false;
+  bool formTaxExempt = false;
   String? formSaleEndsAt;
+  final taxExemptReasonCtrl = TextEditingController();
   final List<File> productImages = [];
   ProductModel? _editingProduct;
   bool get isEditing => _editingProduct != null;
@@ -537,6 +557,11 @@ class SellerInventoryController extends GetxController {
 
   void toggleWholesale() {
     formWholesale = !formWholesale;
+    update();
+  }
+
+  void toggleTaxExempt() {
+    formTaxExempt = !formTaxExempt;
     update();
   }
 
@@ -733,15 +758,16 @@ class SellerInventoryController extends GetxController {
     update();
   }
 
-  void prepareAddForm() {
+  Future<void> prepareAddForm() async {
     _editingProduct = null;
     _clearForm();
     if (isWholesale) {
+      await _loadWarehouses();
       formData.warehouseQty = {for (final w in warehouses) w.id: ''};
     }
   }
 
-  void prepareEditForm(ProductModel p) {
+  Future<void> prepareEditForm(ProductModel p) async {
     _editingProduct = p;
     nameCtrl.text = p.name;
     descCtrl.text = p.description;
@@ -755,6 +781,10 @@ class SellerInventoryController extends GetxController {
     formStatus = p.status;
     formFreeShipping = p.isFreeShipping;
     formWholesale = p.wholesaleEnabled;
+    formTaxExempt = p.taxExempt;
+    if (formTaxExempt && p.taxExemptReason != null) {
+      taxExemptReasonCtrl.text = p.taxExemptReason!;
+    }
     if (formWholesale) {
       if (p.wholesalePrice != null) wsPrice.text = p.wholesalePrice.toString();
       if (p.minWholesaleQty != null) wsMinQty.text = p.minWholesaleQty.toString();
@@ -765,6 +795,7 @@ class SellerInventoryController extends GetxController {
       _initVariantControllers(formData.variants, {}, {});
     }
     if (isWholesale) {
+      await _loadWarehouses();
       formData.warehouseQty = {for (final w in warehouses) w.id: ''};
       for (final ws in p.warehouseStock) {
         formData.warehouseQty[ws.warehouseId] = ws.qty.toString();
@@ -776,7 +807,7 @@ class SellerInventoryController extends GetxController {
   void _clearForm() {
     for (final c in [
       nameCtrl, descCtrl, priceCtrl, salePriceCtrl,
-      skuCtrl, stockCtrl, wsPrice, wsMinQty, weightCtrl
+      skuCtrl, stockCtrl, wsPrice, wsMinQty, weightCtrl, taxExemptReasonCtrl
     ]) {
       c.clear();
     }
@@ -785,6 +816,7 @@ class SellerInventoryController extends GetxController {
     formStatus = 'active';
     formFreeShipping = false;
     formWholesale = false;
+    formTaxExempt = false;
     formSaleEndsAt = null;
     productImages.clear();
     formData.warehouseQty.clear();
@@ -896,7 +928,12 @@ class SellerInventoryController extends GetxController {
       'alert_threshold': alertCtrl.text.trim(),
       'status': formStatus,
       'is_free_shipping': formFreeShipping ? '1' : '0',
+      'tax_exempt': formTaxExempt ? '1' : '0',
     };
+
+    if (formTaxExempt && taxExemptReasonCtrl.text.isNotEmpty) {
+      fields['tax_exempt_reason'] = taxExemptReasonCtrl.text.trim();
+    }
 
     if (salePriceCtrl.text.isNotEmpty) {
       fields['offer_price'] = salePriceCtrl.text.trim();

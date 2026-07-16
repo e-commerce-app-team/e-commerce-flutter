@@ -39,6 +39,7 @@ class LoginControllerImp extends LoginController {
       statusRequest = StatusRequest.loading;
       update();
 
+
       var response = await loginData.postData(email.text, password.text);
       response.fold((left){
       statusRequest=left;
@@ -49,11 +50,28 @@ class LoginControllerImp extends LoginController {
           myServices.sharedPreferences.setString("token", right['access_token']);
           myServices.sharedPreferences.setString("email", right['user']['email']);
 
+          // ─── Save permissions for staff members ───────────────────────
+          final rawPerms = right['user']['permissions'];
+          if (rawPerms != null && rawPerms is List) {
+            myServices.sharedPreferences.setStringList(
+              'permissions',
+              List<String>.from(rawPerms.map((e) => e.toString())),
+            );
+          } else {
+            // Owners have no restriction list — clear any stale data
+            myServices.sharedPreferences.setStringList('permissions', []);
+          }
+
           String role = right['user']['role'];
           if (role == "buyer") {
             myServices.sharedPreferences.setString("onboarding", "1");
             Get.offAllNamed(AppRoute.successSignUp);
-          } else if (role == "vendor"||role == "wholesale") {
+          } else if (role == "vendor" || role == "wholesale") {
+            myServices.sharedPreferences.setString("onboarding", "1");
+            Get.offAllNamed(AppRoute.sellerMain);
+          } else if (role == "staff") {
+            // Staff member — goes to same seller main screen
+            // but SellerMainScreen will filter tabs based on permissions
             myServices.sharedPreferences.setString("onboarding", "1");
             Get.offAllNamed(AppRoute.sellerMain);
           } else {

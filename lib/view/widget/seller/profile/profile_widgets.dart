@@ -11,14 +11,14 @@ import 'package:e_commerce/view/widget/seller/dashboard/shimmer_box.dart';
 // =========================================================================
 class ProfileHeader extends StatelessWidget {
   final SellerProfileModel profile;
-  final VoidCallback onEditPhoto;
-  final VoidCallback onEditCover;
+  final VoidCallback? onEditPhoto;
+  final VoidCallback? onEditCover;
 
   const ProfileHeader({
     super.key,
     required this.profile,
-    required this.onEditPhoto,
-    required this.onEditCover,
+    this.onEditPhoto,
+    this.onEditCover,
   });
 
   @override
@@ -57,14 +57,16 @@ class ProfileHeader extends StatelessWidget {
                   ),
                 ),
               ),
-              PositionedDirectional(
-                top: 12,
-                end: 12,
-                child: _GlassBadge(
-                  icon: Icons.camera_alt_outlined,
-                  label: 'acct_change_cover'.tr,
+              // Only show cover-edit badge for owners
+              if (onEditCover != null)
+                PositionedDirectional(
+                  top: 12,
+                  end: 12,
+                  child: _GlassBadge(
+                    icon: Icons.camera_alt_outlined,
+                    label: 'acct_change_cover'.tr,
+                  ),
                 ),
-              ),
             ],
           ),
         ),
@@ -95,24 +97,26 @@ class ProfileHeader extends StatelessWidget {
                     : const _LogoFallback(),
               ),
             ),
-            PositionedDirectional(
-              bottom: 0,
-              start: 0,
-              child: GestureDetector(
-                onTap: onEditPhoto,
-                child: Container(
-                  width: 28,
-                  height: 28,
-                  decoration: BoxDecoration(
-                    color: AppColor.primaryColor,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 2.5),
+            // Only show photo-edit badge for owners
+            if (onEditPhoto != null)
+              PositionedDirectional(
+                bottom: 0,
+                start: 0,
+                child: GestureDetector(
+                  onTap: onEditPhoto,
+                  child: Container(
+                    width: 28,
+                    height: 28,
+                    decoration: BoxDecoration(
+                      color: AppColor.primaryColor,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 2.5),
+                    ),
+                    child: const Icon(Icons.camera_alt_rounded,
+                        size: 13, color: Colors.white),
                   ),
-                  child: const Icon(Icons.camera_alt_rounded,
-                      size: 13, color: Colors.white),
                 ),
               ),
-            ),
           ],
         ),
       ),

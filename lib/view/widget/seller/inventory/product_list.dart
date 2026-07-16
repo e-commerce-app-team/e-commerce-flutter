@@ -9,8 +9,8 @@ class ProductSliverList extends StatelessWidget {
   final SellerInventoryController ctrl;
   const ProductSliverList({super.key, required this.ctrl});
 
-  void _goEdit(ProductModel p) {
-    ctrl.prepareEditForm(p);
+  void _goEdit(ProductModel p) async {
+    await ctrl.prepareEditForm(p);
     Get.to(() => const AddEditProductScreen(), transition: Transition.cupertino);
   }
 

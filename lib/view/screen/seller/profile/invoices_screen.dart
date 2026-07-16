@@ -842,7 +842,7 @@ class _InvoiceCardState extends State<_InvoiceCard>
                     color: AppColor.primarySurface,
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: Text(inv.orderId,
+                  child: Text(inv.orderId?.toString() ?? inv.invoiceNumber,
                       style: AppTextStyle.orderNumber.copyWith(
                           color: AppColor.primaryColor, fontSize: 10)),
                 ),
@@ -869,13 +869,13 @@ class _InvoiceCardState extends State<_InvoiceCard>
                   border: Border.all(color: AppColor.greyBorder, width: 0.5),
                 ),
                 child: Row(children: [
-                  _PriceCol(label: 'قبل الضريبة', value: _fmt(inv.subtotal)),
+                   _PriceCol(label: 'قبل الضريبة', value: _fmt(inv.subtotal.round())),
                   Container(width: 1, height: 30,
                       color: AppColor.greyBorder,
                       margin: const EdgeInsets.symmetric(horizontal: 8)),
                   _PriceCol(
-                    label: 'الضريبة (11%)',
-                    value: '+${_fmt(inv.vatAmount)}',
+                    label: 'الضريبة (${inv.vatAmount > 0 ? ((inv.vatAmount / (inv.subtotal > 0 ? inv.subtotal : 1)) * 100).round().toString() : "0"}%)',
+                    value: '+${_fmt(inv.vatAmount.round())}',
                     valueColor: AppColor.warning,
                   ),
                   Container(width: 1, height: 30,
@@ -883,7 +883,7 @@ class _InvoiceCardState extends State<_InvoiceCard>
                       margin: const EdgeInsets.symmetric(horizontal: 8)),
                   _PriceCol(
                     label: 'الإجمالي',
-                    value: _fmt(inv.total),
+                    value: _fmt(inv.total.round()),
                     valueColor: AppColor.primaryColor,
                     bold: true,
                   ),
@@ -900,7 +900,7 @@ class _InvoiceCardState extends State<_InvoiceCard>
                     size: 11, color: AppColor.greyLight),
                 const SizedBox(width: 4),
                 Text(
-                  'عمولة المنصة (10%): ${_fmt(inv.commission)} — تُخصم تلقائياً من المحفظة',
+                  'عمولة المنصة (${inv.commissionAmount > 0 ? ((inv.commissionAmount / (inv.subtotal > 0 ? inv.subtotal : 1)) * 100).round() : 10}%): ${_fmt(inv.commissionAmount.round())} — تُخصم تلقائياً من المحفظة',
                   style: AppTextStyle.labelSmall.copyWith(
                       color: AppColor.greyLight, fontSize: 10),
                 ),

@@ -35,9 +35,10 @@ class AppLink {
   static const String sellerWalletTransactions = "$server/seller/wallet/transactions"; // TODO: غير موجود بعد
   static const String sellerWalletStats        = "$server/seller/wallet/stats"; // TODO: غير موجود بعد
   static const String sellerWithdrawRequests   = "$server/seller/wallet/withdrawals"; // TODO: غير موجود بعد
-  static const String sellerBranches           = "$server/seller/branches"; // TODO: غير موجود بعد
-  static const String sellerStaff              = "$server/seller/staff"; // TODO: غير موجود بعد
-  static const String sellerStaffInvite        = "$server/seller/staff/invite"; // TODO: غير موجود بعد
+  static const String sellerBranches           = "$server/merchant/branches";
+  static const String sellerStaff              = "$server/seller/staff";
+  static const String sellerStaffInvite        = "$server/seller/staff/invite";
+  static const String staffAcceptInvite        = "$server/auth/staff/accept-invite";
   static const String sellerSupportTickets     = "$server/seller/support/tickets"; // TODO: غير موجود بعد
   static const String sellerOrders             = "$server/seller/orders"; // TODO: غير موجود
   static const String sellerConversations      = "$server/conversations";
@@ -106,4 +107,11 @@ class AppLink {
   static const String chatBlockedUsers    = "$server/chat/blocked-users";
   static const String chatReportUser      = "$server/chat/report-user";
   static const String chatFirebaseAuth    = "$server/chat/firebase-token";
+
+  // ─── Invoices & Tax (NEW) ─────────────────────────────────────────────────
+  static const String invoices            = "$server/invoices";
+  static const String invoiceOrderDetail  = "$server/invoices/order"; // append: /{orderId}
+  static const String invoiceCommission   = "$server/invoices/commission";
+  static const String invoiceTaxReport    = "$server/invoices/tax-report";
+  static const String adminSettings       = "$server/admin/settings";
 }

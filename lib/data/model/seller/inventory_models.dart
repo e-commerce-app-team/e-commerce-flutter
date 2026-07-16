@@ -159,6 +159,10 @@ class ProductModel {
   final List<WarehouseStockEntry> warehouseStock;
   final List<VariantAttributeType> attributeTypes;
   final List<ProductVariantModel> variants;
+  // ─── Tax fields ───────────────────────────────────────────────────────────
+  final bool    taxExempt;
+  final String? taxExemptReason;
+  final double  effectiveTaxRate; // e.g. 5.0, 10.0, 0.0
 
   const ProductModel({
     required this.id,
@@ -184,6 +188,9 @@ class ProductModel {
     this.warehouseStock = const [],
     this.attributeTypes = const [],
     this.variants = const [],
+    this.taxExempt = false,
+    this.taxExemptReason,
+    this.effectiveTaxRate = 5.0,
   });
 
   bool get isLowStock => stock > 0 && stock <= lowStockAlert;
@@ -286,6 +293,9 @@ class ProductModel {
       warehouseStock: parseWarehouseStock(json['warehouse_stock']),
       attributeTypes: [],
       variants: variants,
+      taxExempt:        parseBool(json['tax_exempt']),
+      taxExemptReason:  json['tax_exempt_reason']?.toString(),
+      effectiveTaxRate: (json['effective_tax_rate'] ?? 5.0).toDouble(),
     );
   }
 
@@ -294,6 +304,9 @@ class ProductModel {
     int? stock,
     String? category,
     String? description,
+    bool? taxExempt,
+    String? taxExemptReason,
+    double? effectiveTaxRate,
   }) =>
       ProductModel(
         id: id,
@@ -319,6 +332,9 @@ class ProductModel {
         warehouseStock: warehouseStock,
         attributeTypes: attributeTypes,
         variants: variants,
+        taxExempt:        taxExempt        ?? this.taxExempt,
+        taxExemptReason:  taxExemptReason  ?? this.taxExemptReason,
+        effectiveTaxRate: effectiveTaxRate  ?? this.effectiveTaxRate,
       );
 
   // Mock data (used as fallback only — real data comes from API)
@@ -389,7 +405,7 @@ class WarehouseModel {
         id: json['id'] ?? 0,
         name: json['name'] ?? '',
         type: json['type'] ?? 'warehouse',
-        city: json['city'] ?? '',
+        city: json['address'] ?? json['city'] ?? '',
         isActive: json['is_active'] ?? true,
       );
 
