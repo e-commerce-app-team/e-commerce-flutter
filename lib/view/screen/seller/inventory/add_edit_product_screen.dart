@@ -542,6 +542,24 @@ class _StatusSection extends StatelessWidget {
           onChanged: (_) => ctrl.toggleFreeShipping(),
         ),
       ],
+      const SizedBox(height: 14),
+      _ToggleTile(
+        icon: Icons.money_off_outlined,
+        title: 'tax_exempt_title'.tr,
+        subtitle: 'tax_exempt_sub'.tr,
+        value: ctrl.formTaxExempt,
+        onChanged: (_) => ctrl.toggleTaxExempt(),
+      ),
+      if (ctrl.formTaxExempt) ...[
+        const SizedBox(height: 14),
+        AppField(
+          controller: ctrl.taxExemptReasonCtrl,
+          label: 'tax_exempt_reason_label'.tr,
+          hint: 'tax_exempt_reason_hint'.tr,
+          keyboardType: TextInputType.text,
+          validator: (v) => validInput(v ?? '', 3, 200, 'text'),
+        ),
+      ],
     ],
   );
 }

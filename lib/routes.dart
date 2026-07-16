@@ -11,6 +11,7 @@ import 'package:e_commerce/view/screen/auth/success_signup.dart';
 import 'package:e_commerce/view/screen/auth/forgetpassword/verifycode.dart';
 import 'package:e_commerce/view/screen/auth/verifycodesignup.dart';
 import 'package:e_commerce/view/screen/auth/signup/verifycodesignupseller.dart';
+import 'package:e_commerce/view/screen/auth/staff/staff_accept_invite_screen.dart';
 import 'package:e_commerce/view/screen/onboarding.dart';
 import 'package:e_commerce/view/screen/seller/branches/branch_form_screen.dart';
 import 'package:e_commerce/view/screen/seller/branches/branch_location_picker_screen.dart';
@@ -40,7 +41,7 @@ import 'package:get/get.dart';
 
 List<GetPage<dynamic>>? routes = [
 
-  GetPage(name: "/", page: () => const  BuyerMainScreen(), middlewares: [
+  GetPage(name: "/", page: () => const  OnBoarding(), middlewares: [
 
     MyMiddleWare()
 
@@ -102,4 +103,8 @@ List<GetPage<dynamic>>? routes = [
   GetPage(name: AppRoute.themeSettings, page: () => const ThemeSettingsScreen()),
   GetPage(name: AppRoute.buyerMain, page: () => const BuyerMainScreen()),
   GetPage(name: AppRoute.explore, page: () => const ExploreScreen()),
+  GetPage(
+    name: AppRoute.staffAcceptInvite,
+    page: () => const StaffAcceptInviteScreen(),
+  ),
 ];

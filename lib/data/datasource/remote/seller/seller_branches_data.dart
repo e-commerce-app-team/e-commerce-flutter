@@ -20,21 +20,20 @@ class SellerBranchesData {
       );
 
   Future<dynamic> updateBranch(String token, BranchModel branch) async =>
-      await crud.postData(
+      await crud.putData(
         '${AppLink.sellerBranches}/${branch.id}',
         branch.toJson(),
         headers: {"Authorization": "Bearer $token"},
       );
 
   Future<dynamic> deleteBranch(String token, int id) async =>
-      await crud.postData(
-        '${AppLink.sellerBranches}/$id/delete',
-        {},
+      await crud.deleteData(
+        '${AppLink.sellerBranches}/$id',
         headers: {"Authorization": "Bearer $token"},
       );
 
   Future<dynamic> toggleActive(String token, int id, bool isActive) async =>
-      await crud.postData(
+      await crud.patchData(
         '${AppLink.sellerBranches}/$id/toggle',
         {'is_active': isActive},
         headers: {"Authorization": "Bearer $token"},

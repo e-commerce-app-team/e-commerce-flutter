@@ -245,6 +245,30 @@ class SellerStaffController extends GetxController {
     );
   }
 
+  Future<void> toggleStaffStatus(StaffModel member) async {
+    // Show a loading indicator temporarily
+    final idx = staff.indexWhere((s) => s.id == member.id);
+    if (idx == -1) return;
+
+    final response = await staffData.toggleStaffStatus(_token, member.id);
+
+    response.fold(
+      (failure) {
+        customSnackbar('staff_warning'.tr, 'Failed to update staff status');
+      },
+      (data) {
+        if (data['success'] == true) {
+          final newStatus = data['status'] ?? (member.status == 'approved' ? 'suspended' : 'approved');
+          staff[idx] = member.copyWith(status: newStatus);
+          update();
+          customSnackbar('Success', 'Staff status updated successfully', isError: false);
+        } else {
+          customSnackbar('staff_warning'.tr, data['message'] ?? 'Failed to update staff status');
+        }
+      },
+    );
+  }
+
   @override
   void onClose() {
     emailCtrl.dispose();

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/controller/seller/seller_profile_controller.dart';
 import 'package:e_commerce/core/localization/changelocal.dart';
@@ -7,6 +7,7 @@ import 'package:e_commerce/core/class/status_request.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
 import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/core/constant/routes.dart';
+import 'package:e_commerce/core/services/services.dart';
 import 'package:e_commerce/view/widget/seller/profile/profile_widgets.dart';
 
 class SellerProfileScreen extends StatelessWidget {
@@ -41,7 +42,10 @@ class _AccountBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final profile = ctrl.profile!;
+    final profile  = ctrl.profile!;
+    final services = Get.find<MyServices>();
+    final isStaff  = services.isStaff;
+
     return RefreshIndicator(
       onRefresh: ctrl.refreshProfile,
       color: AppColor.primaryColor,
@@ -53,8 +57,9 @@ class _AccountBody extends StatelessWidget {
           SliverToBoxAdapter(
             child: ProfileHeader(
               profile: profile,
-              onEditPhoto: () => Get.toNamed(AppRoute.storeEdit),
-              onEditCover: () => Get.toNamed(AppRoute.storeEdit),
+              // Staff members cannot edit store photos
+              onEditPhoto: isStaff ? null : () => Get.toNamed(AppRoute.storeEdit),
+              onEditCover: isStaff ? null : () => Get.toNamed(AppRoute.storeEdit),
             ),
           ),
           SliverPadding(
@@ -64,70 +69,81 @@ class _AccountBody extends StatelessWidget {
                 ProfileInfoCard(profile: profile),
                 const SizedBox(height: 20),
 
-                ProfileMenuSection(
-                  sectionLabel: 'acct_section_store'.tr,
-                  children: [
-                    ProfileMenuTile(
-                      icon: Icons.storefront_outlined,
-                      title: 'acct_edit_store_title'.tr,
-                      subtitle: profile.storeName,
-                      iconColor: AppColor.primaryColor,
-                      iconBg: AppColor.primarySurface,
-                      onTap: () => Get.toNamed(AppRoute.storeEdit),
-                    ),
-                    ProfileMenuTile(
-                      icon: Icons.local_shipping_outlined,
-                      title: 'acct_shipping_title'.tr,
-                      subtitle: ctrl.shippingMethod == 'our_delivery'
-                          ? 'acct_shipping_sub_platform'.tr
-                          : 'acct_shipping_sub_self'.tr,
-                      iconColor: AppColor.statOrders,
-                      iconBg: const Color(0xffEEEDFE),
-                      onTap: () => Get.toNamed(AppRoute.shippingSettings),
-                    ),
-                    ProfileMenuTile(
-                      icon: Icons.star_outline_rounded,
-                      title: 'acct_reviews_title'.tr,
-                      subtitle: '${profile.reviewCount} ${'acct_reviews_count'.tr}',
-                      iconColor: const Color(0xffF39C12),
-                      iconBg: AppColor.warningLight,
-                      trailing: const ProfileComingSoonChip(),
-                      showDivider: false,
-                      onTap: () {},
-                    ),
-                  ],
-                ),
+                // ─── Staff Mode Banner ─────────────────────────────────────
+                if (isStaff) ...[
+                  _StaffModeBanner(services: services),
+                  const SizedBox(height: 16),
+                ],
 
-                ProfileMenuSection(
-                  sectionLabel: 'acct_section_marketing'.tr,
-                  children: [
-                    ProfileMenuTile(
-                      icon: Icons.casino_outlined,
-                      title: 'acct_spin_title'.tr,
-                      subtitle: 'acct_spin_sub'.tr,
-                      iconColor: AppColor.primaryColor,
-                      iconBg: AppColor.primarySurface,
-                      onTap: () => Get.toNamed(AppRoute.spinWheele),
-                    ),
-                    ProfileMenuTile(
-                      icon: Icons.local_offer_outlined,
-                      title: 'acct_coupons_title'.tr,
-                      iconColor: AppColor.success,
-                      iconBg: AppColor.successLight,
-                      onTap: () => Get.toNamed(AppRoute.coupons),
-                    ),
-                    ProfileMenuTile(
-                      icon: Icons.campaign_outlined,
-                      title: 'acct_ads_title'.tr,
-                      iconColor: AppColor.info,
-                      iconBg: AppColor.infoLight,
-                      showDivider: false,
-                      onTap: () => Get.toNamed(AppRoute.ads),
-                    ),
-                  ],
-                ),
+                // ─── Store Settings — hidden for staff ────────────────────
+                if (!isStaff)
+                  ProfileMenuSection(
+                    sectionLabel: 'acct_section_store'.tr,
+                    children: [
+                      ProfileMenuTile(
+                        icon: Icons.storefront_outlined,
+                        title: 'acct_edit_store_title'.tr,
+                        subtitle: profile.storeName,
+                        iconColor: AppColor.primaryColor,
+                        iconBg: AppColor.primarySurface,
+                        onTap: () => Get.toNamed(AppRoute.storeEdit),
+                      ),
+                      ProfileMenuTile(
+                        icon: Icons.local_shipping_outlined,
+                        title: 'acct_shipping_title'.tr,
+                        subtitle: ctrl.shippingMethod == 'our_delivery'
+                            ? 'acct_shipping_sub_platform'.tr
+                            : 'acct_shipping_sub_self'.tr,
+                        iconColor: AppColor.statOrders,
+                        iconBg: const Color(0xffEEEDFE),
+                        onTap: () => Get.toNamed(AppRoute.shippingSettings),
+                      ),
+                      ProfileMenuTile(
+                        icon: Icons.star_outline_rounded,
+                        title: 'acct_reviews_title'.tr,
+                        subtitle: '${profile.reviewCount} ${'acct_reviews_count'.tr}',
+                        iconColor: const Color(0xffF39C12),
+                        iconBg: AppColor.warningLight,
+                        trailing: const ProfileComingSoonChip(),
+                        showDivider: false,
+                        onTap: () {},
+                      ),
+                    ],
+                  ),
 
-                if (ctrl.isWholesale)
+                // ─── Marketing — hidden for staff ─────────────────────────
+                if (!isStaff)
+                  ProfileMenuSection(
+                    sectionLabel: 'acct_section_marketing'.tr,
+                    children: [
+                      ProfileMenuTile(
+                        icon: Icons.casino_outlined,
+                        title: 'acct_spin_title'.tr,
+                        subtitle: 'acct_spin_sub'.tr,
+                        iconColor: AppColor.primaryColor,
+                        iconBg: AppColor.primarySurface,
+                        onTap: () => Get.toNamed(AppRoute.spinWheele),
+                      ),
+                      ProfileMenuTile(
+                        icon: Icons.local_offer_outlined,
+                        title: 'acct_coupons_title'.tr,
+                        iconColor: AppColor.success,
+                        iconBg: AppColor.successLight,
+                        onTap: () => Get.toNamed(AppRoute.coupons),
+                      ),
+                      ProfileMenuTile(
+                        icon: Icons.campaign_outlined,
+                        title: 'acct_ads_title'.tr,
+                        iconColor: AppColor.info,
+                        iconBg: AppColor.infoLight,
+                        showDivider: false,
+                        onTap: () => Get.toNamed(AppRoute.ads),
+                      ),
+                    ],
+                  ),
+
+                // ─── Enterprise (Wholesale owners only) ───────────────────
+                if (!isStaff && ctrl.isWholesale)
                   ProfileMenuSection(
                     sectionLabel: 'acct_section_enterprise'.tr,
                     children: [
@@ -156,6 +172,7 @@ class _AccountBody extends StatelessWidget {
                     ],
                   ),
 
+                // ─── Preferences (visible to all) ─────────────────────────
                 ProfileMenuSection(
                   sectionLabel: 'acct_section_preferences'.tr,
                   children: [
@@ -193,6 +210,7 @@ class _AccountBody extends StatelessWidget {
                   ],
                 ),
 
+                // ─── Security (visible to all) ────────────────────────────
                 ProfileMenuSection(
                   sectionLabel: 'acct_section_security'.tr,
                   children: [
@@ -219,6 +237,7 @@ class _AccountBody extends StatelessWidget {
                   ],
                 ),
 
+                // ─── Support (visible to all) ─────────────────────────────
                 ProfileMenuSection(
                   sectionLabel: 'acct_section_support'.tr,
                   children: [
@@ -243,6 +262,7 @@ class _AccountBody extends StatelessWidget {
                   ],
                 ),
 
+                // ─── Logout (visible to all) ──────────────────────────────
                 ProfileMenuSection(
                   children: [
                     ProfileMenuTile(
@@ -295,6 +315,116 @@ class _AccountBody extends StatelessWidget {
   }
 }
 
+// ─── Staff Mode Banner ────────────────────────────────────────────────────────
+/// Shown at the top of the profile screen for staff members.
+/// Displays their role and the permissions they have.
+class _StaffModeBanner extends StatelessWidget {
+  final MyServices services;
+  const _StaffModeBanner({required this.services});
+
+  @override
+  Widget build(BuildContext context) {
+    final perms = services.userPermissions;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppColor.statOrders.withOpacity(0.08),
+            AppColor.primaryColor.withOpacity(0.06),
+          ],
+          begin: Alignment.topLeft,
+          end:   Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppColor.statOrders.withOpacity(0.25),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color:        const Color(0xffEEEDFE),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(
+                Icons.badge_outlined,
+                color: AppColor.statOrders,
+                size:  18,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'staff_mode_title'.tr,
+                    style: AppTextStyle.labelLarge
+                        .copyWith(color: AppColor.statOrders, fontSize: 13),
+                  ),
+                  Text(
+                    'staff_mode_sub'.tr,
+                    style: AppTextStyle.bodySmall
+                        .copyWith(color: AppColor.greyLight, fontSize: 11),
+                  ),
+                ],
+              ),
+            ),
+          ]),
+          if (perms.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Wrap(
+              spacing:    6,
+              runSpacing: 6,
+              children: perms.map((p) => _PermChip(perm: p)).toList(),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _PermChip extends StatelessWidget {
+  final String perm;
+  const _PermChip({required this.perm});
+
+  String get _label {
+    switch (perm) {
+      case 'view_orders':      return 'perm_view_orders'.tr;
+      case 'manage_inventory': return 'perm_manage_inv'.tr;
+      case 'view_reports':     return 'perm_view_reports'.tr;
+      case 'chat_with_buyers': return 'perm_chat_buyers'.tr;
+      default: return perm;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration: BoxDecoration(
+          color:        AppColor.primarySurface,
+          borderRadius: BorderRadius.circular(20),
+          border:       Border.all(color: AppColor.primaryColor.withOpacity(0.25)),
+        ),
+        child: Text(
+          _label,
+          style: AppTextStyle.chip.copyWith(
+            color:      AppColor.primaryColor,
+            fontSize:   10,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      );
+}
+
+// ─── Shimmer ──────────────────────────────────────────────────────────────────
 class _AccountShimmer extends StatelessWidget {
   const _AccountShimmer();
 

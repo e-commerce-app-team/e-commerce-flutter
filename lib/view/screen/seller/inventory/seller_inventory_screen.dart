@@ -70,8 +70,8 @@ class _AddFAB extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => FloatingActionButton.extended(
-    onPressed: () {
-      ctrl.prepareAddForm();
+    onPressed: () async {
+      await ctrl.prepareAddForm();
       Get.to(() => const AddEditProductScreen(), transition: Transition.cupertino);
     },
     backgroundColor: AppColor.primaryColor,

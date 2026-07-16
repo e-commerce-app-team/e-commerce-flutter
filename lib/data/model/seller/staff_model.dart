@@ -41,21 +41,28 @@ class StaffModel {
     this.avatar,
   });
 
-  bool get isActive  => status == 'active';
+  bool get isActive  => status == 'active' || status == 'approved';
   bool get isPending => status == 'pending';
 
   bool hasPermission(String perm) => permissions.contains(perm);
 
-  factory StaffModel.fromJson(Map json) => StaffModel(
-        id:          json['id']          ?? 0,
-        name:        json['name']        ?? '',
-        email:       json['email']       ?? '',
-        role:        json['role']        ?? StaffRole.support,
-        permissions: List<String>.from(json['permissions'] ?? []),
-        status:      json['status']      ?? 'pending',
-        joinedAt:    json['joined_at']   ?? '',
-        avatar:      json['avatar'],
-      );
+  factory StaffModel.fromJson(Map json) {
+    String fullName = json['name'] ?? '';
+    if (fullName.isEmpty && json['first_name'] != null) {
+      fullName = '${json['first_name']} ${json['last_name'] ?? ''}'.trim();
+    }
+    
+    return StaffModel(
+      id:          json['id']          ?? 0,
+      name:        fullName,
+      email:       json['email']       ?? '',
+      role:        json['role']        ?? StaffRole.support,
+      permissions: json['permissions'] is List ? List<String>.from(json['permissions']) : [],
+      status:      json['status']      ?? 'pending',
+      joinedAt:    json['joined_at']   ?? json['created_at']?.toString().split('T').first ?? '',
+      avatar:      json['avatar'],
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         'id':          id,

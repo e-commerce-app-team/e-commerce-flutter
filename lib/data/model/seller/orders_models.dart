@@ -109,6 +109,9 @@ class SubOrderModel {
   final String? escrowReleaseAt;
   final List<TimelineStep> timeline;
   final DiscountInfo? discountInfo;
+  final double taxAmount;
+  final double platformCommission;
+  final double commissionRate;
 
   const SubOrderModel({
     required this.subOrderId,
@@ -132,6 +135,9 @@ class SubOrderModel {
     this.escrowReleaseAt,
     this.timeline = const [],
     this.discountInfo,
+    this.taxAmount = 0.0,
+    this.platformCommission = 0.0,
+    this.commissionRate = 0.0,
   });
 
   factory SubOrderModel.fromJson(Map json) {
@@ -179,6 +185,9 @@ class SubOrderModel {
       escrowReleaseAt: json['escrow_release_at'],
       timeline: timelineList,
       discountInfo: discountJson is Map ? DiscountInfo.fromJson(discountJson) : null,
+      taxAmount: (json['tax_amount'] ?? 0).toDouble(),
+      platformCommission: (json['platform_commission'] ?? 0).toDouble(),
+      commissionRate: (json['commission_rate_snapshot'] ?? 0).toDouble(),
     );
   }
 
@@ -186,6 +195,9 @@ class SubOrderModel {
     String? status,
     String? qrToken,
     DiscountInfo? discountInfo,
+    double? taxAmount,
+    double? platformCommission,
+    double? commissionRate,
   }) =>
       SubOrderModel(
         subOrderId: subOrderId,
@@ -208,6 +220,9 @@ class SubOrderModel {
         escrowReleaseAt: escrowReleaseAt,
         timeline: timeline,
         discountInfo: discountInfo ?? this.discountInfo,
+        taxAmount: taxAmount ?? this.taxAmount,
+        platformCommission: platformCommission ?? this.platformCommission,
+        commissionRate: commissionRate ?? this.commissionRate,
       );
 
   int get rawId => int.tryParse(subOrderId.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
