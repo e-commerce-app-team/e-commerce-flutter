@@ -4,6 +4,7 @@ import 'package:e_commerce/controller/buyer/buyer_main_controller.dart';
 import 'package:e_commerce/view/screen/buyer/buyer_home_screen.dart';
 import 'package:e_commerce/view/screen/buyer/explore/explore_screen.dart';
 import 'package:e_commerce/view/widget/buyer/shared/buyer_bottom_nav.dart';
+import 'package:e_commerce/view/screen/buyer/cart/cart_screen.dart';
 
 class BuyerMainScreen extends StatelessWidget {
   const BuyerMainScreen({super.key});
@@ -20,8 +21,7 @@ class BuyerMainScreen extends StatelessWidget {
             children: [
               const BuyerHomeScreen(),
               const ExploreScreen(),
-              // Placeholder for Cart Screen
-              const Scaffold(body: Center(child: Text("Cart Screen"))),
+              const CartScreen(),
               // Placeholder for Orders Screen
               const Scaffold(body: Center(child: Text("Orders Screen"))),
               // Placeholder for Account Screen
