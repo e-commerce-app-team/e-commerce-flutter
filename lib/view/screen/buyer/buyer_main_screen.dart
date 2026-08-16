@@ -1,3 +1,4 @@
+import 'package:e_commerce/view/screen/buyer/orders/buyer_orders_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/controller/buyer/buyer_main_controller.dart';
@@ -23,14 +24,14 @@ class BuyerMainScreen extends StatelessWidget {
               const ExploreScreen(),
               const CartScreen(),
               // Placeholder for Orders Screen
-              const Scaffold(body: Center(child: Text("Orders Screen"))),
+              const BuyerOrdersScreen(),
               // Placeholder for Account Screen
               const Scaffold(body: Center(child: Text("Account Screen"))),
             ],
           ),
           bottomNavigationBar: BuyerBottomNav(
             currentIndex: controller.currentIndex,
-            cartCount: 2, // You can connect this to a cart controller later
+            cartCount: 0,
             onTap: (i) => controller.changeTab(i),
           ),
         );

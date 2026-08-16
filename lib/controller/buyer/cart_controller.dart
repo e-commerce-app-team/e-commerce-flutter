@@ -155,7 +155,7 @@ class CartController extends GetxController {
     isApplyingPromo.value = true;
 
     // محاكاة طلب API
-    await Future.delayed(const Duration(milliseconds: 900));
+    // await Future.delayed(const Duration(milliseconds: 900));
 
     if (_validCodes.containsKey(code)) {
       appliedPromoCode.value = code;

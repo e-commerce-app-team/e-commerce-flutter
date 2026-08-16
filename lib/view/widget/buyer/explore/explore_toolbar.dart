@@ -23,25 +23,31 @@ class ExploreToolbar extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 14, 20, 10),
       child: Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              color: AppColor.secondBackground,
-              borderRadius: BorderRadius.circular(24),
-            ),
-            child: Row(
-              children: [
-                _SegmentButton(
-                  label: 'explore_tab_products'.tr,
-                  selected: !isStoresTab,
-                  onTap: () => onTabChanged(false),
-                ),
-                _SegmentButton(
-                  label: 'explore_tab_stores'.tr,
-                  selected: isStoresTab,
-                  onTap: () => onTabChanged(true),
-                ),
-              ],
+          Flexible(
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: AppColor.secondBackground,
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _SegmentButton(
+                      label: 'explore_tab_products'.tr,
+                      selected: !isStoresTab,
+                      onTap: () => onTabChanged(false),
+                    ),
+                  ),
+                  Expanded(
+                    child: _SegmentButton(
+                      label: 'explore_tab_stores'.tr,
+                      selected: isStoresTab,
+                      onTap: () => onTabChanged(true),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           const Spacer(),
@@ -85,7 +91,8 @@ class _SegmentButton extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        alignment: Alignment.center,
         decoration: BoxDecoration(
           color: selected ? AppColor.backgroundcolor : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
@@ -93,6 +100,8 @@ class _SegmentButton extends StatelessWidget {
         ),
         child: Text(
           label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: AppTextStyle.labelMedium.copyWith(
             color: selected ? AppColor.primaryColor : AppColor.grey,
             fontWeight: selected ? FontWeight.w700 : FontWeight.w500,

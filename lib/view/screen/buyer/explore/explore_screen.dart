@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
+import 'package:e_commerce/core/constant/routes.dart';
 import 'package:e_commerce/controller/buyer/explore_controller.dart';
-import 'package:e_commerce/data/datasource/static/explore_mock_data.dart';
 import 'package:e_commerce/view/widget/buyer/explore/explore_search_header.dart';
 import 'package:e_commerce/view/widget/buyer/explore/explore_category_bar.dart';
 import 'package:e_commerce/view/widget/buyer/explore/explore_toolbar.dart';
@@ -47,7 +47,7 @@ class ExploreScreen extends StatelessWidget {
               if (!controller.isSearchFocused) ...[
                 const SizedBox(height: 16),
                 ExploreCategoryBar(
-                  categories: ExploreMockData.categories,
+                  categories: controller.categories,
                   selectedIndex: controller.selectedCategoryIndex,
                   onSelect: controller.selectCategory,
                 ),
@@ -113,9 +113,9 @@ class ExploreScreen extends StatelessWidget {
           return ExploreProductCard(
             product: product,
             index: index,
-            onTap: () {},
+            onTap: () => Get.toNamed(AppRoute.buyerProductDetail, arguments: {'product_id': product.id}),
             onFavoriteTap: () => controller.toggleFavorite(product.id),
-            onAddToCart: () {},
+            onAddToCart: () => controller.addToCart(product.id),
           );
         },
       ),
@@ -134,8 +134,8 @@ class ExploreScreen extends StatelessWidget {
           return ExploreStoreCard(
             store: store,
             index: index,
-            onTap: () {},
-            onFollowTap: () {},
+            onTap: () => Get.toNamed(AppRoute.buyerStoreDetail, arguments: {'store_id': store.id}),
+            onFollowTap: () => Get.toNamed(AppRoute.buyerStoreDetail, arguments: {'store_id': store.id}),
           );
         },
       ),

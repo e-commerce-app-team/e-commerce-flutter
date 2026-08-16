@@ -37,11 +37,14 @@ import 'package:e_commerce/view/screen/seller/chat/chat_settings_screen.dart';
 import 'package:e_commerce/view/screen/buyer/buyer_home_screen.dart';
 import 'package:e_commerce/view/screen/buyer/explore/explore_screen.dart';
 import 'package:e_commerce/view/screen/buyer/buyer_main_screen.dart';
+import 'package:e_commerce/view/screen/buyer/store/buyer_store_detail_screen.dart';
+import 'package:e_commerce/view/screen/buyer/chat/buyer_chat_room_screen.dart';
+import 'package:e_commerce/view/screen/buyer/product/buyer_product_detail_screen.dart';
 import 'package:get/get.dart';
 
 List<GetPage<dynamic>>? routes = [
 
-  GetPage(name: "/", page: () => const  OnBoarding(), middlewares: [
+  GetPage(name: "/", page: () => const BuyerMainScreen(), middlewares: [
 
     MyMiddleWare()
 
@@ -103,6 +106,9 @@ List<GetPage<dynamic>>? routes = [
   GetPage(name: AppRoute.themeSettings, page: () => const ThemeSettingsScreen()),
   GetPage(name: AppRoute.buyerMain, page: () => const BuyerMainScreen()),
   GetPage(name: AppRoute.explore, page: () => const ExploreScreen()),
+  GetPage(name: AppRoute.buyerStoreDetail, page: () => const BuyerStoreDetailScreen()),
+  GetPage(name: AppRoute.buyerChatRoom, page: () => const BuyerChatRoomScreen()),
+  GetPage(name: AppRoute.buyerProductDetail, page: () => const BuyerProductDetailScreen()),
   GetPage(
     name: AppRoute.staffAcceptInvite,
     page: () => const StaffAcceptInviteScreen(),
