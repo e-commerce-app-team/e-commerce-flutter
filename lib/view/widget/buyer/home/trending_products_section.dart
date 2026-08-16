@@ -4,9 +4,9 @@ import 'package:e_commerce/data/models/buyer/home_models.dart';
 import '../shared/buyer_section_header.dart';
 import '../shared/buyer_product_card.dart';
 
-/// Two-column grid of [BuyerProductCard]s under a section header.
-/// Nested inside the home screen's outer scroll view, so the grid itself
-/// does not scroll independently.
+/// Trending Now — 2-column grid of products with high engagement/sales.
+/// Uses shrinkWrap inside the outer ListView so it doesn't scroll
+/// independently.
 class TrendingProductsSection extends StatelessWidget {
   final List<BuyerProductItem> products;
   final VoidCallback? onSeeAll;
@@ -41,7 +41,7 @@ class TrendingProductsSection extends StatelessWidget {
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: products.length,
+            itemCount: products.length > 6 ? 6 : products.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               mainAxisSpacing: 14,
@@ -52,8 +52,9 @@ class TrendingProductsSection extends StatelessWidget {
               return BuyerProductCard(
                 product: products[index],
                 onTap: onProductTap == null ? null : () => onProductTap!(index),
-                onFavoriteToggle:
-                    onFavoriteToggle == null ? null : () => onFavoriteToggle!(index),
+                onFavoriteToggle: onFavoriteToggle == null
+                    ? null
+                    : () => onFavoriteToggle!(index),
                 onAddToCart: onAddToCart == null ? null : () => onAddToCart!(index),
               );
             },

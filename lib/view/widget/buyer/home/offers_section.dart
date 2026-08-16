@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:e_commerce/core/constant/color.dart';
+import 'package:e_commerce/core/constant/app_text_style.dart';
 import 'package:e_commerce/data/models/buyer/home_models.dart';
-import '../shared/buyer_section_header.dart';
 import '../shared/buyer_product_card.dart';
+import '../shared/buyer_section_header.dart';
 
-/// Recommended For You — personalized horizontal scroll based on
-/// user browsing/search/follow history.
-class RecommendedSection extends StatelessWidget {
+/// Deals & Offers — products with active discounts, shown in a visually
+/// charged horizontal row with a "fire" eyebrow to signal urgency.
+class OffersSection extends StatelessWidget {
   final List<BuyerProductItem> products;
   final VoidCallback? onSeeAll;
   final void Function(int index)? onProductTap;
   final void Function(int index)? onFavoriteToggle;
   final void Function(int index)? onAddToCart;
 
-  const RecommendedSection({
+  const OffersSection({
     Key? key,
     required this.products,
     this.onSeeAll,
@@ -32,8 +34,8 @@ class RecommendedSection extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: BuyerSectionHeader(
-            eyebrow: 'eyebrow_for_you'.tr,
-            title: 'recommended_title'.tr,
+            eyebrow: 'eyebrow_offers'.tr,
+            title: 'offers_title'.tr,
             onSeeAll: onSeeAll,
           ),
         ),

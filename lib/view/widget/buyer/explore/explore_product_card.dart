@@ -57,8 +57,7 @@ class ExploreProductCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AspectRatio(
-              aspectRatio: 1.05,
+            Expanded(
               child: Stack(
                 fit: StackFit.expand,
                 children: [

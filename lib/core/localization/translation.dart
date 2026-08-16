@@ -998,6 +998,101 @@ class MyTranslation extends Translations {
       "wallet_withdraw_shaam":       "طلب سحب — شام كاش",
       "wallet_withdraw_bank":        "طلب سحب — تحويل بنكي",
       "wallet_just_now":             "الآن",
+      // Drawer
+      "drawer_leadership": "القيادة",
+      "drawer_dashboard": "لوحة القيادة",
+      "drawer_view_as_buyer": "عرض كمشتري",
+      "drawer_preview": "معاينة",
+      "drawer_marketing_growth": "التسويق والنمو",
+      "drawer_spin_wheel": "دولاب الحظ",
+      "drawer_discount_coupons": "كوبونات الخصم",
+      "drawer_ads_sponsorships": "الإعلانات والرعاية",
+      "drawer_financial_management": "الإدارة المالية",
+      "drawer_wallet_withdraw": "المحفظة والسحب",
+      "drawer_invoices_taxes": "الفواتير والضرائب",
+      "drawer_companies": "شركات",
+      "drawer_enterprise_management": "إدارة المؤسسة",
+      "drawer_employee_management": "إدارة الموظفين",
+      "drawer_branches_warehouses": "الفروع والمستودعات",
+      "drawer_support_system": "الدعم والنظام",
+      "drawer_seller_support_center": "مركز دعم التجار",
+      "drawer_settings": "الإعدادات",
+      "drawer_logout": "تسجيل الخروج",
+      "drawer_enterprise_seller": "بائع مؤسسي / شركة",
+      "drawer_individual_seller": "بائع فردي",
+      
+      // AppBar
+      'cart_title': 'سلة المشتريات',
+      'items_in_cart': 'منتج في السلة',
+      'clear_cart': 'تفريغ السلة',
+      'clear_cart_confirm': 'هل أنت متأكد من تفريغ السلة؟ لا يمكن التراجع عن هذا الإجراء.',
+      'clear_confirm': 'تفريغ',
+
+      // Item card
+      'remove': 'إزالة',
+      'remove_item': 'إزالة المنتج',
+      'remove_item_confirm': 'هل تريد إزالة هذا المنتج من السلة؟',
+
+      // Empty state
+      'empty_cart_title': 'سلتك فارغة!',
+      'empty_cart_subtitle':
+          'يبدو أنك لم تضف أي منتجات بعد.\nابدأ التسوق الآن واستمتع بأفضل العروض!',
+      'start_shopping': 'ابدأ التسوق',
+
+      // Promo code
+      'promo_code': 'كود الخصم',
+      'promo_code_hint': 'أدخل كود الخصم...',
+      'apply': 'تطبيق',
+      'applied': 'مطبّق',
+      'promo_code_empty': 'الرجاء إدخال كود الخصم أولاً',
+      'promo_code_invalid': 'الكود غير صحيح أو منتهي الصلاحية',
+      'promo_applied_msg': '🎉 تم تطبيق الخصم! وفّرت',
+      'discount_applied': 'خصم',
+
+      // Order summary
+      'subtotal': 'المجموع الفرعي',
+      'shipping_fee': 'رسوم الشحن',
+      'total': 'الإجمالي',
+      'proceed_checkout': 'متابعة الدفع',
+
+      // Checkout placeholder
+      'checkout_soon': 'قريباً',
+      'checkout_wip': 'صفحة الدفع قيد الإنشاء 🚀',
+
+      // Misc
+      'max_stock_msg': 'لا يمكن إضافة أكثر من',
+
+      // ─── Buyer Home Screen ─────────────────────────────────────────────────
+      'search_hint_home': 'ابحث عن منتجات، متاجر...',
+      'flash_sale_title': 'عروض محدودة',
+      'flash_sale_ends_in': 'تنتهي خلال',
+      'featured_stores_title': 'متاجر مميزة',
+      'featured_badge': 'مميز',
+      'open_now': 'مفتوح',
+      'closed_now': 'مغلق',
+      'eyebrow_curated': 'اختيار المحررين',
+      'eyebrow_this_week': 'هذا الأسبوع',
+      'eyebrow_for_you': 'موصى به لك',
+      'trending_products_title': 'رائج الآن',
+      'recommended_title': 'موصى به',
+      'featured_products_title': 'منتجات مميزة',
+      'nearby_stores_title': 'متاجر قريبة منك',
+      'eyebrow_nearby': 'في محيطك',
+      'new_arrivals_title': 'وصل حديثاً',
+      'eyebrow_new': 'الجديد',
+      'offers_title': 'عروض وتخفيضات',
+      'eyebrow_offers': 'لا تفوتها',
+      'favorites_title': 'المفضلة',
+      'eyebrow_favorites': 'قائمتك',
+      'all_products_title': 'جميع المنتجات',
+      'eyebrow_all': 'استكشف',
+      'all_categories': 'الكل',
+      'km_away': 'كم',
+      'no_nearby_stores': 'لا توجد متاجر قريبة',
+      'no_favorites': 'قائمة المفضلة فارغة',
+      'add_to_favorites_hint': 'أضف منتجاتك المفضلة بالضغط على ❤️',
+      'load_more': 'تحميل المزيد',
+      'nexus_search_placeholder': 'ابحث في NEXUS...',
     },
     "en": {
       "2": "Choose Product",
@@ -2528,6 +2623,28 @@ class MyTranslation extends Translations {
       "wallet_withdraw_shaam":       "Withdrawal Request — ShaamCash",
       "wallet_withdraw_bank":        "Withdrawal Request — Bank Transfer",
       "wallet_just_now":             "Just now",
+      // Drawer
+      "drawer_leadership": "Leadership",
+      "drawer_dashboard": "Dashboard",
+      "drawer_view_as_buyer": "View as Buyer",
+      "drawer_preview": "Preview",
+      "drawer_marketing_growth": "Marketing & Growth",
+      "drawer_spin_wheel": "Spin Wheel",
+      "drawer_discount_coupons": "Discount Coupons",
+      "drawer_ads_sponsorships": "Ads & Sponsorships",
+      "drawer_financial_management": "Financial Management",
+      "drawer_wallet_withdraw": "Wallet & Withdraw",
+      "drawer_invoices_taxes": "Invoices & Taxes",
+      "drawer_companies": "Companies",
+      "drawer_enterprise_management": "Enterprise Management",
+      "drawer_employee_management": "Employee Management",
+      "drawer_branches_warehouses": "Branches & Warehouses",
+      "drawer_support_system": "Support & System",
+      "drawer_seller_support_center": "Seller Support Center",
+      "drawer_settings": "Settings",
+      "drawer_logout": "Logout",
+      "drawer_enterprise_seller": "Enterprise / Company Seller",
+      "drawer_individual_seller": "Individual Seller",
       "acct_section_store": "My Store",
       "acct_section_marketing": "Marketing",
       "acct_section_enterprise": "Enterprise",
@@ -2626,6 +2743,80 @@ class MyTranslation extends Translations {
       "sub_men":                    "Men",
       "sub_women":                  "Women",
       "sub_kids":                   "Kids",
+
+      // AppBar
+      'cart_title': 'My Cart',
+      'items_in_cart': 'items in cart',
+      'clear_cart': 'Clear Cart',
+      'clear_cart_confirm':
+          'Are you sure you want to clear your cart? This cannot be undone.',
+      'clear_confirm': 'Clear',
+
+      // Item card
+      'remove': 'Remove',
+      'remove_item': 'Remove Item',
+      'remove_item_confirm': 'Are you sure you want to remove this item from your cart?',
+
+      // Empty state
+      'empty_cart_title': 'Your Cart is Empty!',
+      'empty_cart_subtitle':
+          "Looks like you haven't added anything yet.\nStart shopping and enjoy the best deals!",
+      'start_shopping': 'Start Shopping',
+
+      // Promo code
+      'promo_code': 'Promo Code',
+      'promo_code_hint': 'Enter promo code...',
+      'apply': 'Apply',
+      'applied': 'Applied',
+      'promo_code_empty': 'Please enter a promo code first',
+      'promo_code_invalid': 'Invalid or expired promo code',
+      'promo_applied_msg': '🎉 Promo applied! You saved',
+      'discount_applied': 'Discount',
+
+      // Order summary
+      'subtotal': 'Subtotal',
+      'shipping_fee': 'Shipping',
+      'total': 'Total',
+      'proceed_checkout': 'Proceed to Checkout',
+
+      // Checkout placeholder
+      'checkout_soon': 'Coming Soon',
+      'checkout_wip': 'Checkout page is under construction 🚀',
+
+      // Misc
+      'max_stock_msg': 'Cannot add more than',
+
+      // ─── Buyer Home Screen ─────────────────────────────────────────────────
+      'search_hint_home': 'Search products, stores...',
+      'flash_sale_title': 'Flash Sale',
+      'flash_sale_ends_in': 'Ends in',
+      'featured_stores_title': 'Featured Stores',
+      'featured_badge': 'Featured',
+      'open_now': 'Open',
+      'closed_now': 'Closed',
+      'eyebrow_curated': "Editor's Pick",
+      'eyebrow_this_week': 'This Week',
+      'eyebrow_for_you': 'Recommended',
+      'trending_products_title': 'Trending Now',
+      'recommended_title': 'For You',
+      'featured_products_title': 'Featured Products',
+      'nearby_stores_title': 'Stores Near You',
+      'eyebrow_nearby': 'Around You',
+      'new_arrivals_title': 'New Arrivals',
+      'eyebrow_new': 'Just In',
+      'offers_title': 'Deals & Offers',
+      'eyebrow_offers': "Don't Miss Out",
+      'favorites_title': 'Favorites',
+      'eyebrow_favorites': 'Your List',
+      'all_products_title': 'All Products',
+      'eyebrow_all': 'Explore',
+      'all_categories': 'All',
+      'km_away': 'km',
+      'no_nearby_stores': 'No nearby stores',
+      'no_favorites': 'Favorites list is empty',
+      'add_to_favorites_hint': 'Tap ❤️ to save products',
+      'load_more': 'Load More',
+      'nexus_search_placeholder': 'Search NEXUS...',
     }
   };
 }

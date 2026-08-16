@@ -6,13 +6,11 @@ import 'package:e_commerce/data/models/buyer/home_models.dart';
 import '../shared/buyer_network_image.dart';
 import '../shared/buyer_section_header.dart';
 
-/// A store card modeled on a boutique storefront listing: the logo sits
-/// half over the cover photo, the way a shop sign overlaps its own
-/// window display, instead of two flat, stacked rectangles.
+/// Compact store card focused on the seller logo, name, category and trust
+/// signals. Store covers are intentionally not used on the home feed.
 class BuyerStoreCard extends StatelessWidget {
   final BuyerStoreItem store;
   final VoidCallback? onTap;
-  static const double _coverHeight = 88;
   static const double _logoSize = 46;
 
   const BuyerStoreCard({
@@ -40,15 +38,7 @@ class BuyerStoreCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                SizedBox(
-                  height: _coverHeight,
-                  width: double.infinity,
-                  child: BuyerNetworkImage(
-                    url: store.coverUrl,
-                    fallbackIcon: Icons.storefront_outlined,
-                  ),
-                ),
-                const SizedBox(height: _logoSize / 2 + 6),
+                const SizedBox(height: _logoSize + 26),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
                   child: Column(
@@ -135,7 +125,7 @@ class BuyerStoreCard extends StatelessWidget {
                 ),
               ),
             PositionedDirectional(
-              top: _coverHeight - _logoSize / 2,
+              top: 16,
               start: 12,
               child: Container(
                 width: _logoSize,

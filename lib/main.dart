@@ -33,6 +33,7 @@ class _MyAppState extends State<MyApp> {
   late AppLinks _appLinks;
   StreamSubscription<Uri>? _linkSubscription;
 
+
   @override
   void initState() {
     super.initState();

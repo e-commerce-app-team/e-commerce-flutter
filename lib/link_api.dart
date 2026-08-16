@@ -114,4 +114,36 @@ class AppLink {
   static const String invoiceCommission   = "$server/invoices/commission";
   static const String invoiceTaxReport    = "$server/invoices/tax-report";
   static const String adminSettings       = "$server/admin/settings";
+
+  // ─── Buyer Home ──────────────────────────────────────────────────────────────
+  static const String buyerBanners           = "$server/buyer/banners";
+  static const String buyerCategories        = "$server/buyer/categories";
+  static const String buyerFeaturedStores    = "$server/buyer/stores/featured";
+  static const String buyerNearbyStores      = "$server/buyer/stores/nearby";
+  static const String buyerFeaturedProducts  = "$server/buyer/products/featured";
+  static const String buyerFlashSale         = "$server/buyer/products/flash-sale";
+  static const String buyerTrending          = "$server/buyer/products/trending";
+  static const String buyerNewArrivals       = "$server/buyer/products/new-arrivals";
+  static const String buyerOffers            = "$server/buyer/products/offers";
+  static const String buyerAllProducts       = "$server/buyer/products";
+  static const String buyerCartAdd           = "$server/cart/add";
+  static String buyerProductDetails(String productId) => "$server/products/$productId";
+  static String buyerProductView(String productId) => "$server/products/$productId/view";
+  static const String buyerRecommended       = "$server/buyer/products/recommended";
+  static const String buyerFavorites         = "$server/buyer/favorites";
+  static const String buyerStores            = "$server/buyer/stores";
+  static String buyerToggleFavorite(String productId) =>
+      "$server/buyer/favorites/$productId/toggle";
+  static String buyerStoreDetails(String storeId) =>
+      "$server/buyer/stores/$storeId";
+  static String buyerStoreProducts(String storeId) =>
+      "$server/buyer/stores/$storeId/products";
+  static String buyerStoreDepartments(String storeId) =>
+      "$server/buyer/stores/$storeId/departments";
+  static String buyerStoreReviews(String storeId) =>
+      "$server/buyer/stores/$storeId/reviews";
+  static String buyerToggleStoreFollow(String storeId) =>
+      "$server/buyer/stores/$storeId/follow";
+  static String buyerRateStore(String storeId) =>
+      "$server/buyer/stores/$storeId/reviews";
 }

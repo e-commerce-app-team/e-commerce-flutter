@@ -129,8 +129,6 @@ class _WarehouseRow extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 5),
-              Text(warehouse.city, style: AppTextStyle.labelSmall.copyWith(fontSize: 10)),
             ]),
           ]),
         ),
