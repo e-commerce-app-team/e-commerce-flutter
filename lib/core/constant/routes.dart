@@ -45,9 +45,11 @@ class AppRoute {
   static const String buyerChatRoom = "/buyer/chat";
   static const String buyerProductDetail = "/buyer/product";
   static const String buyerOrderDetail = "/buyer/order";
+  static const String buyerProfile = "/buyer";
 
   // ─── Staff Invitation ──────────────────────────────────────────────────────
   /// Route opened when a staff member clicks the invitation link in their email.
   /// Expects Get.arguments = {'token': '...', 'store_name': '...'}
   static const String staffAcceptInvite = "/staff/accept-invite";
+
 }

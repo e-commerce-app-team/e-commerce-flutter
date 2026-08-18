@@ -1,3 +1,4 @@
+import 'package:e_commerce/view/screen/buyer/buyer_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:e_commerce/view/screen/buyer/orders/buyer_orders_screen.dart';
 import 'package:get/get.dart';
@@ -29,7 +30,7 @@ class BuyerMainScreen extends StatelessWidget {
               const ExploreScreen(),
               const CartScreen(),
               const BuyerOrdersScreen(),
-              const Scaffold(body: Center(child: Text("Account Screen"))),
+              const BuyerProfileScreen(),
             ],
           ),
           bottomNavigationBar: Obx(

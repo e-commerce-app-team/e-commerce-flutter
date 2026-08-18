@@ -12,6 +12,7 @@ import 'package:e_commerce/view/screen/auth/forgetpassword/verifycode.dart';
 import 'package:e_commerce/view/screen/auth/verifycodesignup.dart';
 import 'package:e_commerce/view/screen/auth/signup/verifycodesignupseller.dart';
 import 'package:e_commerce/view/screen/auth/staff/staff_accept_invite_screen.dart';
+import 'package:e_commerce/view/screen/buyer/buyer_profile_screen.dart';
 import 'package:e_commerce/view/screen/onboarding.dart';
 import 'package:e_commerce/view/screen/seller/branches/branch_form_screen.dart';
 import 'package:e_commerce/view/screen/seller/branches/branch_location_picker_screen.dart';
@@ -111,6 +112,8 @@ List<GetPage<dynamic>>? routes = [
   GetPage(name: AppRoute.explore, page: () => const ExploreScreen()),
   GetPage(name: AppRoute.buyerStoreDetail, page: () => const BuyerStoreDetailScreen()),
   GetPage(name: AppRoute.buyerChatRoom, page: () => const BuyerChatRoomScreen()),
+  GetPage(name: AppRoute.buyerProfile, page: () => const BuyerProfileScreen()),
+
   GetPage(name: AppRoute.buyerProductDetail, page: () => const BuyerProductDetailScreen()),
   GetPage(name: AppRoute.buyerOrderDetail, page: () => const BuyerOrderDetailScreen()),
   GetPage(
