@@ -1,32 +1,64 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:e_commerce/core/functions/custom_snackbar.dart';
+import 'package:e_commerce/controller/buyer/cart_controller.dart';
 import 'package:e_commerce/core/services/services.dart';
-import 'package:e_commerce/data/datasource/remote/buyer/home_datasource.dart';
+import 'package:e_commerce/data/datasource/remote/buyer/explore_datasource.dart';
 import 'package:e_commerce/data/models/explore/explore_models.dart';
 
+enum ExploreMode { chooser, products, stores }
+
+class ExploreSection<T> {
+  final String id;
+  final String title;
+  final List<T> items;
+
+  const ExploreSection({
+    required this.id,
+    required this.title,
+    required this.items,
+  });
+}
+
 class ExploreController extends GetxController {
-  final BuyerHomeRemoteDataSource _remote = BuyerHomeRemoteDataSource();
+  final BuyerExploreRemoteDataSource _remote = BuyerExploreRemoteDataSource();
   final TextEditingController searchTextController = TextEditingController();
   final FocusNode searchFocusNode = FocusNode();
 
+  ExploreMode mode = ExploreMode.chooser;
   bool isSearchFocused = false;
-  bool isStoresTab = false;
-  bool isLoading = true;
+  bool isLoading = false;
+  String? errorMessage;
   int selectedCategoryIndex = 0;
-  String? selectedSubCategoryId;
+  String? selectedStoreId;
   String currentQuery = '';
   RangeValues priceRange = const RangeValues(0, 3000000);
   double minRating = 0;
+  double radiusKm = 10;
   bool freeShippingOnly = false;
   bool discountedOnly = false;
+  bool inStockOnly = false;
+  bool openNowOnly = false;
+  bool hasProductsOnly = false;
+  bool nearbyOnly = false;
   String sortBy = 'latest';
   List<String> recentSearches = [];
   List<String> suggestions = [];
-  List<ExploreCategoryModel> categories = [];
+  List<ExploreCategoryModel> categories = const [
+    ExploreCategoryModel(
+      id: 'all',
+      name: 'all_categories',
+      icon: Icons.apps_rounded,
+    ),
+  ];
   final List<ExploreProductModel> _allProducts = [];
   final List<ExploreStoreModel> _allStores = [];
   List<ExploreProductModel> products = [];
   List<ExploreStoreModel> stores = [];
+
+  bool get isProductsMode => mode == ExploreMode.products;
+  bool get isStoresMode => mode == ExploreMode.stores;
+  bool get hasSelectedMode => mode != ExploreMode.chooser;
 
   String? get _token {
     try {
@@ -43,89 +75,161 @@ class ExploreController extends GetxController {
       isSearchFocused = searchFocusNode.hasFocus;
       update();
     });
-    _loadRemote();
+    _loadCategories();
   }
 
-  Future<void> _loadRemote() async {
-    isLoading = true;
+  Future<void> chooseMode(ExploreMode nextMode) async {
+    mode = nextMode;
+    isSearchFocused = false;
+    searchFocusNode.unfocus();
     update();
-    final results = await Future.wait([
-      _remote.getCategories(),
-      _remote.getAllProducts(),
-      _remote.getFeaturedStores(),
-    ]);
-    final categoryResponse = results[0].fold((_) => <String, dynamic>{}, (v) => v);
-    final productResponse = results[1].fold((_) => <String, dynamic>{}, (v) => v);
-    final storeResponse = results[2].fold((_) => <String, dynamic>{}, (v) => v);
-    final categoryList = categoryResponse['data'] is List ? categoryResponse['data'] as List : const [];
-    categories = [
-      const ExploreCategoryModel(id: 'all', name: 'all_categories', icon: Icons.apps_rounded),
-      ...categoryList.whereType<Map>().map((item) => ExploreCategoryModel(
-            id: item['id'].toString(),
-            name: item['name']?.toString() ?? '',
-            icon: Icons.category_outlined,
-          )),
-    ];
-    final rawProducts = productResponse['data'] is Map
-        ? productResponse['data']['data']
-        : productResponse['data'];
-    _allProducts
-      ..clear()
-      ..addAll((rawProducts is List ? rawProducts : const [])
-          .whereType<Map>()
-          .map(_productFromJson));
-    final rawStores = storeResponse['data'] is List ? storeResponse['data'] as List : const [];
-    _allStores
-      ..clear()
-      ..addAll(rawStores.whereType<Map>().map(_storeFromJson));
-    applyFilters();
+    await refreshResults();
+  }
+
+  Future<void> _loadCategories() async {
+    final result = await _remote.getCategories();
+    result.fold(
+      (_) {},
+      (response) {
+        final raw = response['data'] is List ? response['data'] as List : const [];
+        categories = [
+          const ExploreCategoryModel(
+            id: 'all',
+            name: 'all_categories',
+            icon: Icons.apps_rounded,
+          ),
+          ...raw.whereType<Map>().map(
+                (item) => ExploreCategoryModel(
+                  id: item['id'].toString(),
+                  name: item['name']?.toString() ?? '',
+                  icon: Icons.category_outlined,
+                ),
+              ),
+        ];
+      },
+    );
+    update();
+  }
+
+  Future<void> refreshResults() async {
+    if (!hasSelectedMode) return;
+    isLoading = true;
+    errorMessage = null;
+    update();
+
+    final categoryId = selectedCategoryIndex > 0 &&
+            selectedCategoryIndex < categories.length
+        ? categories[selectedCategoryIndex].id
+        : null;
+
+    final result = isProductsMode
+        ? await _remote.getProducts(
+            query: currentQuery,
+            categoryId: categoryId,
+            sortBy: sortBy,
+            minPrice: priceRange.start,
+            maxPrice: priceRange.end,
+            minRating: minRating,
+            freeShipping: freeShippingOnly,
+            discounted: discountedOnly,
+            inStock: inStockOnly,
+            storeId: selectedStoreId,
+            token: _token,
+          )
+        : await _remote.getStores(
+            query: currentQuery,
+            categoryId: categoryId,
+            sortBy: sortBy,
+            minRating: minRating,
+            openNow: openNowOnly,
+            hasProducts: hasProductsOnly,
+            radius: nearbyOnly ? radiusKm : null,
+            token: _token,
+          );
+
+    result.fold(
+      (failure) {
+        errorMessage = 'explore_error_body'.tr;
+      },
+      (response) {
+        if (response['success'] == false) {
+          errorMessage =
+              response['message']?.toString().isNotEmpty == true
+                  ? response['message'].toString()
+                  : 'explore_error_body'.tr;
+          return;
+        }
+        if (isProductsMode) {
+          final rawData = response['data'];
+          final raw = rawData is Map ? rawData['data'] : rawData;
+          _allProducts
+            ..clear()
+            ..addAll((raw is List ? raw : const [])
+                .whereType<Map>()
+                .map((item) => ExploreProductModel.fromJson(Map<String, dynamic>.from(item))));
+          products = List<ExploreProductModel>.from(_allProducts);
+          suggestions = _buildProductSuggestions(currentQuery);
+        } else {
+          final rawData = response['data'];
+          final raw = rawData is Map ? rawData['data'] : rawData;
+          _allStores
+            ..clear()
+            ..addAll((raw is List ? raw : const [])
+                .whereType<Map>()
+                .map((item) => ExploreStoreModel.fromJson(Map<String, dynamic>.from(item))));
+          stores = List<ExploreStoreModel>.from(_allStores);
+          suggestions = _buildStoreSuggestions(currentQuery);
+        }
+      },
+    );
+
     isLoading = false;
     update();
   }
 
-  ExploreProductModel _productFromJson(Map item) => ExploreProductModel(
-        id: item['id'].toString(),
-        name: item['name']?.toString() ?? '',
-        storeName: item['store_name']?.toString() ?? '',
-        storeId: item['store_id']?.toString() ?? '',
-        categoryId: item['category_id']?.toString() ?? '',
-        price: double.tryParse('${item['old_price'] ?? item['price'] ?? 0}') ?? 0,
-        salePrice: item['old_price'] != null
-            ? double.tryParse('${item['price']}')
-            : null,
-        rating: double.tryParse('${item['rating'] ?? 0}') ?? 0,
-        reviewCount: int.tryParse('${item['rating_count'] ?? 0}') ?? 0,
-        hasFreeShipping: item['free_shipping'] == true || item['free_shipping'] == 1,
-        hasWholesalePrice: item['has_wholesale'] == true || item['has_wholesale'] == 1,
-        isFavorite: item['is_favorite'] == true,
-      );
-
-  ExploreStoreModel _storeFromJson(Map item) => ExploreStoreModel(
-        id: item['id'].toString(),
-        name: item['store_name']?.toString() ?? item['name']?.toString() ?? '',
-        category: item['category']?.toString() ?? '',
-        rating: double.tryParse('${item['rating'] ?? 0}') ?? 0,
-        isOpen: item['is_open'] == true || item['is_open'] == 1,
-        productCount: int.tryParse('${item['products_count'] ?? 0}') ?? 0,
-      );
-
   void onSearchChanged(String query) {
-    suggestions = _allProducts
-        .where((p) => p.name.toLowerCase().contains(query.toLowerCase()))
-        .map((p) => p.name)
-        .take(6)
-        .toList();
+    suggestions = isStoresMode
+        ? _buildStoreSuggestions(query)
+        : _buildProductSuggestions(query);
     update();
   }
 
-  void submitSearch(String query) {
+  List<String> _buildProductSuggestions(String query) {
+    final normalized = query.toLowerCase().trim();
+    return _allProducts
+        .where((p) =>
+            normalized.isEmpty ||
+            p.name.toLowerCase().contains(normalized) ||
+            p.storeName.toLowerCase().contains(normalized))
+        .map((p) => p.name)
+        .where((name) => name.isNotEmpty)
+        .toSet()
+        .take(6)
+        .toList();
+  }
+
+  List<String> _buildStoreSuggestions(String query) {
+    final normalized = query.toLowerCase().trim();
+    return _allStores
+        .where((s) =>
+            normalized.isEmpty ||
+            s.name.toLowerCase().contains(normalized) ||
+            s.category.toLowerCase().contains(normalized))
+        .map((s) => s.name)
+        .where((name) => name.isNotEmpty)
+        .toSet()
+        .take(6)
+        .toList();
+  }
+
+  Future<void> submitSearch(String query) async {
     searchFocusNode.unfocus();
     currentQuery = query.trim();
     if (currentQuery.isNotEmpty && !recentSearches.contains(currentQuery)) {
       recentSearches.insert(0, currentQuery);
       if (recentSearches.length > 5) recentSearches.removeLast();
     }
-    applyFilters();
+    await refreshResults();
   }
 
   void selectSuggestion(String suggestion) {
@@ -133,82 +237,204 @@ class ExploreController extends GetxController {
     submitSearch(suggestion);
   }
 
-  void closeSearch() {
+  Future<void> closeSearch() async {
     searchTextController.clear();
     currentQuery = '';
     suggestions = [];
     searchFocusNode.unfocus();
-    applyFilters();
+    await refreshResults();
   }
 
-  void clearRecentSearches() { recentSearches = []; update(); }
+  void clearRecentSearches() {
+    recentSearches = [];
+    update();
+  }
 
-  void selectCategory(int index) { selectedCategoryIndex = index; selectedSubCategoryId = null; applyFilters(); }
-  void selectSubCategory(String id) { selectedSubCategoryId = selectedSubCategoryId == id ? null : id; applyFilters(); }
-  List<ExploreSubCategoryModel> get currentSubCategories => const [];
-  void switchTab(bool storesTab) { isStoresTab = storesTab; update(); }
+  Future<void> selectCategory(int index) async {
+    selectedCategoryIndex = index;
+    await refreshResults();
+  }
 
-  void applyFilterValues({required RangeValues newPriceRange, required double newMinRating, required bool newFreeShippingOnly, required bool newDiscountedOnly}) {
+  void switchTab(bool storesTab) {
+    chooseMode(storesTab ? ExploreMode.stores : ExploreMode.products);
+  }
+
+  Future<void> applyFilterValues({
+    required RangeValues newPriceRange,
+    required double newMinRating,
+    required bool newFreeShippingOnly,
+    required bool newDiscountedOnly,
+    required bool newInStockOnly,
+    required bool newOpenNowOnly,
+    required bool newHasProductsOnly,
+    required bool newNearbyOnly,
+    required double newRadiusKm,
+  }) async {
     priceRange = newPriceRange;
     minRating = newMinRating;
     freeShippingOnly = newFreeShippingOnly;
     discountedOnly = newDiscountedOnly;
-    applyFilters();
+    inStockOnly = newInStockOnly;
+    openNowOnly = newOpenNowOnly;
+    hasProductsOnly = newHasProductsOnly;
+    nearbyOnly = newNearbyOnly;
+    radiusKm = newRadiusKm;
+    await refreshResults();
   }
 
-  void setSortBy(String value) { sortBy = value; applyFilters(); }
-
-  Future<void> applyFilters() async {
-    var nextProducts = List<ExploreProductModel>.from(_allProducts);
-    var nextStores = List<ExploreStoreModel>.from(_allStores);
-    if (selectedCategoryIndex > 0 && selectedCategoryIndex < categories.length) {
-      final id = categories[selectedCategoryIndex].id;
-      nextProducts = nextProducts.where((p) => p.categoryId == id).toList();
-    }
-    if (currentQuery.isNotEmpty) {
-      final query = currentQuery.toLowerCase();
-      nextProducts = nextProducts.where((p) => p.name.toLowerCase().contains(query) || p.storeName.toLowerCase().contains(query)).toList();
-      nextStores = nextStores.where((s) => s.name.toLowerCase().contains(query)).toList();
-    }
-    if (discountedOnly) nextProducts = nextProducts.where((p) => p.hasDiscount).toList();
-    if (freeShippingOnly) nextProducts = nextProducts.where((p) => p.hasFreeShipping).toList();
-    if (minRating > 0) nextProducts = nextProducts.where((p) => p.rating >= minRating).toList();
-    nextProducts = nextProducts.where((p) => p.displayPrice >= priceRange.start && p.displayPrice <= priceRange.end).toList();
-    if (sortBy == 'price_asc') nextProducts.sort((a, b) => a.displayPrice.compareTo(b.displayPrice));
-    if (sortBy == 'price_desc') nextProducts.sort((a, b) => b.displayPrice.compareTo(a.displayPrice));
-    if (sortBy == 'rating') nextProducts.sort((a, b) => b.rating.compareTo(a.rating));
-    products = nextProducts;
-    stores = nextStores;
-    update();
+  Future<void> setSortBy(String value) async {
+    sortBy = value;
+    await refreshResults();
   }
 
-  void resetFilters() { selectedCategoryIndex = 0; selectedSubCategoryId = null; priceRange = const RangeValues(0, 3000000); minRating = 0; freeShippingOnly = false; discountedOnly = false; sortBy = 'latest'; currentQuery = ''; applyFilters(); }
-  void removeFilterChip(String key) { if (key == 'discount') discountedOnly = false; if (key == 'rating') minRating = 0; if (key == 'price') priceRange = const RangeValues(0, 3000000); applyFilters(); }
+  Future<void> resetFilters() async {
+    selectedCategoryIndex = 0;
+    selectedStoreId = null;
+    priceRange = const RangeValues(0, 3000000);
+    minRating = 0;
+    radiusKm = 10;
+    freeShippingOnly = false;
+    discountedOnly = false;
+    inStockOnly = false;
+    openNowOnly = false;
+    hasProductsOnly = false;
+    nearbyOnly = false;
+    sortBy = 'latest';
+    currentQuery = '';
+    searchTextController.clear();
+    await refreshResults();
+  }
+
+  Future<void> removeFilterChip(String key) async {
+    if (key == 'discount') discountedOnly = false;
+    if (key == 'rating') minRating = 0;
+    if (key == 'price') priceRange = const RangeValues(0, 3000000);
+    if (key == 'shipping') freeShippingOnly = false;
+    if (key == 'stock') inStockOnly = false;
+    if (key == 'open') openNowOnly = false;
+    if (key == 'has_products') hasProductsOnly = false;
+    if (key == 'nearby') nearbyOnly = false;
+    if (key == 'category') selectedCategoryIndex = 0;
+    await refreshResults();
+  }
 
   Future<void> toggleFavorite(String productId) async {
     final token = _token;
-    if (token == null) { Get.snackbar('Sign in required', 'Sign in to manage favorites.'); return; }
-    await _remote.toggleFavorite(productId, token);
-    final index = _allProducts.indexWhere((p) => p.id == productId);
-    if (index != -1) _allProducts[index] = _allProducts[index].copyWith(isFavorite: !_allProducts[index].isFavorite);
-    applyFilters();
+    if (token == null) {
+      customSnackbar('warning'.tr, 'signin_required_favorite'.tr, isError: true);
+      return;
+    }
+    final result = await _remote.toggleFavorite(productId, token);
+    result.fold(
+      (_) => customSnackbar('error'.tr, 'server_error'.tr, isError: true),
+      (_) {
+        final index = _allProducts.indexWhere((p) => p.id == productId);
+        if (index != -1) {
+          _allProducts[index] = _allProducts[index].copyWith(
+            isFavorite: !_allProducts[index].isFavorite,
+          );
+          products = List<ExploreProductModel>.from(_allProducts);
+          update();
+        }
+      },
+    );
   }
 
   Future<void> addToCart(String productId) async {
-    final token = _token;
-    if (token == null) { Get.snackbar('Sign in required', 'Sign in to add products to your cart.'); return; }
-    final result = await _remote.addToCart(productId, token);
-    result.fold((_) => Get.snackbar('Cart', 'The product could not be added.'), (_) => Get.snackbar('Cart', 'Product added to your cart.'));
+    ExploreProductModel? product;
+    for (final item in _allProducts) {
+      if (item.id == productId) {
+        product = item;
+        break;
+      }
+    }
+
+    final maxStock = product?.quantity;
+    if (!Get.isRegistered<CartController>()) return;
+
+    await Get.find<CartController>().addToCart(
+      productId,
+      maxStock: maxStock,
+    );
   }
 
-  int get activeFilterCount => (discountedOnly ? 1 : 0) + (minRating > 0 ? 1 : 0) + (priceRange.start != 0 || priceRange.end != 3000000 ? 1 : 0);
+  Map<String, String> get _categoryNames => {
+        for (final category in categories) category.id: category.name,
+      };
+
+  List<ExploreSection<ExploreProductModel>> get productSections {
+    final grouped = <String, List<ExploreProductModel>>{};
+    for (final product in products) {
+      final key = product.categoryId.isNotEmpty ? product.categoryId : 'uncategorized';
+      grouped.putIfAbsent(key, () => []).add(product);
+    }
+    return grouped.entries
+        .map(
+          (entry) => ExploreSection<ExploreProductModel>(
+            id: entry.key,
+            title: _categoryNames[entry.key] ??
+                _fallbackLabel(entry.value.first.categoryName, 'explore_uncategorized'.tr),
+            items: entry.value,
+          ),
+        )
+        .toList();
+  }
+
+  List<ExploreSection<ExploreStoreModel>> get storeSections {
+    final grouped = <String, List<ExploreStoreModel>>{};
+    for (final store in stores) {
+      final key = store.categoryId.isNotEmpty
+          ? store.categoryId
+          : _fallbackLabel(store.category, 'explore_uncategorized'.tr);
+      grouped.putIfAbsent(key, () => []).add(store);
+    }
+    return grouped.entries
+        .map(
+          (entry) => ExploreSection<ExploreStoreModel>(
+            id: entry.key,
+            title: _categoryNames[entry.key] ??
+                _fallbackLabel(entry.value.first.category, 'explore_uncategorized'.tr),
+            items: entry.value,
+          ),
+        )
+        .toList();
+  }
+
+  String _fallbackLabel(String value, String fallback) {
+    return value.trim().isEmpty ? fallback : value;
+  }
+
+  int get activeFilterCount =>
+      (discountedOnly ? 1 : 0) +
+      (minRating > 0 ? 1 : 0) +
+      (priceRange.start != 0 || priceRange.end != 3000000 ? 1 : 0) +
+      (freeShippingOnly ? 1 : 0) +
+      (inStockOnly ? 1 : 0) +
+      (openNowOnly ? 1 : 0) +
+      (hasProductsOnly ? 1 : 0) +
+      (nearbyOnly ? 1 : 0) +
+      (selectedCategoryIndex > 0 ? 1 : 0);
+
   List<Map<String, String>> get activeFilterChips => [
-        if (discountedOnly) {'key': 'discount', 'label': 'discounted'},
+        if (selectedCategoryIndex > 0 && selectedCategoryIndex < categories.length)
+          {'key': 'category', 'label': categories[selectedCategoryIndex].name},
+        if (discountedOnly) {'key': 'discount', 'label': 'explore_discount_only'},
+        if (freeShippingOnly) {'key': 'shipping', 'label': 'free_shipping'},
+        if (inStockOnly) {'key': 'stock', 'label': 'explore_in_stock_only'},
+        if (openNowOnly) {'key': 'open', 'label': 'explore_open_now_only'},
+        if (hasProductsOnly) {'key': 'has_products', 'label': 'explore_has_products_only'},
+        if (nearbyOnly) {'key': 'nearby', 'label': 'explore_nearby_only'},
         if (minRating > 0) {'key': 'rating', 'label': '${minRating.toInt()}+'},
-        if (priceRange.start != 0 || priceRange.end != 3000000) {'key': 'price', 'label': 'price range'},
+        if (priceRange.start != 0 || priceRange.end != 3000000)
+          {'key': 'price', 'label': 'explore_price_range'},
       ];
-  int get resultCount => isStoresTab ? stores.length : products.length;
+
+  int get resultCount => isStoresMode ? stores.length : products.length;
 
   @override
-  void onClose() { searchTextController.dispose(); searchFocusNode.dispose(); super.onClose(); }
+  void onClose() {
+    searchTextController.dispose();
+    searchFocusNode.dispose();
+    super.onClose();
+  }
 }

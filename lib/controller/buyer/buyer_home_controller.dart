@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/data/models/buyer/home_models.dart';
 import 'package:e_commerce/data/datasource/remote/buyer/home_datasource.dart';
+import 'package:e_commerce/controller/buyer/cart_controller.dart';
 import 'package:e_commerce/core/services/services.dart';
 
 /// The single controller for the NEXUS buyer home screen.
@@ -84,16 +85,8 @@ class BuyerHomeController extends GetxController {
   }
 
   Future<void> addToCart(BuyerProductItem product) async {
-    final token = _token;
-    if (token == null || product.id == null) {
-      Get.snackbar('Sign in required', 'Sign in to add products to your cart.');
-      return;
-    }
-    final result = await _ds.addToCart(product.id!, token);
-    result.fold(
-      (_) => Get.snackbar('Cart', 'The product could not be added.'),
-      (_) => Get.snackbar('Cart', 'Product added to your cart.'),
-    );
+    if (product.id == null || !Get.isRegistered<CartController>()) return;
+    await Get.find<CartController>().addToCart(product.id!);
   }
 
   Future<void> loadAllProducts({bool reset = false}) async {

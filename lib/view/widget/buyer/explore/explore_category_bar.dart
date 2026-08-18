@@ -52,7 +52,9 @@ class ExploreCategoryBar extends StatelessWidget {
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    category.name.tr,
+                    category.id == 'all' ? 'all_categories'.tr : category.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: selected ? AppTextStyle.buttonSmall : AppTextStyle.labelMedium,
                   ),
                 ],
@@ -105,7 +107,9 @@ class ExploreSubCategoryBar extends StatelessWidget {
               ),
               alignment: Alignment.center,
               child: Text(
-                sub.name.tr,
+                sub.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: AppTextStyle.labelSmall.copyWith(
                   color: selected ? AppColor.primaryColor : AppColor.greyText,
                   fontWeight: selected ? FontWeight.w700 : FontWeight.w500,

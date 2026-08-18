@@ -21,6 +21,8 @@ class ExploreScreen extends StatelessWidget {
     {'value': 'price_asc', 'label': 'sort_price_asc'},
     {'value': 'price_desc', 'label': 'sort_price_desc'},
     {'value': 'rating', 'label': 'sort_rating'},
+    {'value': 'popular', 'label': 'sort_popular'},
+    {'value': 'name', 'label': 'sort_name'},
   ];
 
   @override
@@ -39,24 +41,21 @@ class ExploreScreen extends StatelessWidget {
                 focusNode: controller.searchFocusNode,
                 activeFilterCount: controller.activeFilterCount,
                 isSearchFocused: controller.isSearchFocused,
+                showSearchBar: controller.hasSelectedMode,
                 onFilterTap: () => _openFilterSheet(context),
                 onChanged: controller.onSearchChanged,
                 onSubmitted: controller.submitSearch,
                 onCancel: controller.closeSearch,
               ),
-              if (!controller.isSearchFocused) ...[
+              if (!controller.hasSelectedMode)
+                Expanded(child: _buildModeChooser(controller))
+              else if (!controller.isSearchFocused) ...[
                 const SizedBox(height: 16),
                 ExploreCategoryBar(
                   categories: controller.categories,
                   selectedIndex: controller.selectedCategoryIndex,
                   onSelect: controller.selectCategory,
                 ),
-                if (controller.currentSubCategories.isNotEmpty)
-                  ExploreSubCategoryBar(
-                    subCategories: controller.currentSubCategories,
-                    selectedId: controller.selectedSubCategoryId,
-                    onSelect: controller.selectSubCategory,
-                  ),
                 if (controller.activeFilterChips.isNotEmpty) ...[
                   const SizedBox(height: 12),
                   ExploreActiveFilterChips(
@@ -66,28 +65,29 @@ class ExploreScreen extends StatelessWidget {
                   ),
                 ],
                 ExploreToolbar(
-                  isStoresTab: controller.isStoresTab,
+                  isStoresTab: controller.isStoresMode,
                   resultCount: controller.resultCount,
                   onTabChanged: controller.switchTab,
                   onSortTap: () => _openSortSheet(context),
                 ),
               ],
-              Expanded(
-                child: controller.isSearchFocused
-                    ? ExploreSearchSuggestions(
-                        recentSearches: controller.recentSearches,
-                        suggestions: controller.suggestions,
-                        onSelectSuggestion: controller.selectSuggestion,
-                        onClearRecent: controller.clearRecentSearches,
-                      )
-                    : controller.isLoading
-                        ? _buildLoadingState(controller.isStoresTab)
-                        : controller.isStoresTab
-                            ? _buildStoresList(controller)
-                            : controller.products.isEmpty
-                                ? _buildEmptyState(controller)
-                                : _buildProductsGrid(controller),
-              ),
+              if (controller.hasSelectedMode)
+                Expanded(
+                  child: controller.isSearchFocused
+                      ? ExploreSearchSuggestions(
+                          recentSearches: controller.recentSearches,
+                          suggestions: controller.suggestions,
+                          onSelectSuggestion: controller.selectSuggestion,
+                          onClearRecent: controller.clearRecentSearches,
+                        )
+                      : controller.isLoading
+                          ? _buildLoadingState(controller.isStoresMode)
+                          : controller.errorMessage != null
+                              ? _buildErrorState(controller)
+                              : controller.isStoresMode
+                                  ? _buildStoreSections(controller)
+                                  : _buildProductSections(controller),
+                ),
             ],
           ),
         ),
@@ -95,47 +95,126 @@ class ExploreScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProductsGrid(ExploreController controller) {
+  Widget _buildModeChooser(ExploreController controller) {
     return RefreshIndicator(
       color: AppColor.primaryColor,
-      onRefresh: controller.applyFilters,
-      child: GridView.builder(
+      onRefresh: controller.refreshResults,
+      child: ListView(
+        padding: const EdgeInsets.fromLTRB(20, 22, 20, 28),
+        children: [
+          Text(
+            'explore_choose_title'.tr,
+            style: AppTextStyle.heading1,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'explore_choose_body'.tr,
+            style: AppTextStyle.bodyMedium,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 22),
+          _DiscoveryChoiceCard(
+            icon: Icons.storefront_rounded,
+            title: 'explore_choose_stores'.tr,
+            body: 'explore_choose_stores_body'.tr,
+            countLabel: 'explore_store_rows_hint'.tr,
+            colors: const [Color(0xff0F766E), Color(0xff22C55E)],
+            onTap: () => controller.chooseMode(ExploreMode.stores),
+          ),
+          const SizedBox(height: 14),
+          _DiscoveryChoiceCard(
+            icon: Icons.inventory_2_rounded,
+            title: 'explore_choose_products'.tr,
+            body: 'explore_choose_products_body'.tr,
+            countLabel: 'explore_product_rows_hint'.tr,
+            colors: const [Color(0xff7C2D12), Color(0xffF59E0B)],
+            onTap: () => controller.chooseMode(ExploreMode.products),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProductSections(ExploreController controller) {
+    if (controller.products.isEmpty) return _buildEmptyState(controller);
+    final sections = controller.productSections;
+    return RefreshIndicator(
+      color: AppColor.primaryColor,
+      onRefresh: controller.refreshResults,
+      child: ListView.separated(
         padding: const EdgeInsets.fromLTRB(16, 6, 16, 24),
-        itemCount: controller.products.length,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 14,
-          crossAxisSpacing: 14,
-          childAspectRatio: 0.6,
-        ),
-        itemBuilder: (context, index) {
-          final product = controller.products[index];
-          return ExploreProductCard(
-            product: product,
-            index: index,
-            onTap: () => Get.toNamed(AppRoute.buyerProductDetail, arguments: {'product_id': product.id}),
-            onFavoriteTap: () => controller.toggleFavorite(product.id),
-            onAddToCart: () => controller.addToCart(product.id),
+        itemCount: sections.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 18),
+        itemBuilder: (context, sectionIndex) {
+          final section = sections[sectionIndex];
+          return _ResultSection(
+                title: section.title,
+            subtitle: '${section.items.length} ${'explore_products_count'.tr}',
+            child: SizedBox(
+              height: 286,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: section.items.length,
+                separatorBuilder: (_, __) => const SizedBox(width: 12),
+                itemBuilder: (context, index) {
+                  final product = section.items[index];
+                  return SizedBox(
+                    width: 174,
+                    child: ExploreProductCard(
+                      product: product,
+                      index: index,
+                      onTap: () => Get.toNamed(
+                        AppRoute.buyerProductDetail,
+                        arguments: {'product_id': product.id},
+                      ),
+                      onFavoriteTap: () => controller.toggleFavorite(product.id),
+                      onAddToCart: () => controller.addToCart(product.id),
+                    ),
+                  );
+                },
+              ),
+            ),
           );
         },
       ),
     );
   }
 
-  Widget _buildStoresList(ExploreController controller) {
+  Widget _buildStoreSections(ExploreController controller) {
+    if (controller.stores.isEmpty) return _buildEmptyState(controller);
+    final sections = controller.storeSections;
     return RefreshIndicator(
       color: AppColor.primaryColor,
-      onRefresh: controller.applyFilters,
-      child: ListView.builder(
+      onRefresh: controller.refreshResults,
+      child: ListView.separated(
         padding: const EdgeInsets.fromLTRB(16, 10, 16, 24),
-        itemCount: controller.stores.length,
-        itemBuilder: (context, index) {
-          final store = controller.stores[index];
-          return ExploreStoreCard(
-            store: store,
-            index: index,
-            onTap: () => Get.toNamed(AppRoute.buyerStoreDetail, arguments: {'store_id': store.id}),
-            onFollowTap: () => Get.toNamed(AppRoute.buyerStoreDetail, arguments: {'store_id': store.id}),
+        itemCount: sections.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 14),
+        itemBuilder: (context, sectionIndex) {
+          final section = sections[sectionIndex];
+          return _ResultSection(
+            title: section.title,
+            subtitle: '${section.items.length} ${'explore_tab_stores'.tr}',
+            child: Column(
+              children: List.generate(section.items.length, (index) {
+                final store = section.items[index];
+                return ExploreStoreCard(
+                  store: store,
+                  index: index,
+                  onTap: () => Get.toNamed(
+                    AppRoute.buyerStoreDetail,
+                    arguments: {'store_id': store.id},
+                  ),
+                  onFollowTap: () => Get.toNamed(
+                    AppRoute.buyerStoreDetail,
+                    arguments: {'store_id': store.id},
+                  ),
+                );
+              }),
+            ),
           );
         },
       ),
@@ -160,6 +239,50 @@ class ExploreScreen extends StatelessWidget {
         childAspectRatio: 0.6,
       ),
       itemBuilder: (_, __) => const _ProductCardSkeleton(),
+    );
+  }
+
+  Widget _buildErrorState(ExploreController controller) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(30),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 94,
+              height: 94,
+              decoration: const BoxDecoration(
+                color: AppColor.errorLight,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.wifi_off_rounded,
+                size: 42,
+                color: AppColor.error,
+              ),
+            ),
+            const SizedBox(height: 18),
+            Text('explore_error_title'.tr, style: AppTextStyle.heading2),
+            const SizedBox(height: 8),
+            Text(
+              controller.errorMessage ?? 'explore_error_body'.tr,
+              style: AppTextStyle.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 18),
+            ElevatedButton.icon(
+              onPressed: controller.refreshResults,
+              icon: const Icon(Icons.refresh_rounded),
+              label: Text('retry'.tr),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColor.primaryColor,
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -276,6 +399,131 @@ class ExploreScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _DiscoveryChoiceCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String body;
+  final String countLabel;
+  final List<Color> colors;
+  final VoidCallback onTap;
+
+  const _DiscoveryChoiceCard({
+    required this.icon,
+    required this.title,
+    required this.body,
+    required this.countLabel,
+    required this.colors,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(22),
+        child: Ink(
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: colors,
+              begin: AlignmentDirectional.topStart,
+              end: AlignmentDirectional.bottomEnd,
+            ),
+            borderRadius: BorderRadius.circular(22),
+            boxShadow: AppColor.cardShadow,
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 66,
+                height: 66,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.16),
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(color: Colors.white.withOpacity(0.22)),
+                ),
+                child: Icon(icon, color: Colors.white, size: 32),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyle.heading2.copyWith(color: Colors.white),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      body,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyle.bodySmall.copyWith(color: Colors.white.withOpacity(0.86)),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      countLabel,
+                      style: AppTextStyle.labelSmall.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 10),
+              const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white, size: 18),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ResultSection extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final Widget child;
+
+  const _ResultSection({
+    required this.title,
+    required this.subtitle,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyle.heading3,
+                ),
+              ),
+              Text(subtitle, style: AppTextStyle.labelSmall),
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
+        child,
+      ],
     );
   }
 }

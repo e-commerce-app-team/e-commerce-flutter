@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
 import 'package:e_commerce/data/models/explore/explore_models.dart';
+import 'package:e_commerce/view/widget/buyer/shared/buyer_network_image.dart';
 
 class ExploreStoreCard extends StatelessWidget {
   final ExploreStoreModel store;
@@ -43,20 +44,60 @@ class ExploreStoreCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Container(
-              width: 58,
-              height: 58,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: gradient,
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  width: 76,
+                  height: 64,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    gradient: store.coverUrl.isEmpty
+                        ? LinearGradient(
+                            colors: gradient,
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          )
+                        : null,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: store.coverUrl.isEmpty
+                      ? const Icon(Icons.storefront_rounded, color: Colors.white, size: 26)
+                      : BuyerNetworkImage(
+                          url: store.coverUrl,
+                          fallbackIcon: Icons.storefront_rounded,
+                          backgroundColor: gradient.first.withOpacity(0.25),
+                        ),
                 ),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: const Icon(Icons.storefront_rounded, color: Colors.white, size: 26),
+                Positioned.directional(
+                  textDirection: Directionality.of(context),
+                  bottom: -6,
+                  end: -6,
+                  child: Container(
+                    width: 34,
+                    height: 34,
+                    clipBehavior: Clip.antiAlias,
+                    decoration: BoxDecoration(
+                      color: AppColor.backgroundcolor,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: AppColor.backgroundcolor, width: 2),
+                    ),
+                    child: store.logoUrl.isEmpty
+                        ? const Icon(
+                            Icons.store_mall_directory_rounded,
+                            color: AppColor.primaryColor,
+                            size: 18,
+                          )
+                        : BuyerNetworkImage(
+                            url: store.logoUrl,
+                            fallbackIcon: Icons.store_mall_directory_rounded,
+                            fallbackIconSize: 18,
+                          ),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(width: 14),
+            const SizedBox(width: 18),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,7 +133,12 @@ class ExploreStoreCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 4),
-                  Text(store.category.tr, style: AppTextStyle.bodySmall),
+                  Text(
+                    store.category,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyle.bodySmall,
+                  ),
                   const SizedBox(height: 6),
                   Row(
                     children: [
@@ -119,6 +165,22 @@ class ExploreStoreCard extends StatelessWidget {
                         '${store.productCount} ${'explore_products_count'.tr}',
                         style: AppTextStyle.labelSmall,
                       ),
+                      if (store.distance != null) ...[
+                        const SizedBox(width: 8),
+                        Container(
+                          width: 3,
+                          height: 3,
+                          decoration: const BoxDecoration(
+                            color: AppColor.greyLight,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '${store.distance!.toStringAsFixed(1)} ${'km_away'.tr}',
+                          style: AppTextStyle.labelSmall,
+                        ),
+                      ],
                     ],
                   ),
                 ],

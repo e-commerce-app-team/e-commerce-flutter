@@ -12,6 +12,7 @@ class ExploreSearchHeader extends StatelessWidget {
   final ValueChanged<String> onChanged;
   final ValueChanged<String> onSubmitted;
   final VoidCallback onCancel;
+  final bool showSearchBar;
 
   const ExploreSearchHeader({
     Key? key,
@@ -23,6 +24,7 @@ class ExploreSearchHeader extends StatelessWidget {
     required this.onChanged,
     required this.onSubmitted,
     required this.onCancel,
+    this.showSearchBar = true,
   }) : super(key: key);
 
   @override
@@ -55,94 +57,147 @@ class ExploreSearchHeader extends StatelessWidget {
             ),
             const SizedBox(height: 16),
           ],
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(25),
-                    boxShadow: AppColor.cardShadow,
-                  ),
-                  child: TextField(
-                    controller: searchController,
-                    focusNode: focusNode,
-                    onChanged: onChanged,
-                    onSubmitted: onSubmitted,
-                    textInputAction: TextInputAction.search,
-                    style: AppTextStyle.inputText,
-                    decoration: InputDecoration(
-                      hintText: 'explore_search_hint'.tr,
-                      hintStyle: AppTextStyle.inputHint,
-                      border: InputBorder.none,
-                      isCollapsed: true,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 16),
-                      prefixIcon: const Icon(Icons.search_rounded, color: AppColor.primaryColor, size: 24),
-                      prefixIconConstraints: const BoxConstraints(minWidth: 46),
-                      suffixIcon: searchController.text.isEmpty
-                          ? null
-                          : IconButton(
-                              icon: const Icon(Icons.close_rounded, color: AppColor.grey, size: 20),
-                              onPressed: () {
-                                searchController.clear();
-                                onChanged('');
-                              },
-                            ),
+          if (showSearchBar)
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(25),
+                      boxShadow: AppColor.cardShadow,
+                    ),
+                    child: TextField(
+                      controller: searchController,
+                      focusNode: focusNode,
+                      onChanged: onChanged,
+                      onSubmitted: onSubmitted,
+                      textInputAction: TextInputAction.search,
+                      style: AppTextStyle.inputText,
+                      decoration: InputDecoration(
+                        hintText: 'explore_search_hint'.tr,
+                        hintStyle: AppTextStyle.inputHint,
+                        border: InputBorder.none,
+                        isCollapsed: true,
+                        contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                        prefixIcon: const Icon(Icons.search_rounded, color: AppColor.primaryColor, size: 24),
+                        prefixIconConstraints: const BoxConstraints(minWidth: 46),
+                        suffixIcon: searchController.text.isEmpty
+                            ? null
+                            : IconButton(
+                                icon: const Icon(Icons.close_rounded, color: AppColor.grey, size: 20),
+                                onPressed: () {
+                                  searchController.clear();
+                                  onChanged('');
+                                },
+                              ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 10),
-              if (isSearchFocused)
-                TextButton(
-                  onPressed: onCancel,
-                  child: Text(
-                    'cancel'.tr,
-                    style: AppTextStyle.buttonMedium.copyWith(color: Colors.white),
-                  ),
-                )
-              else
-                GestureDetector(
-                  onTap: onFilterTap,
-                  child: Container(
-                    width: 50,
-                    height: 50,
-                    clipBehavior: Clip.none,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.18),
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white.withOpacity(0.4), width: 1.2),
+                const SizedBox(width: 10),
+                if (isSearchFocused)
+                  TextButton(
+                    onPressed: onCancel,
+                    child: Text(
+                      'cancel'.tr,
+                      style: AppTextStyle.buttonMedium.copyWith(color: Colors.white),
                     ),
-                    child: Stack(
+                  )
+                else
+                  GestureDetector(
+                    onTap: onFilterTap,
+                    child: Container(
+                      width: 50,
+                      height: 50,
                       clipBehavior: Clip.none,
-                      children: [
-                        const Center(child: Icon(Icons.tune_rounded, color: Colors.white, size: 22)),
-                        if (activeFilterCount > 0)
-                          Positioned.directional(
-                            textDirection: direction,
-                            top: -2,
-                            end: -2,
-                            child: Container(
-                              padding: const EdgeInsets.all(3),
-                              decoration: const BoxDecoration(
-                                color: AppColor.error,
-                                shape: BoxShape.circle,
-                              ),
-                              constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
-                              child: Text(
-                                '$activeFilterCount',
-                                textAlign: TextAlign.center,
-                                style: AppTextStyle.badge.copyWith(fontSize: 9),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.18),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white.withOpacity(0.4), width: 1.2),
+                      ),
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          const Center(child: Icon(Icons.tune_rounded, color: Colors.white, size: 22)),
+                          if (activeFilterCount > 0)
+                            Positioned.directional(
+                              textDirection: direction,
+                              top: -2,
+                              end: -2,
+                              child: Container(
+                                padding: const EdgeInsets.all(3),
+                                decoration: const BoxDecoration(
+                                  color: AppColor.error,
+                                  shape: BoxShape.circle,
+                                ),
+                                constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
+                                child: Text(
+                                  '$activeFilterCount',
+                                  textAlign: TextAlign.center,
+                                  style: AppTextStyle.badge.copyWith(fontSize: 9),
+                                ),
                               ),
                             ),
+                        ],
+                      ),
+                    ),
+                  ),
+              ],
+            )
+          else
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.12),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.white.withOpacity(0.18)),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.14),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: const Icon(Icons.touch_app_rounded, color: Colors.white, size: 20),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'explore_choose_title'.tr,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTextStyle.bodyMedium.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                            height: 1.2,
                           ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'explore_choose_body'.tr,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTextStyle.labelSmall.copyWith(
+                            color: Colors.white.withOpacity(0.82),
+                            height: 1.25,
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                ),
-            ],
-          ),
+                ],
+              ),
+            ),
         ],
       ),
     );

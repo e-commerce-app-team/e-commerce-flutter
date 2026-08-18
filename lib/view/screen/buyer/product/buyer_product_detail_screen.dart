@@ -4,6 +4,7 @@ import 'package:e_commerce/core/class/status_request.dart';
 import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/core/services/services.dart';
 import 'package:e_commerce/link_api.dart';
+import 'package:e_commerce/controller/buyer/cart_controller.dart';
 import 'package:e_commerce/view/widget/buyer/shared/buyer_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -38,6 +39,9 @@ class _BuyerProductDetailScreenState extends State<BuyerProductDetailScreen> {
   @override
   void initState() {
     super.initState();
+    if (!Get.isRegistered<CartController>()) {
+      Get.put(CartController(), permanent: true);
+    }
     _load();
   }
 
@@ -82,19 +86,12 @@ class _BuyerProductDetailScreenState extends State<BuyerProductDetailScreen> {
   }
 
   Future<void> _addToCart() async {
-    final token = _token;
-    if (token == null) {
-      Get.snackbar('Sign in required', 'Sign in to add products to your cart.');
-      return;
-    }
-    final result = await _crud.postData(
-      AppLink.buyerCartAdd,
-      {'product_id': _id, 'qty': 1},
-      headers: {'Authorization': 'Bearer $token'},
-    );
-    result.fold(
-      (_) => Get.snackbar('Cart', 'The product could not be added.'),
-      (_) => Get.snackbar('Cart', 'Product added to your cart.'),
+    final stock = (_product?['stock'] as num?)?.toInt() ??
+        (_product?['quantity'] as num?)?.toInt();
+
+    await Get.find<CartController>().addToCart(
+      _id,
+      maxStock: stock,
     );
   }
 
@@ -189,11 +186,22 @@ class _ProductBody extends StatelessWidget {
           SizedBox(
             height: 52,
             width: double.infinity,
-            child: FilledButton.icon(
-              onPressed: onAddToCart,
-              icon: const Icon(Icons.shopping_bag_outlined),
-              label: const Text('Add to cart'),
-            ),
+            child: Obx(() {
+              final adding = Get.isRegistered<CartController>()
+                  ? Get.find<CartController>().isAddingToCart.value
+                  : false;
+              return FilledButton.icon(
+                onPressed: adding ? null : onAddToCart,
+                icon: adding
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      )
+                    : const Icon(Icons.shopping_bag_outlined),
+                label: Text(adding ? 'adding_to_cart'.tr : 'add_to_cart'.tr),
+              );
+            }),
           ),
         ],
       ),

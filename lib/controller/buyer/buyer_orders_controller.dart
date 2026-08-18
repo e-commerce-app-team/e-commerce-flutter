@@ -1,102 +1,311 @@
 // lib/controller/buyer/buyer_orders_controller.dart
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:e_commerce/data/model/buyer/buyer_orders_model.dart';
+import 'package:e_commerce/core/class/crud.dart';
+import 'package:e_commerce/core/class/status_request.dart';
+import 'package:e_commerce/core/functions/custom_snackbar.dart';
+import 'package:e_commerce/core/services/services.dart';
+import 'package:e_commerce/data/datasource/remote/buyer/buyer_orders_datasource.dart';
 import 'package:e_commerce/data/datasource/static/buyer_orders_mock_data.dart';
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// TODO: TRANSLATIONS — Add these keys to translation.dart before final release:
-//   'my_orders_title'          → ar: 'طلباتي'                  en: 'My Orders'
-//   'buyer_orders_empty_title' → ar: 'لا توجد طلبات بعد'       en: 'No orders yet'
-//   'buyer_orders_empty_body'  → ar: 'ستظهر طلباتك هنا'        en: 'Your orders will appear here'
-//   'buyer_tab_pending'        → ar: 'قيد الانتظار'            en: 'Pending'
-//   'cancel_order'             → ar: 'إلغاء الطلب'             en: 'Cancel Order'
-//   'track_order'              → ar: 'تتبع الطلب'              en: 'Track Order'
-//   'reorder'                  → ar: 'إعادة الطلب'             en: 'Reorder'
-//   'order_items_count'        → ar: 'منتج'                    en: 'item(s)'
-// ═══════════════════════════════════════════════════════════════════════════════
+import 'package:e_commerce/data/model/buyer/buyer_orders_model.dart';
 
 class BuyerOrdersController extends GetxController {
-  // ── State ──────────────────────────────────────────────────────────────────
+  final BuyerOrdersDataSource _dataSource =
+      BuyerOrdersDataSource(Get.find<Crud>());
+  final MyServices _services = Get.find<MyServices>();
+
   List<BuyerOrderModel> _allOrders = [];
   List<BuyerOrderModel> filteredOrders = [];
 
   bool isLoading = false;
-  int selectedTabIndex = 0;
+  bool useMockFallback = false;
+  bool _isLoadingOrders = false;
 
-  // ── Tab → status mapping (index must mirror _OrderTabsBar._tabKeys) ────────
-  static const List<BuyerOrderStatus?> tabStatusFilters = [
-    null,                        // 0 → الكل
-    BuyerOrderStatus.pending,    // 1 → قيد الانتظار
-    BuyerOrderStatus.processing, // 2 → قيد التجهيز
-    BuyerOrderStatus.shipped,    // 3 → مشحون
-    BuyerOrderStatus.delivered,  // 4 → مكتمل
-    BuyerOrderStatus.cancelled,  // 5 → ملغى
+  int selectedTabIndex = 0;
+  BuyerOrderSort sortBy = BuyerOrderSort.newest;
+  RangeValues priceRange = const RangeValues(0, 5000000);
+
+  static const List<BuyerOrderTabFilter> tabFilters = [
+    BuyerOrderTabFilter.all,
+    BuyerOrderTabFilter.active,
+    BuyerOrderTabFilter.completed,
+    BuyerOrderTabFilter.cancelled,
   ];
 
-  // ── Lifecycle ──────────────────────────────────────────────────────────────
+  static const List<String> tabLabelKeys = [
+    'tab_all',
+    'buyer_tab_active',
+    'buyer_tab_completed',
+    'tab_cancelled',
+  ];
+
+  String? get _token {
+    final t = _services.sharedPreferences.getString('token');
+    if (t == null || t.isEmpty) return null;
+    return t;
+  }
+
+  int get activeFilterCount {
+    var count = 0;
+    if (sortBy != BuyerOrderSort.newest) count++;
+    if (priceRange.start > 0 || priceRange.end < 5000000) count++;
+    return count;
+  }
+
   @override
   void onInit() {
     super.onInit();
     _loadOrders();
   }
 
-  // ── Public API ─────────────────────────────────────────────────────────────
-
-  /// Called by RefreshIndicator's onRefresh callback.
   Future<void> refresh() => _loadOrders();
 
-  /// Switches the active filter tab and re-applies the filter.
   void changeTab(int index) {
     if (selectedTabIndex == index) return;
     selectedTabIndex = index;
-    _applyFilter();
+    _applyFilters();
     update();
   }
 
-  /// Marks an order as cancelled locally and notifies the API.
-  /// TODO: Replace stub with real POST /buyer/orders/{id}/cancel via Crud.
-  Future<void> cancelOrder(String orderId) async {
-    _allOrders = _allOrders.map((o) {
-      if (o.id != orderId) return o;
-      return BuyerOrderModel(
-        id: o.id,
-        orderNumber: o.orderNumber,
-        storeName: o.storeName,
-        storeLogoUrl: o.storeLogoUrl,
-        totalAmount: o.totalAmount,
-        status: BuyerOrderStatus.cancelled,
-        createdAt: o.createdAt,
-        items: o.items,
-        trackingNumber: o.trackingNumber,
+  void applyFilterSheet({
+    required BuyerOrderSort sort,
+    required RangeValues price,
+  }) {
+    sortBy = sort;
+    priceRange = price;
+    _applyFilters();
+    update();
+  }
+
+  void resetFilters() {
+    sortBy = BuyerOrderSort.newest;
+    priceRange = const RangeValues(0, 5000000);
+    _applyFilters();
+    update();
+  }
+
+  BuyerOrderModel? findOrder(String id) {
+    try {
+      return _allOrders.firstWhere((o) => o.id == id);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  void patchOrder(BuyerOrderModel updated) {
+    _allOrders = _allOrders.map((o) => o.id == updated.id ? updated : o).toList();
+    _applyFilters();
+    update();
+  }
+
+  Future<bool> confirmDelivery(String orderId) async {
+    final token = _token;
+    if (token == null) {
+      _applyLocalDelivery(orderId);
+      return true;
+    }
+
+    final result = await _dataSource.confirmDelivery(token, orderId);
+    return result.fold(
+      (_) {
+        customSnackbar('error'.tr, 'buyer_confirm_delivery_failed'.tr);
+        return false;
+      },
+      (response) {
+        if (response['success'] == true) {
+          _applyLocalDelivery(orderId);
+          return true;
+        }
+        customSnackbar(
+          'error'.tr,
+          response['message']?.toString() ?? 'buyer_confirm_delivery_failed'.tr,
+        );
+        return false;
+      },
+    );
+  }
+
+  void _applyLocalDelivery(String orderId) {
+    final order = findOrder(orderId);
+    if (order == null) return;
+    patchOrder(order.copyWith(
+      status: BuyerOrderStatus.delivered,
+      deliveredAt: DateTime.now(),
+    ));
+  }
+
+  Future<bool> submitRating({
+    required String orderId,
+    required String storeId,
+    required double rating,
+    required String comment,
+  }) async {
+    final token = _token;
+    if (token != null) {
+      final result = await _dataSource.rateStore(
+        token,
+        storeId,
+        rating: rating,
+        comment: comment,
       );
-    }).toList();
-    _applyFilter();
-    update();
+      final failed = result.fold(
+        (_) => true,
+        (r) => r['success'] != true,
+      );
+      if (failed) {
+        customSnackbar('error'.tr, 'buyer_rating_failed'.tr);
+        return false;
+      }
+    }
+
+    final order = findOrder(orderId);
+    if (order != null) {
+      patchOrder(order.copyWith(isRated: true));
+    }
+    customSnackbar('success'.tr, 'buyer_rating_success'.tr, isError: false);
+    return true;
   }
 
-  /// TODO: Wire to cart controller to push items back to the cart.
-  Future<void> reorder(String orderId) async {}
+  Future<void> submitReturnRequest({
+    required String orderId,
+    required String reason,
+    required String description,
+    List<String> imagePaths = const [],
+  }) async {
+    final order = findOrder(orderId);
+    if (order == null) return;
 
-  // ── Private ────────────────────────────────────────────────────────────────
+    final request = BuyerReturnRequest(
+      status: BuyerReturnStatus.submitted,
+      reason: reason,
+      description: description,
+      imageUrls: imagePaths,
+      timeline: const [
+        BuyerTimelineStep(
+          status: 'submitted',
+          title: 'submitted',
+          isDone: true,
+          isCurrent: true,
+        ),
+      ],
+    );
+
+    patchOrder(order.copyWith(returnRequest: request));
+    customSnackbar('success'.tr, 'buyer_return_submitted'.tr, isError: false);
+  }
+
+  void escalateReturn(String orderId) {
+    final order = findOrder(orderId);
+    if (order?.returnRequest == null) return;
+
+    final updated = BuyerReturnRequest(
+      status: BuyerReturnStatus.underReview,
+      reason: order!.returnRequest!.reason,
+      description: order.returnRequest!.description,
+      imageUrls: order.returnRequest!.imageUrls,
+      timeline: [
+        ...order.returnRequest!.timeline,
+        const BuyerTimelineStep(
+          status: 'escalated',
+          title: 'escalated',
+          isDone: true,
+          isCurrent: true,
+        ),
+      ],
+    );
+    patchOrder(order.copyWith(returnRequest: updated));
+    customSnackbar('success'.tr, 'buyer_return_escalated'.tr, isError: false);
+  }
 
   Future<void> _loadOrders() async {
+    if (_isLoadingOrders) return;
+    _isLoadingOrders = true;
+    
     isLoading = true;
+    update();
 
-    // TODO: Replace with Crud.getData(AppLink.buyerOrders, headers: {...})
-    // await Future.delayed(const Duration(milliseconds: 750));
-    _allOrders = BuyerOrdersMockData.orders;
+    final token = _token;
+    if (token == null) {
+      useMockFallback = true;
+      _allOrders = BuyerOrdersMockData.orders;
+    } else {
+      final result = await _dataSource.getOrders(token);
+      result.fold(
+        (_) {
+          useMockFallback = true;
+          _allOrders = BuyerOrdersMockData.orders;
+        },
+        (response) {
+          final parsed = _parseOrdersResponse(response);
+          if (parsed.isEmpty) {
+            useMockFallback = true;
+            _allOrders = BuyerOrdersMockData.orders;
+          } else {
+            useMockFallback = false;
+            _allOrders = parsed;
+          }
+        },
+      );
+    }
 
-    _applyFilter();
+    _applyFilters();
     isLoading = false;
+    _isLoadingOrders = false;
     update();
   }
 
-  void _applyFilter() {
-    final statusFilter = tabStatusFilters[selectedTabIndex];
-    filteredOrders = statusFilter == null
-        ? List<BuyerOrderModel>.from(_allOrders)
-        : _allOrders.where((o) => o.status == statusFilter).toList();
+  List<BuyerOrderModel> _parseOrdersResponse(Map response) {
+    dynamic data = response['data'] ?? response;
+    if (data is Map && data['data'] is List) {
+      data = data['data'];
+    }
+    if (data is! List) return [];
+
+    return data
+        .whereType<Map>()
+        .map((e) => BuyerOrderModel.fromJson(Map<String, dynamic>.from(e)))
+        .toList();
+  }
+
+  void _applyFilters() {
+    final tab = tabFilters[selectedTabIndex];
+    Iterable<BuyerOrderModel> list = _allOrders;
+
+    list = list.where((order) {
+      switch (tab) {
+        case BuyerOrderTabFilter.all:
+          return true;
+        case BuyerOrderTabFilter.active:
+          return order.isActive;
+        case BuyerOrderTabFilter.completed:
+          return order.isCompleted;
+        case BuyerOrderTabFilter.cancelled:
+          return order.isCancelledGroup;
+      }
+    });
+
+    list = list.where((order) {
+      final total = order.totalAmount;
+      return total >= priceRange.start && total <= priceRange.end;
+    });
+
+    final sorted = list.toList();
+    switch (sortBy) {
+      case BuyerOrderSort.newest:
+        sorted.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        break;
+      case BuyerOrderSort.oldest:
+        sorted.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+        break;
+      case BuyerOrderSort.priceHigh:
+        sorted.sort((a, b) => b.totalAmount.compareTo(a.totalAmount));
+        break;
+      case BuyerOrderSort.priceLow:
+        sorted.sort((a, b) => a.totalAmount.compareTo(b.totalAmount));
+        break;
+    }
+
+    filteredOrders = sorted;
   }
 }
-

@@ -1,0 +1,2 @@
+- [x] إضافة مفاتيح الترجمة المفقودة لـ `buyer_nav_explore` و `buyer_nav_cart` و `buyer_nav_orders` في `translation.dart`
+- [ ] التحقق من عمل الترجمة في التطبيق

@@ -4,6 +4,7 @@ import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
 import 'package:e_commerce/core/functions/format_price.dart';
 import 'package:e_commerce/data/models/explore/explore_models.dart';
+import 'package:e_commerce/view/widget/buyer/shared/buyer_network_image.dart';
 
 class ExploreProductCard extends StatelessWidget {
   final ExploreProductModel product;
@@ -44,6 +45,7 @@ class ExploreProductCard extends StatelessWidget {
     final direction = Directionality.of(context);
     final gradient = _placeholderGradients[index % _placeholderGradients.length];
     final placeholderIcon = _categoryIcons[index % _categoryIcons.length];
+    final unavailable = product.quantity <= 0;
 
     return GestureDetector(
       onTap: onTap,
@@ -61,22 +63,50 @@ class ExploreProductCard extends StatelessWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: gradient,
+                  product.imageUrl.isEmpty
+                      ? Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: gradient,
+                            ),
+                          ),
+                          child: Center(
+                            child: Icon(
+                              placeholderIcon,
+                              size: 44,
+                              color: Colors.white.withOpacity(0.55),
+                            ),
+                          ),
+                        )
+                      : BuyerNetworkImage(
+                          url: product.imageUrl,
+                          fallbackIcon: placeholderIcon,
+                          backgroundColor: gradient.first.withOpacity(0.3),
+                          fallbackIconSize: 42,
+                        ),
+                  if (unavailable)
+                    Positioned.fill(
+                      child: Container(
+                        color: Colors.black.withOpacity(0.48),
+                        alignment: Alignment.center,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            'explore_unavailable'.tr,
+                            style: AppTextStyle.labelSmall.copyWith(
+                              color: AppColor.error,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                    child: Center(
-                      child: Icon(
-                        placeholderIcon,
-                        size: 44,
-                        color: Colors.white.withOpacity(0.55),
-                      ),
-                    ),
-                  ),
                   if (product.hasDiscount)
                     Positioned.directional(
                       textDirection: direction,
@@ -152,12 +182,13 @@ class ExploreProductCard extends StatelessWidget {
                     bottom: 8,
                     end: 8,
                     child: GestureDetector(
-                      onTap: onAddToCart,
+                      onTap: unavailable ? null : onAddToCart,
                       child: Container(
                         width: 30,
                         height: 30,
                         decoration: BoxDecoration(
-                          gradient: AppColor.mainGradient,
+                          gradient: unavailable ? null : AppColor.mainGradient,
+                          color: unavailable ? AppColor.greyLight : null,
                           shape: BoxShape.circle,
                           border: Border.all(color: Colors.white, width: 1.5),
                         ),
@@ -187,21 +218,28 @@ class ExploreProductCard extends StatelessWidget {
                     style: AppTextStyle.bodyLarge.copyWith(fontSize: 13.5, height: 1.3),
                   ),
                   const SizedBox(height: 6),
-                  Row(
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 6,
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
-                      const Icon(Icons.star_rounded, size: 15, color: AppColor.warning),
-                      const SizedBox(width: 3),
-                      Text(
-                        product.rating.toStringAsFixed(1),
-                        style: AppTextStyle.labelSmall.copyWith(
-                          color: AppColor.black,
-                          fontWeight: FontWeight.w700,
-                        ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.star_rounded, size: 15, color: AppColor.warning),
+                          const SizedBox(width: 3),
+                          Text(
+                            product.rating.toStringAsFixed(1),
+                            style: AppTextStyle.labelSmall.copyWith(
+                              color: AppColor.black,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(width: 3),
+                          Text('(${product.reviewCount})', style: AppTextStyle.labelSmall),
+                        ],
                       ),
-                      const SizedBox(width: 3),
-                      Text('(${product.reviewCount})', style: AppTextStyle.labelSmall),
-                      if (product.hasWholesalePrice) ...[
-                        const Spacer(),
+                      if (product.hasWholesalePrice)
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
@@ -217,20 +255,18 @@ class ExploreProductCard extends StatelessWidget {
                             ),
                           ),
                         ),
-                      ],
                     ],
                   ),
                   const SizedBox(height: 8),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.baseline,
-                    textBaseline: TextBaseline.alphabetic,
+                  Wrap(
+                    spacing: 6,
+                    crossAxisAlignment: WrapCrossAlignment.end,
                     children: [
                       Text(
                         '${formatPrice(product.displayPrice)} ${'currency'.tr}',
                         style: AppTextStyle.price.copyWith(fontSize: 14.5),
                       ),
-                      if (product.hasDiscount) ...[
-                        const SizedBox(width: 6),
+                      if (product.hasDiscount)
                         Text(
                           formatPrice(product.price),
                           style: AppTextStyle.bodySmall.copyWith(
@@ -238,7 +274,6 @@ class ExploreProductCard extends StatelessWidget {
                             color: AppColor.greyLight,
                           ),
                         ),
-                      ],
                     ],
                   ),
                 ],

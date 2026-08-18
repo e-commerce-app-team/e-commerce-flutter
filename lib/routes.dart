@@ -40,6 +40,7 @@ import 'package:e_commerce/view/screen/buyer/buyer_main_screen.dart';
 import 'package:e_commerce/view/screen/buyer/store/buyer_store_detail_screen.dart';
 import 'package:e_commerce/view/screen/buyer/chat/buyer_chat_room_screen.dart';
 import 'package:e_commerce/view/screen/buyer/product/buyer_product_detail_screen.dart';
+import 'package:e_commerce/view/screen/buyer/orders/buyer_order_detail_screen.dart';
 import 'package:get/get.dart';
 
 List<GetPage<dynamic>>? routes = [
@@ -49,6 +50,8 @@ List<GetPage<dynamic>>? routes = [
     MyMiddleWare()
 
   ]),
+
+
   GetPage(name: AppRoute.login, page: () => const Login()),
 
   GetPage(name: AppRoute.selectAccountType, page: () => const SelectAccountType()),
@@ -109,6 +112,7 @@ List<GetPage<dynamic>>? routes = [
   GetPage(name: AppRoute.buyerStoreDetail, page: () => const BuyerStoreDetailScreen()),
   GetPage(name: AppRoute.buyerChatRoom, page: () => const BuyerChatRoomScreen()),
   GetPage(name: AppRoute.buyerProductDetail, page: () => const BuyerProductDetailScreen()),
+  GetPage(name: AppRoute.buyerOrderDetail, page: () => const BuyerOrderDetailScreen()),
   GetPage(
     name: AppRoute.staffAcceptInvite,
     page: () => const StaffAcceptInviteScreen(),

@@ -79,11 +79,24 @@ Future<void> _setupToken()async{
           customSnackbar(message.notification?.title ?? 'إعلان جديد'.tr,
               message.notification?.body ?? 'إعلان جديد تم إضافته'.tr, isError: false);
           break;
+        case 'order_confirmed':
+          customSnackbar(
+            message.notification?.title ?? 'order_success_title'.tr,
+            message.notification?.body ?? 'order_success_sub'.tr,
+            isError: false,
+          );
+          break;
       }
     } else {
       if (type == 'ad_notification') {
         customSnackbar(message.notification?.title ?? 'إعلان جديد'.tr,
             message.notification?.body ?? 'إعلان جديد تم إضافته'.tr, isError: false);
+      } else if (type == 'order_confirmed') {
+        customSnackbar(
+          message.notification?.title ?? 'order_success_title'.tr,
+          message.notification?.body ?? 'order_success_sub'.tr,
+          isError: false,
+        );
       }
     }
   }

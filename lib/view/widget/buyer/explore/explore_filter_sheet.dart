@@ -19,6 +19,11 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
   late double _minRating;
   late bool _freeShippingOnly;
   late bool _discountedOnly;
+  late bool _inStockOnly;
+  late bool _openNowOnly;
+  late bool _hasProductsOnly;
+  late bool _nearbyOnly;
+  late double _radiusKm;
 
   @override
   void initState() {
@@ -27,6 +32,11 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
     _minRating = controller.minRating;
     _freeShippingOnly = controller.freeShippingOnly;
     _discountedOnly = controller.discountedOnly;
+    _inStockOnly = controller.inStockOnly;
+    _openNowOnly = controller.openNowOnly;
+    _hasProductsOnly = controller.hasProductsOnly;
+    _nearbyOnly = controller.nearbyOnly;
+    _radiusKm = controller.radiusKm;
   }
 
   @override
@@ -54,9 +64,25 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 16, 12, 12),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('explore_filter_title'.tr, style: AppTextStyle.heading2),
-                const Spacer(),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('explore_filter_title'.tr, style: AppTextStyle.heading2),
+                      const SizedBox(height: 4),
+                      Text(
+                        controller.isProductsMode
+                            ? 'explore_choose_products_body'.tr
+                            : 'explore_choose_stores_body'.tr,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyle.labelMedium.copyWith(color: AppColor.greyText),
+                      ),
+                    ],
+                  ),
+                ),
                 IconButton(
                   onPressed: () => Navigator.pop(context),
                   icon: const Icon(Icons.close_rounded, color: AppColor.grey),
@@ -69,36 +95,69 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
             child: ListView(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
               children: [
-                Text('explore_price_range'.tr, style: AppTextStyle.heading3),
-                const SizedBox(height: 10),
-                SliderTheme(
-                  data: SliderTheme.of(context).copyWith(
-                    activeTrackColor: AppColor.primaryColor,
-                    inactiveTrackColor: AppColor.greyBorder,
-                    thumbColor: AppColor.primaryColor,
-                    overlayColor: AppColor.primaryColor.withOpacity(0.15),
-                    rangeThumbShape: const RoundRangeSliderThumbShape(enabledThumbRadius: 10),
-                    trackHeight: 4,
-                  ),
-                  child: RangeSlider(
-                    values: _priceRange,
-                    min: 0,
-                    max: 3000000,
-                    divisions: 30,
-                    labels: RangeLabels(
-                      formatPrice(_priceRange.start),
-                      formatPrice(_priceRange.end),
+                if (controller.isProductsMode) ...[
+                  Text('explore_price_range'.tr, style: AppTextStyle.heading3),
+                  const SizedBox(height: 10),
+                  SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      activeTrackColor: AppColor.primaryColor,
+                      inactiveTrackColor: AppColor.greyBorder,
+                      thumbColor: AppColor.primaryColor,
+                      overlayColor: AppColor.primaryColor.withOpacity(0.15),
+                      rangeThumbShape: const RoundRangeSliderThumbShape(enabledThumbRadius: 10),
+                      trackHeight: 4,
                     ),
-                    onChanged: (values) => setState(() => _priceRange = values),
+                    child: RangeSlider(
+                      values: _priceRange,
+                      min: 0,
+                      max: 3000000,
+                      divisions: 30,
+                      labels: RangeLabels(
+                        formatPrice(_priceRange.start),
+                        formatPrice(_priceRange.end),
+                      ),
+                      onChanged: (values) => setState(() => _priceRange = values),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 6),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _PriceTag(label: formatPrice(_priceRange.start)),
-                    _PriceTag(label: formatPrice(_priceRange.end)),
-                  ],
+                  const SizedBox(height: 6),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _PriceTag(label: formatPrice(_priceRange.start)),
+                      _PriceTag(label: formatPrice(_priceRange.end)),
+                    ],
+                  ),
+                  const SizedBox(height: 28),
+                ],
+                Text('explore_category_filter'.tr, style: AppTextStyle.heading3),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: List.generate(controller.categories.length, (index) {
+                    final category = controller.categories[index];
+                    final selected = controller.selectedCategoryIndex == index;
+                    return ChoiceChip(
+                      selected: selected,
+                      onSelected: (_) => setState(() {
+                        controller.selectedCategoryIndex = index;
+                      }),
+                      label: Text(
+                        category.id == 'all' ? 'all_categories'.tr : category.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      selectedColor: AppColor.primarySurface,
+                      backgroundColor: AppColor.secondBackground,
+                      labelStyle: AppTextStyle.labelSmall.copyWith(
+                        color: selected ? AppColor.primaryColor : AppColor.greyText,
+                        fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
+                      ),
+                      side: BorderSide(
+                        color: selected ? AppColor.primaryColor : AppColor.greyBorder,
+                      ),
+                    );
+                  }),
                 ),
                 const SizedBox(height: 28),
                 Text('explore_rating_label'.tr, style: AppTextStyle.heading3),
@@ -152,19 +211,64 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
                 const SizedBox(height: 28),
                 Text('explore_quick_filters'.tr, style: AppTextStyle.heading3),
                 const SizedBox(height: 12),
-                _SwitchRow(
-                  icon: Icons.local_shipping_outlined,
-                  label: 'free_shipping'.tr,
-                  value: _freeShippingOnly,
-                  onChanged: (v) => setState(() => _freeShippingOnly = v),
-                ),
-                const Divider(height: 28, color: AppColor.greyBorder),
-                _SwitchRow(
-                  icon: Icons.local_offer_outlined,
-                  label: 'explore_discount_only'.tr,
-                  value: _discountedOnly,
-                  onChanged: (v) => setState(() => _discountedOnly = v),
-                ),
+                if (controller.isProductsMode) ...[
+                  _SwitchRow(
+                    icon: Icons.local_shipping_outlined,
+                    label: 'free_shipping'.tr,
+                    value: _freeShippingOnly,
+                    onChanged: (v) => setState(() => _freeShippingOnly = v),
+                  ),
+                  const Divider(height: 28, color: AppColor.greyBorder),
+                  _SwitchRow(
+                    icon: Icons.local_offer_outlined,
+                    label: 'explore_discount_only'.tr,
+                    value: _discountedOnly,
+                    onChanged: (v) => setState(() => _discountedOnly = v),
+                  ),
+                  const Divider(height: 28, color: AppColor.greyBorder),
+                  _SwitchRow(
+                    icon: Icons.inventory_2_outlined,
+                    label: 'explore_in_stock_only'.tr,
+                    value: _inStockOnly,
+                    onChanged: (v) => setState(() => _inStockOnly = v),
+                  ),
+                ] else ...[
+                  _SwitchRow(
+                    icon: Icons.storefront_outlined,
+                    label: 'explore_open_now_only'.tr,
+                    value: _openNowOnly,
+                    onChanged: (v) => setState(() => _openNowOnly = v),
+                  ),
+                  const Divider(height: 28, color: AppColor.greyBorder),
+                  _SwitchRow(
+                    icon: Icons.inventory_2_outlined,
+                    label: 'explore_has_products_only'.tr,
+                    value: _hasProductsOnly,
+                    onChanged: (v) => setState(() => _hasProductsOnly = v),
+                  ),
+                  const Divider(height: 28, color: AppColor.greyBorder),
+                  _SwitchRow(
+                    icon: Icons.near_me_outlined,
+                    label: 'explore_nearby_only'.tr,
+                    value: _nearbyOnly,
+                    onChanged: (v) => setState(() => _nearbyOnly = v),
+                  ),
+                  if (_nearbyOnly) ...[
+                    const SizedBox(height: 14),
+                    Text(
+                      '${'explore_radius'.tr}: ${_radiusKm.toStringAsFixed(0)} ${'km_away'.tr}',
+                      style: AppTextStyle.labelMedium,
+                    ),
+                    Slider(
+                      value: _radiusKm,
+                      min: 1,
+                      max: 50,
+                      divisions: 49,
+                      activeColor: AppColor.primaryColor,
+                      onChanged: (value) => setState(() => _radiusKm = value),
+                    ),
+                  ],
+                ],
               ],
             ),
           ),
@@ -189,6 +293,11 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
                         _minRating = 0;
                         _freeShippingOnly = false;
                         _discountedOnly = false;
+                        _inStockOnly = false;
+                        _openNowOnly = false;
+                        _hasProductsOnly = false;
+                        _nearbyOnly = false;
+                        _radiusKm = 10;
                       });
                       controller.resetFilters();
                       Navigator.pop(context);
@@ -222,6 +331,11 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
                           newMinRating: _minRating,
                           newFreeShippingOnly: _freeShippingOnly,
                           newDiscountedOnly: _discountedOnly,
+                          newInStockOnly: _inStockOnly,
+                          newOpenNowOnly: _openNowOnly,
+                          newHasProductsOnly: _hasProductsOnly,
+                          newNearbyOnly: _nearbyOnly,
+                          newRadiusKm: _radiusKm,
                         );
                         Navigator.pop(context);
                       },

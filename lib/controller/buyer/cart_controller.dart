@@ -1,229 +1,521 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// lib/controller/buyer/cart_controller.dart
-// ─────────────────────────────────────────────────────────────────────────────
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../core/constant/color.dart';
-import '../../data/models/buyer/cart_models.dart';
+import 'package:e_commerce/core/class/crud.dart';
+import 'package:e_commerce/core/functions/custom_snackbar.dart';
+import 'package:e_commerce/controller/buyer/buyer_main_controller.dart';
+import 'package:e_commerce/core/functions/format_price.dart' as price_fmt;
+import 'package:e_commerce/core/services/services.dart';
+import 'package:e_commerce/data/datasource/remote/buyer/cart_datasource.dart';
+import 'package:e_commerce/data/models/buyer/cart_models.dart';
+import 'package:e_commerce/view/screen/buyer/cart/checkout/sham_cash_payment_screen.dart';
+import 'package:e_commerce/view/screen/buyer/cart/checkout/order_success_screen.dart';
 
 class CartController extends GetxController {
-  // ── Observable State ─────────────────────────────────────────────────────────
-  final RxList<CartItem> cartItems = <CartItem>[].obs;
+  final BuyerCartDataSource _cartData = BuyerCartDataSource(Get.find<Crud>());
+  final BuyerAddressDataSource _addressData =
+      BuyerAddressDataSource(Get.find<Crud>());
+  final MyServices _services = Get.find<MyServices>();
 
-  // Promo code state
-  final TextEditingController promoTextCtrl = TextEditingController();
-  final RxString appliedPromoCode = ''.obs;
-  final RxString promoError = ''.obs;
-  final RxBool isApplyingPromo = false.obs;
-  final RxDouble discountPercentage = 0.0.obs;
+  // ── State ───────────────────────────────────────────────────────────────────
+  final RxList<StoreCartGroup> storeGroups = <StoreCartGroup>[].obs;
+  final RxList<BuyerAddress> addresses = <BuyerAddress>[].obs;
+  final Rxn<BuyerAddress> selectedAddress = Rxn<BuyerAddress>();
+  final RxString driverNotes = ''.obs;
 
-  // Shipping (static for now, comes from API in production)
-  final RxDouble shippingFee = 15.0.obs;
-  final RxBool isFreeShipping = false.obs;
+  final RxBool isLoading = false.obs;
+  final RxBool isCheckingOut = false.obs;
+  final RxBool isAddingToCart = false.obs;
+  final RxDouble walletBalance = 0.0.obs;
 
-  // ── Valid promo codes (بيانات وهمية — تُستبدل بـ API) ────────────────────────
-  static const Map<String, double> _validCodes = {
-    'SAVE10': 10.0,
-    'SAVE20': 20.0,
-    'WELCOME': 15.0,
-    'FLASH30': 30.0,
-  };
+  /// Per-store selected shipping option id
+  final RxMap<String, String> selectedShipping = <String, String>{}.obs;
 
-  // ── Computed getters ─────────────────────────────────────────────────────────
-  double get subtotal =>
-      cartItems.fold(0.0, (acc, item) => acc + item.lineTotal);
+  /// Per-store applied coupon
+  final RxMap<String, AppliedStoreCoupon> appliedCoupons =
+      <String, AppliedStoreCoupon>{}.obs;
 
-  double get discountAmount => subtotal * (discountPercentage.value / 100);
+  /// Per-store promo field controllers & errors
+  final Map<String, TextEditingController> promoControllers = {};
+  final RxMap<String, String> promoErrors = <String, String>{}.obs;
+  final RxMap<String, bool> isApplyingPromo = <String, bool>{}.obs;
 
-  double get effectiveShipping =>
-      isFreeShipping.value ? 0.0 : shippingFee.value;
+  final TextEditingController driverNotesCtrl = TextEditingController();
 
-  double get total => subtotal - discountAmount + effectiveShipping;
+  String? get _token {
+    final t = _services.sharedPreferences.getString('token');
+    if (t == null || t.isEmpty) return null;
+    return t;
+  }
 
+  // ── Computed ────────────────────────────────────────────────────────────────
   int get totalItemsCount =>
-      cartItems.fold(0, (acc, item) => acc + item.quantity);
+      storeGroups.fold(0, (acc, g) => acc + g.itemsCount);
 
-  bool get hasDiscount =>
-      appliedPromoCode.value.isNotEmpty && discountAmount > 0;
+  bool get isEmpty => storeGroups.isEmpty;
 
-  // ── Lifecycle ─────────────────────────────────────────────────────────────────
+  double get grandSubtotal =>
+      storeGroups.fold(0.0, (acc, g) => acc + g.subtotal);
+
+  double get totalShipping => storeGroups.fold(0.0, (acc, g) {
+        final opt = _selectedShippingOption(g);
+        return acc + (opt?.cost ?? 0);
+      });
+
+  double get totalDiscount => appliedCoupons.values.fold(
+        0.0,
+        (acc, c) => acc + c.discountAmount,
+      );
+
+  double get grandTotal =>
+      (grandSubtotal - totalDiscount + totalShipping).clamp(0, double.infinity);
+
+  bool get hasOutOfStock =>
+      storeGroups.any((g) => g.items.any((i) => i.isOutOfStock));
+
+  // ── Lifecycle ───────────────────────────────────────────────────────────────
   @override
   void onInit() {
     super.onInit();
-    _loadDummyData();
+    driverNotesCtrl.addListener(() => driverNotes.value = driverNotesCtrl.text);
+    refreshAll();
+    _applySpinWheelCouponIfAny();
   }
 
   @override
   void onClose() {
-    promoTextCtrl.dispose();
+    driverNotesCtrl.dispose();
+    for (final c in promoControllers.values) {
+      c.dispose();
+    }
     super.onClose();
   }
 
-  // ── Dummy data ────────────────────────────────────────────────────────────────
-  void _loadDummyData() {
-    cartItems.assignAll([
-      CartItem(
-        id: 'ci_001',
-        productId: 'p_101',
-        name: 'قميص كلاسيكي بريميوم',
-        imageUrl:
-            'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=300',
-        price: 149.99,
-        originalPrice: 199.99,
-        quantity: 1,
-        variant: 'مقاس: L — لون: أبيض',
-        storeName: 'متجر الأناقة',
-        storeId: 'store_01',
-        maxStock: 10,
-      ),
-      CartItem(
-        id: 'ci_002',
-        productId: 'p_102',
-        name: 'بنطلون جينز سليم فيت',
-        imageUrl:
-            'https://images.unsplash.com/photo-1542272604-787c3835535d?w=300',
-        price: 249.99,
-        quantity: 2,
-        variant: 'مقاس: 32×32 — لون: أزرق داكن',
-        storeName: 'متجر الأناقة',
-        storeId: 'store_01',
-        maxStock: 5,
-      ),
-      CartItem(
-        id: 'ci_003',
-        productId: 'p_103',
-        name: 'حذاء رياضي كلاسيك',
-        imageUrl:
-            'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300',
-        price: 399.99,
-        originalPrice: 549.99,
-        quantity: 1,
-        variant: 'مقاس: 42 — لون: أسود/أبيض',
-        storeName: 'ستور الرياضة',
-        storeId: 'store_02',
-        maxStock: 3,
-      ),
-    ]);
+  Future<void> refreshAll() async {
+    await Future.wait([loadCart(), loadAddresses(), loadWalletBalance()]);
   }
 
-  // ── Quantity Actions ──────────────────────────────────────────────────────────
-  void increaseQuantity(String itemId) {
-    final idx = cartItems.indexWhere((i) => i.id == itemId);
-    if (idx == -1) return;
-    final item = cartItems[idx];
-    if (item.quantity >= item.maxStock) {
-      _showMaxStockSnackbar(item.maxStock);
-      return;
+  /// Adds a product to the cart via API, refreshes cart state, and updates the nav badge.
+  Future<bool> addToCart(
+    String productId, {
+    int qty = 1,
+    String? variantId,
+    int? maxStock,
+  }) async {
+    if (productId.isEmpty) return false;
+
+    if (maxStock != null && maxStock <= 0) {
+      customSnackbar('warning'.tr, 'explore_unavailable_body'.tr);
+      return false;
     }
-    cartItems[idx] = item.copyWith(quantity: item.quantity + 1);
-    cartItems.refresh();
-  }
 
-  void decreaseQuantity(String itemId) {
-    final idx = cartItems.indexWhere((i) => i.id == itemId);
-    if (idx == -1) return;
-    final item = cartItems[idx];
-    if (item.quantity <= 1) {
-      removeItem(itemId);
-    } else {
-      cartItems[idx] = item.copyWith(quantity: item.quantity - 1);
-      cartItems.refresh();
+    final token = _token;
+    if (token == null) {
+      customSnackbar('warning'.tr, 'signin_required_cart'.tr);
+      return false;
     }
+
+    isAddingToCart.value = true;
+    final result = await _cartData.addToCart(
+      token,
+      productId: productId,
+      qty: qty,
+      variantId: variantId,
+    );
+    isAddingToCart.value = false;
+
+    return result.fold(
+      (_) {
+        customSnackbar('error'.tr, 'product_add_failed'.tr);
+        return false;
+      },
+      (body) {
+        final success = body['success'] != false;
+        if (success) {
+          customSnackbar('success'.tr, 'product_added_cart'.tr, isError: false);
+          loadCart();
+        } else {
+          customSnackbar(
+            'error'.tr,
+            body['message']?.toString() ?? 'product_add_failed'.tr,
+          );
+        }
+        return success;
+      },
+    );
   }
 
-  void removeItem(String itemId) {
-    cartItems.removeWhere((i) => i.id == itemId);
-    // إعادة حساب الخصم بعد الحذف
-    _recalcDiscount();
-  }
-
-  void clearCart() {
-    cartItems.clear();
-    removePromoCode();
-  }
-
-  // ── Promo Code ────────────────────────────────────────────────────────────────
-  Future<void> applyPromoCode() async {
-    final code = promoTextCtrl.text.trim().toUpperCase();
-    if (code.isEmpty) {
-      promoError.value = 'promo_code_empty'.tr;
+  Future<void> loadCart() async {
+    final token = _token;
+    if (token == null) {
+      storeGroups.clear();
       return;
     }
 
-    promoError.value = '';
-    isApplyingPromo.value = true;
+    isLoading.value = true;
+    final result = await _cartData.getCart(token);
+    isLoading.value = false;
 
-    // محاكاة طلب API
-    // await Future.delayed(const Duration(milliseconds: 900));
+    result.fold(
+      (_) => customSnackbar('error'.tr, 'server_error'.tr),
+      (body) {
+        if (body['success'] != true && body['message'] != null) {
+          customSnackbar('error'.tr, body['message'].toString());
+          return;
+        }
+        final data = body['data'];
+        if (data is! Map) return;
 
-    if (_validCodes.containsKey(code)) {
-      appliedPromoCode.value = code;
-      discountPercentage.value = _validCodes[code]!;
-      _recalcDiscount();
-      isApplyingPromo.value = false;
+        final stores = data['stores'];
+        if (stores is! List) return;
 
-      Get.snackbar(
-        'success'.tr,
-        '${'promo_applied_msg'.tr} ${discountPercentage.value.toInt()}%',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: AppColor.primaryColor,
-        colorText: AppColor.white,
-        margin: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-        borderRadius: 14,
-        duration: const Duration(seconds: 3),
-        icon: const Icon(Icons.local_offer_rounded, color: Colors.white),
-        isDismissible: true,
+        storeGroups.assignAll(
+          stores
+              .map((e) => StoreCartGroup.fromJson(Map<String, dynamic>.from(e)))
+              .toList(),
+        );
+
+        _initStoreSelections();
+        _applySpinWheelCouponIfAny();
+      },
+    );
+  }
+
+  Future<void> loadAddresses() async {
+    final token = _token;
+    if (token == null) return;
+
+    final result = await _addressData.getAddresses(token);
+    result.fold((_) {}, (body) {
+      final data = body['data'];
+      if (data is! List) return;
+
+      addresses.assignAll(
+        data.map((e) => BuyerAddress.fromJson(Map<String, dynamic>.from(e))),
       );
-    } else {
-      promoError.value = 'promo_code_invalid'.tr;
-      isApplyingPromo.value = false;
+
+      selectedAddress.value = addresses.firstWhereOrNull((a) => a.isDefault) ??
+          addresses.firstOrNull;
+    });
+  }
+
+  Future<void> loadWalletBalance() async {
+    final token = _token;
+    if (token == null) return;
+
+    final result = await _cartData.getWalletBalance(token);
+    result.fold((_) {}, (body) {
+      walletBalance.value =
+          double.tryParse('${body['balance']}') ?? walletBalance.value;
+    });
+  }
+
+  void _initStoreSelections() {
+    for (final group in storeGroups) {
+      promoControllers.putIfAbsent(group.sellerId, TextEditingController.new);
+
+      if (!selectedShipping.containsKey(group.sellerId)) {
+        final first = group.shippingOptions.isNotEmpty
+            ? group.shippingOptions.first.id
+            : 'standard';
+        selectedShipping[group.sellerId] = first;
+      }
+
+      final coupon = appliedCoupons[group.sellerId];
+      if (coupon != null) {
+        promoControllers[group.sellerId]?.text = coupon.code;
+      }
     }
   }
 
-  void removePromoCode() {
-    appliedPromoCode.value = '';
-    discountPercentage.value = 0.0;
-    promoError.value = '';
-    promoTextCtrl.clear();
+  void _applySpinWheelCouponIfAny() {
+    final pending =
+        _services.sharedPreferences.getString('pending_spin_coupon');
+    if (pending == null || pending.isEmpty || storeGroups.isEmpty) return;
+
+    final firstStore = storeGroups.first;
+    promoControllers[firstStore.sellerId]?.text = pending;
+    applyPromoCode(firstStore.sellerId);
+    _services.sharedPreferences.remove('pending_spin_coupon');
   }
 
-  void _recalcDiscount() {
-    // إعادة الحساب عند تغيير الكميات
-    if (appliedPromoCode.value.isEmpty) return;
-    // discountAmount getter يعيد الحساب تلقائياً عبر computed getter
-    cartItems.refresh(); // trigger UI rebuild
+  ShippingOption? _selectedShippingOption(StoreCartGroup group) {
+    final id = selectedShipping[group.sellerId];
+    if (id == null) return null;
+    return group.shippingOptions.firstWhereOrNull((o) => o.id == id) ??
+        group.shippingOptions.firstOrNull;
   }
 
-  // ── Navigation ────────────────────────────────────────────────────────────────
-  void proceedToCheckout() {
-    // TODO: Get.toNamed(AppRoutes.buyerCheckout);
-    Get.snackbar(
-      'checkout_soon'.tr,
-      'checkout_wip'.tr,
-      snackPosition: SnackPosition.BOTTOM,
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-      borderRadius: 14,
+  double storeDiscount(String sellerId) =>
+      appliedCoupons[sellerId]?.discountAmount ?? 0;
+
+  double storeShippingCost(String sellerId) {
+    final group = storeGroups.firstWhereOrNull((g) => g.sellerId == sellerId);
+    if (group == null) return 0;
+    return _selectedShippingOption(group)?.cost ?? 0;
+  }
+
+  double storeTotal(String sellerId) {
+    final group = storeGroups.firstWhereOrNull((g) => g.sellerId == sellerId);
+    if (group == null) return 0;
+    return group.subtotal - storeDiscount(sellerId) + storeShippingCost(sellerId);
+  }
+
+  void selectShipping(String sellerId, String optionId) {
+    selectedShipping[sellerId] = optionId;
+    selectedShipping.refresh();
+  }
+
+  void selectAddress(BuyerAddress address) {
+    selectedAddress.value = address;
+    if (address.driverNotes != null && address.driverNotes!.isNotEmpty) {
+      driverNotesCtrl.text = address.driverNotes!;
+    }
+  }
+
+  Future<void> addAddress(BuyerAddress draft) async {
+    final token = _token;
+    if (token == null) return;
+
+    final result = await _addressData.createAddress(token, draft.toJson());
+    result.fold(
+      (_) => customSnackbar('error'.tr, 'server_error'.tr),
+      (body) {
+        if (body['success'] == true) {
+          customSnackbar('success'.tr, 'address_saved'.tr, isError: false);
+          loadAddresses();
+        } else {
+          customSnackbar('error'.tr, body['message']?.toString() ?? 'error'.tr);
+        }
+      },
+    );
+  }
+
+  Future<void> increaseQuantity(String itemId, String sellerId) async {
+    final group = storeGroups.firstWhereOrNull((g) => g.sellerId == sellerId);
+    if (group == null) return;
+
+    final item = group.items.firstWhereOrNull((i) => i.id == itemId);
+    if (item == null) return;
+
+    if (item.quantity >= item.maxStock) {
+      customSnackbar('notice'.tr, '${'max_stock_msg'.tr} ${item.maxStock}');
+      return;
+    }
+
+    await _updateQtyRemote(itemId, item.quantity + 1);
+  }
+
+  Future<void> decreaseQuantity(String itemId, String sellerId) async {
+    final group = storeGroups.firstWhereOrNull((g) => g.sellerId == sellerId);
+    if (group == null) return;
+    final item = group.items.firstWhereOrNull((i) => i.id == itemId);
+    if (item == null) return;
+
+    if (item.quantity <= 1) {
+      await removeItem(itemId);
+    } else {
+      await _updateQtyRemote(itemId, item.quantity - 1);
+    }
+  }
+
+  Future<void> _updateQtyRemote(String itemId, int qty) async {
+    final token = _token;
+    if (token == null) return;
+
+    final result = await _cartData.updateQty(token, itemId, qty);
+    result.fold(
+      (_) => customSnackbar('error'.tr, 'server_error'.tr),
+      (body) {
+        if (body['success'] != true) {
+          customSnackbar('error'.tr, body['message']?.toString() ?? 'error'.tr);
+          return;
+        }
+        loadCart();
+      },
+    );
+  }
+
+  Future<void> removeItem(String itemId) async {
+    final token = _token;
+    if (token == null) return;
+
+    final result = await _cartData.removeItem(token, itemId);
+    result.fold(
+      (_) => customSnackbar('error'.tr, 'server_error'.tr),
+      (body) {
+        if (body['success'] == true) {
+          loadCart();
+        }
+      },
+    );
+  }
+
+  Future<void> clearCart() async {
+    final token = _token;
+    if (token == null) return;
+
+    final result = await _cartData.clearCart(token);
+    result.fold((_) {}, (_) {
+      storeGroups.clear();
+      appliedCoupons.clear();
+      selectedShipping.clear();
+    });
+  }
+
+  Future<void> applyPromoCode(String sellerId) async {
+    final token = _token;
+    if (token == null) return;
+
+    final code = promoControllers[sellerId]?.text.trim().toUpperCase() ?? '';
+    if (code.isEmpty) {
+      promoErrors[sellerId] = 'promo_code_empty'.tr;
+      promoErrors.refresh();
+      return;
+    }
+
+    final group = storeGroups.firstWhereOrNull((g) => g.sellerId == sellerId);
+    if (group == null) return;
+
+    promoErrors[sellerId] = '';
+    isApplyingPromo[sellerId] = true;
+    isApplyingPromo.refresh();
+
+    final productIds = group.items.map((i) => i.productId).toList();
+    final result = await _cartData.validateCoupon(
+      token,
+      code: code,
+      sellerId: sellerId,
+      orderTotal: group.subtotal,
+      productIds: productIds,
+    );
+
+    isApplyingPromo[sellerId] = false;
+    isApplyingPromo.refresh();
+
+    result.fold(
+      (_) {
+        promoErrors[sellerId] = 'promo_code_invalid'.tr;
+        promoErrors.refresh();
+      },
+      (body) {
+        if (body['success'] != true) {
+          promoErrors[sellerId] =
+              body['message']?.toString() ?? 'promo_code_invalid'.tr;
+          promoErrors.refresh();
+          return;
+        }
+
+        final coupon = body['coupon'];
+        final discount = double.tryParse('${body['discount_amount']}') ?? 0;
+        appliedCoupons[sellerId] = AppliedStoreCoupon(
+          code: code,
+          type: coupon is Map ? '${coupon['type']}' : 'percentage',
+          discountAmount: discount,
+        );
+        appliedCoupons.refresh();
+
+        if (coupon is Map && coupon['type'] == 'free_shipping') {
+          final pickup = group.shippingOptions
+              .firstWhereOrNull((o) => o.id == 'pickup' || o.cost == 0);
+          if (pickup != null) selectShipping(sellerId, pickup.id);
+        }
+
+        customSnackbar('success'.tr, 'promo_applied_success'.tr, isError: false);
+      },
+    );
+  }
+
+  void removePromoCode(String sellerId) {
+    appliedCoupons.remove(sellerId);
+    appliedCoupons.refresh();
+    promoControllers[sellerId]?.clear();
+    promoErrors[sellerId] = '';
+    promoErrors.refresh();
+  }
+
+  TextEditingController promoControllerFor(String sellerId) =>
+      promoControllers.putIfAbsent(sellerId, TextEditingController.new);
+
+  Future<void> proceedToCheckout() async {
+    if (isEmpty) return;
+
+    if (_token == null) {
+      customSnackbar('notice'.tr, 'login_required'.tr);
+      return;
+    }
+
+    if (hasOutOfStock) {
+      customSnackbar('notice'.tr, 'cart_out_of_stock_warning'.tr);
+      return;
+    }
+
+    if (selectedAddress.value == null) {
+      customSnackbar('notice'.tr, 'select_delivery_address'.tr);
+      return;
+    }
+
+    isCheckingOut.value = true;
+
+    final storesPayload = storeGroups.map((g) {
+      return {
+        'seller_id': int.tryParse(g.sellerId) ?? g.sellerId,
+        'shipping_option_id': selectedShipping[g.sellerId] ?? 'standard',
+        if (appliedCoupons[g.sellerId] != null)
+          'coupon_code': appliedCoupons[g.sellerId]!.code,
+      };
+    }).toList();
+
+    final result = await _cartData.checkout(
+      _token!,
+      {
+        'address_id': int.tryParse(selectedAddress.value!.id) ??
+            selectedAddress.value!.id,
+        'driver_notes': driverNotesCtrl.text.trim(),
+        'stores': storesPayload,
+      },
+    );
+
+    isCheckingOut.value = false;
+
+    await result.fold(
+      (_) async {
+        customSnackbar('error'.tr, 'server_error'.tr);
+      },
+      (body) async {
+        if (body['success'] != true) {
+          customSnackbar('error'.tr, body['message']?.toString() ?? 'error'.tr);
+          return;
+        }
+
+        final checkout = CheckoutResult.fromJson(Map<String, dynamic>.from(body));
+        await loadWalletBalance();
+
+        final paid = await Get.to<bool>(() => ShamCashPaymentScreen(
+              orderId: checkout.orderId,
+              orderNumber: checkout.orderNumber,
+              totalAmount: checkout.totalPrice,
+              walletBalance: walletBalance.value,
+            ));
+
+        if (paid == true) {
+          await Get.off(() => OrderSuccessScreen(
+                orderNumber: checkout.orderNumber,
+                totalAmount: checkout.totalPrice,
+              ));
+          await loadCart();
+        }
+      },
     );
   }
 
   void startShopping() {
-    // TODO: Navigate to explore tab
-    Get.back();
-  }
-
-  // ── Helpers ───────────────────────────────────────────────────────────────────
-  void _showMaxStockSnackbar(int max) {
-    Get.snackbar(
-      'notice'.tr,
-      '${'max_stock_msg'.tr} $max',
-      snackPosition: SnackPosition.BOTTOM,
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-      borderRadius: 14,
-      duration: const Duration(seconds: 2),
-    );
+    if (Get.isRegistered<BuyerMainController>()) {
+      Get.find<BuyerMainController>().changeTab(1);
+    } else {
+      Get.back();
+    }
   }
 
   String formatPrice(double price) =>
-      '${price.toStringAsFixed(2)} ${'currency'.tr}';
+      '${price_fmt.formatPrice(price)} ${'currency'.tr}';
 }

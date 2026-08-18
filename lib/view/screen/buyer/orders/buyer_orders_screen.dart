@@ -1,15 +1,24 @@
-// lib/view/screen/buyer/orders/buyer_orders_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
+import 'package:e_commerce/core/constant/color.dart';
+import 'package:e_commerce/core/constant/routes.dart';
 import 'package:e_commerce/controller/buyer/buyer_orders_controller.dart';
 import 'package:e_commerce/view/widget/buyer/orders/buyer_order_card.dart';
+import 'package:e_commerce/view/widget/buyer/orders/buyer_orders_filter_sheet.dart';
 
 class BuyerOrdersScreen extends StatelessWidget {
   const BuyerOrdersScreen({Key? key}) : super(key: key);
+
+  void _openFilterSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => const BuyerOrdersFilterSheet(),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,27 +27,26 @@ class BuyerOrdersScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: AppColor.secondBackground,
         body: GetBuilder<BuyerOrdersController>(
-          init: BuyerOrdersController(),
           builder: (ctrl) => RefreshIndicator(
             color: AppColor.primaryColor,
             onRefresh: ctrl.refresh,
             child: CustomScrollView(
-              // AlwaysScrollable ensures RefreshIndicator fires even when the
-              // list is too short to scroll naturally.
               physics: const BouncingScrollPhysics(
                 parent: AlwaysScrollableScrollPhysics(),
               ),
               slivers: [
                 _BuyerOrdersSliverAppBar(
                   selectedTabIndex: ctrl.selectedTabIndex,
+                  filterCount: ctrl.activeFilterCount,
                   onTabSelected: ctrl.changeTab,
+                  onFilterTap: () => _openFilterSheet(context),
                 ),
-                if (ctrl.filteredOrders.isEmpty)
+                if (ctrl.isLoading)
+                  const _OrdersShimmer()
+                else if (ctrl.filteredOrders.isEmpty)
                   const _EmptyOrders()
                 else
-                  _OrdersSliverList(
-                    controller: ctrl,
-                  ),
+                  _OrdersSliverList(controller: ctrl),
               ],
             ),
           ),
@@ -48,15 +56,17 @@ class BuyerOrdersScreen extends StatelessWidget {
   }
 }
 
-// ─── Sliver App Bar ───────────────────────────────────────────────────────────
-
 class _BuyerOrdersSliverAppBar extends StatelessWidget {
   final int selectedTabIndex;
+  final int filterCount;
   final ValueChanged<int> onTabSelected;
+  final VoidCallback onFilterTap;
 
   const _BuyerOrdersSliverAppBar({
     required this.selectedTabIndex,
+    required this.filterCount,
     required this.onTabSelected,
+    required this.onFilterTap,
   });
 
   @override
@@ -65,21 +75,47 @@ class _BuyerOrdersSliverAppBar extends StatelessWidget {
       pinned: true,
       automaticallyImplyLeading: false,
       elevation: 0,
-      // AppColor.primaryColor shows through the tab-bar area below the
-      // flexibleSpace gradient — both are orange, so the header reads as one
-      // unified band.
       backgroundColor: AppColor.primaryColor,
       flexibleSpace: const FlexibleSpaceBar(
         background: DecoratedBox(
           decoration: BoxDecoration(gradient: AppColor.headerGradient),
         ),
       ),
-      title: Text(
-        // TODO: TRANSLATIONS — 'my_orders_title' → ar: 'طلباتي'  en: 'My Orders'
-        'my_orders_title'.tr,
-        style: AppTextStyle.appBarTitle,
-      ),
+      title: Text('my_orders_title'.tr, style: AppTextStyle.appBarTitle),
       centerTitle: false,
+      actions: [
+        Stack(
+          clipBehavior: Clip.none,
+          children: [
+            IconButton(
+              onPressed: onFilterTap,
+              icon: const Icon(Icons.tune_rounded, color: Colors.white),
+              tooltip: 'buyer_orders_filter_title'.tr,
+            ),
+            if (filterCount > 0)
+              PositionedDirectional(
+                top: 8,
+                end: 8,
+                child: Container(
+                  width: 16,
+                  height: 16,
+                  alignment: Alignment.center,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(
+                    '$filterCount',
+                    style: AppTextStyle.badge.copyWith(
+                      color: AppColor.primaryColor,
+                      fontSize: 9,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ],
       bottom: _OrderTabsBar(
         selectedIndex: selectedTabIndex,
         onSelect: onTabSelected,
@@ -88,22 +124,9 @@ class _BuyerOrdersSliverAppBar extends StatelessWidget {
   }
 }
 
-// ─── Tab filter bar ───────────────────────────────────────────────────────────
-
-/// Horizontal chip-style tab bar embedded in [SliverAppBar.bottom].
-/// Index order MUST stay in sync with [BuyerOrdersController.tabStatusFilters].
 class _OrderTabsBar extends StatelessWidget implements PreferredSizeWidget {
   final int selectedIndex;
   final ValueChanged<int> onSelect;
-
-  static const List<String> _tabKeys = [
-    'tab_all',
-    'buyer_tab_pending',  // TODO: TRANSLATIONS — ar: 'قيد الانتظار'  en: 'Pending'
-    'tab_processing',
-    'tab_shipped',
-    'tab_delivered',
-    'tab_cancelled',
-  ];
 
   const _OrderTabsBar({
     required this.selectedIndex,
@@ -120,7 +143,7 @@ class _OrderTabsBar extends StatelessWidget implements PreferredSizeWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
-        itemCount: _tabKeys.length,
+        itemCount: BuyerOrdersController.tabLabelKeys.length,
         separatorBuilder: (_, __) => const SizedBox(width: 8),
         itemBuilder: (_, i) {
           final selected = i == selectedIndex;
@@ -131,9 +154,7 @@ class _OrderTabsBar extends StatelessWidget implements PreferredSizeWidget {
               curve: Curves.easeOut,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: selected
-                    ? Colors.white.withOpacity(0.22)
-                    : Colors.transparent,
+                color: selected ? Colors.white.withOpacity(0.22) : Colors.transparent,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: selected
@@ -144,7 +165,7 @@ class _OrderTabsBar extends StatelessWidget implements PreferredSizeWidget {
               ),
               alignment: Alignment.center,
               child: Text(
-                _tabKeys[i].tr,
+                BuyerOrdersController.tabLabelKeys[i].tr,
                 style: AppTextStyle.labelMedium.copyWith(
                   color: Colors.white,
                   fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
@@ -157,8 +178,6 @@ class _OrderTabsBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 }
-
-// ─── Orders list ──────────────────────────────────────────────────────────────
 
 class _OrdersSliverList extends StatelessWidget {
   final BuyerOrdersController controller;
@@ -177,14 +196,14 @@ class _OrdersSliverList extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 14),
               child: BuyerOrderCard(
                 order: order,
-                onTap: () {
-                  // TODO: Get.toNamed(AppRoute.buyerOrderDetails, arguments: order)
-                },
-                onCancelTap: () => controller.cancelOrder(order.id),
-                onTrackTap: () {
-                  // TODO: Get.toNamed(AppRoute.buyerOrderTracking, arguments: order)
-                },
-                onReorderTap: () => controller.reorder(order.id),
+                onTap: () => Get.toNamed(
+                  AppRoute.buyerOrderDetail,
+                  arguments: order.id,
+                ),
+                onTrackTap: () => Get.toNamed(
+                  AppRoute.buyerOrderDetail,
+                  arguments: order.id,
+                ),
               ),
             );
           },
@@ -194,8 +213,6 @@ class _OrdersSliverList extends StatelessWidget {
     );
   }
 }
-
-// ─── Loading shimmer ──────────────────────────────────────────────────────────
 
 class _OrdersShimmer extends StatelessWidget {
   const _OrdersShimmer();
@@ -216,7 +233,6 @@ class _OrdersShimmer extends StatelessWidget {
   }
 }
 
-/// Animated pulsing skeleton that mirrors the real [BuyerOrderCard] shape.
 class _OrderCardSkeleton extends StatefulWidget {
   const _OrderCardSkeleton();
 
@@ -251,74 +267,63 @@ class _OrderCardSkeletonState extends State<_OrderCardSkeleton>
     return FadeTransition(
       opacity: _opacity,
       child: Container(
+        height: 140,
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: AppColor.cardBackground,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(18),
           boxShadow: AppColor.cardShadow,
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
           children: [
-            // Header row
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _bone(w: 46, h: 46, r: 23), // status icon
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          _bone(w: 120, h: 14),
-                          const Spacer(),
-                          _bone(w: 66, h: 22, r: 11),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      _bone(w: 150, h: 11),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          _bone(w: 90, h: 14),
-                          const Spacer(),
-                          _bone(w: 72, h: 11),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+            Container(
+              width: 46,
+              height: 46,
+              decoration: const BoxDecoration(
+                color: AppColor.secondBackground,
+                shape: BoxShape.circle,
+              ),
             ),
-            const SizedBox(height: 12),
-            const Divider(height: 1, color: AppColor.greyBorder),
-            const SizedBox(height: 12),
-            // Items row
-            _bone(w: double.infinity, h: 11),
-            const SizedBox(height: 10),
-            // Action button
-            _bone(w: double.infinity, h: 40, r: 12),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    height: 14,
+                    width: 120,
+                    decoration: BoxDecoration(
+                      color: AppColor.secondBackground,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Container(
+                    height: 11,
+                    width: 160,
+                    decoration: BoxDecoration(
+                      color: AppColor.secondBackground,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
+                  const Spacer(),
+                  Container(
+                    height: 12,
+                    width: 90,
+                    decoration: BoxDecoration(
+                      color: AppColor.secondBackground,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
     );
   }
-
-  Widget _bone({required double w, required double h, double r = 6}) {
-    return Container(
-      width: w,
-      height: h,
-      decoration: BoxDecoration(
-        color: AppColor.secondBackground,
-        borderRadius: BorderRadius.circular(r),
-      ),
-    );
-  }
 }
-
-// ─── Empty state ──────────────────────────────────────────────────────────────
 
 class _EmptyOrders extends StatelessWidget {
   const _EmptyOrders();
@@ -348,17 +353,12 @@ class _EmptyOrders extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               Text(
-                // TODO: TRANSLATIONS — 'buyer_orders_empty_title'
-                //   ar: 'لا توجد طلبات بعد'  en: 'No orders yet'
                 'buyer_orders_empty_title'.tr,
                 style: AppTextStyle.heading2,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 10),
               Text(
-                // TODO: TRANSLATIONS — 'buyer_orders_empty_body'
-                //   ar: 'ستظهر طلباتك هنا عند إتمام أول عملية شراء'
-                //   en: 'Your orders will appear here after your first purchase'
                 'buyer_orders_empty_body'.tr,
                 style: AppTextStyle.bodyMedium,
                 textAlign: TextAlign.center,
@@ -370,4 +370,3 @@ class _EmptyOrders extends StatelessWidget {
     );
   }
 }
-
