@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:e_commerce/core/functions/handling_data_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -111,11 +110,11 @@ class SignUpBuyerControllerImp extends SignUpBuyerController {
     var response = await verifyCodeSignUpData.sendOtp(
         email.text, phone.text, firstName.text, method);
 
-    response.fold((lift) {
+    response.fold((lift) async {
       statusRequest = StatusRequest.none;
       update();
       customSnackbar("خطأ", "فشل الاتصال بالخادم. تأكد من إعدادات الشبكة.", isError: true);
-    }, (right) {
+    }, (right) async {
       if (right["success"] == true) {
         statusRequest = StatusRequest.success;
         update();
@@ -129,12 +128,46 @@ class SignUpBuyerControllerImp extends SignUpBuyerController {
           "password_confirmation": confirmPassword.text,
         };
 
-        // توجيه لصفحة التحقق مع تمرير البيانات
-        Get.toNamed(AppRoute.verfiyCodeSignUp, arguments: {
+        // توجيه لصفحة التحقق مع تمرير البيانات وانتظار النتيجة
+        var result = await Get.toNamed(AppRoute.verfiyCodeSignUp, arguments: {
           "textData": textData,
           "profileImage": profileImage,
           "method": method,
         });
+
+        // إذا عاد true — تم التحقق بنجاح، نكمل عملية إنشاء الحساب هنا
+        if (result == true) {
+          // جمع الملفات
+          Map<String, File> filesData = {};
+          if (profileImage != null) filesData['profile_photo'] = profileImage!;
+
+          var registerResponse = await signUpBuyerData.postData(textData, filesData);
+          registerResponse.fold((lRegister) {
+            statusRequest = StatusRequest.none;
+            update();
+            String errorMsg = "فشل الاتصال أثناء إنشاء الحساب";
+            if (lRegister.toString().contains("offline")) {
+              errorMsg = "لا يوجد اتصال بالإنترنت. تأكد من الشبكة وحاول مرة أخرى.";
+            } else if (lRegister.toString().contains("timeout")) {
+              errorMsg = "انقطع الاتصال بالخادم. حاول مرة أخرى.";
+            }
+            customSnackbar("خطأ", errorMsg, isError: true);
+          }, (rRegister) {
+            if (rRegister["success"] == true) {
+              statusRequest = StatusRequest.success;
+              update();
+              Get.offAllNamed(AppRoute.successSignUp);
+            } else {
+              statusRequest = StatusRequest.none;
+              update();
+              String errorMessage = rRegister['message'] ?? 'Error occurred';
+              if (rRegister['errors'] != null) {
+                errorMessage = (rRegister['errors'] as Map).values.first[0];
+              }
+              customSnackbar("warning".tr, errorMessage, isError: true);
+            }
+          });
+        }
       } else {
         statusRequest = StatusRequest.none;
         update();

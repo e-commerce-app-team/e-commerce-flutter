@@ -116,15 +116,30 @@ class _BuyerMessageBubble extends StatelessWidget {
           ),
           boxShadow: AppColor.cardShadow,
         ),
-        child: Text(
-          message.content,
-          style: TextStyle(
-            color: isMine ? AppColor.white : AppColor.black,
-            fontSize: 14,
-            height: 1.45,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+        child: message.type == 'image' && message.imageUrl != null
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  message.imageUrl!,
+                  width: 220,
+                  height: 180,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => const SizedBox(
+                    width: 220,
+                    height: 180,
+                    child: Icon(Icons.broken_image_outlined),
+                  ),
+                ),
+              )
+            : Text(
+                message.content,
+                style: TextStyle(
+                  color: isMine ? AppColor.white : AppColor.black,
+                  fontSize: 14,
+                  height: 1.45,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
       ),
     );
   }
@@ -164,6 +179,12 @@ class _BuyerMessageInput extends StatelessWidget {
                       const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                 ),
               ),
+            ),
+            const SizedBox(width: 6),
+            IconButton(
+              onPressed: controller.sendImage,
+              icon: const Icon(Icons.attach_file_rounded, color: AppColor.primaryColor),
+              tooltip: 'attach_image'.tr,
             ),
             const SizedBox(width: 8),
             InkWell(

@@ -52,13 +52,17 @@ class VerifyCodeSignUpControllerImp extends VerifyCodeSignUpController {
     if (!canResend) return;
     statusRequest = StatusRequest.loading;
     update();
-    
+
     var response = await verifyCodeSignUpData.sendOtp(
-      textData['email']!, textData['phone']!, firstName, method);
+        textData['email']!, textData['phone']!, firstName, method);
     response.fold((l) {
       statusRequest = StatusRequest.none;
       update();
-      customSnackbar("خطأ", "فشل الاتصال بخادم إرسال الرمز", isError: true);
+      String errorMsg = "فشل الاتصال بخادم إرسال الرمز";
+      if (l.toString().contains("offline")) {
+        errorMsg = "لا يوجد اتصال بالإنترنت. تأكد من الشبكة وحاول مرة أخرى.";
+      }
+      customSnackbar("خطأ", errorMsg, isError: true);
     }, (r) {
       statusRequest = StatusRequest.none;
       if (r["success"] == true) {
@@ -66,7 +70,14 @@ class VerifyCodeSignUpControllerImp extends VerifyCodeSignUpController {
         customSnackbar("نجاح", "تمت إعادة إرسال الرمز بنجاح", isError: false);
       } else {
         update();
-        customSnackbar("خطأ", r['message'] ?? 'فشل إعادة الإرسال', isError: true);
+        String errorMsg = r['message'] ?? 'فشل إعادة الإرسال';
+        if (r['errors'] != null) {
+          final errorsList = r['errors'] as Map;
+          errorMsg = errorsList.values
+              .map((e) => e is List ? e.first : e)
+              .join('\n');
+        }
+        customSnackbar("خطأ", errorMsg, isError: true);
       }
     });
   }
@@ -78,13 +89,22 @@ class VerifyCodeSignUpControllerImp extends VerifyCodeSignUpController {
 
     try {
       var response = await verifyCodeSignUpData.verifyOtp(email, verificationCode);
-      
+
       response.fold((l) {
         statusRequest = StatusRequest.none;
         update();
         customSnackbar("خطأ", "فشل الاتصال.", isError: true);
       }, (r) {
-        _handleVerificationSuccess(r);
+        // عند نجاح التحقق فقط نرجع للـ caller ولا نقوم بإنشاء الحساب هنا
+        if (r["success"] == true) {
+          statusRequest = StatusRequest.success;
+          update();
+          Get.back(result: true);
+        } else {
+          statusRequest = StatusRequest.none;
+          update();
+          customSnackbar("خطأ", r['message'] ?? 'Invalid Verification Code', isError: true);
+        }
       });
     } catch (e) {
       statusRequest = StatusRequest.none;
@@ -93,46 +113,8 @@ class VerifyCodeSignUpControllerImp extends VerifyCodeSignUpController {
     }
   }
 
-  Future<void> _handleVerificationSuccess(Map r) async {
-    try {
-      if (r["success"] == true) {
-        Map<String, File> filesData = {};
-        if (profileImage != null) {
-          filesData['profile_photo'] = profileImage!;
-        }
+  // Removed immediate account creation here. The SignUpBuyer controller will handle post-OTP registration.
 
-        var registerResponse = await signUpBuyerData.postData(textData, filesData);
-        registerResponse.fold((lRegister) {
-          statusRequest = StatusRequest.none;
-          update();
-          customSnackbar("خطأ", "فشل الاتصال أثناء إنشاء الحساب", isError: true);
-        }, (rRegister) {
-          if (rRegister["success"] == true) {
-            statusRequest = StatusRequest.success;
-            update();
-            goToSuccessSignUp();
-          } else {
-            statusRequest = StatusRequest.none;
-            update();
-            // Show exact backend error if validation fails
-            String errorMsg = rRegister['message'] ?? 'Registration failed';
-            if (rRegister['errors'] != null) {
-              errorMsg = rRegister['errors'].values.first[0];
-            }
-            customSnackbar("تنبيه", errorMsg, isError: true);
-          }
-        });
-      } else {
-        statusRequest = StatusRequest.none;
-        update();
-        customSnackbar("خطأ", r['message'] ?? 'Invalid Verification Code', isError: true);
-      }
-    } catch (e) {
-      statusRequest = StatusRequest.none;
-      update();
-      customSnackbar("خطأ", "حدث خطأ غير متوقع أثناء إكمال التسجيل", isError: true);
-    }
-  }
 
   @override
   goToSuccessSignUp() {

@@ -12,7 +12,6 @@ import 'package:e_commerce/view/screen/auth/forgetpassword/verifycode.dart';
 import 'package:e_commerce/view/screen/auth/verifycodesignup.dart';
 import 'package:e_commerce/view/screen/auth/signup/verifycodesignupseller.dart';
 import 'package:e_commerce/view/screen/auth/staff/staff_accept_invite_screen.dart';
-import 'package:e_commerce/view/screen/buyer/buyer_profile_screen.dart';
 import 'package:e_commerce/view/screen/onboarding.dart';
 import 'package:e_commerce/view/screen/seller/branches/branch_form_screen.dart';
 import 'package:e_commerce/view/screen/seller/branches/branch_location_picker_screen.dart';
@@ -42,11 +41,16 @@ import 'package:e_commerce/view/screen/buyer/store/buyer_store_detail_screen.dar
 import 'package:e_commerce/view/screen/buyer/chat/buyer_chat_room_screen.dart';
 import 'package:e_commerce/view/screen/buyer/product/buyer_product_detail_screen.dart';
 import 'package:e_commerce/view/screen/buyer/orders/buyer_order_detail_screen.dart';
+import 'package:e_commerce/view/screen/buyer/profile/buyer_profile_screen.dart';
+import 'package:e_commerce/view/screen/buyer/profile/buyer_following_stores_screen.dart';
+import 'package:e_commerce/view/screen/buyer/profile/buyer_reviews_screen.dart';
+import 'package:e_commerce/view/screen/buyer/profile/buyer_profile_tools_screen.dart';
+import 'package:e_commerce/view/screen/buyer/cart/address/buyer_address_map_screen.dart';
 import 'package:get/get.dart';
 
 List<GetPage<dynamic>>? routes = [
 
-  GetPage(name: "/", page: () => const BuyerMainScreen(), middlewares: [
+  GetPage(name: "/", page: () => const OnBoarding(), middlewares: [
 
     MyMiddleWare()
 
@@ -113,6 +117,14 @@ List<GetPage<dynamic>>? routes = [
   GetPage(name: AppRoute.buyerStoreDetail, page: () => const BuyerStoreDetailScreen()),
   GetPage(name: AppRoute.buyerChatRoom, page: () => const BuyerChatRoomScreen()),
   GetPage(name: AppRoute.buyerProfile, page: () => const BuyerProfileScreen()),
+  GetPage(name: '/buyer/following-stores', page: () => const BuyerFollowingStoresScreen()),
+  GetPage(name: '/buyer/reviews', page: () => const BuyerReviewsScreen()),
+  GetPage(name: '/buyer/edit-profile', page: () => const BuyerProfileToolsScreen(mode: 'edit')),
+  GetPage(name: '/buyer/addresses', page: () => const BuyerProfileToolsScreen(mode: 'addresses')),
+  GetPage(name: '/buyer/wallet', page: () => const BuyerProfileToolsScreen(mode: 'wallet')),
+  GetPage(name: '/buyer/notification-settings', page: () => const BuyerProfileToolsScreen(mode: 'notifications')),
+  GetPage(name: '/buyer/conversations', page: () => const BuyerProfileToolsScreen(mode: 'conversations')),
+  GetPage(name: '/buyer/address-map', page: () => const BuyerAddressMapScreen()),
 
   GetPage(name: AppRoute.buyerProductDetail, page: () => const BuyerProductDetailScreen()),
   GetPage(name: AppRoute.buyerOrderDetail, page: () => const BuyerOrderDetailScreen()),

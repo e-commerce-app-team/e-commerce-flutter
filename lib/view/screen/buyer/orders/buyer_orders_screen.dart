@@ -43,6 +43,8 @@ class BuyerOrdersScreen extends StatelessWidget {
                 ),
                 if (ctrl.isLoading)
                   const _OrdersShimmer()
+                else if (ctrl.loadError != null)
+                  _OrdersError(onRetry: ctrl.refresh, message: ctrl.loadError!)
                 else if (ctrl.filteredOrders.isEmpty)
                   const _EmptyOrders()
                 else
@@ -362,6 +364,40 @@ class _EmptyOrders extends StatelessWidget {
                 'buyer_orders_empty_body'.tr,
                 style: AppTextStyle.bodyMedium,
                 textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _OrdersError extends StatelessWidget {
+  final Future<void> Function() onRetry;
+  final String message;
+
+  const _OrdersError({required this.onRetry, required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverFillRemaining(
+      hasScrollBody: false,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(28),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.cloud_off_rounded, size: 58, color: AppColor.error),
+              const SizedBox(height: 14),
+              Text(message, textAlign: TextAlign.center, style: AppTextStyle.bodyMedium),
+              const SizedBox(height: 14),
+              ElevatedButton.icon(
+                onPressed: () => onRetry(),
+                icon: const Icon(Icons.refresh_rounded),
+                label: Text('retry'.tr),
+                style: ElevatedButton.styleFrom(backgroundColor: AppColor.primaryColor),
               ),
             ],
           ),

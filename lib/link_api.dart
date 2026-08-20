@@ -1,4 +1,5 @@
 class AppLink {
+  static String? cachedUserId;
   static const String server = "http://192.168.1.12:8000/api";
 
   // ─── Auth ─────────────────────────────────────────────────────────────────

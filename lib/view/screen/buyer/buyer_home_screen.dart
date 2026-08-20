@@ -321,7 +321,7 @@ class _HomeLoadingShimmer extends StatelessWidget {
             4,
             (i) => Padding(
               padding: const EdgeInsets.only(right: 12),
-              child: _shimmer(height: 100, width: 78, radius: 20),
+              child: _shimmer(height: 80, width: 70, radius: 20),
             ),
           ),
         ),

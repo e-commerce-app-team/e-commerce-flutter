@@ -22,6 +22,15 @@ class VerifyCodeSignUpData {
       "identifier": identifier,
       "otp": otp,
     });
+
+    if (response.fold((_) => false, (_) => true)) {
+      response.fold((_) {}, (r) {
+        if (r["success"] == true && r["user_id"] != null) {
+          AppLink.cachedUserId = r["user_id"].toString();
+        }
+      });
+    }
+
     return response;
   }
 }

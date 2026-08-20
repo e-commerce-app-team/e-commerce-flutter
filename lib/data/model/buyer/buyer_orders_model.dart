@@ -40,7 +40,7 @@ class BuyerOrderItem {
   });
 
   factory BuyerOrderItem.fromJson(Map<String, dynamic> json) {
-    final product = json['product'] as Map<String, dynamic>?;
+    final product = _asMap(json['product']);
     return BuyerOrderItem(
       id: '${json['id'] ?? ''}',
       productId: product?['id']?.toString() ?? json['product_id']?.toString(),
@@ -76,8 +76,8 @@ class BuyerSubOrderModel {
   String get itemsPreview => items.map((e) => e.name).join('، ');
 
   factory BuyerSubOrderModel.fromJson(Map<String, dynamic> json) {
-    final seller = json['seller'] as Map<String, dynamic>?;
-    final itemsJson = json['items'] as List<dynamic>? ?? [];
+    final seller = _asMap(json['seller']);
+    final itemsJson = _asList(json['items']);
     return BuyerSubOrderModel(
       id: '${json['id'] ?? ''}',
       sellerId: '${json['seller_id'] ?? seller?['id'] ?? ''}',
@@ -89,6 +89,7 @@ class BuyerSubOrderModel {
       totalPrice: _toDouble(json['total_price'] ?? json['total']),
       status: BuyerOrderStatusX.fromApi(json['status']?.toString()),
       items: itemsJson
+          .map(_asMap)
           .whereType<Map<String, dynamic>>()
           .map(BuyerOrderItem.fromJson)
           .toList(),
@@ -275,8 +276,9 @@ class BuyerOrderModel {
   }
 
   factory BuyerOrderModel.fromJson(Map<String, dynamic> json) {
-    final subOrdersJson = json['sub_orders'] as List<dynamic>? ?? [];
+    final subOrdersJson = _asList(json['sub_orders']);
     final subOrders = subOrdersJson
+        .map(_asMap)
         .whereType<Map<String, dynamic>>()
         .map(BuyerSubOrderModel.fromJson)
         .toList();
@@ -284,7 +286,10 @@ class BuyerOrderModel {
     final timelineJson = json['timeline'] ?? json['status_timeline'];
     List<BuyerTimelineStep> timeline = [];
     if (timelineJson is List) {
-      final parsed = timelineJson.whereType<Map<String, dynamic>>().toList();
+      final parsed = timelineJson
+          .map(_asMap)
+          .whereType<Map<String, dynamic>>()
+          .toList();
       final currentStatus = json['status']?.toString() ?? '';
       timeline = parsed.asMap().entries.map((e) {
         final isLast = e.key == parsed.length - 1;
@@ -314,6 +319,14 @@ class BuyerOrderModel {
     );
   }
 }
+
+Map<String, dynamic>? _asMap(dynamic value) {
+  if (value is Map<String, dynamic>) return value;
+  if (value is Map) return Map<String, dynamic>.from(value);
+  return null;
+}
+
+List<dynamic> _asList(dynamic value) => value is List ? value : const [];
 
 extension BuyerOrderStatusX on BuyerOrderStatus {
   bool get isActive =>

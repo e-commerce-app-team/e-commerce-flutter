@@ -1,13 +1,13 @@
 // lib/controller/buyer/buyer_orders_controller.dart
 
 import 'package:flutter/material.dart';
+import 'package:dartz/dartz.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/class/crud.dart';
 import 'package:e_commerce/core/class/status_request.dart';
 import 'package:e_commerce/core/functions/custom_snackbar.dart';
 import 'package:e_commerce/core/services/services.dart';
 import 'package:e_commerce/data/datasource/remote/buyer/buyer_orders_datasource.dart';
-import 'package:e_commerce/data/datasource/static/buyer_orders_mock_data.dart';
 import 'package:e_commerce/data/model/buyer/buyer_orders_model.dart';
 
 class BuyerOrdersController extends GetxController {
@@ -19,7 +19,7 @@ class BuyerOrdersController extends GetxController {
   List<BuyerOrderModel> filteredOrders = [];
 
   bool isLoading = false;
-  bool useMockFallback = false;
+  String? loadError;
   bool _isLoadingOrders = false;
 
   int selectedTabIndex = 0;
@@ -56,6 +56,11 @@ class BuyerOrdersController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
     _loadOrders();
   }
 
@@ -220,39 +225,52 @@ class BuyerOrdersController extends GetxController {
 
   Future<void> _loadOrders() async {
     if (_isLoadingOrders) return;
-    _isLoadingOrders = true;
-    
-    isLoading = true;
-    update();
-
     final token = _token;
+
+    // Resolve the empty/unauthenticated state before showing a loading frame.
+    // This also avoids losing the final update while the controller is being
+    // created inside the buyer main screen.
     if (token == null) {
-      useMockFallback = true;
-      _allOrders = BuyerOrdersMockData.orders;
-    } else {
-      final result = await _dataSource.getOrders(token);
+      _allOrders = [];
+      _applyFilters();
+      loadError = 'login_required'.tr;
+      isLoading = false;
+      _isLoadingOrders = false;
+      update();
+      return;
+    }
+
+    _isLoadingOrders = true;
+    isLoading = true;
+    loadError = null;
+    update();
+    try {
+      final result = await _dataSource
+          .getOrders(token)
+          .timeout(const Duration(seconds: 20), onTimeout: () => const Left(StatusRequest.serverfailure));
       result.fold(
         (_) {
-          useMockFallback = true;
-          _allOrders = BuyerOrdersMockData.orders;
+          _allOrders = [];
+          loadError = 'buyer_orders_load_failed'.tr;
         },
         (response) {
-          final parsed = _parseOrdersResponse(response);
-          if (parsed.isEmpty) {
-            useMockFallback = true;
-            _allOrders = BuyerOrdersMockData.orders;
-          } else {
-            useMockFallback = false;
-            _allOrders = parsed;
+          try {
+            _allOrders = _parseOrdersResponse(response);
+          } catch (_) {
+            _allOrders = [];
+            loadError = 'buyer_orders_load_failed'.tr;
           }
         },
       );
+    } catch (_) {
+      _allOrders = [];
+      loadError = 'buyer_orders_load_failed'.tr;
+    } finally {
+      _applyFilters();
+      isLoading = false;
+      _isLoadingOrders = false;
+      update();
     }
-
-    _applyFilters();
-    isLoading = false;
-    _isLoadingOrders = false;
-    update();
   }
 
   List<BuyerOrderModel> _parseOrdersResponse(Map response) {
