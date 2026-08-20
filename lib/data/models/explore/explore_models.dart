@@ -1,4 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:e_commerce/link_api.dart';
+
+String _exploreImageUrl(dynamic value) {
+  final path = value?.toString().trim() ?? '';
+  if (path.isEmpty || path.startsWith('http')) return path;
+  return AppLink.storageUrl(path.replaceFirst('/storage/', ''));
+}
 
 class ExploreSubCategoryModel {
   final String id;
@@ -81,7 +88,7 @@ class ExploreProductModel {
     return ExploreProductModel(
       id: json['id'].toString(),
       name: json['name']?.toString() ?? '',
-      imageUrl: (json['image'] ?? json['image_url'] ?? '').toString(),
+      imageUrl: _exploreImageUrl(json['image'] ?? json['image_url']),
       storeName: json['store_name']?.toString() ?? '',
       storeId: json['store_id']?.toString() ?? '',
       categoryId: (json['category_id'] ?? json['department_id'] ?? '').toString(),
@@ -151,8 +158,8 @@ class ExploreStoreModel {
     return ExploreStoreModel(
       id: json['id'].toString(),
       name: (json['store_name'] ?? json['name'] ?? '').toString(),
-      logoUrl: (json['store_logo'] ?? json['logo_url'] ?? '').toString(),
-      coverUrl: (json['store_cover'] ?? json['cover_url'] ?? '').toString(),
+      logoUrl: _exploreImageUrl(json['store_logo'] ?? json['logo_url']),
+      coverUrl: _exploreImageUrl(json['store_cover'] ?? json['cover_url']),
       categoryId: (json['category_id'] ?? '').toString(),
       category: (json['category'] ?? json['store_type'] ?? '').toString(),
       rating: double.tryParse(json['rating'].toString()) ?? 0,

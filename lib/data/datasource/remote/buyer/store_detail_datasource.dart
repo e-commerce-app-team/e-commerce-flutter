@@ -83,7 +83,7 @@ class BuyerStoreDetailDataSource {
     return _crud.postData(
       AppLink.buyerRateStore(storeId),
       {
-        'rating': rating,
+        'rating': rating.round(),
         'comment': comment,
       },
       headers: _auth(token),

@@ -240,6 +240,11 @@ class Crud {
 
   Either<StatusRequest, Map> _handleResponse(http.Response response) {
     try {
+      final requestUrl = response.request?.url.toString() ?? 'unknown URL';
+      if (response.statusCode < 200 || response.statusCode >= 300) {
+        print('=========== API ERROR ${response.statusCode}: $requestUrl ===========');
+        print('=========== API ERROR BODY: ${response.body} ===========');
+      }
       if (response.statusCode >= 200 && response.statusCode < 300) {
         dynamic decoded = jsonDecode(response.body);
         Map responsebody = decoded is List ? {'data': decoded} : decoded;

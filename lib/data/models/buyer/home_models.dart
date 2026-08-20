@@ -1,10 +1,11 @@
-/// Plain display models for the buyer home screen widgets.
-///
-/// These models support both direct construction (for demo/testing) and
-/// fromJson deserialization (for real API calls from Laravel backend).
-library home_models;
-
 import 'package:flutter/widgets.dart' show IconData;
+import 'package:e_commerce/link_api.dart';
+
+String _buyerImageUrl(dynamic value) {
+  final path = value?.toString().trim() ?? '';
+  if (path.isEmpty || path.startsWith('http')) return path;
+  return AppLink.storageUrl(path.replaceFirst('/storage/', ''));
+}
 
 // ─── Banner / Ad ─────────────────────────────────────────────────────────────
 
@@ -30,7 +31,7 @@ class BuyerBannerItem {
   factory BuyerBannerItem.fromJson(Map<String, dynamic> json) {
     return BuyerBannerItem(
       id: json['id']?.toString(),
-      imageUrl: json['image'] ?? json['image_url'] ?? '',
+      imageUrl: _buyerImageUrl(json['image'] ?? json['image_url']),
       title: json['title'] ?? '',
       subtitle: json['subtitle'] ?? json['description'] ?? '',
       badgeLabel: json['badge_label'],
@@ -63,7 +64,7 @@ class BuyerCategoryItem {
     return BuyerCategoryItem(
       id: json['id']?.toString() ?? '',
       label: json['name'] ?? json['label'] ?? '',
-      imageUrl: json['icon'] ?? json['image_url'],
+      imageUrl: _buyerImageUrl(json['icon'] ?? json['image_url']),
       colorHex: json['color'],
       productsCount: json['products_count'],
     );
@@ -100,14 +101,14 @@ class BuyerStoreItem {
   factory BuyerStoreItem.fromJson(Map<String, dynamic> json) {
     return BuyerStoreItem(
       id: json['id']?.toString(),
-      coverUrl: json['store_cover'] ?? json['cover_url'] ?? '',
-      logoUrl: json['store_logo'] ?? json['logo_url'] ?? '',
+      coverUrl: _buyerImageUrl(json['store_cover'] ?? json['cover_url']),
+      logoUrl: _buyerImageUrl(json['store_logo'] ?? json['logo_url']),
       name: json['store_name'] ?? json['name'] ?? '',
       category: json['category'] ?? json['store_type'] ?? '',
-      rating: (json['rating'] ?? 0.0).toDouble(),
+      rating: double.tryParse('${json['rating'] ?? 0}') ?? 0,
       isOpen: json['is_open'] == true || json['is_open'] == 1,
       isFeatured: json['is_featured'] == true || json['is_featured'] == 1,
-      productsCount: json['products_count'],
+      productsCount: int.tryParse('${json['products_count'] ?? 0}'),
       distance: json['distance'] != null
           ? (json['distance'] as num).toDouble()
           : null,
@@ -152,9 +153,13 @@ class BuyerProductItem {
 
   factory BuyerProductItem.fromJson(Map<String, dynamic> json) {
     // Support both sale_price/price pattern and price/old_price pattern
-    final rawPrice = json['price'] as num? ?? 0;
-    final rawSale = json['sale_price'] as num?;
-    final rawOld = json['old_price'] as num?;
+    final rawPrice = num.tryParse('${json['price'] ?? 0}') ?? 0;
+    final rawSale = json['sale_price'] == null
+        ? null
+        : num.tryParse('${json['sale_price']}');
+    final rawOld = json['old_price'] == null
+        ? null
+        : num.tryParse('${json['old_price']}');
 
     final actualPrice = rawSale ?? rawPrice;
     num? actualOldPrice;
@@ -166,12 +171,15 @@ class BuyerProductItem {
 
     return BuyerProductItem(
       id: json['id']?.toString(),
-      imageUrl: json['image'] ?? json['image_url'] ?? '',
+      imageUrl: _buyerImageUrl(json['image'] ?? json['image_url']),
       name: json['name'] ?? '',
       price: actualPrice,
       oldPrice: actualOldPrice,
-      rating: (json['rating'] ?? 0.0).toDouble(),
-      ratingCount: json['rating_count'] ?? json['reviews_count'] ?? 0,
+      rating: double.tryParse('${json['rating'] ?? 0}') ?? 0,
+      ratingCount: int.tryParse(
+            '${json['rating_count'] ?? json['reviews_count'] ?? 0}',
+          ) ??
+          0,
       badgeLabel: json['badge_label'],
       isFavorite: json['is_favorite'] == true || json['is_favorite'] == 1,
       storeId: json['store_id']?.toString(),

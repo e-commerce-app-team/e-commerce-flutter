@@ -163,10 +163,17 @@ class BuyerProfileController extends GetxController {
 
   Future<void> saveAddress(Map<String, dynamic> data) async {
     final response = await profileData.addAddress(token, data);
-    response.fold((_) => customSnackbar('error'.tr, 'server_error'.tr), (_) {
-      customSnackbar('success'.tr, 'address_saved'.tr, isError: false);
-      loadAddresses();
-    });
+    response.fold(
+      (_) => customSnackbar('error'.tr, 'server_error'.tr),
+      (body) {
+        if (body['success'] == true) {
+          customSnackbar('success'.tr, 'address_saved'.tr, isError: false);
+          loadAddresses();
+        } else {
+          customSnackbar('error'.tr, body['message']?.toString() ?? 'server_error'.tr);
+        }
+      },
+    );
   }
 
   Future<void> setDefaultAddress(String id) async {
@@ -202,7 +209,11 @@ class BuyerProfileController extends GetxController {
     });
     response.fold(
       (_) => customSnackbar('error'.tr, 'server_error'.tr),
-      (_) {
+      (body) {
+        if (body['success'] != true) {
+          customSnackbar('error'.tr, body['message']?.toString() ?? 'server_error'.tr);
+          return;
+        }
         customSnackbar('success'.tr, 'wallet_deposit_pending'.tr, isError: false);
         loadWallet();
       },

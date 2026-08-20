@@ -5,9 +5,12 @@ import 'package:e_commerce/link_api.dart';
 
 /// Remote datasource for all buyer home screen API calls.
 /// Every method falls through gracefully so the controller can
-/// show demo data when the backend hasn't implemented an endpoint yet.
+/// leave an unavailable section empty instead of injecting fake products.
 class BuyerHomeRemoteDataSource {
   final Crud _crud = Crud();
+
+  Map<String, String> _auth(String? token) =>
+      token == null || token.isEmpty ? {} : {'Authorization': 'Bearer $token'};
 
   Future<Either<StatusRequest, Map>> getBanners() =>
       _crud.getData(AppLink.buyerBanners);
@@ -26,20 +29,20 @@ class BuyerHomeRemoteDataSource {
       _crud.getData(
           '${AppLink.buyerNearbyStores}?lat=$lat&lng=$lng&radius=$radius');
 
-  Future<Either<StatusRequest, Map>> getFeaturedProducts() =>
-      _crud.getData(AppLink.buyerFeaturedProducts);
+  Future<Either<StatusRequest, Map>> getFeaturedProducts({String? token}) =>
+      _crud.getData(AppLink.buyerFeaturedProducts, headers: _auth(token));
 
-  Future<Either<StatusRequest, Map>> getFlashSaleProducts() =>
-      _crud.getData(AppLink.buyerFlashSale);
+  Future<Either<StatusRequest, Map>> getFlashSaleProducts({String? token}) =>
+      _crud.getData(AppLink.buyerFlashSale, headers: _auth(token));
 
-  Future<Either<StatusRequest, Map>> getTrendingProducts() =>
-      _crud.getData(AppLink.buyerTrending);
+  Future<Either<StatusRequest, Map>> getTrendingProducts({String? token}) =>
+      _crud.getData(AppLink.buyerTrending, headers: _auth(token));
 
-  Future<Either<StatusRequest, Map>> getNewArrivals() =>
-      _crud.getData(AppLink.buyerNewArrivals);
+  Future<Either<StatusRequest, Map>> getNewArrivals({String? token}) =>
+      _crud.getData(AppLink.buyerNewArrivals, headers: _auth(token));
 
-  Future<Either<StatusRequest, Map>> getOffers() =>
-      _crud.getData(AppLink.buyerOffers);
+  Future<Either<StatusRequest, Map>> getOffers({String? token}) =>
+      _crud.getData(AppLink.buyerOffers, headers: _auth(token));
 
   Future<Either<StatusRequest, Map>> getRecommended(String? token) =>
       _crud.getData(

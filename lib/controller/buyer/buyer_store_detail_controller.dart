@@ -222,7 +222,12 @@ class BuyerStoreDetailController extends GetxController {
         update();
         Get.snackbar('تعذر تنفيذ المتابعة', 'تحقق من الاتصال وحاول مجدداً');
       },
-      (_) {},
+      (response) {
+        if (response['success'] != true) {
+          store = current;
+          update();
+        }
+      },
     );
   }
 
@@ -247,7 +252,11 @@ class BuyerStoreDetailController extends GetxController {
 
     result.fold(
       (_) => Get.snackbar('تعذر إرسال التقييم', 'حاول مرة أخرى بعد قليل'),
-      (_) async {
+      (response) async {
+        if (response['success'] != true) {
+          Get.snackbar('تعذر إرسال التقييم', response['message']?.toString() ?? 'حاول مرة أخرى');
+          return;
+        }
         reviewController.clear();
         selectedRating = 5;
         await _loadReviews();

@@ -327,7 +327,11 @@ class ExploreController extends GetxController {
     final result = await _remote.toggleFavorite(productId, token);
     result.fold(
       (_) => customSnackbar('error'.tr, 'server_error'.tr, isError: true),
-      (_) {
+      (response) {
+        if (response['success'] != true) {
+          customSnackbar('error'.tr, response['message']?.toString() ?? 'server_error'.tr, isError: true);
+          return;
+        }
         final index = _allProducts.indexWhere((p) => p.id == productId);
         if (index != -1) {
           _allProducts[index] = _allProducts[index].copyWith(

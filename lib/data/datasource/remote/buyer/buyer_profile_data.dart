@@ -52,7 +52,7 @@ class BuyerProfileData {
       await crud.getData(AppLink.buyerWalletBalance, headers: _auth(token));
 
   Future<Either<StatusRequest, Map>> getWalletHistory(String token) async =>
-      await crud.getData('${AppLink.server}/history', headers: _auth(token));
+      await crud.getData(AppLink.buyerWalletHistory, headers: _auth(token));
 
   Future<Either<StatusRequest, Map>> requestDeposit(String token, Map<String, dynamic> data) async =>
       await crud.postData('${AppLink.server}/buyer/wallet/deposit-requests', data, headers: _auth(token));

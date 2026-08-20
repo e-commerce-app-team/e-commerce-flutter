@@ -98,9 +98,10 @@ class _BuyerProductDetailScreenState extends State<BuyerProductDetailScreen> {
     final result = await _crud.postData(
       AppLink.buyerToggleFavorite(_id),
       {},
-      headers: {'Authorization': '******'},
+      headers: {'Authorization': 'Bearer $_token'},
     );
     result.fold((_) {}, (response) {
+      if (response['success'] != true) return;
       if (mounted) setState(() => _favorite = response['is_favorite'] == true);
     });
   }
@@ -159,6 +160,25 @@ class _BuyerProductDetailScreenState extends State<BuyerProductDetailScreen> {
       ),
     );
     if (result != null && mounted) {
+      final token = _token;
+      if (token == null || token.isEmpty) {
+        Get.snackbar('signin_required_title'.tr, 'signin_required_cart'.tr);
+        return;
+      }
+      final response = await _crud.postData(
+        '${AppLink.server}/buyer/reviews',
+        {
+          'product_id': int.tryParse(_id) ?? _id,
+          'rating': result.rating.round(),
+          'comment': result.comment,
+        },
+        headers: {'Authorization': 'Bearer $token'},
+      );
+      final failed = response.fold((_) => true, (body) => body['success'] != true);
+      if (failed) {
+        Get.snackbar('error'.tr, 'server_error'.tr);
+        return;
+      }
       setState(() {
         _myRating = result.rating;
         _myComment = result.comment;

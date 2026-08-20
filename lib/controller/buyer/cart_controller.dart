@@ -25,6 +25,7 @@ class CartController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxBool isCheckingOut = false.obs;
   final RxBool isAddingToCart = false.obs;
+  bool _cartLoadInProgress = false;
   final RxDouble walletBalance = 0.0.obs;
 
   /// Per-store selected shipping option id
@@ -123,13 +124,13 @@ class CartController extends GetxController {
     );
     isAddingToCart.value = false;
 
-    return result.fold(
+    final success = result.fold(
       (_) {
         customSnackbar('error'.tr, 'product_add_failed'.tr);
         return false;
       },
       (body) {
-        final success = body['success'] != false;
+        final success = body['success'] == true;
         if (success) {
           customSnackbar('success'.tr, 'product_added_cart'.tr, isError: false);
           loadCart();
@@ -142,18 +143,26 @@ class CartController extends GetxController {
         return success;
       },
     );
+
+    if (success) {
+      await loadCart();
+    }
+    return success;
   }
 
   Future<void> loadCart() async {
+    if (_cartLoadInProgress) return;
     final token = _token;
     if (token == null) {
       storeGroups.clear();
       return;
     }
 
+    _cartLoadInProgress = true;
     isLoading.value = true;
     final result = await _cartData.getCart(token);
     isLoading.value = false;
+    _cartLoadInProgress = false;
 
     result.fold(
       (_) => customSnackbar('error'.tr, 'server_error'.tr),

@@ -135,13 +135,14 @@ class AppLink {
   static const String buyerCheckout          = "$server/buyer/checkout";
   static const String buyerValidateCoupon    = "$server/coupons/validate";
   static const String buyerWalletBalance     = "$server/buyerBalance";
+  static const String buyerWalletHistory     = "$server/buyerHistory";
   static String buyerPayOrder(String orderId)=> "$server/orders/$orderId/pay";
   static const String buyerOrders              = "$server/buyer/orders";
   static String buyerOrderDetail(String id)    => "$server/orders/$id";
   static String buyerConfirmDelivery(String id)=> "$server/orders/$id/confirm-delivery";
   static const String buyerAddresses         = "$server/buyer/addresses";
   static String buyerAddressDefault(String id)=> "$server/buyer/addresses/$id/default";
-  static String buyerProductDetails(String productId) => "$server/products/$productId";
+  static String buyerProductDetails(String productId) => "$server/buyer/products/$productId";
   static String buyerProductView(String productId) => "$server/products/$productId/view";
   static const String buyerRecommended       = "$server/buyer/products/recommended";
   static const String buyerFavorites         = "$server/buyer/favorites";
