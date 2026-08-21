@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:dartz/dartz.dart';
 import 'package:e_commerce/core/class/crud.dart';
 import 'package:e_commerce/core/class/status_request.dart';
 import 'package:e_commerce/core/functions/custom_snackbar.dart';
@@ -20,15 +21,6 @@ class SellerOrdersController extends GetxController {
 
   int selectedTab = 0;
 
-  static const List<String?> _tabStatuses = [
-    null,
-    'pending',
-    'processing',
-    'shipped',
-    'delivered',
-    'cancelled_returned',
-  ];
-
   String searchQuery = '';
 
   String get _token => _myServices.sharedPreferences.getString('token') ?? '';
@@ -36,9 +28,32 @@ class SellerOrdersController extends GetxController {
       int.tryParse(_myServices.sharedPreferences.getString('id') ?? '0') ?? 0;
 
   List<SubOrderModel> get filteredOrders {
-    final status = _tabStatuses[selectedTab];
-    if (status == null) return _allOrders;
-    return _allOrders.where((o) => o.status == status).toList();
+    return _allOrders.where((order) {
+      switch (selectedTab) {
+        case 1:
+          return order.isPending &&
+              (order.isShippingQuotePending || order.canStartPreparation);
+        case 2:
+          return order.isPending && order.isAwaitingBuyerApproval;
+        case 3:
+          return order.isPending && order.isAwaitingPayment;
+        case 4:
+          return order.isProcessing && order.shipmentState == 'pending';
+        case 5:
+          return order.isProcessing &&
+              order.shipmentState == 'ready_for_shipping';
+        case 6:
+          return order.isShipped && order.escrowReleaseAt == null;
+        case 7:
+          return order.isShipped && order.escrowReleaseAt != null;
+        case 8:
+          return order.isDelivered;
+        case 9:
+          return order.isCancelled || order.isReturned;
+        default:
+          return true;
+      }
+    }).toList();
   }
 
   List<SubOrderModel> get searchResults {
@@ -53,11 +68,34 @@ class SellerOrdersController extends GetxController {
         .toList();
   }
 
-  int get pendingCount => _allOrders.where((o) => o.isPending).length;
-  int get processingCount => _allOrders.where((o) => o.isProcessing).length;
-  int get shippedCount => _allOrders.where((o) => o.isShipped).length;
+  int get newCount =>
+      _allOrders
+          .where(
+            (o) =>
+                o.isPending &&
+                (o.isShippingQuotePending || o.canStartPreparation),
+          )
+          .length;
+  int get awaitingBuyerApprovalCount =>
+      _allOrders.where((o) => o.isPending && o.isAwaitingBuyerApproval).length;
+  int get awaitingPaymentCount =>
+      _allOrders.where((o) => o.isPending && o.isAwaitingPayment).length;
+  int get processingCount => _allOrders
+      .where((o) => o.isProcessing && o.shipmentState == 'pending')
+      .length;
+  int get readyForShippingCount => _allOrders
+      .where((o) => o.isProcessing && o.shipmentState == 'ready_for_shipping')
+      .length;
+  int get shippedCount =>
+      _allOrders.where((o) => o.isShipped && o.escrowReleaseAt == null).length;
+  int get awaitingReceiptCount =>
+      _allOrders.where((o) => o.isShipped && o.escrowReleaseAt != null).length;
   int get deliveredCount => _allOrders.where((o) => o.isDelivered).length;
-  int get cancelledCount => _allOrders.where((o) => o.isCancelled).length;
+  int get cancelledCount =>
+      _allOrders.where((o) => o.isCancelled || o.isReturned).length;
+
+  int get pendingCount =>
+      newCount + awaitingBuyerApprovalCount + awaitingPaymentCount;
 
   void changeTab(int i) {
     selectedTab = i;
@@ -203,6 +241,7 @@ class SellerOrdersController extends GetxController {
           'buyer_id': order['user_id'],
           'payment_status': order['payment_status'],
           'payment_method': order['payment_method'],
+          'customer_notes': order['customer_notes'],
           'created_at': order['created_at'],
           'status_timeline': sub['status_timeline'] ?? order['status_timeline'],
           'shipping_address_details':
@@ -240,7 +279,7 @@ class SellerOrdersController extends GetxController {
           actionStatusRequest = StatusRequest.success;
           customSnackbar(
             'success'.tr,
-            'تم حفظ تكلفة التوصيل والموعد',
+            'seller_shipping_saved'.tr,
             isError: false,
           );
           loadOrders();
@@ -249,6 +288,50 @@ class SellerOrdersController extends GetxController {
           customSnackbar(
             'warning'.tr,
             body['message']?.toString() ?? 'error'.tr,
+          );
+        }
+      },
+    );
+    update();
+  }
+
+  Future<void> markReadyForShipping(SubOrderModel order) async {
+    await _runOrderAction(
+      action: () =>
+          _ordersData.readyForShipping(orderId: order.rawId, token: _token),
+      successKey: 'seller_order_ready_for_shipping',
+    );
+  }
+
+  Future<void> markShipped(SubOrderModel order) async {
+    await _runOrderAction(
+      action: () => _ordersData.shipOrder(orderId: order.rawId, token: _token),
+      successKey: 'seller_order_marked_shipped',
+    );
+  }
+
+  Future<void> _runOrderAction({
+    required Future<Either<StatusRequest, Map>> Function() action,
+    required String successKey,
+  }) async {
+    actionStatusRequest = StatusRequest.loading;
+    update();
+    final result = await action();
+    result.fold(
+      (failure) {
+        actionStatusRequest = failure;
+        customSnackbar('error'.tr, 'server_error'.tr);
+      },
+      (body) {
+        if (body['success'] == true) {
+          actionStatusRequest = StatusRequest.success;
+          customSnackbar('success'.tr, successKey.tr, isError: false);
+          loadOrders();
+        } else {
+          actionStatusRequest = StatusRequest.none;
+          customSnackbar(
+            'warning'.tr,
+            body['message']?.toString() ?? 'server_error'.tr,
           );
         }
       },

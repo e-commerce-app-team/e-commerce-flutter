@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
 import 'package:e_commerce/core/constant/color.dart';
@@ -78,7 +78,9 @@ class _TimelineRowState extends State<_TimelineRow>
       width: dotSize,
       height: dotSize,
       decoration: BoxDecoration(
-        color: widget.step.isDone || widget.step.isCurrent ? _accent : Colors.white,
+        color: widget.step.isDone || widget.step.isCurrent
+            ? _accent
+            : Colors.white,
         shape: BoxShape.circle,
         border: widget.step.isDone || widget.step.isCurrent
             ? null
@@ -96,8 +98,8 @@ class _TimelineRowState extends State<_TimelineRow>
       child: widget.step.isDone
           ? Icon(Icons.check_rounded, size: dotSize * 0.55, color: Colors.white)
           : widget.step.isCurrent
-              ? Icon(Icons.circle, size: dotSize * 0.35, color: Colors.white)
-              : null,
+          ? Icon(Icons.circle, size: dotSize * 0.35, color: Colors.white)
+          : null,
     );
 
     if (_pulseCtrl != null) {
@@ -145,8 +147,8 @@ class _TimelineRowState extends State<_TimelineRow>
                     color: widget.step.isCurrent
                         ? AppColor.primaryColor
                         : widget.step.isDone
-                            ? AppColor.black
-                            : AppColor.greyText,
+                        ? AppColor.black
+                        : AppColor.greyText,
                     fontWeight: widget.step.isCurrent || widget.step.isDone
                         ? FontWeight.w700
                         : FontWeight.w500,
@@ -169,12 +171,11 @@ class _TimelineRowState extends State<_TimelineRow>
   }
 
   String _stepLabel(BuyerTimelineStep step) {
-    if (step.title.isNotEmpty && !step.title.contains('_')) {
-      return step.title;
-    }
     final key = 'timeline_${step.status}';
     final translated = key.tr;
-    return translated != key ? translated : step.status;
+    return translated != key
+        ? translated
+        : (step.title.isNotEmpty ? step.title : step.status);
   }
 
   String _formatTime(DateTime d) =>
@@ -188,7 +189,8 @@ class _TimelineRowState extends State<_TimelineRow>
 class BuyerOrderStatusChip extends StatelessWidget {
   final BuyerOrderStatus status;
 
-  const BuyerOrderStatusChip({Key? key, required this.status}) : super(key: key);
+  const BuyerOrderStatusChip({Key? key, required this.status})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -247,8 +249,13 @@ class BuyerOrderStatusChip extends StatelessWidget {
 
 class BuyerSubOrderTile extends StatelessWidget {
   final BuyerSubOrderModel subOrder;
+  final VoidCallback? onConfirmDelivery;
 
-  const BuyerSubOrderTile({Key? key, required this.subOrder}) : super(key: key);
+  const BuyerSubOrderTile({
+    Key? key,
+    required this.subOrder,
+    this.onConfirmDelivery,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -306,12 +313,38 @@ class BuyerSubOrderTile extends StatelessWidget {
                   ),
                   Text(
                     '${formatBuyerPrice(item.price * item.quantity)} ${'currency'.tr}',
-                    style: AppTextStyle.labelSmall.copyWith(fontWeight: FontWeight.w600),
+                    style: AppTextStyle.labelSmall.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ],
               ),
             ),
           ),
+          if (subOrder.shippingMethod != null) ...[
+            const SizedBox(height: 4),
+            _SubOrderInfoRow(
+              icon: Icons.local_shipping_outlined,
+              label: 'shipping_method_label'.tr,
+              value: subOrder.shippingLabel ?? subOrder.shippingMethod!,
+            ),
+          ],
+          _SubOrderInfoRow(
+            icon: Icons.payments_outlined,
+            label: 'price_shipping'.tr,
+            value: subOrder.shippingCost == null
+                ? 'buyer_shipping_quote_pending'.tr
+                : subOrder.shippingCost == 0
+                ? 'buyer_free_shipping'.tr
+                : '${formatBuyerPrice(subOrder.shippingCost!)} ${'currency'.tr}',
+          ),
+          if (subOrder.estimatedDelivery != null &&
+              subOrder.estimatedDelivery!.isNotEmpty)
+            _SubOrderInfoRow(
+              icon: Icons.schedule_outlined,
+              label: 'estimated_delivery_label'.tr,
+              value: subOrder.estimatedDelivery!,
+            ),
           const SizedBox(height: 4),
           Align(
             alignment: AlignmentDirectional.centerEnd,
@@ -320,6 +353,55 @@ class BuyerSubOrderTile extends StatelessWidget {
               style: AppTextStyle.labelMedium.copyWith(
                 color: AppColor.primaryColor,
                 fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          if (onConfirmDelivery != null) ...[
+            const SizedBox(height: 10),
+            SizedBox(
+              width: double.infinity,
+              height: 42,
+              child: OutlinedButton.icon(
+                onPressed: onConfirmDelivery,
+                icon: const Icon(Icons.check_circle_outline, size: 17),
+                label: Text('buyer_confirm_delivery_btn'.tr),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _SubOrderInfoRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+
+  const _SubOrderInfoRow({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 5),
+      child: Row(
+        children: [
+          Icon(icon, size: 14, color: AppColor.grey),
+          const SizedBox(width: 6),
+          Text(label, style: AppTextStyle.labelSmall),
+          const Spacer(),
+          Flexible(
+            child: Text(
+              value,
+              textAlign: TextAlign.end,
+              style: AppTextStyle.labelSmall.copyWith(
+                color: AppColor.primaryColor,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),

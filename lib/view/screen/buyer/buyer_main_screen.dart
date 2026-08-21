@@ -10,15 +10,29 @@ import 'package:e_commerce/controller/buyer/buyer_orders_controller.dart';
 import 'package:e_commerce/view/screen/buyer/cart/cart_screen.dart';
 import 'package:e_commerce/view/screen/buyer/profile/buyer_profile_screen.dart';
 
-class BuyerMainScreen extends StatelessWidget {
+class BuyerMainScreen extends StatefulWidget {
   const BuyerMainScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  State<BuyerMainScreen> createState() => _BuyerMainScreenState();
+}
+
+class _BuyerMainScreenState extends State<BuyerMainScreen> {
+  @override
+  void initState() {
+    super.initState();
     Get.put(BuyerMainController());
     Get.put(CartController(), permanent: true);
-    Get.put(BuyerOrdersController(), permanent: true);
 
+    if (Get.isRegistered<BuyerOrdersController>()) {
+      Get.find<BuyerOrdersController>().refresh();
+    } else {
+      Get.put(BuyerOrdersController(), permanent: true);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return GetBuilder<BuyerMainController>(
       builder: (controller) {
         final cartCtrl = Get.find<CartController>();

@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
@@ -130,10 +130,7 @@ class _OrderTabsBar extends StatelessWidget implements PreferredSizeWidget {
   final int selectedIndex;
   final ValueChanged<int> onSelect;
 
-  const _OrderTabsBar({
-    required this.selectedIndex,
-    required this.onSelect,
-  });
+  const _OrderTabsBar({required this.selectedIndex, required this.onSelect});
 
   @override
   Size get preferredSize => const Size.fromHeight(52);
@@ -150,13 +147,16 @@ class _OrderTabsBar extends StatelessWidget implements PreferredSizeWidget {
         itemBuilder: (_, i) {
           final selected = i == selectedIndex;
           return GestureDetector(
+            behavior: HitTestBehavior.opaque,
             onTap: () => onSelect(i),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 220),
               curve: Curves.easeOut,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: selected ? Colors.white.withOpacity(0.22) : Colors.transparent,
+                color: selected
+                    ? Colors.white.withOpacity(0.22)
+                    : Colors.transparent,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: selected
@@ -191,26 +191,19 @@ class _OrdersSliverList extends StatelessWidget {
     return SliverPadding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
       sliver: SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (context, i) {
-            final order = controller.filteredOrders[i];
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 14),
-              child: BuyerOrderCard(
-                order: order,
-                onTap: () => Get.toNamed(
-                  AppRoute.buyerOrderDetail,
-                  arguments: order.id,
-                ),
-                onTrackTap: () => Get.toNamed(
-                  AppRoute.buyerOrderDetail,
-                  arguments: order.id,
-                ),
-              ),
-            );
-          },
-          childCount: controller.filteredOrders.length,
-        ),
+        delegate: SliverChildBuilderDelegate((context, i) {
+          final order = controller.filteredOrders[i];
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 14),
+            child: BuyerOrderCard(
+              order: order,
+              onTap: () =>
+                  Get.toNamed(AppRoute.buyerOrderDetail, arguments: order.id),
+              onTrackTap: () =>
+                  Get.toNamed(AppRoute.buyerOrderDetail, arguments: order.id),
+            ),
+          );
+        }, childCount: controller.filteredOrders.length),
       ),
     );
   }
@@ -254,8 +247,10 @@ class _OrderCardSkeletonState extends State<_OrderCardSkeleton>
       vsync: this,
       duration: const Duration(milliseconds: 900),
     )..repeat(reverse: true);
-    _opacity = Tween<double>(begin: 0.4, end: 1.0)
-        .animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
+    _opacity = Tween<double>(
+      begin: 0.4,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
   }
 
   @override
@@ -389,15 +384,25 @@ class _OrdersError extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.cloud_off_rounded, size: 58, color: AppColor.error),
+              const Icon(
+                Icons.cloud_off_rounded,
+                size: 58,
+                color: AppColor.error,
+              ),
               const SizedBox(height: 14),
-              Text(message, textAlign: TextAlign.center, style: AppTextStyle.bodyMedium),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: AppTextStyle.bodyMedium,
+              ),
               const SizedBox(height: 14),
               ElevatedButton.icon(
                 onPressed: () => onRetry(),
                 icon: const Icon(Icons.refresh_rounded),
                 label: Text('retry'.tr),
-                style: ElevatedButton.styleFrom(backgroundColor: AppColor.primaryColor),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColor.primaryColor,
+                ),
               ),
             ],
           ),

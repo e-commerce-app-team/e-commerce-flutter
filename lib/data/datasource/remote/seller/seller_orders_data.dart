@@ -102,6 +102,15 @@ class SellerOrdersData {
     headers: _auth(token),
   );
 
+  Future<Either<StatusRequest, Map>> shipOrder({
+    required int orderId,
+    required String token,
+  }) async => await crud.postData(
+    AppLink.ordersShip,
+    {'order_id': orderId},
+    headers: _auth(token),
+  );
+
   /// Find or create conversation with buyer
   Future<Either<StatusRequest, Map>> findOrCreateConversation({
     required int buyerId,

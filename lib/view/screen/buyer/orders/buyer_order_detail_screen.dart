@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
 import 'package:e_commerce/core/constant/color.dart';
@@ -20,22 +20,37 @@ class BuyerOrderDetailScreen extends StatelessWidget {
     return null;
   }
 
-  Future<void> _confirmDelivery(BuildContext context, BuyerOrderModel order) async {
+  Future<void> _confirmDelivery(
+    BuildContext context,
+    BuyerOrderModel order, {
+    String? subOrderId,
+  }) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-        title: Text('buyer_confirm_delivery_title'.tr, style: AppTextStyle.heading3),
-        content: Text('buyer_confirm_delivery_body'.tr, style: AppTextStyle.bodyMedium),
+        title: Text(
+          'buyer_confirm_delivery_title'.tr,
+          style: AppTextStyle.heading3,
+        ),
+        content: Text(
+          'buyer_confirm_delivery_body'.tr,
+          style: AppTextStyle.bodyMedium,
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
             child: Text('cancel'.tr),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: AppColor.primaryColor),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColor.primaryColor,
+            ),
             onPressed: () => Navigator.pop(ctx, true),
-            child: Text('confirm'.tr, style: const TextStyle(color: Colors.white)),
+            child: Text(
+              'confirm'.tr,
+              style: const TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),
@@ -44,7 +59,7 @@ class BuyerOrderDetailScreen extends StatelessWidget {
     if (confirmed != true) return;
 
     final ctrl = Get.find<BuyerOrdersController>();
-    final ok = await ctrl.confirmDelivery(order.id);
+    final ok = await ctrl.confirmDelivery(order.id, subOrderId: subOrderId);
     if (!ok) return;
 
     final updated = ctrl.findOrder(order.id);
@@ -57,15 +72,69 @@ class BuyerOrderDetailScreen extends StatelessWidget {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('تأكيد الدفع', style: AppTextStyle.heading3),
-        content: Text('سيتم خصم ${formatBuyerPrice(order.totalAmount)} ${'currency'.tr} من الرصيد المتاح وحجزه في الضمان.', style: AppTextStyle.bodyMedium),
+        title: Text('buyer_pay_order_title'.tr, style: AppTextStyle.heading3),
+        content: Text(
+          'buyer_pay_order_body'.trParams({
+            'amount': '${formatBuyerPrice(order.totalAmount)} ${'currency'.tr}',
+          }),
+          style: AppTextStyle.bodyMedium,
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text('cancel'.tr)),
-          ElevatedButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('تأكيد الدفع')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text('cancel'.tr),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text('confirm'.tr),
+          ),
         ],
       ),
     );
     if (ok == true) await Get.find<BuyerOrdersController>().payOrder(order.id);
+  }
+
+  Future<void> _approveShipping(
+    BuildContext context,
+    BuyerOrderModel order,
+  ) async {
+    final pending = order.subOrders
+        .where(
+          (s) =>
+              s.shippingCost != null &&
+              s.shippingCost! > 0 &&
+              !s.shippingApproved,
+        )
+        .toList();
+    if (pending.isEmpty) return;
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(
+          'buyer_shipping_approval_title'.tr,
+          style: AppTextStyle.heading3,
+        ),
+        content: Text(
+          'buyer_shipping_approval_body'.tr,
+          style: AppTextStyle.bodyMedium,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text('cancel'.tr),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text('confirm'.tr),
+          ),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    final ctrl = Get.find<BuyerOrdersController>();
+    for (final subOrder in pending) {
+      if (!await ctrl.approveShipping(order.id, subOrder.id)) return;
+    }
   }
 
   @override
@@ -86,15 +155,25 @@ class BuyerOrderDetailScreen extends StatelessWidget {
             backgroundColor: AppColor.primaryColor,
             elevation: 0,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white, size: 20),
+              icon: const Icon(
+                Icons.arrow_back_ios_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
               onPressed: () => Get.back(),
             ),
             title: Column(
               children: [
-                Text('#${order.orderNumber}', style: AppTextStyle.appBarTitle.copyWith(fontSize: 15)),
+                Text(
+                  '#${order.orderNumber}',
+                  style: AppTextStyle.appBarTitle.copyWith(fontSize: 15),
+                ),
                 Text(
                   _formatDate(order.createdAt),
-                  style: AppTextStyle.timestamp.copyWith(color: Colors.white70, fontSize: 11),
+                  style: AppTextStyle.timestamp.copyWith(
+                    color: Colors.white70,
+                    fontSize: 11,
+                  ),
                 ),
               ],
             ),
@@ -124,7 +203,20 @@ class BuyerOrderDetailScreen extends StatelessWidget {
                       title: 'buyer_order_stores_section'.tr,
                       child: Column(
                         children: order.subOrders
-                            .map((s) => BuyerSubOrderTile(subOrder: s))
+                            .map(
+                              (s) => BuyerSubOrderTile(
+                                subOrder: s,
+                                onConfirmDelivery:
+                                    s.status == BuyerOrderStatus.shipped &&
+                                        s.escrowReleasedAt == null
+                                    ? () => _confirmDelivery(
+                                        context,
+                                        order,
+                                        subOrderId: s.id,
+                                      )
+                                    : null,
+                              ),
+                            )
                             .toList(),
                       ),
                     ),
@@ -140,6 +232,7 @@ class BuyerOrderDetailScreen extends StatelessWidget {
           bottomNavigationBar: _BottomActions(
             order: order,
             onPay: () => _payOrder(context, order),
+            onApproveShipping: () => _approveShipping(context, order),
             onConfirm: () => _confirmDelivery(context, order),
             onReport: () => BuyerReturnRequestSheet.show(order),
             onRate: () => BuyerOrderRatingSheet.show(order),
@@ -178,7 +271,10 @@ class _SummaryCard extends StatelessWidget {
               color: AppColor.primarySurface,
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Icon(Icons.receipt_long_rounded, color: AppColor.primaryColor),
+            child: Icon(
+              Icons.receipt_long_rounded,
+              color: AppColor.primaryColor,
+            ),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -191,10 +287,25 @@ class _SummaryCard extends StatelessWidget {
                   '${formatBuyerPrice(order.totalAmount)} ${'currency'.tr}',
                   style: AppTextStyle.price.copyWith(fontSize: 18),
                 ),
+                const SizedBox(height: 5),
+                Text(
+                  '${'buyer_products_total'.tr}: ${formatBuyerPrice(order.productsTotal)} ${'currency'.tr}',
+                  style: AppTextStyle.labelSmall,
+                ),
+                Text(
+                  '${'shipping_fee'.tr}: ${order.needsShippingQuote
+                      ? 'buyer_shipping_quote_pending'.tr
+                      : order.shippingTotal == 0
+                      ? 'buyer_free_shipping'.tr
+                      : '${formatBuyerPrice(order.shippingTotal)} ${'currency'.tr}'}',
+                  style: AppTextStyle.labelSmall,
+                ),
                 if (order.paymentStatus != null)
                   Text(
-                    '${'buyer_payment_status'.tr}: ${order.paymentStatus!}',
-                    style: AppTextStyle.labelSmall.copyWith(color: AppColor.greyText),
+                    '${'buyer_payment_status'.tr}: ${order.paymentStatusLabelKey.tr}',
+                    style: AppTextStyle.labelSmall.copyWith(
+                      color: AppColor.greyText,
+                    ),
                   ),
               ],
             ),
@@ -221,14 +332,20 @@ class _EscrowNoteCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.info_outline_rounded, color: AppColor.primaryColor, size: 20),
+          Icon(
+            Icons.info_outline_rounded,
+            color: AppColor.primaryColor,
+            size: 20,
+          ),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
               'buyer_escrow_auto_release'.trParams({
                 'date': '${releaseAt.day}/${releaseAt.month}/${releaseAt.year}',
               }),
-              style: AppTextStyle.bodySmall.copyWith(color: AppColor.primaryColor),
+              style: AppTextStyle.bodySmall.copyWith(
+                color: AppColor.primaryColor,
+              ),
             ),
           ),
         ],
@@ -304,6 +421,7 @@ class _SectionCard extends StatelessWidget {
 class _BottomActions extends StatelessWidget {
   final BuyerOrderModel order;
   final VoidCallback onPay;
+  final VoidCallback onApproveShipping;
   final VoidCallback onConfirm;
   final VoidCallback onReport;
   final VoidCallback onRate;
@@ -312,6 +430,7 @@ class _BottomActions extends StatelessWidget {
   const _BottomActions({
     required this.order,
     required this.onPay,
+    required this.onApproveShipping,
     required this.onConfirm,
     required this.onReport,
     required this.onRate,
@@ -335,9 +454,27 @@ class _BottomActions extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          if (order.needsShippingApproval)
+            _PrimaryBtn(
+              label: 'buyer_review_shipping_btn'.tr,
+              icon: Icons.local_shipping_outlined,
+              onTap: onApproveShipping,
+            ),
           if (order.canPay)
-            _PrimaryBtn(label: 'تأكيد الدفع', icon: Icons.lock_outline_rounded, onTap: onPay),
-          if (order.canConfirmDelivery)
+            _PrimaryBtn(
+              label: 'buyer_pay_order_btn'.tr,
+              icon: Icons.lock_outline_rounded,
+              onTap: onPay,
+            ),
+          if (order.canConfirmDelivery &&
+              order.subOrders
+                      .where(
+                        (s) =>
+                            s.status == BuyerOrderStatus.shipped &&
+                            s.escrowReleasedAt == null,
+                      )
+                      .length <=
+                  1)
             _PrimaryBtn(
               label: 'buyer_confirm_delivery_btn'.tr,
               icon: Icons.check_circle_outline_rounded,
@@ -393,7 +530,9 @@ class _PrimaryBtn extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColor.primaryColor,
           foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
         ),
         onPressed: onTap,
         icon: Icon(icon, size: 18),
@@ -423,7 +562,9 @@ class _OutlineBtn extends StatelessWidget {
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColor.error,
           side: BorderSide(color: AppColor.error.withOpacity(0.5)),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
         ),
         onPressed: onTap,
         icon: Icon(icon, size: 18),

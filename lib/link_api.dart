@@ -104,6 +104,7 @@ class AppLink {
   static const String ordersReject = "$server/orders/reject";
   static const String ordersUpdateTime = "$server/orders/update-time";
   static const String ordersReadyShipping = "$server/orders/ready-shipping";
+  static const String ordersShip = "$server/orders/ship";
 
   // ─── Helpers ──────────────────────────────────────────────────────────────
   /// Constructs a full URL to a Laravel storage-hosted file.
@@ -172,6 +173,8 @@ class AppLink {
   static String buyerOrderDetail(String id) => "$server/orders/$id";
   static String buyerConfirmDelivery(String id) =>
       "$server/orders/$id/confirm-delivery";
+  static String buyerApproveShipping(String id) =>
+      "$server/orders/$id/approve-shipping";
   static const String buyerAddresses = "$server/buyer/addresses";
   static String buyerAddressDefault(String id) =>
       "$server/buyer/addresses/$id/default";

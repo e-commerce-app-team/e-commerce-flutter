@@ -50,7 +50,10 @@ class OrderDetailScreen extends StatelessWidget {
                   const SizedBox(height: 4),
                   _SelfShippingCard(),
                 ],
-                if (order.isPending) ...[
+                if (order.isPending ||
+                    order.canStartPreparation ||
+                    order.canMarkReadyForShipping ||
+                    order.canMarkShipped) ...[
                   const SizedBox(height: 4),
                   _DetailActions(order: order),
                 ],
@@ -157,7 +160,7 @@ class _StatusCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  config.labelKey.tr,
+                  order.displayStatusKey.tr,
                   style: AppTextStyle.heading3.copyWith(
                     color: config.accent,
                     fontSize: 15,
@@ -195,7 +198,7 @@ class _StatusCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
-              config.labelKey.tr,
+              order.displayStatusKey.tr,
               style: AppTextStyle.chip.copyWith(
                 color: config.text,
                 fontWeight: FontWeight.w700,
@@ -252,10 +255,22 @@ String _timelineStepTranslate(String status, String defaultTitle) {
       return 'timeline_pending'.tr;
     case 'processing':
       return 'timeline_processing'.tr;
+    case 'shipping_quoted':
+      return 'timeline_shipping_quoted'.tr;
+    case 'shipping_approved':
+      return 'timeline_shipping_approved'.tr;
+    case 'ready_for_shipping':
+      return 'timeline_ready_for_shipping'.tr;
+    case 'paid_escrow':
+      return 'timeline_paid_escrow'.tr;
     case 'shipped':
       return 'timeline_shipped'.tr;
     case 'delivered':
       return 'timeline_delivered'.tr;
+    case 'delivery_confirmed_by_buyer':
+      return 'timeline_delivery_confirmed_by_buyer'.tr;
+    case 'delivery_auto_confirmed':
+      return 'timeline_delivery_auto_confirmed'.tr;
     case 'cancelled':
     case 'cancelled_returned':
       return 'timeline_cancelled'.tr;
@@ -397,6 +412,13 @@ class _BuyerInfoCard extends StatelessWidget {
             label: 'buyer_phone_label'.tr,
             value: order.buyerPhone,
           ),
+          if (order.customerNotes != null &&
+              order.customerNotes!.trim().isNotEmpty)
+            _InfoRow(
+              icon: Icons.notes_outlined,
+              label: 'customer_notes_label'.tr,
+              value: order.customerNotes!,
+            ),
           _InfoRow(
             icon: Icons.location_on_outlined,
             label: 'buyer_address_label'.tr,
@@ -466,7 +488,7 @@ class _ProductRow extends StatelessWidget {
             ),
           ),
           Text(
-            'Ã—${item.qty}',
+            '×${item.qty}',
             style: AppTextStyle.labelMedium.copyWith(
               color: AppColor.grey,
               fontSize: 13,
@@ -552,10 +574,10 @@ class _PriceCard extends StatelessWidget {
   String _discountLabel(SubOrderModel o) {
     if (o.discountInfo == null) return 'price_discount'.tr;
     if (o.discountInfo!.isCoupon) {
-      return '${'price_discount'.tr} â€” ${o.discountInfo!.couponCode ?? ""}';
+      return '${'price_discount'.tr} — ${o.discountInfo!.couponCode ?? ""}';
     }
     if (o.discountInfo!.isSpinWheel) {
-      return '${'price_discount'.tr} â€” ${'order_spin_label'.tr}';
+      return '${'price_discount'.tr} — ${'order_spin_label'.tr}';
     }
     return 'price_discount'.tr;
   }
@@ -818,17 +840,17 @@ class _DetailActions extends StatelessWidget {
     final ctrl = Get.find<SellerOrdersController>();
     return Column(
       children: [
-        if (order.isPending || order.isProcessing) ...[
+        if (order.isPending && order.shippingCost == null) ...[
           SizedBox(
             width: double.infinity,
             child: OutlinedButton.icon(
               onPressed: () => showDialog(
                 context: context,
                 builder: (_) =>
-                    _SellerShippingQuoteDialog(order: order, ctrl: ctrl),
+                    SellerShippingQuoteDialog(order: order, ctrl: ctrl),
               ),
               icon: const Icon(Icons.local_shipping_outlined),
-              label: const Text('تحديد طريقة وتكلفة التوصيل'),
+              label: Text('seller_set_shipping'.tr),
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppColor.primaryColor,
                 side: BorderSide(color: AppColor.primaryColor.withOpacity(.35)),
@@ -840,71 +862,130 @@ class _DetailActions extends StatelessWidget {
           ),
           const SizedBox(height: 12),
         ],
+        if (order.isPending && order.shippingCost != null) ...[
+          _SellerOrderInfoMessage(
+            text: order.shippingApproved
+                ? 'seller_waiting_payment'.tr
+                : 'seller_waiting_buyer_approval'.tr,
+            color: order.shippingApproved ? AppColor.info : AppColor.warning,
+          ),
+          const SizedBox(height: 12),
+        ],
+        if (order.canStartPreparation) ...[
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () => ctrl.acceptOrder(order),
+              icon: const Icon(Icons.inventory_2_outlined),
+              label: Text('seller_start_preparation'.tr),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColor.primaryColor,
+                padding: const EdgeInsets.symmetric(vertical: 13),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+        ],
+        if (order.canMarkReadyForShipping) ...[
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () => ctrl.markReadyForShipping(order),
+              icon: const Icon(Icons.inventory_rounded),
+              label: Text('seller_mark_ready_shipping'.tr),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColor.primaryColor,
+                padding: const EdgeInsets.symmetric(vertical: 13),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+        ],
+        if (order.canMarkShipped) ...[
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () => ctrl.markShipped(order),
+              icon: const Icon(Icons.local_shipping_outlined),
+              label: Text('seller_confirm_shipment'.tr),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColor.primaryColor,
+                padding: const EdgeInsets.symmetric(vertical: 13),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+        ],
         Row(
           children: [
-            Expanded(
-              child: OutlinedButton(
-                onPressed: () => showDialog(
-                  context: context,
-                  builder: (_) => RejectOrderDialog(
-                    order: order,
-                    onConfirm: (reason) {
-                      ctrl.rejectOrder(order, reason);
-                      Get.back();
-                    },
+            if (order.isPending)
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () => showDialog(
+                    context: context,
+                    builder: (_) => RejectOrderDialog(
+                      order: order,
+                      onConfirm: (reason) {
+                        ctrl.rejectOrder(order, reason);
+                        Get.back();
+                      },
+                    ),
                   ),
-                ),
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 13),
-                  side: BorderSide(color: AppColor.greyBorder),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 13),
+                    side: BorderSide(color: AppColor.greyBorder),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                ),
-                child: Text(
-                  'order_reject_title'.tr,
-                  style: AppTextStyle.buttonMedium.copyWith(
-                    color: AppColor.grey,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              flex: 2,
-              child: ElevatedButton.icon(
-                onPressed: () => showDialog(
-                  context: context,
-                  builder: (_) => AcceptOrderDialog(
-                    order: order,
-                    onConfirm: (minutes) {
-                      ctrl.acceptOrder(order, estimatedMinutes: minutes);
-                      Get.back();
-                    },
-                  ),
-                ),
-                icon: const Icon(
-                  Icons.check_rounded,
-                  color: Colors.white,
-                  size: 18,
-                ),
-                label: Text(
-                  'order_accept_btn'.tr,
-                  style: AppTextStyle.buttonMedium,
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColor.primaryColor,
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(vertical: 13),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                  child: Text(
+                    'order_reject_title'.tr,
+                    style: AppTextStyle.buttonMedium.copyWith(
+                      color: AppColor.grey,
+                    ),
                   ),
                 ),
               ),
-            ),
           ],
         ),
       ],
+    );
+  }
+}
+
+class _SellerOrderInfoMessage extends StatelessWidget {
+  final String text;
+  final Color color;
+
+  const _SellerOrderInfoMessage({required this.text, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.25)),
+      ),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: AppTextStyle.labelMedium.copyWith(
+          color: color,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
     );
   }
 }

@@ -50,6 +50,7 @@ class SellerProfileController extends GetxController {
   bool pickupDeliveryEnabled = true;
   bool standardDeliveryEnabled = true;
   bool expressDeliveryEnabled = false;
+  bool freeShippingEnabled = false;
   late final TextEditingController baseFeeCtrl;
   late final TextEditingController perKmCtrl;
   late final TextEditingController perKgCtrl;
@@ -179,6 +180,7 @@ class SellerProfileController extends GetxController {
           ? true
           : options['standard'] == true;
       expressDeliveryEnabled = options['express'] == true;
+      freeShippingEnabled = data['free_shipping'] == true;
       update();
     });
   }
@@ -249,6 +251,7 @@ class SellerProfileController extends GetxController {
 
     final response = await profileData.updateShippingSettings(_token, {
       'shipping_mode': 'self_delivery',
+      'free_shipping': freeShippingEnabled,
       'delivery_options': {
         'pickup': pickupDeliveryEnabled,
         'standard': standardDeliveryEnabled,

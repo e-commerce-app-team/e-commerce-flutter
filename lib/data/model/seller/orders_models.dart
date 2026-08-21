@@ -27,6 +27,12 @@ String _formatDateTime(String? raw) {
   }
 }
 
+bool _parseBool(dynamic value) {
+  if (value is bool) return value;
+  if (value is num) return value != 0;
+  return ['1', 'true', 'yes'].contains(value?.toString().toLowerCase());
+}
+
 class DiscountInfo {
   final String source;
   final String? couponCode;
@@ -72,11 +78,23 @@ class OrderItemModel {
       return 0;
     }
 
+    final product = json['product'] is Map ? json['product'] as Map : null;
+    final quantity = parseInt(
+      json['quantity'] ?? json['qty'] ?? json['pivot']?['quantity'],
+    );
+    final lineTotal = parseInt(json['total_price'] ?? json['line_total']);
+    final unitPrice = parseInt(
+      json['unit_price'] ?? json['price'] ?? json['pivot']?['price'],
+    );
+
     return OrderItemModel(
-      name: json['name'] ?? '',
-      qty: parseInt(json['pivot']?['quantity'] ?? json['qty']),
-      price: parseInt(json['pivot']?['price'] ?? json['price']),
-      variant: json['variant'],
+      name: (product?['name'] ?? json['name'] ?? json['product_name'] ?? '')
+          .toString(),
+      qty: quantity > 0 ? quantity : 1,
+      price: unitPrice > 0
+          ? unitPrice
+          : (quantity > 0 && lineTotal > 0 ? lineTotal ~/ quantity : 0),
+      variant: (json['variant'] ?? json['variant_name'])?.toString(),
     );
   }
 
@@ -118,6 +136,8 @@ class SubOrderModel {
   final String? shippingMethod;
   final String? shippingLabel;
   final String? estimatedDelivery;
+  final bool shippingApproved;
+  final String shipmentState;
   final int discount;
   final int subtotal;
   final String status;
@@ -149,6 +169,8 @@ class SubOrderModel {
     this.shippingMethod,
     this.shippingLabel,
     this.estimatedDelivery,
+    this.shippingApproved = false,
+    this.shipmentState = 'pending',
     required this.discount,
     required this.subtotal,
     required this.status,
@@ -182,8 +204,31 @@ class SubOrderModel {
     final rawBuyer = json['buyer'];
     final buyerMap = rawBuyer is Map ? rawBuyer : null;
     final bName = buyerMap != null
-        ? '${buyerMap['first_name']} ${buyerMap['last_name']}'
-        : (json['buyer_name'] ?? '');
+        ? [buyerMap['first_name'], buyerMap['last_name']]
+              .where(
+                (part) => part != null && part.toString().trim().isNotEmpty,
+              )
+              .join(' ')
+        : (json['buyer_name'] ?? '').toString();
+
+    final calculatedItemsTotal = itemsList.fold<int>(
+      0,
+      (sum, item) => sum + item.subtotal,
+    );
+    final rawTotal = _parseInt(
+      json['total'] ?? json['total_price'] ?? json['subtotal'],
+    );
+    final itemsTotal = _parseInt(json['items_total']);
+    final effectiveItemsTotal = itemsTotal > 0
+        ? itemsTotal
+        : calculatedItemsTotal;
+    final shipping = _parseInt(json['shipping_cost'] ?? json['shipping_fee']);
+    final discountAmount = _parseInt(
+      json['discount_amount'] ?? json['discount'],
+    );
+    final effectiveTotal = rawTotal > 0
+        ? rawTotal
+        : (effectiveItemsTotal - discountAmount + shipping).clamp(0, 1 << 31);
 
     return SubOrderModel(
       subOrderId: json['sub_order_id'] != null
@@ -198,14 +243,16 @@ class SubOrderModel {
       shippingAddress:
           json['shipping_address_details'] ?? json['shipping_address'] ?? '',
       items: itemsList,
-      itemsTotal: _parseInt(json['total_price'] ?? json['items_total']),
-      shippingFee: _parseInt(json['shipping_cost'] ?? json['shipping_fee']),
+      itemsTotal: effectiveItemsTotal,
+      shippingFee: shipping,
       shippingCost: _parseNullableDouble(json['shipping_cost']),
       shippingMethod: json['shipping_method']?.toString(),
       shippingLabel: json['shipping_label']?.toString(),
       estimatedDelivery: json['estimated_delivery']?.toString(),
-      discount: _parseInt(json['discount']),
-      subtotal: _parseInt(json['total_price'] ?? json['subtotal']),
+      shippingApproved: _parseBool(json['shipping_approved']),
+      shipmentState: json['shipment_state']?.toString() ?? 'pending',
+      discount: discountAmount,
+      subtotal: _parseInt(effectiveTotal),
       status: json['status']?.toString() ?? 'pending',
       paymentStatus: json['payment_status'],
       paymentMethod: json['payment_method'],
@@ -246,6 +293,8 @@ class SubOrderModel {
     shippingMethod: shippingMethod,
     shippingLabel: shippingLabel,
     estimatedDelivery: estimatedDelivery,
+    shippingApproved: shippingApproved,
+    shipmentState: shipmentState,
     discount: discount,
     subtotal: subtotal,
     status: status ?? this.status,
@@ -276,7 +325,45 @@ class SubOrderModel {
   bool get isReturned => status == 'returned';
   bool get isOurDelivery => shippingType == 'our_delivery';
   bool get isSelfShipping => shippingType == 'self_shipping';
+  bool get isShippingQuotePending => shippingCost == null;
+  bool get isAwaitingBuyerApproval =>
+      shippingCost != null && shippingCost! > 0 && !shippingApproved;
+  bool get isAwaitingPayment =>
+      shippingCost != null &&
+      shippingApproved &&
+      paymentStatus != 'paid_escrow';
+  bool get canStartPreparation =>
+      isPending &&
+      shippingCost != null &&
+      shippingApproved &&
+      paymentStatus == 'paid_escrow';
+  bool get canMarkReadyForShipping =>
+      isProcessing &&
+      paymentStatus == 'paid_escrow' &&
+      shipmentState == 'pending';
+  bool get canMarkShipped =>
+      isProcessing &&
+      paymentStatus == 'paid_escrow' &&
+      shipmentState == 'ready_for_shipping';
+
+  String get displayStatusKey {
+    if (canStartPreparation) return 'seller_start_preparation';
+    if (isPending && isShippingQuotePending) return 'seller_tab_new';
+    if (isPending && isAwaitingBuyerApproval) {
+      return 'seller_tab_awaiting_buyer';
+    }
+    if (isPending && isAwaitingPayment) return 'seller_waiting_payment';
+    if (isProcessing && shipmentState == 'ready_for_shipping') {
+      return 'seller_tab_ready_shipping';
+    }
+    if (isShipped && escrowReleaseAt != null) {
+      return 'seller_tab_awaiting_receipt';
+    }
+    return OrderStatusConfig.of(status).labelKey;
+  }
+
   bool get hasDiscount => discount > 0 || discountInfo != null;
+  int get itemsCount => items.fold(0, (sum, item) => sum + item.qty);
   bool get showQR => isOurDelivery && (isProcessing || isShipped);
 
   String _formatPrice(int v) => v >= 1000 ? 'SP ${v ~/ 1000}k' : 'SP $v';

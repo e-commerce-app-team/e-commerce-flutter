@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/controller/seller/seller_orders_controller.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
@@ -68,10 +68,7 @@ class _OrderCardState extends State<OrderCard>
               borderRadius: BorderRadius.circular(16),
               boxShadow: AppColor.cardShadow,
               border: Border(
-                right: BorderSide(
-                  color: config.accent,
-                  width: 3.5,
-                ),
+                right: BorderSide(color: config.accent, width: 3.5),
                 left: BorderSide(color: AppColor.greyBorder, width: 0.5),
                 top: BorderSide(color: AppColor.greyBorder, width: 0.5),
                 bottom: BorderSide(color: AppColor.greyBorder, width: 0.5),
@@ -128,10 +125,7 @@ class _CardHeader extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Text(
-                      order.subOrderId,
-                      style: AppTextStyle.orderNumber,
-                    ),
+                    Text(order.subOrderId, style: AppTextStyle.orderNumber),
                     if (order.isPending) ...[
                       const SizedBox(width: 6),
                       _PulseDot(),
@@ -141,8 +135,7 @@ class _CardHeader extends StatelessWidget {
                 const SizedBox(height: 3),
                 Text(
                   order.buyerName,
-                  style:
-                      AppTextStyle.bodySmall.copyWith(color: AppColor.black),
+                  style: AppTextStyle.bodySmall.copyWith(color: AppColor.black),
                 ),
                 const SizedBox(height: 2),
                 Row(
@@ -171,8 +164,7 @@ class _CardHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
                 decoration: BoxDecoration(
                   color: config.bg,
                   borderRadius: BorderRadius.circular(20),
@@ -187,10 +179,7 @@ class _CardHeader extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 6),
-              Text(
-                order.createdAt,
-                style: AppTextStyle.timestamp,
-              ),
+              Text(order.createdAt, style: AppTextStyle.timestamp),
             ],
           ),
         ],
@@ -228,15 +217,11 @@ class _CardBody extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(14, 10, 14, 0),
       child: Row(
         children: [
-          Icon(
-            Icons.shopping_bag_outlined,
-            size: 14,
-            color: AppColor.grey,
-          ),
+          Icon(Icons.shopping_bag_outlined, size: 14, color: AppColor.grey),
           const SizedBox(width: 6),
           Expanded(
             child: Text(
-              order.items.map((i) => '${i.name} Ã—${i.qty}').join(' Â· '),
+              order.items.map((i) => '${i.name} ×${i.qty}').join(' · '),
               style: AppTextStyle.labelSmall.copyWith(fontSize: 11.5),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -264,48 +249,51 @@ class _DiscountAndShippingRow extends StatelessWidget {
     if (order.discountInfo != null) {
       final info = order.discountInfo!;
       if (info.isCoupon && info.couponCode != null) {
-        chips.add(_InfoChip(
-          icon: Icons.local_offer_rounded,
-          label:
-              '${'order_coupon_label'.tr} ${info.couponCode}',
-          color: AppColor.statOrders,
-          bgColor: AppColor.statOrdersLight,
-        ));
+        chips.add(
+          _InfoChip(
+            icon: Icons.local_offer_rounded,
+            label: '${'order_coupon_label'.tr} ${info.couponCode}',
+            color: AppColor.statOrders,
+            bgColor: AppColor.statOrdersLight,
+          ),
+        );
       } else if (info.isSpinWheel) {
-        chips.add(_InfoChip(
-          icon: Icons.casino_outlined,
-          label: 'order_spin_label'.tr,
-          color: AppColor.warning,
-          bgColor: AppColor.warningLight,
-        ));
+        chips.add(
+          _InfoChip(
+            icon: Icons.casino_outlined,
+            label: 'order_spin_label'.tr,
+            color: AppColor.warning,
+            bgColor: AppColor.warningLight,
+          ),
+        );
       } else if (info.isFreeShipping) {
-        chips.add(_InfoChip(
-          icon: Icons.local_shipping_outlined,
-          label: 'order_free_ship_label'.tr,
-          color: AppColor.success,
-          bgColor: AppColor.successLight,
-        ));
+        chips.add(
+          _InfoChip(
+            icon: Icons.local_shipping_outlined,
+            label: 'order_free_ship_label'.tr,
+            color: AppColor.success,
+            bgColor: AppColor.successLight,
+          ),
+        );
       }
     }
 
-    chips.add(_InfoChip(
-      icon: order.isOurDelivery
-          ? Icons.delivery_dining_rounded
-          : Icons.directions_car_outlined,
-      label: order.isOurDelivery
-          ? 'order_shipping_our'.tr
-          : 'order_shipping_self'.tr,
-      color: order.isOurDelivery ? AppColor.info : AppColor.grey,
-      bgColor: order.isOurDelivery ? AppColor.infoLight : AppColor.greyBorder,
-    ));
+    chips.add(
+      _InfoChip(
+        icon: order.isOurDelivery
+            ? Icons.delivery_dining_rounded
+            : Icons.directions_car_outlined,
+        label: order.isOurDelivery
+            ? 'order_shipping_our'.tr
+            : 'order_shipping_self'.tr,
+        color: order.isOurDelivery ? AppColor.info : AppColor.grey,
+        bgColor: order.isOurDelivery ? AppColor.infoLight : AppColor.greyBorder,
+      ),
+    );
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(14, 8, 14, 0),
-      child: Wrap(
-        spacing: 6,
-        runSpacing: 4,
-        children: chips,
-      ),
+      child: Wrap(spacing: 6, runSpacing: 4, children: chips),
     );
   }
 }
@@ -373,8 +361,10 @@ class _PendingActions extends StatelessWidget {
               ),
               child: Text(
                 'order_reject_btn'.tr,
-                style: AppTextStyle.buttonSmall
-                    .copyWith(color: AppColor.grey, fontSize: 13),
+                style: AppTextStyle.buttonSmall.copyWith(
+                  color: AppColor.grey,
+                  fontSize: 13,
+                ),
               ),
             ),
           ),
@@ -394,13 +384,13 @@ class _PendingActions extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.check_rounded,
-                      size: 16, color: Colors.white),
-                  const SizedBox(width: 4),
-                  Text(
-                    'order_accept_btn'.tr,
-                    style: AppTextStyle.buttonSmall,
+                  const Icon(
+                    Icons.check_rounded,
+                    size: 16,
+                    color: Colors.white,
                   ),
+                  const SizedBox(width: 4),
+                  Text('order_accept_btn'.tr, style: AppTextStyle.buttonSmall),
                 ],
               ),
             ),
@@ -450,9 +440,8 @@ class _AcceptOrderDialogState extends State<AcceptOrderDialog> {
   int selectedMinutes = 30;
   final options = [15, 30, 45, 60, 90, 120];
 
-  String _label(int m) => m < 60
-      ? '$m ${'minute_label'.tr}'
-      : '${m ~/ 60} ${'hour_label'.tr}';
+  String _label(int m) =>
+      m < 60 ? '$m ${'minute_label'.tr}' : '${m ~/ 60} ${'hour_label'.tr}';
 
   @override
   Widget build(BuildContext context) {
@@ -481,8 +470,9 @@ class _AcceptOrderDialogState extends State<AcceptOrderDialog> {
             const SizedBox(height: 4),
             Text(
               widget.order.subOrderId,
-              style: AppTextStyle.labelMedium
-                  .copyWith(color: AppColor.primaryColor),
+              style: AppTextStyle.labelMedium.copyWith(
+                color: AppColor.primaryColor,
+              ),
             ),
             const SizedBox(height: 16),
             Text(
@@ -500,7 +490,9 @@ class _AcceptOrderDialogState extends State<AcceptOrderDialog> {
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 180),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 8),
+                      horizontal: 14,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? AppColor.primaryColor
@@ -515,8 +507,7 @@ class _AcceptOrderDialogState extends State<AcceptOrderDialog> {
                     child: Text(
                       _label(m),
                       style: AppTextStyle.chip.copyWith(
-                        color:
-                            isSelected ? Colors.white : AppColor.grey,
+                        color: isSelected ? Colors.white : AppColor.grey,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -532,8 +523,9 @@ class _AcceptOrderDialogState extends State<AcceptOrderDialog> {
                     onPressed: () => Get.back(),
                     child: Text(
                       'cancel'.tr,
-                      style: AppTextStyle.buttonSmall
-                          .copyWith(color: AppColor.grey),
+                      style: AppTextStyle.buttonSmall.copyWith(
+                        color: AppColor.grey,
+                      ),
                     ),
                   ),
                 ),
@@ -548,10 +540,10 @@ class _AcceptOrderDialogState extends State<AcceptOrderDialog> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColor.primaryColor,
                       elevation: 0,
-                      padding:
-                          const EdgeInsets.symmetric(vertical: 12),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     child: Text(
                       'order_accept_confirm'.tr,
@@ -593,11 +585,11 @@ class _RejectOrderDialogState extends State<RejectOrderDialog> {
   }
 
   List<String> get _reasons => [
-        'reject_out_stock'.tr,
-        'reject_not_available'.tr,
-        'reject_no_delivery'.tr,
-        'reject_other'.tr,
-      ];
+    'reject_out_stock'.tr,
+    'reject_not_available'.tr,
+    'reject_no_delivery'.tr,
+    'reject_other'.tr,
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -626,8 +618,10 @@ class _RejectOrderDialogState extends State<RejectOrderDialog> {
             const SizedBox(height: 4),
             Text(
               'order_reject_refund_note'.tr,
-              style: AppTextStyle.bodySmall
-                  .copyWith(color: AppColor.grey, fontSize: 12),
+              style: AppTextStyle.bodySmall.copyWith(
+                color: AppColor.grey,
+                fontSize: 12,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
@@ -638,7 +632,9 @@ class _RejectOrderDialogState extends State<RejectOrderDialog> {
                   width: double.infinity,
                   margin: const EdgeInsets.only(bottom: 8),
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 14, vertical: 11),
+                    horizontal: 14,
+                    vertical: 11,
+                  ),
                   decoration: BoxDecoration(
                     color: _selected == r
                         ? AppColor.errorLight
@@ -653,9 +649,7 @@ class _RejectOrderDialogState extends State<RejectOrderDialog> {
                   child: Text(
                     r,
                     style: AppTextStyle.labelLarge.copyWith(
-                      color: _selected == r
-                          ? AppColor.error
-                          : AppColor.black,
+                      color: _selected == r ? AppColor.error : AppColor.black,
                       fontSize: 13,
                     ),
                   ),
@@ -674,8 +668,7 @@ class _RejectOrderDialogState extends State<RejectOrderDialog> {
                   fillColor: AppColor.secondBackground,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(11),
-                    borderSide:
-                        BorderSide(color: AppColor.greyBorder),
+                    borderSide: BorderSide(color: AppColor.greyBorder),
                   ),
                   contentPadding: const EdgeInsets.all(12),
                 ),
@@ -689,8 +682,9 @@ class _RejectOrderDialogState extends State<RejectOrderDialog> {
                     onPressed: () => Get.back(),
                     child: Text(
                       'cancel'.tr,
-                      style: AppTextStyle.buttonSmall
-                          .copyWith(color: AppColor.grey),
+                      style: AppTextStyle.buttonSmall.copyWith(
+                        color: AppColor.grey,
+                      ),
                     ),
                   ),
                 ),
@@ -701,10 +695,9 @@ class _RejectOrderDialogState extends State<RejectOrderDialog> {
                     onPressed: _selected == null
                         ? null
                         : () {
-                            final reason =
-                                _selected == 'reject_other'.tr
-                                    ? _otherCtrl.text.trim()
-                                    : _selected!;
+                            final reason = _selected == 'reject_other'.tr
+                                ? _otherCtrl.text.trim()
+                                : _selected!;
                             Get.back();
                             widget.onConfirm(reason);
                           },
@@ -712,10 +705,10 @@ class _RejectOrderDialogState extends State<RejectOrderDialog> {
                       backgroundColor: AppColor.error,
                       disabledBackgroundColor: AppColor.greyLight,
                       elevation: 0,
-                      padding:
-                          const EdgeInsets.symmetric(vertical: 12),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     child: Text(
                       'order_reject_confirm'.tr,
@@ -759,9 +752,10 @@ class _PulseDotState extends State<_PulseDot>
   @override
   Widget build(BuildContext context) {
     return FadeTransition(
-      opacity: Tween<double>(begin: 0.3, end: 1.0).animate(
-        CurvedAnimation(parent: _c, curve: Curves.easeInOut),
-      ),
+      opacity: Tween<double>(
+        begin: 0.3,
+        end: 1.0,
+      ).animate(CurvedAnimation(parent: _c, curve: Curves.easeInOut)),
       child: Container(
         width: 7,
         height: 7,

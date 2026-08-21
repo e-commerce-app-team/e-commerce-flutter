@@ -11,8 +11,9 @@ import 'package:e_commerce/data/datasource/remote/buyer/buyer_orders_datasource.
 import 'package:e_commerce/data/model/buyer/buyer_orders_model.dart';
 
 class BuyerOrdersController extends GetxController {
-  final BuyerOrdersDataSource _dataSource =
-      BuyerOrdersDataSource(Get.find<Crud>());
+  final BuyerOrdersDataSource _dataSource = BuyerOrdersDataSource(
+    Get.find<Crud>(),
+  );
   final MyServices _services = Get.find<MyServices>();
 
   List<BuyerOrderModel> _allOrders = [];
@@ -28,14 +29,20 @@ class BuyerOrdersController extends GetxController {
 
   static const List<BuyerOrderTabFilter> tabFilters = [
     BuyerOrderTabFilter.all,
-    BuyerOrderTabFilter.active,
+    BuyerOrderTabFilter.needsAction,
+    BuyerOrderTabFilter.processing,
+    BuyerOrderTabFilter.shipped,
+    BuyerOrderTabFilter.awaitingReceipt,
     BuyerOrderTabFilter.completed,
     BuyerOrderTabFilter.cancelled,
   ];
 
   static const List<String> tabLabelKeys = [
     'tab_all',
-    'buyer_tab_active',
+    'buyer_tab_needs_action',
+    'buyer_tab_processing',
+    'buyer_tab_shipped',
+    'buyer_tab_awaiting_receipt',
     'buyer_tab_completed',
     'tab_cancelled',
   ];
@@ -56,11 +63,6 @@ class BuyerOrdersController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
     _loadOrders();
   }
 
@@ -99,19 +101,25 @@ class BuyerOrdersController extends GetxController {
   }
 
   void patchOrder(BuyerOrderModel updated) {
-    _allOrders = _allOrders.map((o) => o.id == updated.id ? updated : o).toList();
+    _allOrders = _allOrders
+        .map((o) => o.id == updated.id ? updated : o)
+        .toList();
     _applyFilters();
     update();
   }
 
-  Future<bool> confirmDelivery(String orderId) async {
+  Future<bool> confirmDelivery(String orderId, {String? subOrderId}) async {
     final token = _token;
     if (token == null) {
       _applyLocalDelivery(orderId);
       return true;
     }
 
-    final result = await _dataSource.confirmDelivery(token, orderId);
+    final result = await _dataSource.confirmDelivery(
+      token,
+      orderId,
+      subOrderId: subOrderId,
+    );
     return result.fold(
       (_) {
         customSnackbar('error'.tr, 'buyer_confirm_delivery_failed'.tr);
@@ -134,10 +142,12 @@ class BuyerOrdersController extends GetxController {
   void _applyLocalDelivery(String orderId) {
     final order = findOrder(orderId);
     if (order == null) return;
-    patchOrder(order.copyWith(
-      status: BuyerOrderStatus.delivered,
-      deliveredAt: DateTime.now(),
-    ));
+    patchOrder(
+      order.copyWith(
+        status: BuyerOrderStatus.delivered,
+        deliveredAt: DateTime.now(),
+      ),
+    );
   }
 
   Future<bool> submitRating({
@@ -154,10 +164,7 @@ class BuyerOrdersController extends GetxController {
         rating: rating,
         comment: comment,
       );
-      final failed = result.fold(
-        (_) => true,
-        (r) => r['success'] != true,
-      );
+      final failed = result.fold((_) => true, (r) => r['success'] != true);
       if (failed) {
         customSnackbar('error'.tr, 'buyer_rating_failed'.tr);
         return false;
@@ -247,7 +254,10 @@ class BuyerOrdersController extends GetxController {
     try {
       final result = await _dataSource
           .getOrders(token)
-          .timeout(const Duration(seconds: 20), onTimeout: () => const Left(StatusRequest.serverfailure));
+          .timeout(
+            const Duration(seconds: 20),
+            onTimeout: () => const Left(StatusRequest.serverfailure),
+          );
       result.fold(
         (_) {
           _allOrders = [];
@@ -255,7 +265,19 @@ class BuyerOrdersController extends GetxController {
         },
         (response) {
           try {
-            _allOrders = _parseOrdersResponse(response);
+            final httpStatus = response['_http_status'] is num
+                ? (response['_http_status'] as num).toInt()
+                : 200;
+            final hasOrderList =
+                response['data'] is List ||
+                (response['data'] is Map &&
+                    (response['data'] as Map)['data'] is List);
+            if (httpStatus >= 400 || !hasOrderList) {
+              _allOrders = [];
+              loadError = 'buyer_orders_load_failed'.tr;
+            } else {
+              _allOrders = _parseOrdersResponse(response);
+            }
           } catch (_) {
             _allOrders = [];
             loadError = 'buyer_orders_load_failed'.tr;
@@ -273,19 +295,62 @@ class BuyerOrdersController extends GetxController {
     }
   }
 
+  Future<bool> approveShipping(String orderId, String subOrderId) async {
+    final token = _token;
+    if (token == null) return false;
+    final result = await _dataSource.approveShipping(
+      token,
+      orderId,
+      subOrderId: subOrderId,
+    );
+    var shouldPay = false;
+    final approved = result.fold(
+      (_) {
+        customSnackbar('error'.tr, 'buyer_shipping_approval_failed'.tr);
+        return false;
+      },
+      (response) {
+        if (response['success'] == true) {
+          customSnackbar(
+            'success'.tr,
+            'buyer_shipping_approved'.tr,
+            isError: false,
+          );
+          shouldPay = response['shipping_ready_for_payment'] == true;
+          _loadOrders();
+          return true;
+        }
+        customSnackbar(
+          'error'.tr,
+          response['message']?.toString() ??
+              'buyer_shipping_approval_failed'.tr,
+        );
+        return false;
+      },
+    );
+    if (approved && shouldPay) return payOrder(orderId);
+    return approved;
+  }
+
   Future<bool> payOrder(String orderId) async {
     final token = _token;
     if (token == null) return false;
     final result = await _dataSource.payOrder(token, orderId);
     return result.fold(
-      (_) { customSnackbar('error'.tr, 'server_error'.tr); return false; },
+      (_) {
+        customSnackbar('error'.tr, 'server_error'.tr);
+        return false;
+      },
       (response) {
         if (response['success'] == true) {
           customSnackbar('success'.tr, 'wallet_order_paid'.tr, isError: false);
           _loadOrders();
           return true;
         }
-        customSnackbar('error'.tr, response['message']?.toString() ?? 'server_error'.tr);
+        customSnackbar(
+          'error'.tr,
+          response['message']?.toString() ?? 'server_error'.tr,
+        );
         return false;
       },
     );
@@ -312,8 +377,14 @@ class BuyerOrdersController extends GetxController {
       switch (tab) {
         case BuyerOrderTabFilter.all:
           return true;
-        case BuyerOrderTabFilter.active:
-          return order.isActive;
+        case BuyerOrderTabFilter.needsAction:
+          return order.isNeedsAction;
+        case BuyerOrderTabFilter.processing:
+          return order.isProcessingGroup && !order.isNeedsAction;
+        case BuyerOrderTabFilter.shipped:
+          return order.isShippedGroup;
+        case BuyerOrderTabFilter.awaitingReceipt:
+          return order.isShippedGroup && order.canConfirmDelivery;
         case BuyerOrderTabFilter.completed:
           return order.isCompleted;
         case BuyerOrderTabFilter.cancelled:
@@ -321,10 +392,13 @@ class BuyerOrdersController extends GetxController {
       }
     });
 
-    list = list.where((order) {
-      final total = order.totalAmount;
-      return total >= priceRange.start && total <= priceRange.end;
-    });
+    final hasPriceFilter = priceRange.start > 0 || priceRange.end < 5000000;
+    if (hasPriceFilter) {
+      list = list.where((order) {
+        final total = order.totalAmount;
+        return total >= priceRange.start && total <= priceRange.end;
+      });
+    }
 
     final sorted = list.toList();
     switch (sortBy) {

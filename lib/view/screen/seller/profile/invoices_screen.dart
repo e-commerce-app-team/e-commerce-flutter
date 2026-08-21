@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/controller/seller/seller_invoices_controller.dart';
@@ -32,15 +32,14 @@ class InvoicesScreen extends StatelessWidget {
                       padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
                       sliver: SliverList(
                         delegate: SliverChildListDelegate([
-
                           // â‘  Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ø¶Ø±ÙŠØ¨Ø©
                           _TaxSettingsCard(ctrl: ctrl),
                           const SizedBox(height: 18),
 
                           // â‘¡ Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ± Ø§Ù„Ø´Ù‡Ø±ÙŠØ©
-                          const _SectionLabel(
+                          _SectionLabel(
                             icon: Icons.calendar_month_rounded,
-                            title: 'Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ± Ø§Ù„Ø´Ù‡Ø±ÙŠØ©',
+                            title: 'invoice_monthly_reports'.tr,
                           ),
                           const SizedBox(height: 10),
                           _MonthSelectorRow(ctrl: ctrl),
@@ -49,12 +48,14 @@ class InvoicesScreen extends StatelessWidget {
                             _VatSummaryCard(ctrl: ctrl),
                           const SizedBox(height: 18),
 
-                          // â‘¢ Ù‚Ø§Ø¦Ù…Ø© Ø§Ù„ÙÙˆØ§ØªÙŠØ±
+
                           _InvoicesSectionHeader(ctrl: ctrl),
                           const SizedBox(height: 10),
 
                           if (ctrl.filteredInvoices.isEmpty)
-                            _EmptyInvoices(hasFilter: ctrl.filterStatus != 'all')
+                            _EmptyInvoices(
+                              hasFilter: ctrl.filterStatus != 'all',
+                            )
                           else
                             ...ctrl.filteredInvoices.asMap().entries.map(
                               (e) => Padding(
@@ -77,9 +78,6 @@ class InvoicesScreen extends StatelessWidget {
   }
 }
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// App Bar
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 class _InvoicesAppBar extends StatelessWidget implements PreferredSizeWidget {
   const _InvoicesAppBar();
@@ -92,11 +90,14 @@ class _InvoicesAppBar extends StatelessWidget implements PreferredSizeWidget {
     backgroundColor: AppColor.primaryColor,
     elevation: 0,
     leading: IconButton(
-      icon: const Icon(Icons.arrow_back_ios_rounded,
-          color: Colors.white, size: 20),
+      icon: const Icon(
+        Icons.arrow_back_ios_rounded,
+        color: Colors.white,
+        size: 20,
+      ),
       onPressed: () => Get.back(),
     ),
-    title: Text('Ø§Ù„ÙÙˆØ§ØªÙŠØ± Ø§Ù„Ø¶Ø±ÙŠØ¨ÙŠØ©', style: AppTextStyle.appBarTitle),
+    title: Text('acct_invoices_title'.tr, style: AppTextStyle.appBarTitle),
     centerTitle: true,
     actions: [
       Container(
@@ -107,12 +108,24 @@ class _InvoicesAppBar extends StatelessWidget implements PreferredSizeWidget {
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: Colors.white.withOpacity(0.35)),
         ),
-        child: Row(mainAxisSize: MainAxisSize.min, children: [
-          const Icon(Icons.business_center_outlined, size: 12, color: Colors.white),
-          const SizedBox(width: 4),
-          Text('Ø´Ø±ÙƒØ§Øª', style: AppTextStyle.badge.copyWith(
-              color: Colors.white, fontSize: 10)),
-        ]),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.business_center_outlined,
+              size: 12,
+              color: Colors.white,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              'drawer_companies'.tr,
+              style: AppTextStyle.badge.copyWith(
+                color: Colors.white,
+                fontSize: 10,
+              ),
+            ),
+          ],
+        ),
       ),
     ],
   );
@@ -128,18 +141,21 @@ class _SectionLabel extends StatelessWidget {
   const _SectionLabel({required this.icon, required this.title});
 
   @override
-  Widget build(BuildContext context) => Row(children: [
-    Container(
-      width: 28, height: 28,
-      decoration: BoxDecoration(
-        color: AppColor.warningLight,
-        borderRadius: BorderRadius.circular(8),
+  Widget build(BuildContext context) => Row(
+    children: [
+      Container(
+        width: 28,
+        height: 28,
+        decoration: BoxDecoration(
+          color: AppColor.warningLight,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(icon, size: 14, color: AppColor.warning),
       ),
-      child: Icon(icon, size: 14, color: AppColor.warning),
-    ),
-    const SizedBox(width: 8),
-    Text(title, style: AppTextStyle.heading3.copyWith(fontSize: 14)),
-  ]);
+      const SizedBox(width: 8),
+      Text(title, style: AppTextStyle.heading3.copyWith(fontSize: 14)),
+    ],
+  );
 }
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -162,59 +178,89 @@ class _TaxSettingsCard extends StatelessWidget {
             : AppColor.warning.withOpacity(0.4),
       ),
     ),
-    child: Column(children: [
-      // Header
-      Padding(
-        padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
-        child: Row(children: [
-          Container(
-            width: 32, height: 32,
-            decoration: BoxDecoration(
-              color: AppColor.infoLight,
-              borderRadius: BorderRadius.circular(9),
-            ),
-            child: const Icon(Icons.receipt_long_outlined,
-                size: 16, color: AppColor.info),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ø¶Ø±ÙŠØ¨ÙŠØ©',
-                  style: AppTextStyle.heading3.copyWith(fontSize: 14)),
-              if (ctrl.taxSettings?.isComplete == false)
-                Text('ÙŠØ±Ø¬Ù‰ Ø¥ÙƒÙ…Ø§Ù„ Ø¨ÙŠØ§Ù†Ø§ØªÙƒ Ø§Ù„Ø¶Ø±ÙŠØ¨ÙŠØ©',
-                    style: AppTextStyle.labelSmall.copyWith(
-                        color: AppColor.warning, fontSize: 10)),
-            ]),
-          ),
-          GestureDetector(
-            onTap: ctrl.isEditingSettings ? ctrl.cancelEdit : ctrl.toggleEditSettings,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 180),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-              decoration: BoxDecoration(
-                color: ctrl.isEditingSettings
-                    ? AppColor.errorLight : AppColor.primarySurface,
-                borderRadius: BorderRadius.circular(9),
-              ),
-              child: Text(
-                ctrl.isEditingSettings ? 'Ø¥Ù„ØºØ§Ø¡' : 'ØªØ¹Ø¯ÙŠÙ„',
-                style: AppTextStyle.chip.copyWith(
-                  color: ctrl.isEditingSettings
-                      ? AppColor.error : AppColor.primaryColor,
-                  fontWeight: FontWeight.w700, fontSize: 11,
+    child: Column(
+      children: [
+        // Header
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
+          child: Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: AppColor.infoLight,
+                  borderRadius: BorderRadius.circular(9),
+                ),
+                child: const Icon(
+                  Icons.receipt_long_outlined,
+                  size: 16,
+                  color: AppColor.info,
                 ),
               ),
-            ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'tax_data'.tr,
+                      style: AppTextStyle.heading3.copyWith(fontSize: 14),
+                    ),
+                    if (ctrl.taxSettings?.isComplete == false)
+                      Text(
+                        'tax_data_complete_hint'.tr,
+                        style: AppTextStyle.labelSmall.copyWith(
+                          color: AppColor.warning,
+                          fontSize: 10,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              GestureDetector(
+                onTap: ctrl.isEditingSettings
+                    ? ctrl.cancelEdit
+                    : ctrl.toggleEditSettings,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 180),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 5,
+                  ),
+                  decoration: BoxDecoration(
+                    color: ctrl.isEditingSettings
+                        ? AppColor.errorLight
+                        : AppColor.primarySurface,
+                    borderRadius: BorderRadius.circular(9),
+                  ),
+                  child: Text(
+                    ctrl.isEditingSettings ? 'cancel'.tr : 'edit'.tr,
+                    style: AppTextStyle.chip.copyWith(
+                      color: ctrl.isEditingSettings
+                          ? AppColor.error
+                          : AppColor.primaryColor,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 11,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ]),
-      ),
-      Divider(height: 16, indent: 16, endIndent: 16, color: AppColor.greyBorder),
+        ),
+        Divider(
+          height: 16,
+          indent: 16,
+          endIndent: 16,
+          color: AppColor.greyBorder,
+        ),
 
-      ctrl.isEditingSettings
-          ? _TaxEditForm(ctrl: ctrl)
-          : _TaxDisplay(settings: ctrl.taxSettings),
-    ]),
+        ctrl.isEditingSettings
+            ? _TaxEditForm(ctrl: ctrl)
+            : _TaxDisplay(settings: ctrl.taxSettings),
+      ],
+    ),
   );
 }
 
@@ -229,97 +275,118 @@ class _TaxDisplay extends StatelessWidget {
     if (settings == null) return const SizedBox.shrink();
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
-      child: Column(children: [
-        _TaxRow(
-          icon: Icons.tag_outlined,
-          label: 'Ø§Ù„Ø±Ù‚Ù… Ø§Ù„Ø¶Ø±ÙŠØ¨ÙŠ',
-          value: settings!.vatNumber?.isNotEmpty == true
-              ? settings!.vatNumber! : 'â€”',
-          valueMono: true,
-        ),
-        _TaxRow(
-          icon: Icons.store_mall_directory_outlined,
-          label: 'Ø±Ù‚Ù… Ø§Ù„Ø³Ø¬Ù„ Ø§Ù„ØªØ¬Ø§Ø±ÙŠ',
-          value: settings!.crNumber?.isNotEmpty == true
-              ? settings!.crNumber! : 'â€”',
-          valueMono: true,
-        ),
-        _TaxRow(
-          icon: Icons.business_outlined,
-          label: 'Ø§Ù„Ø§Ø³Ù… Ø§Ù„Ù‚Ø§Ù†ÙˆÙ†ÙŠ',
-          value: settings!.legalName.isNotEmpty ? settings!.legalName : 'â€”',
-        ),
-        _TaxRow(
-          icon: Icons.location_on_outlined,
-          label: 'Ø§Ù„Ø¹Ù†ÙˆØ§Ù†',
-          value: settings!.address.isNotEmpty ? settings!.address : 'â€”',
-          showDivider: false,
-        ),
-        const SizedBox(height: 12),
-        Row(children: [
-          _PillBadge(
-            icon: Icons.percent_rounded,
-            label: 'Ù†Ø³Ø¨Ø© Ø§Ù„Ø¶Ø±ÙŠØ¨Ø©: ${(settings!.vatRate * 100).toInt()}%',
-            bg: AppColor.warningLight,
-            fg: AppColor.warningDark,
+      child: Column(
+        children: [
+          _TaxRow(
+            icon: Icons.tag_outlined,
+            label: 'tax_number'.tr,
+            value: settings!.vatNumber?.isNotEmpty == true
+                ? settings!.vatNumber!
+                : '—',
+            valueMono: true,
           ),
-          const SizedBox(width: 8),
-          if (settings!.vatRegistered)
-            _PillBadge(
-              icon: Icons.verified_outlined,
-              label: 'Ù…Ø³Ø¬Ù„ Ø±Ø³Ù…ÙŠØ§Ù‹',
-              bg: AppColor.successLight,
-              fg: AppColor.successDark,
-            ),
-        ]),
-      ]),
+          _TaxRow(
+            icon: Icons.store_mall_directory_outlined,
+            label: 'commercial_register_number'.tr,
+            value: settings!.crNumber?.isNotEmpty == true
+                ? settings!.crNumber!
+                : '—',
+            valueMono: true,
+          ),
+          _TaxRow(
+            icon: Icons.business_outlined,
+            label: 'legal_name'.tr,
+            value: settings!.legalName.isNotEmpty ? settings!.legalName : '—',
+          ),
+          _TaxRow(
+            icon: Icons.location_on_outlined,
+            label: 'address'.tr,
+            value: settings!.address.isNotEmpty ? settings!.address : '—',
+            showDivider: false,
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              _PillBadge(
+                icon: Icons.percent_rounded,
+                label:
+                    '${'tax_rate'.tr}: ${(settings!.vatRate * 100).toInt()}%',
+                bg: AppColor.warningLight,
+                fg: AppColor.warningDark,
+              ),
+              const SizedBox(width: 8),
+              if (settings!.vatRegistered)
+                _PillBadge(
+                  icon: Icons.verified_outlined,
+                  label: 'tax_registered'.tr,
+                  bg: AppColor.successLight,
+                  fg: AppColor.successDark,
+                ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
 
 class _TaxRow extends StatelessWidget {
   final IconData icon;
-  final String   label;
-  final String   value;
-  final bool     valueMono;
-  final bool     showDivider;
+  final String label;
+  final String value;
+  final bool valueMono;
+  final bool showDivider;
   const _TaxRow({
-    required this.icon, required this.label, required this.value,
-    this.valueMono = false, this.showDivider = true,
+    required this.icon,
+    required this.label,
+    required this.value,
+    this.valueMono = false,
+    this.showDivider = true,
   });
 
   @override
-  Widget build(BuildContext context) => Column(children: [
-    Padding(
-      padding: const EdgeInsets.symmetric(vertical: 7),
-      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Icon(icon, size: 13, color: AppColor.greyLight),
-        const SizedBox(width: 8),
-        SizedBox(
-          width: 96,
-          child: Text(label,
-              style: AppTextStyle.labelSmall.copyWith(fontSize: 11)),
+  Widget build(BuildContext context) => Column(
+    children: [
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 7),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(icon, size: 13, color: AppColor.greyLight),
+            const SizedBox(width: 8),
+            SizedBox(
+              width: 96,
+              child: Text(
+                label,
+                style: AppTextStyle.labelSmall.copyWith(fontSize: 11),
+              ),
+            ),
+            Expanded(
+              child: Text(
+                value,
+                style: valueMono
+                    ? AppTextStyle.orderNumber.copyWith(fontSize: 12)
+                    : AppTextStyle.labelLarge.copyWith(fontSize: 12),
+              ),
+            ),
+          ],
         ),
-        Expanded(
-          child: Text(
-            value,
-            style: valueMono
-                ? AppTextStyle.orderNumber.copyWith(fontSize: 12)
-                : AppTextStyle.labelLarge.copyWith(fontSize: 12),
-          ),
-        ),
-      ]),
-    ),
-    if (showDivider) Divider(height: 1, color: AppColor.greyBorder),
-  ]);
+      ),
+      if (showDivider) Divider(height: 1, color: AppColor.greyBorder),
+    ],
+  );
 }
 
 class _PillBadge extends StatelessWidget {
   final IconData icon;
   final String label;
   final Color bg, fg;
-  const _PillBadge({required this.icon, required this.label,
-      required this.bg, required this.fg});
+  const _PillBadge({
+    required this.icon,
+    required this.label,
+    required this.bg,
+    required this.fg,
+  });
 
   @override
   Widget build(BuildContext context) => Container(
@@ -329,12 +396,21 @@ class _PillBadge extends StatelessWidget {
       borderRadius: BorderRadius.circular(20),
       border: Border.all(color: fg.withOpacity(0.25)),
     ),
-    child: Row(mainAxisSize: MainAxisSize.min, children: [
-      Icon(icon, size: 12, color: fg),
-      const SizedBox(width: 4),
-      Text(label, style: AppTextStyle.chip.copyWith(
-          color: fg, fontWeight: FontWeight.w700, fontSize: 11)),
-    ]),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 12, color: fg),
+        const SizedBox(width: 4),
+        Text(
+          label,
+          style: AppTextStyle.chip.copyWith(
+            color: fg,
+            fontWeight: FontWeight.w700,
+            fontSize: 11,
+          ),
+        ),
+      ],
+    ),
   );
 }
 
@@ -349,70 +425,83 @@ class _TaxEditForm extends StatelessWidget {
     padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
     child: Form(
       key: ctrl.formKey,
-      child: Column(children: [
-        AppField(
-          controller: ctrl.vatCtrl,
-          label: 'Ø§Ù„Ø±Ù‚Ù… Ø§Ù„Ø¶Ø±ÙŠØ¨ÙŠ *',
-          hint: 'Ù…Ø«Ø§Ù„: 300123456789012',
-          keyboardType: TextInputType.number,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          validator: (v) {
-            if (v == null || v.trim().isEmpty) return 'Ø§Ù„Ø±Ù‚Ù… Ø§Ù„Ø¶Ø±ÙŠØ¨ÙŠ Ù…Ø·Ù„ÙˆØ¨';
-            if (v.length < 11) return 'ÙŠØ¬Ø¨ Ø£Ù† ÙŠÙƒÙˆÙ† 11 Ø±Ù‚Ù…Ø§Ù‹ Ø¹Ù„Ù‰ Ø§Ù„Ø£Ù‚Ù„';
-            return null;
-          },
-        ),
-        const SizedBox(height: 12),
-        AppField(
-          controller: ctrl.crCtrl,
-          label: 'Ø±Ù‚Ù… Ø§Ù„Ø³Ø¬Ù„ Ø§Ù„ØªØ¬Ø§Ø±ÙŠ *',
-          hint: 'Ù…Ø«Ø§Ù„: 1234567890',
-          keyboardType: TextInputType.number,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          validator: (v) {
-            if (v == null || v.trim().isEmpty) return 'Ø±Ù‚Ù… Ø§Ù„Ø³Ø¬Ù„ Ø§Ù„ØªØ¬Ø§Ø±ÙŠ Ù…Ø·Ù„ÙˆØ¨';
-            if (v.length < 5) return 'ÙŠØ¬Ø¨ Ø£Ù† ÙŠÙƒÙˆÙ† 5 Ø£Ø±Ù‚Ø§Ù… Ø¹Ù„Ù‰ Ø§Ù„Ø£Ù‚Ù„';
-            return null;
-          },
-        ),
-        const SizedBox(height: 12),
-        AppField(
-          controller: ctrl.legalNameCtrl,
-          label: 'Ø§Ù„Ø§Ø³Ù… Ø§Ù„Ù‚Ø§Ù†ÙˆÙ†ÙŠ Ù„Ù„Ù…Ù†Ø´Ø£Ø© *',
-          hint: 'Ù…Ø«Ø§Ù„: Ø´Ø±ÙƒØ© Ø£Ø­Ù…Ø¯ Ù„Ù„Ø­Ø±Ù Ø§Ù„ÙŠØ¯ÙˆÙŠØ©',
-          validator: (v) {
-            if (v == null || v.trim().length < 3) return 'Ø§Ù„Ø§Ø³Ù… Ø§Ù„Ù‚Ø§Ù†ÙˆÙ†ÙŠ Ù…Ø·Ù„ÙˆØ¨ (3 Ø£Ø­Ø±Ù Ø¹Ù„Ù‰ Ø§Ù„Ø£Ù‚Ù„)';
-            return null;
-          },
-        ),
-        const SizedBox(height: 12),
-        AppField(
-          controller: ctrl.addressCtrl,
-          label: 'Ø¹Ù†ÙˆØ§Ù† Ø§Ù„Ù…Ù†Ø´Ø£Ø©',
-          hint: 'Ø¯Ù…Ø´Ù‚ØŒ Ø§Ù„Ù…Ø²Ø©ØŒ Ø´Ø§Ø±Ø¹...',
-          validator: null,
-        ),
-        const SizedBox(height: 16),
-        SizedBox(
-          width: double.infinity, height: 46,
-          child: ElevatedButton(
-            onPressed: ctrl.saveStatusRequest == StatusRequest.loading
-                ? null : ctrl.saveSettings,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColor.primaryColor,
-              disabledBackgroundColor: AppColor.primaryColor.withOpacity(0.6),
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
-            ),
-            child: ctrl.saveStatusRequest == StatusRequest.loading
-                ? const SizedBox(width: 20, height: 20,
-                    child: CircularProgressIndicator(
-                        color: Colors.white, strokeWidth: 2.5))
-                : Text('Ø­ÙØ¸ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª', style: AppTextStyle.buttonMedium),
+      child: Column(
+        children: [
+          AppField(
+            controller: ctrl.vatCtrl,
+            label: '${'tax_number'.tr} *',
+            hint: 'tax_number_hint'.tr,
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            validator: (v) {
+              if (v == null || v.trim().isEmpty)
+                return 'tax_number_required'.tr;
+              if (v.length < 11) return 'tax_number_min_length'.tr;
+              return null;
+            },
           ),
-        ),
-      ]),
+          const SizedBox(height: 12),
+          AppField(
+            controller: ctrl.crCtrl,
+            label: '${'commercial_register_number'.tr} *',
+            hint: 'commercial_register_hint'.tr,
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            validator: (v) {
+              if (v == null || v.trim().isEmpty)
+                return 'commercial_register_required'.tr;
+              if (v.length < 5) return 'commercial_register_min_length'.tr;
+              return null;
+            },
+          ),
+          const SizedBox(height: 12),
+          AppField(
+            controller: ctrl.legalNameCtrl,
+            label: '${'legal_name'.tr} *',
+            hint: 'legal_name_hint'.tr,
+            validator: (v) {
+              if (v == null || v.trim().length < 3)
+                return 'legal_name_required'.tr;
+              return null;
+            },
+          ),
+          const SizedBox(height: 12),
+          AppField(
+            controller: ctrl.addressCtrl,
+            label: 'address'.tr,
+            hint: 'address_hint'.tr,
+            validator: null,
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            height: 46,
+            child: ElevatedButton(
+              onPressed: ctrl.saveStatusRequest == StatusRequest.loading
+                  ? null
+                  : ctrl.saveSettings,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColor.primaryColor,
+                disabledBackgroundColor: AppColor.primaryColor.withOpacity(0.6),
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: ctrl.saveStatusRequest == StatusRequest.loading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2.5,
+                      ),
+                    )
+                  : Text('save_tax_data'.tr, style: AppTextStyle.buttonMedium),
+            ),
+          ),
+        ],
+      ),
     ),
   );
 }
@@ -434,7 +523,7 @@ class _MonthSelectorRow extends StatelessWidget {
       separatorBuilder: (_, __) => const SizedBox(width: 8),
       itemBuilder: (_, i) {
         final isSelected = ctrl.selectedMonthIndex == i;
-        final report     = ctrl.vatReports[i];
+        final report = ctrl.vatReports[i];
         return GestureDetector(
           onTap: () => ctrl.selectMonth(i),
           child: AnimatedContainer(
@@ -447,9 +536,13 @@ class _MonthSelectorRow extends StatelessWidget {
                 color: isSelected ? AppColor.warning : AppColor.greyBorder,
               ),
               boxShadow: isSelected
-                  ? [BoxShadow(
-                      color: AppColor.warning.withOpacity(0.3),
-                      blurRadius: 8, offset: const Offset(0, 3))]
+                  ? [
+                      BoxShadow(
+                        color: AppColor.warning.withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      ),
+                    ]
                   : null,
             ),
             child: Text(
@@ -477,7 +570,7 @@ class _VatSummaryCard extends StatelessWidget {
 
   String _fmt(int v) {
     if (v >= 1000000) return 'SP ${(v / 1000000).toStringAsFixed(1)}Ù…';
-    if (v >= 1000)    return 'SP ${v ~/ 1000}k';
+    if (v >= 1000) return 'SP ${v ~/ 1000}k';
     return 'SP $v';
   }
 
@@ -493,139 +586,205 @@ class _VatSummaryCard extends StatelessWidget {
           colors: [Color(0xff7D4900), Color(0xffF39C12)],
         ),
         borderRadius: BorderRadius.circular(18),
-        boxShadow: [BoxShadow(
-          color: AppColor.warning.withOpacity(0.35),
-          blurRadius: 18, offset: const Offset(0, 7),
-        )],
+        boxShadow: [
+          BoxShadow(
+            color: AppColor.warning.withOpacity(0.35),
+            blurRadius: 18,
+            offset: const Offset(0, 7),
+          ),
+        ],
       ),
-      child: Column(children: [
-        // Top row
-        Row(children: [
-          Expanded(
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(report.monthLabel,
-                  style: AppTextStyle.labelMedium.copyWith(
-                      color: Colors.white70, fontSize: 11)),
-              const SizedBox(height: 3),
-              Text('Ø¥Ø¬Ù…Ø§Ù„ÙŠ Ø§Ù„Ù…Ø¨ÙŠØ¹Ø§Øª Ø§Ù„Ø®Ø§Ø¶Ø¹Ø© Ù„Ù„Ø¶Ø±ÙŠØ¨Ø©',
-                  style: AppTextStyle.labelSmall.copyWith(
-                      color: Colors.white60, fontSize: 10)),
-              const SizedBox(height: 4),
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: Alignment.centerRight,
-                child: Text(_fmt(report.totalSales),
-                    style: AppTextStyle.priceLarge.copyWith(
-                        color: Colors.white, fontSize: 26)),
+      child: Column(
+        children: [
+          // Top row
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      report.monthLabel,
+                      style: AppTextStyle.labelMedium.copyWith(
+                        color: Colors.white70,
+                        fontSize: 11,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      'taxable_sales_total'.tr,
+                      style: AppTextStyle.labelSmall.copyWith(
+                        color: Colors.white60,
+                        fontSize: 10,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        _fmt(report.totalSales),
+                        style: AppTextStyle.priceLarge.copyWith(
+                          color: Colors.white,
+                          fontSize: 26,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ]),
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: const Icon(
+                  Icons.receipt_long_rounded,
+                  color: Colors.white70,
+                  size: 26,
+                ),
+              ),
+            ],
           ),
+
           Container(
-            width: 48, height: 48,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.12),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: const Icon(Icons.receipt_long_rounded,
-                color: Colors.white70, size: 26),
+            margin: const EdgeInsets.symmetric(vertical: 14),
+            height: 1,
+            color: Colors.white.withOpacity(0.2),
           ),
-        ]),
 
-        Container(margin: const EdgeInsets.symmetric(vertical: 14),
-            height: 1, color: Colors.white.withOpacity(0.2)),
-
-        // Stats row
-        Row(children: [
-          _VatStat(
-            label: 'Ø¶Ø±ÙŠØ¨Ø© Ø§Ù„Ù‚ÙŠÙ…Ø© Ø§Ù„Ù…Ø¶Ø§ÙØ©',
-            value: _fmt(report.totalVat),
-            icon: Icons.percent_rounded,
-          ),
-          Container(width: 1, height: 40,
-              color: Colors.white.withOpacity(0.2),
-              margin: const EdgeInsets.symmetric(horizontal: 4)),
-          _VatStat(
-            label: 'ÙÙˆØ§ØªÙŠØ± ØµØ§Ø¯Ø±Ø©',
-            value: '${report.invoiceCount}',
-            icon: Icons.description_outlined,
-          ),
-          if (report.cancelledCount > 0) ...[
-            Container(width: 1, height: 40,
+          // Stats row
+          Row(
+            children: [
+              _VatStat(
+                label: 'vat_label'.tr,
+                value: _fmt(report.totalVat),
+                icon: Icons.percent_rounded,
+              ),
+              Container(
+                width: 1,
+                height: 40,
                 color: Colors.white.withOpacity(0.2),
-                margin: const EdgeInsets.symmetric(horizontal: 4)),
-            _VatStat(
-              label: 'Ù…Ù„ØºØ§Ø©',
-              value: '${report.cancelledCount}',
-              icon: Icons.cancel_outlined,
-              accent: Colors.redAccent.shade100,
-            ),
-          ],
-        ]),
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+              ),
+              _VatStat(
+                label: 'invoice_status_issued'.tr,
+                value: '${report.invoiceCount}',
+                icon: Icons.description_outlined,
+              ),
+              if (report.cancelledCount > 0) ...[
+                Container(
+                  width: 1,
+                  height: 40,
+                  color: Colors.white.withOpacity(0.2),
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                ),
+                _VatStat(
+                  label: 'invoice_status_cancelled'.tr,
+                  value: '${report.cancelledCount}',
+                  icon: Icons.cancel_outlined,
+                  accent: Colors.redAccent.shade100,
+                ),
+              ],
+            ],
+          ),
 
-        const SizedBox(height: 14),
+          const SizedBox(height: 14),
 
-        // Download button
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton.icon(
-            onPressed: ctrl.isDownloadingReport ? null : ctrl.downloadMonthlyReport,
-            icon: ctrl.isDownloadingReport
-                ? const SizedBox(width: 15, height: 15,
-                    child: CircularProgressIndicator(
-                        color: AppColor.warning, strokeWidth: 2))
-                : const Icon(Icons.download_rounded,
-                    size: 16, color: AppColor.warning),
-            label: Text(
-              ctrl.isDownloadingReport
-                  ? 'Ø¬Ø§Ø±ÙŠ Ø§Ù„ØªØ­Ø¶ÙŠØ±...'
-                  : 'ØªØ­Ù…ÙŠÙ„ Ø§Ù„ØªÙ‚Ø±ÙŠØ± Ø§Ù„Ø´Ù‡Ø±ÙŠ (PDF)',
-              style: AppTextStyle.buttonMedium.copyWith(
-                  color: AppColor.warning, fontSize: 13),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              disabledBackgroundColor: Colors.white.withOpacity(0.7),
-              elevation: 0,
-              padding: const EdgeInsets.symmetric(vertical: 11),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+          // Download button
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: ctrl.isDownloadingReport
+                  ? null
+                  : ctrl.downloadMonthlyReport,
+              icon: ctrl.isDownloadingReport
+                  ? const SizedBox(
+                      width: 15,
+                      height: 15,
+                      child: CircularProgressIndicator(
+                        color: AppColor.warning,
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : const Icon(
+                      Icons.download_rounded,
+                      size: 16,
+                      color: AppColor.warning,
+                    ),
+              label: Text(
+                ctrl.isDownloadingReport
+                    ? 'invoice_preparing'.tr
+                    : 'invoice_download_report_pdf'.tr,
+                style: AppTextStyle.buttonMedium.copyWith(
+                  color: AppColor.warning,
+                  fontSize: 13,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                disabledBackgroundColor: Colors.white.withOpacity(0.7),
+                elevation: 0,
+                padding: const EdgeInsets.symmetric(vertical: 11),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
             ),
           ),
-        ),
-      ]),
+        ],
+      ),
     );
   }
 }
 
 class _VatStat extends StatelessWidget {
-  final String   label;
-  final String   value;
+  final String label;
+  final String value;
   final IconData icon;
-  final Color?   accent;
+  final Color? accent;
   const _VatStat({
-    required this.label, required this.value,
-    required this.icon,  this.accent,
+    required this.label,
+    required this.value,
+    required this.icon,
+    this.accent,
   });
 
   @override
   Widget build(BuildContext context) => Expanded(
-    child: Column(children: [
-      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Icon(icon, size: 11, color: Colors.white60),
-        const SizedBox(width: 3),
-        Flexible(
-          child: Text(label,
-              style: AppTextStyle.labelSmall.copyWith(
-                  color: Colors.white60, fontSize: 9.5),
-              textAlign: TextAlign.center,
-              maxLines: 1, overflow: TextOverflow.ellipsis),
+    child: Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 11, color: Colors.white60),
+            const SizedBox(width: 3),
+            Flexible(
+              child: Text(
+                label,
+                style: AppTextStyle.labelSmall.copyWith(
+                  color: Colors.white60,
+                  fontSize: 9.5,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
         ),
-      ]),
-      const SizedBox(height: 4),
-      Text(value,
+        const SizedBox(height: 4),
+        Text(
+          value,
           style: AppTextStyle.statNumberSmall.copyWith(
-              color: accent ?? Colors.white, fontSize: 17)),
-    ]),
+            color: accent ?? Colors.white,
+            fontSize: 17,
+          ),
+        ),
+      ],
+    ),
   );
 }
 
@@ -641,59 +800,74 @@ class _InvoicesSectionHeader extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Row(children: [
-        Container(
-          width: 28, height: 28,
-          decoration: BoxDecoration(
-            color: AppColor.primarySurface,
-            borderRadius: BorderRadius.circular(8),
+      Row(
+        children: [
+          Container(
+            width: 28,
+            height: 28,
+            decoration: BoxDecoration(
+              color: AppColor.primarySurface,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              Icons.receipt_outlined,
+              size: 14,
+              color: AppColor.primaryColor,
+            ),
           ),
-          child: Icon(Icons.receipt_outlined,
-              size: 14, color: AppColor.primaryColor),
-        ),
-        const SizedBox(width: 8),
-        Text('Ø§Ù„ÙÙˆØ§ØªÙŠØ±', style: AppTextStyle.heading3.copyWith(fontSize: 14)),
-        const Spacer(),
-        Text(
-          '${ctrl.filteredInvoices.length} ÙØ§ØªÙˆØ±Ø©',
-          style: AppTextStyle.labelSmall.copyWith(
-              color: AppColor.primaryColor, fontWeight: FontWeight.w700),
-        ),
-      ]),
+          const SizedBox(width: 8),
+          Text(
+            'acct_invoices_title'.tr,
+            style: AppTextStyle.heading3.copyWith(fontSize: 14),
+          ),
+          const Spacer(),
+          Text(
+            '${ctrl.filteredInvoices.length} ${'invoice_count'.tr}',
+            style: AppTextStyle.labelSmall.copyWith(
+              color: AppColor.primaryColor,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
       const SizedBox(height: 10),
-      Row(children: [
-        _StatusChip(
-          label: 'Ø§Ù„ÙƒÙ„',
-          isSelected: ctrl.filterStatus == 'all',
-          onTap: () => ctrl.setFilterStatus('all'),
-        ),
-        const SizedBox(width: 8),
-        _StatusChip(
-          label: 'ØµØ§Ø¯Ø±Ø©',
-          isSelected: ctrl.filterStatus == 'issued',
-          activeColor: AppColor.success,
-          onTap: () => ctrl.setFilterStatus('issued'),
-        ),
-        const SizedBox(width: 8),
-        _StatusChip(
-          label: 'Ù…Ù„ØºØ§Ø©',
-          isSelected: ctrl.filterStatus == 'cancelled',
-          activeColor: AppColor.error,
-          onTap: () => ctrl.setFilterStatus('cancelled'),
-        ),
-      ]),
+      Row(
+        children: [
+          _StatusChip(
+            label: 'all'.tr,
+            isSelected: ctrl.filterStatus == 'all',
+            onTap: () => ctrl.setFilterStatus('all'),
+          ),
+          const SizedBox(width: 8),
+          _StatusChip(
+            label: 'invoice_status_issued'.tr,
+            isSelected: ctrl.filterStatus == 'issued',
+            activeColor: AppColor.success,
+            onTap: () => ctrl.setFilterStatus('issued'),
+          ),
+          const SizedBox(width: 8),
+          _StatusChip(
+            label: 'invoice_status_cancelled'.tr,
+            isSelected: ctrl.filterStatus == 'cancelled',
+            activeColor: AppColor.error,
+            onTap: () => ctrl.setFilterStatus('cancelled'),
+          ),
+        ],
+      ),
     ],
   );
 }
 
 class _StatusChip extends StatelessWidget {
-  final String     label;
-  final bool       isSelected;
-  final Color?     activeColor;
+  final String label;
+  final bool isSelected;
+  final Color? activeColor;
   final VoidCallback onTap;
   const _StatusChip({
-    required this.label, required this.isSelected,
-    required this.onTap, this.activeColor,
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+    this.activeColor,
   });
 
   @override
@@ -707,15 +881,16 @@ class _StatusChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected ? ac : Colors.white,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-              color: isSelected ? ac : AppColor.greyBorder),
+          border: Border.all(color: isSelected ? ac : AppColor.greyBorder),
           boxShadow: isSelected ? AppColor.cardShadow : null,
         ),
-        child: Text(label,
-            style: AppTextStyle.chip.copyWith(
-              color: isSelected ? Colors.white : AppColor.grey,
-              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-            )),
+        child: Text(
+          label,
+          style: AppTextStyle.chip.copyWith(
+            color: isSelected ? Colors.white : AppColor.grey,
+            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+          ),
+        ),
       ),
     );
   }
@@ -730,7 +905,9 @@ class _InvoiceCard extends StatefulWidget {
   final int index;
   final SellerInvoicesController ctrl;
   const _InvoiceCard({
-    required this.invoice, required this.index, required this.ctrl,
+    required this.invoice,
+    required this.index,
+    required this.ctrl,
   });
 
   @override
@@ -740,17 +917,20 @@ class _InvoiceCard extends StatefulWidget {
 class _InvoiceCardState extends State<_InvoiceCard>
     with SingleTickerProviderStateMixin {
   late AnimationController _anim;
-  late Animation<double>   _fade;
-  late Animation<Offset>   _slide;
+  late Animation<double> _fade;
+  late Animation<Offset> _slide;
 
   @override
   void initState() {
     super.initState();
     _anim = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 380));
-    _fade  = CurvedAnimation(parent: _anim, curve: Curves.easeOut);
+      vsync: this,
+      duration: const Duration(milliseconds: 380),
+    );
+    _fade = CurvedAnimation(parent: _anim, curve: Curves.easeOut);
     _slide = Tween<Offset>(
-      begin: const Offset(0, 0.12), end: Offset.zero,
+      begin: const Offset(0, 0.12),
+      end: Offset.zero,
     ).animate(CurvedAnimation(parent: _anim, curve: Curves.easeOutCubic));
     Future.delayed(Duration(milliseconds: 50 + widget.index * 60), () {
       if (mounted) _anim.forward();
@@ -758,18 +938,27 @@ class _InvoiceCardState extends State<_InvoiceCard>
   }
 
   @override
-  void dispose() { _anim.dispose(); super.dispose(); }
+  void dispose() {
+    _anim.dispose();
+    super.dispose();
+  }
 
   String _fmt(int v) => v >= 1000 ? 'SP ${v ~/ 1000}k' : 'SP $v';
 
   @override
   Widget build(BuildContext context) {
-    final inv          = widget.invoice;
+    final inv = widget.invoice;
     final isDownloading = widget.ctrl.downloadingIds.contains(inv.id);
 
-    final statusBg   = inv.isCancelled ? AppColor.errorLight   : AppColor.successLight;
-    final statusText = inv.isCancelled ? AppColor.errorDark    : AppColor.successDark;
-    final statusLabel= inv.isCancelled ? 'Ù…Ù„ØºØ§Ø©'              : 'ØµØ§Ø¯Ø±Ø©';
+    final statusBg = inv.isCancelled
+        ? AppColor.errorLight
+        : AppColor.successLight;
+    final statusText = inv.isCancelled
+        ? AppColor.errorDark
+        : AppColor.successDark;
+    final statusLabel = inv.isCancelled
+        ? 'invoice_status_cancelled'.tr
+        : 'invoice_status_issued'.tr;
 
     return FadeTransition(
       opacity: _fade,
@@ -782,165 +971,243 @@ class _InvoiceCardState extends State<_InvoiceCard>
             boxShadow: AppColor.cardShadow,
             border: Border.all(
               color: inv.isCancelled
-                  ? AppColor.error.withOpacity(0.15) : AppColor.greyBorder,
+                  ? AppColor.error.withOpacity(0.15)
+                  : AppColor.greyBorder,
               width: 0.8,
             ),
           ),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-
-            // â”€â”€ Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-            Padding(
-              padding: const EdgeInsets.fromLTRB(14, 12, 14, 0),
-              child: Row(children: [
-                Container(
-                  width: 40, height: 40,
-                  decoration: BoxDecoration(
-                    color: AppColor.warningLight,
-                    borderRadius: BorderRadius.circular(11),
-                  ),
-                  child: const Icon(Icons.receipt_long_rounded,
-                      size: 20, color: AppColor.warning),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // â”€â”€ Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+              Padding(
+                padding: const EdgeInsets.fromLTRB(14, 12, 14, 0),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: AppColor.warningLight,
+                        borderRadius: BorderRadius.circular(11),
+                      ),
+                      child: const Icon(
+                        Icons.receipt_long_rounded,
+                        size: 20,
+                        color: AppColor.warning,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            inv.invoiceNumber,
+                            style: AppTextStyle.orderNumber.copyWith(
+                              fontSize: 13,
+                            ),
+                          ),
+                          Text(
+                            inv.issuedAt,
+                            style: AppTextStyle.timestamp.copyWith(
+                              fontSize: 10,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 9,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: statusBg,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        statusLabel,
+                        style: AppTextStyle.chip.copyWith(
+                          color: statusText,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+              ),
+
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 14),
+                child: Divider(height: 14, color: AppColor.greyBorder),
+              ),
+
+              // â”€â”€ Order + Buyer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 7,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColor.primarySurface,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        inv.orderId?.toString() ?? inv.invoiceNumber,
+                        style: AppTextStyle.orderNumber.copyWith(
+                          color: AppColor.primaryColor,
+                          fontSize: 10,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Icon(
+                      Icons.person_outline,
+                      size: 12,
+                      color: AppColor.greyLight,
+                    ),
+                    const SizedBox(width: 3),
+                    Expanded(
+                      child: Text(
+                        inv.buyerName,
+                        style: AppTextStyle.labelMedium.copyWith(fontSize: 12),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10),
+
+              // â”€â”€ Price Breakdown â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColor.secondBackground,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: AppColor.greyBorder, width: 0.5),
+                  ),
+                  child: Row(
                     children: [
-                      Text(inv.invoiceNumber,
-                          style: AppTextStyle.orderNumber.copyWith(fontSize: 13)),
-                      Text(inv.issuedAt,
-                          style: AppTextStyle.timestamp.copyWith(fontSize: 10)),
+                      _PriceCol(
+                        label: 'subtotal_before_tax'.tr,
+                        value: _fmt(inv.subtotal.round()),
+                      ),
+                      Container(
+                        width: 1,
+                        height: 30,
+                        color: AppColor.greyBorder,
+                        margin: const EdgeInsets.symmetric(horizontal: 8),
+                      ),
+                      _PriceCol(
+                        label:
+                            '${'tax'.tr} (${inv.vatAmount > 0 ? ((inv.vatAmount / (inv.subtotal > 0 ? inv.subtotal : 1)) * 100).round().toString() : "0"}%)',
+                        value: '+${_fmt(inv.vatAmount.round())}',
+                        valueColor: AppColor.warning,
+                      ),
+                      Container(
+                        width: 1,
+                        height: 30,
+                        color: AppColor.greyBorder,
+                        margin: const EdgeInsets.symmetric(horizontal: 8),
+                      ),
+                      _PriceCol(
+                        label: 'total'.tr,
+                        value: _fmt(inv.total.round()),
+                        valueColor: AppColor.primaryColor,
+                        bold: true,
+                      ),
                     ],
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: statusBg,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(statusLabel,
-                      style: AppTextStyle.chip.copyWith(
-                          color: statusText, fontSize: 10,
-                          fontWeight: FontWeight.w700)),
-                ),
-              ]),
-            ),
-
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 14),
-              child: Divider(height: 14, color: AppColor.greyBorder),
-            ),
-
-            // â”€â”€ Order + Buyer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              child: Row(children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: AppColor.primarySurface,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Text(inv.orderId?.toString() ?? inv.invoiceNumber,
-                      style: AppTextStyle.orderNumber.copyWith(
-                          color: AppColor.primaryColor, fontSize: 10)),
-                ),
-                const SizedBox(width: 8),
-                Icon(Icons.person_outline, size: 12, color: AppColor.greyLight),
-                const SizedBox(width: 3),
-                Expanded(
-                  child: Text(inv.buyerName,
-                      style: AppTextStyle.labelMedium.copyWith(fontSize: 12),
-                      maxLines: 1, overflow: TextOverflow.ellipsis),
-                ),
-              ]),
-            ),
-            const SizedBox(height: 10),
-
-            // â”€â”€ Price Breakdown â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                decoration: BoxDecoration(
-                  color: AppColor.secondBackground,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColor.greyBorder, width: 0.5),
-                ),
-                child: Row(children: [
-                   _PriceCol(label: 'Ù‚Ø¨Ù„ Ø§Ù„Ø¶Ø±ÙŠØ¨Ø©', value: _fmt(inv.subtotal.round())),
-                  Container(width: 1, height: 30,
-                      color: AppColor.greyBorder,
-                      margin: const EdgeInsets.symmetric(horizontal: 8)),
-                  _PriceCol(
-                    label: 'Ø§Ù„Ø¶Ø±ÙŠØ¨Ø© (${inv.vatAmount > 0 ? ((inv.vatAmount / (inv.subtotal > 0 ? inv.subtotal : 1)) * 100).round().toString() : "0"}%)',
-                    value: '+${_fmt(inv.vatAmount.round())}',
-                    valueColor: AppColor.warning,
-                  ),
-                  Container(width: 1, height: 30,
-                      color: AppColor.greyBorder,
-                      margin: const EdgeInsets.symmetric(horizontal: 8)),
-                  _PriceCol(
-                    label: 'Ø§Ù„Ø¥Ø¬Ù…Ø§Ù„ÙŠ',
-                    value: _fmt(inv.total.round()),
-                    valueColor: AppColor.primaryColor,
-                    bold: true,
-                  ),
-                ]),
               ),
-            ),
-            const SizedBox(height: 8),
+              const SizedBox(height: 8),
 
-            // â”€â”€ Commission Note â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              child: Row(children: [
-                Icon(Icons.info_outline_rounded,
-                    size: 11, color: AppColor.greyLight),
-                const SizedBox(width: 4),
-                Text(
-                  'Ø¹Ù…ÙˆÙ„Ø© Ø§Ù„Ù…Ù†ØµØ© (${inv.commissionAmount > 0 ? ((inv.commissionAmount / (inv.subtotal > 0 ? inv.subtotal : 1)) * 100).round() : 10}%): ${_fmt(inv.commissionAmount.round())} â€” ØªÙØ®ØµÙ… ØªÙ„Ù‚Ø§Ø¦ÙŠØ§Ù‹ Ù…Ù† Ø§Ù„Ù…Ø­ÙØ¸Ø©',
-                  style: AppTextStyle.labelSmall.copyWith(
-                      color: AppColor.greyLight, fontSize: 10),
-                ),
-              ]),
-            ),
-            const SizedBox(height: 10),
-
-            // â”€â”€ Download Button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-            if (!inv.isCancelled)
+              // â”€â”€ Commission Note â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
               Padding(
-                padding: const EdgeInsets.fromLTRB(14, 0, 14, 12),
-                child: SizedBox(
-                  width: double.infinity, height: 38,
-                  child: OutlinedButton.icon(
-                    onPressed: isDownloading
-                        ? null : () => widget.ctrl.downloadInvoicePdf(inv),
-                    icon: isDownloading
-                        ? SizedBox(width: 14, height: 14,
-                            child: CircularProgressIndicator(
-                                color: AppColor.primaryColor, strokeWidth: 2))
-                        : Icon(Icons.download_rounded,
-                            size: 16, color: AppColor.primaryColor),
-                    label: Text(
-                      isDownloading ? 'Ø¬Ø§Ø±ÙŠ Ø§Ù„ØªØ­Ø¶ÙŠØ±...' : 'ØªØ­Ù…ÙŠÙ„ Ø§Ù„ÙØ§ØªÙˆØ±Ø© PDF',
-                      style: AppTextStyle.chip.copyWith(
-                          color: AppColor.primaryColor,
-                          fontWeight: FontWeight.w600),
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.info_outline_rounded,
+                      size: 11,
+                      color: AppColor.greyLight,
                     ),
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(
-                          color: AppColor.primaryColor, width: 1.2),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${'commission_note'.tr.replaceFirst('@rate', (inv.commissionAmount > 0 ? ((inv.commissionAmount / (inv.subtotal > 0 ? inv.subtotal : 1)) * 100).round() : 10).toString()).replaceFirst('@amount', _fmt(inv.commissionAmount.round()))}',
+                      style: AppTextStyle.labelSmall.copyWith(
+                        color: AppColor.greyLight,
+                        fontSize: 10,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10),
+
+              // â”€â”€ Download Button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+              if (!inv.isCancelled)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(14, 0, 14, 12),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 38,
+                    child: OutlinedButton.icon(
+                      onPressed: isDownloading
+                          ? null
+                          : () => widget.ctrl.downloadInvoicePdf(inv),
+                      icon: isDownloading
+                          ? SizedBox(
+                              width: 14,
+                              height: 14,
+                              child: CircularProgressIndicator(
+                                color: AppColor.primaryColor,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : Icon(
+                              Icons.download_rounded,
+                              size: 16,
+                              color: AppColor.primaryColor,
+                            ),
+                      label: Text(
+                        isDownloading
+                            ? 'invoice_preparing'.tr
+                            : 'invoice_download_pdf'.tr,
+                        style: AppTextStyle.chip.copyWith(
+                          color: AppColor.primaryColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(
+                          color: AppColor.primaryColor,
+                          width: 1.2,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              )
-            else
-              const SizedBox(height: 12),
-          ]),
+                )
+              else
+                const SizedBox(height: 12),
+            ],
+          ),
         ),
       ),
     );
@@ -950,29 +1217,37 @@ class _InvoiceCardState extends State<_InvoiceCard>
 class _PriceCol extends StatelessWidget {
   final String label, value;
   final Color? valueColor;
-  final bool   bold;
+  final bool bold;
   const _PriceCol({
-    required this.label, required this.value,
-    this.valueColor, this.bold = false,
+    required this.label,
+    required this.value,
+    this.valueColor,
+    this.bold = false,
   });
 
   @override
   Widget build(BuildContext context) => Expanded(
-    child: Column(children: [
-      Text(label,
+    child: Column(
+      children: [
+        Text(
+          label,
           style: AppTextStyle.labelSmall.copyWith(fontSize: 9),
-          textAlign: TextAlign.center),
-      const SizedBox(height: 3),
-      FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Text(value,
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 3),
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            value,
             style: AppTextStyle.price.copyWith(
               color: valueColor ?? AppColor.black,
               fontSize: bold ? 13 : 11,
               fontWeight: bold ? FontWeight.w800 : FontWeight.w600,
-            )),
-      ),
-    ]),
+            ),
+          ),
+        ),
+      ],
+    ),
   );
 }
 
@@ -987,25 +1262,30 @@ class _EmptyInvoices extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 40),
-    child: Column(children: [
-      Icon(
-        hasFilter ? Icons.filter_list_off_rounded : Icons.receipt_long_outlined,
-        size: 58, color: AppColor.greyLight,
-      ),
-      const SizedBox(height: 12),
-      Text(
-        hasFilter ? 'Ù„Ø§ ØªÙˆØ¬Ø¯ ÙÙˆØ§ØªÙŠØ± Ø¨Ù‡Ø°Ù‡ Ø§Ù„Ø­Ø§Ù„Ø©' : 'Ù„Ø§ ØªÙˆØ¬Ø¯ ÙÙˆØ§ØªÙŠØ± Ø¨Ø¹Ø¯',
-        style: AppTextStyle.heading3.copyWith(color: AppColor.grey),
-      ),
-      const SizedBox(height: 6),
-      Text(
-        hasFilter
-            ? 'Ø¬Ø±Ù‘Ø¨ ØªØºÙŠÙŠØ± Ø§Ù„ÙÙ„ØªØ±'
-            : 'ØªÙÙ†Ø´Ø£ Ø§Ù„ÙÙˆØ§ØªÙŠØ± ØªÙ„Ù‚Ø§Ø¦ÙŠØ§Ù‹ Ø¹Ù†Ø¯ Ø§ÙƒØªÙ…Ø§Ù„ Ø§Ù„Ø·Ù„Ø¨Ø§Øª',
-        style: AppTextStyle.bodyMedium,
-        textAlign: TextAlign.center,
-      ),
-    ]),
+    child: Column(
+      children: [
+        Icon(
+          hasFilter
+              ? Icons.filter_list_off_rounded
+              : Icons.receipt_long_outlined,
+          size: 58,
+          color: AppColor.greyLight,
+        ),
+        const SizedBox(height: 12),
+        Text(
+          hasFilter ? 'invoice_empty_filtered'.tr : 'invoice_empty'.tr,
+          style: AppTextStyle.heading3.copyWith(color: AppColor.grey),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          hasFilter
+              ? 'invoice_change_filter'.tr
+              : 'invoice_auto_created_hint'.tr,
+          style: AppTextStyle.bodyMedium,
+          textAlign: TextAlign.center,
+        ),
+      ],
+    ),
   );
 }
 
@@ -1020,77 +1300,96 @@ class _InvoicesShimmer extends StatelessWidget {
   Widget build(BuildContext context) => SingleChildScrollView(
     physics: const NeverScrollableScrollPhysics(),
     padding: const EdgeInsets.all(16),
-    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      // Tax settings shimmer
-      Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: AppColor.cardShadow,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(children: [
-              ShimmerBox(width: 32, height: 32, radius: 9),
-              SizedBox(width: 10),
-              ShimmerBox(width: 130, height: 14),
-              Spacer(),
-              ShimmerBox(width: 55, height: 28, radius: 9),
-            ]),
-            Divider(height: 16, color: AppColor.greyBorder),
-            ShimmerBox(width: double.infinity, height: 10),
-            SizedBox(height: 8),
-            ShimmerBox(width: 200, height: 10),
-            SizedBox(height: 8),
-            ShimmerBox(width: 170, height: 10),
-          ],
-        ),
-      ),
-      const SizedBox(height: 18),
-
-      // Month selector shimmer
-      Row(children: List.generate(4, (_) => const Padding(
-        padding: EdgeInsets.only(right: 8),
-        child: ShimmerBox(width: 70, height: 34, radius: 20),
-      ))),
-      const SizedBox(height: 10),
-
-      // VAT summary shimmer
-      ShimmerBox(
-        width: double.infinity, height: 195,
-        radius: 18,
-      ),
-      const SizedBox(height: 18),
-
-      // Invoice cards shimmer
-      ...List.generate(3, (_) => Padding(
-        padding: const EdgeInsets.only(bottom: 10),
-        child: Container(
-          height: 155,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Tax settings shimmer
+        Container(
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(16),
             boxShadow: AppColor.cardShadow,
           ),
-          padding: const EdgeInsets.all(14),
-          child: Column(children: [
-            Row(children: [
-              ShimmerBox(width: 40, height: 40, radius: 11),
-              SizedBox(width: 10),
-              Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                ShimmerBox(width: 130, height: 13),
-                SizedBox(height: 5),
-                ShimmerBox(width: 90, height: 10),
-              ])),
-              ShimmerBox(width: 48, height: 24, radius: 12),
-            ]),
-            Divider(height: 14, color: AppColor.greyBorder),
-            ShimmerBox(width: double.infinity, height: 50, radius: 10),
-          ]),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  ShimmerBox(width: 32, height: 32, radius: 9),
+                  SizedBox(width: 10),
+                  ShimmerBox(width: 130, height: 14),
+                  Spacer(),
+                  ShimmerBox(width: 55, height: 28, radius: 9),
+                ],
+              ),
+              Divider(height: 16, color: AppColor.greyBorder),
+              ShimmerBox(width: double.infinity, height: 10),
+              SizedBox(height: 8),
+              ShimmerBox(width: 200, height: 10),
+              SizedBox(height: 8),
+              ShimmerBox(width: 170, height: 10),
+            ],
+          ),
         ),
-      )),
-    ]),
+        const SizedBox(height: 18),
+
+        // Month selector shimmer
+        Row(
+          children: List.generate(
+            4,
+            (_) => const Padding(
+              padding: EdgeInsets.only(right: 8),
+              child: ShimmerBox(width: 70, height: 34, radius: 20),
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+
+        // VAT summary shimmer
+        ShimmerBox(width: double.infinity, height: 195, radius: 18),
+        const SizedBox(height: 18),
+
+        // Invoice cards shimmer
+        ...List.generate(
+          3,
+          (_) => Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: Container(
+              height: 155,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: AppColor.cardShadow,
+              ),
+              padding: const EdgeInsets.all(14),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      ShimmerBox(width: 40, height: 40, radius: 11),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ShimmerBox(width: 130, height: 13),
+                            SizedBox(height: 5),
+                            ShimmerBox(width: 90, height: 10),
+                          ],
+                        ),
+                      ),
+                      ShimmerBox(width: 48, height: 24, radius: 12),
+                    ],
+                  ),
+                  Divider(height: 14, color: AppColor.greyBorder),
+                  ShimmerBox(width: double.infinity, height: 50, radius: 10),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    ),
   );
 }

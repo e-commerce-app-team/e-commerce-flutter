@@ -4,7 +4,6 @@ import 'package:e_commerce/core/constant/app_text_style.dart';
 import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/core/utils/buyer_format_utils.dart';
 import 'package:e_commerce/data/model/buyer/buyer_orders_model.dart';
-import 'package:e_commerce/view/widget/buyer/orders/buyer_order_timeline.dart';
 
 class BuyerOrderCard extends StatefulWidget {
   final BuyerOrderModel order;
@@ -206,13 +205,24 @@ class _BuyerOrderCardState extends State<BuyerOrderCard>
                     duration: const Duration(milliseconds: 220),
                   ),
                 ],
-                if (order.status == BuyerOrderStatus.shipped &&
+                if ((order.status == BuyerOrderStatus.shipped ||
+                        order.isNeedsAction) &&
                     widget.onTrackTap != null)
                   Padding(
                     padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
                     child: _ActionButton.filled(
-                      label: 'track_order'.tr,
-                      icon: Icons.local_shipping_outlined,
+                      label: order.needsShippingQuote
+                          ? 'buyer_shipping_quote_pending'.tr
+                          : order.needsShippingApproval
+                          ? 'buyer_review_shipping_btn'.tr
+                          : order.canPay
+                          ? 'buyer_pay_order_btn'.tr
+                          : 'track_order'.tr,
+                      icon: order.needsShippingQuote
+                          ? Icons.hourglass_top_rounded
+                          : order.needsShippingApproval || order.canPay
+                          ? Icons.arrow_forward_rounded
+                          : Icons.local_shipping_outlined,
                       onTap: widget.onTrackTap,
                     ),
                   ),
@@ -371,8 +381,10 @@ class _SubOrderTile extends StatelessWidget {
               Expanded(
                 child: Text(
                   subOrder.shippingCost == null
-                      ? 'بانتظار تحديد تكلفة الشحن من التاجر'
-                      : '${subOrder.shippingLabel ?? 'الشحن'}: ${formatBuyerPrice(subOrder.shippingCost!)}',
+                      ? 'buyer_shipping_quote_pending'.tr
+                      : subOrder.shippingCost == 0
+                      ? 'buyer_free_shipping'.tr
+                      : '${subOrder.shippingLabel ?? 'shipping_fee'.tr}: ${formatBuyerPrice(subOrder.shippingCost!)}',
                   style: AppTextStyle.labelSmall.copyWith(
                     color: subOrder.shippingCost == null
                         ? AppColor.info

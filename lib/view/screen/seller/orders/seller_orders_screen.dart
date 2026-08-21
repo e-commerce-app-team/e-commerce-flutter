@@ -1,10 +1,9 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/controller/seller/seller_orders_controller.dart';
 import 'package:e_commerce/core/class/status_request.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
 import 'package:e_commerce/core/constant/color.dart';
-import 'package:e_commerce/data/model/seller/orders_models.dart';
 import 'package:e_commerce/view/screen/seller/orders/order_detail_screen.dart';
 import 'package:e_commerce/view/widget/seller/dashboard/shimmer_box.dart';
 import 'package:e_commerce/view/widget/seller/orders/order_card.dart';
@@ -30,9 +29,7 @@ class SellerOrdersScreen extends StatelessWidget {
             slivers: [
               _OrdersSliverAppBar(ctrl: ctrl),
               if (ctrl.statusRequest == StatusRequest.loading)
-                const SliverFillRemaining(
-                  child: _OrdersShimmer(),
-                )
+                const SliverFillRemaining(child: _OrdersShimmer())
               else if (ctrl.searchResults.isEmpty)
                 SliverFillRemaining(
                   child: _EmptyOrders(
@@ -45,11 +42,11 @@ class SellerOrdersScreen extends StatelessWidget {
                   padding: const EdgeInsets.fromLTRB(16, 14, 16, 100),
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate(
-                          (_, i) => OrderCard(
+                      (_, i) => OrderCard(
                         order: ctrl.searchResults[i],
                         index: i,
                         onTap: () => Get.to(
-                              () => const OrderDetailScreen(),
+                          () => const OrderDetailScreen(),
                           arguments: ctrl.searchResults[i],
                           transition: Transition.cupertino,
                         ),
@@ -84,52 +81,56 @@ class _OrdersSliverAppBar extends StatelessWidget {
         background: Container(
           decoration: BoxDecoration(gradient: AppColor.headerGradient),
           child: Padding(
-            padding: EdgeInsets.fromLTRB(16, MediaQuery.of(context).padding.top + 12, 16, 0),
+            padding: EdgeInsets.fromLTRB(
+              16,
+              MediaQuery.of(context).padding.top + 12,
+              16,
+              0,
+            ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                  Text(
-                    'orders_title'.tr,
-                    style: AppTextStyle.appBarTitle
-                        .copyWith(fontSize: 22),
-                  ),
-                  const Spacer(),
-                  if (ctrl.pendingCount > 0)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 5),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.35),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(
-                            Icons.notifications_active_outlined,
-                            size: 13,
-                            color: Colors.white,
-                          ),
-                          const SizedBox(width: 5),
-                          Text(
-                            '${ctrl.pendingCount} ${'orders_new_badge'.tr}',
-                            style: AppTextStyle.chip.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 11,
-                            ),
-                          ),
-                        ],
-                      ),
+                Text(
+                  'orders_title'.tr,
+                  style: AppTextStyle.appBarTitle.copyWith(fontSize: 22),
+                ),
+                const Spacer(),
+                if (ctrl.pendingCount > 0)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 5,
                     ),
-                ],
-              ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.white.withOpacity(0.35)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.notifications_active_outlined,
+                          size: 13,
+                          color: Colors.white,
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          '${ctrl.pendingCount} ${'orders_new_badge'.tr}',
+                          style: AppTextStyle.chip.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
             ),
           ),
         ),
+      ),
 
       bottom: _OrdersAppBarBottom(ctrl: ctrl),
     );
@@ -195,8 +196,10 @@ class _SearchBar extends StatelessWidget {
             size: 18,
           ),
           border: InputBorder.none,
-          contentPadding:
-          const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 14,
+            vertical: 10,
+          ),
         ),
       ),
     );
@@ -212,14 +215,32 @@ class _FilterTabs extends StatelessWidget {
     final tabs = [
       _TabData(labelKey: 'tab_all', count: null),
       _TabData(
-        labelKey: 'tab_pending',
-        count: ctrl.pendingCount,
-        hasAlert: ctrl.pendingCount > 0,
+        labelKey: 'seller_tab_new',
+        count: ctrl.newCount,
+        hasAlert: ctrl.newCount > 0,
+      ),
+      _TabData(
+        labelKey: 'seller_tab_awaiting_buyer',
+        count: ctrl.awaitingBuyerApprovalCount,
+        hasAlert: ctrl.awaitingBuyerApprovalCount > 0,
+      ),
+      _TabData(
+        labelKey: 'seller_tab_awaiting_payment',
+        count: ctrl.awaitingPaymentCount,
+        hasAlert: ctrl.awaitingPaymentCount > 0,
       ),
       _TabData(labelKey: 'tab_processing', count: ctrl.processingCount),
+      _TabData(
+        labelKey: 'seller_tab_ready_shipping',
+        count: ctrl.readyForShippingCount,
+      ),
       _TabData(labelKey: 'tab_shipped', count: ctrl.shippedCount),
+      _TabData(
+        labelKey: 'seller_tab_awaiting_receipt',
+        count: ctrl.awaitingReceiptCount,
+      ),
       _TabData(labelKey: 'tab_delivered', count: ctrl.deliveredCount),
-      _TabData(labelKey: 'tab_cancelled', count: null),
+      _TabData(labelKey: 'tab_cancelled', count: ctrl.cancelledCount),
     ];
 
     return SizedBox(
@@ -236,19 +257,16 @@ class _FilterTabs extends StatelessWidget {
             onTap: () => ctrl.changeTab(i),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              padding:
-              const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
               decoration: BoxDecoration(
-                color: isActive
-                    ? Colors.white
-                    : Colors.white.withOpacity(0.15),
+                color: isActive ? Colors.white : Colors.white.withOpacity(0.15),
                 borderRadius: BorderRadius.circular(20),
                 border: isActive
                     ? null
                     : Border.all(
-                  color: Colors.white.withOpacity(0.3),
-                  width: 1,
-                ),
+                        color: Colors.white.withOpacity(0.3),
+                        width: 1,
+                      ),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -256,12 +274,8 @@ class _FilterTabs extends StatelessWidget {
                   Text(
                     tab.labelKey.tr,
                     style: AppTextStyle.chip.copyWith(
-                      color: isActive
-                          ? AppColor.primaryColor
-                          : Colors.white,
-                      fontWeight: isActive
-                          ? FontWeight.w700
-                          : FontWeight.w500,
+                      color: isActive ? AppColor.primaryColor : Colors.white,
+                      fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
                       fontSize: 12,
                     ),
                   ),
@@ -269,13 +283,15 @@ class _FilterTabs extends StatelessWidget {
                     const SizedBox(width: 5),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 1.5),
+                        horizontal: 6,
+                        vertical: 1.5,
+                      ),
                       decoration: BoxDecoration(
                         color: tab.hasAlert
                             ? AppColor.primaryColor
                             : (isActive
-                            ? AppColor.primaryColor
-                            : Colors.white.withOpacity(0.3)),
+                                  ? AppColor.primaryColor
+                                  : Colors.white.withOpacity(0.3)),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
@@ -301,21 +317,14 @@ class _TabData {
   final String labelKey;
   final int? count;
   final bool hasAlert;
-  const _TabData({
-    required this.labelKey,
-    this.count,
-    this.hasAlert = false,
-  });
+  const _TabData({required this.labelKey, this.count, this.hasAlert = false});
 }
 
 class _EmptyOrders extends StatelessWidget {
   final bool hasSearch;
   final bool isFiltered;
 
-  const _EmptyOrders({
-    required this.hasSearch,
-    required this.isFiltered,
-  });
+  const _EmptyOrders({required this.hasSearch, required this.isFiltered});
 
   @override
   Widget build(BuildContext context) {
@@ -342,11 +351,8 @@ class _EmptyOrders extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              hasSearch
-                  ? 'orders_empty_search'.tr
-                  : 'orders_empty_title'.tr,
-              style:
-              AppTextStyle.heading3.copyWith(color: AppColor.grey),
+              hasSearch ? 'orders_empty_search'.tr : 'orders_empty_title'.tr,
+              style: AppTextStyle.heading3.copyWith(color: AppColor.grey),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),

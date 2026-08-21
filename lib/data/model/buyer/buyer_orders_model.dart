@@ -10,7 +10,15 @@ enum BuyerOrderStatus {
   cancelledReturned,
 }
 
-enum BuyerOrderTabFilter { all, active, completed, cancelled }
+enum BuyerOrderTabFilter {
+  all,
+  needsAction,
+  processing,
+  shipped,
+  awaitingReceipt,
+  completed,
+  cancelled,
+}
 
 enum BuyerOrderSort { newest, oldest, priceHigh, priceLow }
 
@@ -57,7 +65,13 @@ class BuyerSubOrderModel {
   final String? shippingMethod;
   final String? shippingLabel;
   final double? shippingCost;
+  final bool shippingApproved;
+  final DateTime? shippingApprovedAt;
   final String? estimatedDelivery;
+  final String shipmentState;
+  final DateTime? escrowReleaseAt;
+  final DateTime? escrowReleasedAt;
+  final String? deliveryConfirmationType;
   final BuyerOrderStatus status;
   final List<BuyerOrderItem> items;
 
@@ -71,7 +85,13 @@ class BuyerSubOrderModel {
     this.shippingMethod,
     this.shippingLabel,
     this.shippingCost,
+    this.shippingApproved = false,
+    this.shippingApprovedAt,
     this.estimatedDelivery,
+    this.shipmentState = 'pending',
+    this.escrowReleaseAt,
+    this.escrowReleasedAt,
+    this.deliveryConfirmationType,
     required this.items,
   });
 
@@ -97,7 +117,22 @@ class BuyerSubOrderModel {
       shippingCost: json['shipping_cost'] == null
           ? null
           : _toDouble(json['shipping_cost']),
+      shippingApproved:
+          json['shipping_approved'] == true ||
+          (json['shipping_cost'] != null &&
+              _toDouble(json['shipping_cost']) == 0),
+      shippingApprovedAt: DateTime.tryParse(
+        json['shipping_approved_at']?.toString() ?? '',
+      ),
       estimatedDelivery: json['estimated_delivery']?.toString(),
+      shipmentState: json['shipment_state']?.toString() ?? 'pending',
+      escrowReleaseAt: DateTime.tryParse(
+        json['escrow_release_at']?.toString() ?? '',
+      ),
+      escrowReleasedAt: DateTime.tryParse(
+        json['escrow_released_at']?.toString() ?? '',
+      ),
+      deliveryConfirmationType: json['delivery_confirmation_type']?.toString(),
       status: BuyerOrderStatusX.fromApi(json['status']?.toString()),
       items: itemsJson
           .map(_asMap)
@@ -126,6 +161,7 @@ class BuyerTimelineStep {
   factory BuyerTimelineStep.fromJson(
     Map<String, dynamic> json, {
     required bool isCurrent,
+    bool? isDone,
   }) {
     final timeStr = json['time']?.toString();
     return BuyerTimelineStep(
@@ -134,7 +170,7 @@ class BuyerTimelineStep {
       time: timeStr != null && timeStr.isNotEmpty
           ? DateTime.tryParse(timeStr)
           : null,
-      isDone: json['is_done'] == true || json['done'] == true,
+      isDone: isDone ?? json['is_done'] == true || json['done'] == true,
       isCurrent: isCurrent,
     );
   }
@@ -172,6 +208,8 @@ class BuyerOrderModel {
   final bool supportsDeliveryCompany;
   final bool showQr;
   final bool showMapTracking;
+  final bool shippingReadyForPayment;
+  final DateTime? autoReleaseAt;
 
   const BuyerOrderModel({
     required this.id,
@@ -189,9 +227,11 @@ class BuyerOrderModel {
     this.supportsDeliveryCompany = false,
     this.showQr = false,
     this.showMapTracking = false,
+    this.shippingReadyForPayment = false,
+    this.autoReleaseAt,
   });
 
-  bool get isActive => status.isActive;
+  bool get isActive => status.isActive || isNeedsAction;
 
   bool get isCompleted => status == BuyerOrderStatus.delivered;
 
@@ -200,10 +240,39 @@ class BuyerOrderModel {
       status == BuyerOrderStatus.returned ||
       status == BuyerOrderStatus.cancelledReturned;
 
-  bool get canConfirmDelivery => status == BuyerOrderStatus.shipped;
+  bool get canConfirmDelivery =>
+      subOrders.any(
+        (s) =>
+            s.status == BuyerOrderStatus.shipped && s.escrowReleasedAt == null,
+      ) ||
+      status == BuyerOrderStatus.shipped;
+
+  bool get needsShippingQuote => subOrders.any((s) => s.shippingCost == null);
+
+  bool get needsShippingApproval => subOrders.any(
+    (s) => s.shippingCost != null && s.shippingCost! > 0 && !s.shippingApproved,
+  );
+
+  bool get isShippingResolved =>
+      subOrders.isEmpty ||
+      subOrders.every((s) => s.shippingCost != null && s.shippingApproved);
+
+  bool get isNeedsAction =>
+      needsShippingQuote || needsShippingApproval || canPay;
+
+  bool get isProcessingGroup =>
+      subOrders.any((s) => s.status == BuyerOrderStatus.processing) ||
+      (paymentStatus == 'paid_escrow' &&
+          subOrders.any((s) => s.status == BuyerOrderStatus.pending)) ||
+      status == BuyerOrderStatus.processing;
+
+  bool get isShippedGroup =>
+      subOrders.any((s) => s.status == BuyerOrderStatus.shipped) ||
+      status == BuyerOrderStatus.shipped;
 
   bool get canPay =>
       paymentStatus == 'unpaid' &&
+      isShippingResolved &&
       (status == BuyerOrderStatus.pending ||
           status == BuyerOrderStatus.processing);
 
@@ -213,11 +282,41 @@ class BuyerOrderModel {
   bool get canRate => status == BuyerOrderStatus.delivered && !isRated;
 
   DateTime? get escrowAutoReleaseAt {
-    if (shippedAt == null || status == BuyerOrderStatus.delivered) return null;
-    return shippedAt!.add(const Duration(days: 2));
+    if (status == BuyerOrderStatus.delivered || paymentStatus != 'paid_escrow')
+      return null;
+    return autoReleaseAt ??
+        subOrders
+            .map((s) => s.escrowReleaseAt)
+            .whereType<DateTime>()
+            .fold<DateTime?>(
+              null,
+              (earliest, value) => earliest == null || value.isBefore(earliest)
+                  ? value
+                  : earliest,
+            );
   }
 
   int get itemsCount => subOrders.fold(0, (sum, s) => sum + s.itemsCount);
+
+  double get shippingTotal =>
+      subOrders.fold(0, (sum, s) => sum + (s.shippingCost ?? 0));
+
+  double get productsTotal =>
+      (totalAmount - shippingTotal).clamp(0, double.infinity).toDouble();
+
+  String get paymentStatusLabelKey {
+    switch (paymentStatus) {
+      case 'paid_escrow':
+        return 'payment_status_paid_escrow';
+      case 'released':
+        return 'payment_status_released';
+      case 'refunded':
+        return 'payment_status_refunded';
+      case 'unpaid':
+      default:
+        return 'payment_status_unpaid';
+    }
+  }
 
   String get itemsPreview {
     final names = subOrders.expand((s) => s.items.map((i) => i.name)).toList();
@@ -294,6 +393,8 @@ class BuyerOrderModel {
       supportsDeliveryCompany: supportsDeliveryCompany,
       showQr: showQr,
       showMapTracking: showMapTracking,
+      shippingReadyForPayment: shippingReadyForPayment,
+      autoReleaseAt: autoReleaseAt,
     );
   }
 
@@ -318,6 +419,7 @@ class BuyerOrderModel {
         return BuyerTimelineStep.fromJson(
           e.value,
           isCurrent: isLast && currentStatus != 'delivered',
+          isDone: !isLast || currentStatus == 'delivered',
         );
       }).toList();
     }
@@ -339,6 +441,10 @@ class BuyerOrderModel {
       supportsDeliveryCompany: json['supports_delivery_company'] == true,
       showQr: json['show_qr'] == true,
       showMapTracking: json['show_map_tracking'] == true,
+      shippingReadyForPayment: json['shipping_ready_for_payment'] == true,
+      autoReleaseAt: DateTime.tryParse(
+        json['escrow_auto_release_at']?.toString() ?? '',
+      ),
     );
   }
 }
