@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
 import 'package:e_commerce/core/constant/color.dart';
@@ -30,7 +30,7 @@ class _BuyerOrdersFilterSheetState extends State<BuyerOrdersFilterSheet> {
   Widget build(BuildContext context) {
     return Container(
       height: MediaQuery.of(context).size.height * 0.62,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColor.backgroundcolor,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(28),
@@ -74,12 +74,12 @@ class _BuyerOrdersFilterSheetState extends State<BuyerOrdersFilterSheet> {
                 ),
                 IconButton(
                   onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.close_rounded, color: AppColor.grey),
+                  icon: Icon(Icons.close_rounded, color: AppColor.grey),
                 ),
               ],
             ),
           ),
-          const Divider(height: 1, color: AppColor.greyBorder),
+          Divider(height: 1, color: AppColor.greyBorder),
           Expanded(
             child: ListView(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),

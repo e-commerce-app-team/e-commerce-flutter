@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/controller/buyer/cart_controller.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
@@ -66,7 +66,7 @@ class StorePromoField extends GetView<CartController> {
                   decoration: InputDecoration(
                     hintText: 'promo_code_hint'.tr,
                     hintStyle: AppTextStyle.inputHint,
-                    prefixIcon: const Icon(Icons.local_offer_outlined,
+                    prefixIcon: Icon(Icons.local_offer_outlined,
                         color: AppColor.primaryColor, size: 20),
                     filled: true,
                     fillColor: AppColor.cardBackground,

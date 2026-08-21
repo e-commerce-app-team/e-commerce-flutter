@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
 import 'package:e_commerce/core/constant/color.dart';
@@ -105,7 +105,7 @@ class _RecentOrderCardState extends State<RecentOrderCard>
                     ),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.shopping_bag_outlined,
                     size: 20,
                     color: AppColor.primaryColor,
@@ -130,7 +130,7 @@ class _RecentOrderCardState extends State<RecentOrderCard>
                             Container(
                               width: 7,
                               height: 7,
-                              decoration: const BoxDecoration(
+                              decoration: BoxDecoration(
                                 color: AppColor.primaryColor,
                                 shape: BoxShape.circle,
                               ),
@@ -201,7 +201,7 @@ class OrderActionButtons extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
       child: Row(
         children: [
-          // رفض
+          // Ø±ÙØ¶
           Expanded(
             child: TextButton(
               onPressed: onReject,
@@ -222,7 +222,7 @@ class OrderActionButtons extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          // قبول
+          // Ù‚Ø¨ÙˆÙ„
           Expanded(
             flex: 2,
             child: ElevatedButton(

@@ -37,8 +37,10 @@ class _BuyerOrderCardState extends State<BuyerOrderCard>
       duration: const Duration(milliseconds: 380),
     );
     _fade = CurvedAnimation(parent: _animCtrl, curve: Curves.easeOut);
-    _slide = Tween<Offset>(begin: const Offset(0, 0.06), end: Offset.zero)
-        .animate(CurvedAnimation(parent: _animCtrl, curve: Curves.easeOut));
+    _slide = Tween<Offset>(
+      begin: const Offset(0, 0.06),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _animCtrl, curve: Curves.easeOut));
     _animCtrl.forward();
   }
 
@@ -104,8 +106,9 @@ class _BuyerOrderCardState extends State<BuyerOrderCard>
                               )
                             else
                               Text(
-                                'buyer_orders_multi_stores'
-                                    .trParams({'count': '${order.subOrders.length}'}),
+                                'buyer_orders_multi_stores'.trParams({
+                                  'count': '${order.subOrders.length}',
+                                }),
                                 style: AppTextStyle.bodySmall.copyWith(
                                   color: AppColor.greyText,
                                 ),
@@ -118,8 +121,11 @@ class _BuyerOrderCardState extends State<BuyerOrderCard>
                                   style: AppTextStyle.price,
                                 ),
                                 const Spacer(),
-                                Icon(Icons.calendar_month_outlined,
-                                    size: 13, color: AppColor.grey.withOpacity(0.9)),
+                                Icon(
+                                  Icons.calendar_month_outlined,
+                                  size: 13,
+                                  color: AppColor.grey.withOpacity(0.9),
+                                ),
                                 const SizedBox(width: 4),
                                 Text(
                                   _formatDate(order.createdAt),
@@ -134,15 +140,27 @@ class _BuyerOrderCardState extends State<BuyerOrderCard>
                   ),
                 ),
                 if (order.subOrders.isNotEmpty) ...[
-                  const Divider(height: 1, thickness: 1, indent: 14, endIndent: 14, color: AppColor.greyBorder),
+                  Divider(
+                    height: 1,
+                    thickness: 1,
+                    indent: 14,
+                    endIndent: 14,
+                    color: AppColor.greyBorder,
+                  ),
                   InkWell(
                     onTap: () => setState(() => _expanded = !_expanded),
-                    borderRadius: const BorderRadius.vertical(bottom: Radius.circular(18)),
+                    borderRadius: const BorderRadius.vertical(
+                      bottom: Radius.circular(18),
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
                       child: Row(
                         children: [
-                          Icon(Icons.shopping_bag_outlined, size: 15, color: AppColor.grey),
+                          Icon(
+                            Icons.shopping_bag_outlined,
+                            size: 15,
+                            color: AppColor.grey,
+                          ),
                           const SizedBox(width: 6),
                           Expanded(
                             child: Text(
@@ -151,7 +169,9 @@ class _BuyerOrderCardState extends State<BuyerOrderCard>
                             ),
                           ),
                           Text(
-                            _expanded ? 'buyer_hide_details'.tr : 'buyer_show_details'.tr,
+                            _expanded
+                                ? 'buyer_hide_details'.tr
+                                : 'buyer_show_details'.tr,
                             style: AppTextStyle.labelSmall.copyWith(
                               color: AppColor.primaryColor,
                               fontWeight: FontWeight.w600,
@@ -160,7 +180,7 @@ class _BuyerOrderCardState extends State<BuyerOrderCard>
                           AnimatedRotation(
                             turns: _expanded ? 0.5 : 0,
                             duration: const Duration(milliseconds: 220),
-                            child: const Icon(
+                            child: Icon(
                               Icons.keyboard_arrow_down_rounded,
                               color: AppColor.primaryColor,
                               size: 20,
@@ -180,12 +200,14 @@ class _BuyerOrderCardState extends State<BuyerOrderCard>
                             .toList(),
                       ),
                     ),
-                    crossFadeState:
-                        _expanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+                    crossFadeState: _expanded
+                        ? CrossFadeState.showSecond
+                        : CrossFadeState.showFirst,
                     duration: const Duration(milliseconds: 220),
                   ),
                 ],
-                if (order.status == BuyerOrderStatus.shipped && widget.onTrackTap != null)
+                if (order.status == BuyerOrderStatus.shipped &&
+                    widget.onTrackTap != null)
                   Padding(
                     padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
                     child: _ActionButton.filled(
@@ -336,6 +358,29 @@ class _SubOrderTile extends StatelessWidget {
             style: AppTextStyle.bodySmall.copyWith(fontWeight: FontWeight.w600),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 5),
+          Row(
+            children: [
+              Icon(
+                Icons.local_shipping_outlined,
+                size: 15,
+                color: AppColor.primaryColor,
+              ),
+              const SizedBox(width: 5),
+              Expanded(
+                child: Text(
+                  subOrder.shippingCost == null
+                      ? 'بانتظار تحديد تكلفة الشحن من التاجر'
+                      : '${subOrder.shippingLabel ?? 'الشحن'}: ${formatBuyerPrice(subOrder.shippingCost!)}',
+                  style: AppTextStyle.labelSmall.copyWith(
+                    color: subOrder.shippingCost == null
+                        ? AppColor.info
+                        : AppColor.greyText,
+                  ),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 8),
           ListView.builder(

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -120,7 +120,7 @@ class _BuyerAddressMapScreenState extends State<BuyerAddressMapScreen> {
                     ),
                   ],
                 ),
-                const Center(
+                Center(
                   child: Padding(
                     padding: EdgeInsets.only(bottom: 36),
                     child: Icon(Icons.location_pin,
@@ -133,7 +133,7 @@ class _BuyerAddressMapScreenState extends State<BuyerAddressMapScreen> {
                   child: FloatingActionButton.small(
                     backgroundColor: AppColor.cardBackground,
                     onPressed: _goToMyLocation,
-                    child: const Icon(Icons.my_location_rounded,
+                    child: Icon(Icons.my_location_rounded,
                         color: AppColor.primaryColor),
                   ),
                 ),

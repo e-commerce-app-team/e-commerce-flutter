@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/controller/seller/seller_wallet_controller.dart';
@@ -330,7 +330,7 @@ class _BalanceCard extends StatelessWidget {
             ),
           ),
           secondChild: Text(
-            '••••••',
+            'â€¢â€¢â€¢â€¢â€¢â€¢',
             style: AppTextStyle.priceLarge.copyWith(
               color: Colors.white,
               fontSize: 28,
@@ -345,7 +345,7 @@ class _BalanceCard extends StatelessWidget {
             _BalancePill(
               icon: Icons.account_balance_wallet_outlined,
               label: 'wallet_available_balance'.tr,
-              value: ctrl.showBalance ? ctrl.formattedAvailable : '•••',
+              value: ctrl.showBalance ? ctrl.formattedAvailable : 'â€¢â€¢â€¢',
             ),
             Container(
               width: 1,
@@ -356,7 +356,7 @@ class _BalanceCard extends StatelessWidget {
             _BalancePill(
               icon: Icons.lock_clock_outlined,
               label: 'wallet_reserved'.tr,
-              value: ctrl.showBalance ? ctrl.formattedReserved : '•••',
+              value: ctrl.showBalance ? ctrl.formattedReserved : 'â€¢â€¢â€¢',
               valueColor: AppColor.warning,
             ),
           ],
@@ -434,7 +434,7 @@ class _StatsRow extends StatelessWidget {
         label: 'wallet_received_month'.tr,
         value: ctrl.showBalance
             ? 'SP ${(ctrl.stats?.receivedThisMonth ?? 0) ~/ 1000}k'
-            : '•••',
+            : 'â€¢â€¢â€¢',
       ),
       const SizedBox(width: 10),
       _StatBox(
@@ -444,7 +444,7 @@ class _StatsRow extends StatelessWidget {
         label: 'wallet_commission_month'.tr,
         value: ctrl.showBalance
             ? 'SP ${(ctrl.stats?.commissionThisMonth ?? 0) ~/ 1000}k'
-            : '•••',
+            : 'â€¢â€¢â€¢',
       ),
       const SizedBox(width: 10),
       _StatBox(
@@ -454,7 +454,7 @@ class _StatsRow extends StatelessWidget {
         label: 'wallet_withdrawn_month'.tr,
         value: ctrl.showBalance
             ? 'SP ${(ctrl.stats?.withdrawnThisMonth ?? 0) ~/ 1000}k'
-            : '•••',
+            : 'â€¢â€¢â€¢',
       ),
     ],
   );
@@ -803,7 +803,7 @@ class _TxCardState extends State<_TxCard> with SingleTickerProviderStateMixin {
                         Container(
                           width: 3,
                           height: 3,
-                          decoration: const BoxDecoration(
+                          decoration: BoxDecoration(
                             color: AppColor.greyLight,
                             shape: BoxShape.circle,
                           ),

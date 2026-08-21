@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/controller/seller/change_password_controller.dart';
@@ -121,7 +121,7 @@ class _PasswordFormCard extends StatelessWidget {
                   color: AppColor.primarySurface,
                   borderRadius: BorderRadius.circular(9),
                 ),
-                child: const Icon(Icons.lock_outline_rounded,
+                child: Icon(Icons.lock_outline_rounded,
                     size: 16, color: AppColor.primaryColor),
               ),
               const SizedBox(width: 10),
@@ -129,7 +129,7 @@ class _PasswordFormCard extends StatelessWidget {
                   style: AppTextStyle.heading3.copyWith(fontSize: 14)),
             ]),
           ),
-          const Divider(
+          Divider(
               height: 20, indent: 16, endIndent: 16, color: AppColor.greyBorder),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
@@ -219,16 +219,16 @@ class _PwdField extends StatelessWidget {
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColor.greyBorder),
+            borderSide: BorderSide(color: AppColor.greyBorder),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColor.greyBorder),
+            borderSide: BorderSide(color: AppColor.greyBorder),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide:
-            const BorderSide(color: AppColor.primaryColor, width: 1.5),
+            BorderSide(color: AppColor.primaryColor, width: 1.5),
           ),
         ),
       ),
@@ -382,7 +382,7 @@ class _ForgotPasswordLink extends StatelessWidget {
             color: AppColor.primarySurface,
             borderRadius: BorderRadius.circular(11),
           ),
-          child: const Icon(Icons.key_outlined,
+          child: Icon(Icons.key_outlined,
               size: 20, color: AppColor.primaryColor),
         ),
         const SizedBox(width: 12),
@@ -402,7 +402,7 @@ class _ForgotPasswordLink extends StatelessWidget {
                 ),
               ]),
         ),
-        const Icon(Icons.arrow_forward_ios_rounded,
+        Icon(Icons.arrow_forward_ios_rounded,
             size: 14, color: AppColor.primaryColor),
       ]),
     ),
@@ -468,7 +468,7 @@ class _ForgotPasswordSheet extends StatelessWidget {
             children: [
               _DragHandle(),
               _SheetHeader(ctrl: c),
-              const Divider(height: 1, color: AppColor.greyBorder),
+              Divider(height: 1, color: AppColor.greyBorder),
               Flexible(
                 child: SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
@@ -528,7 +528,7 @@ class _SheetHeader extends StatelessWidget {
               color: AppColor.secondBackground,
               borderRadius: BorderRadius.circular(9),
             ),
-            child: const Icon(Icons.arrow_back_ios_rounded,
+            child: Icon(Icons.arrow_back_ios_rounded,
                 size: 13, color: AppColor.grey),
           ),
         ),
@@ -633,7 +633,7 @@ class _SendOTPStep extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.email_outlined,
+            Icon(Icons.email_outlined,
                 size: 18, color: AppColor.primaryColor),
             const SizedBox(width: 10),
             Text(
@@ -720,7 +720,7 @@ class _VerifyOTPStep extends StatelessWidget {
         borderColor: AppColor.greyBorder,
         focusedBorderColor: AppColor.primaryColor,
         borderWidth: 1.5,
-        textStyle: const TextStyle(
+        textStyle: TextStyle(
           fontSize: 22,
           fontWeight: FontWeight.w700,
           color: AppColor.primaryColor,
@@ -768,7 +768,7 @@ class _ResendRow extends StatelessWidget {
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.timer_outlined,
+          Icon(Icons.timer_outlined,
               size: 14, color: AppColor.greyLight),
           const SizedBox(width: 6),
           Text(
@@ -787,7 +787,7 @@ class _ResendRow extends StatelessWidget {
           border: Border.all(color: AppColor.primaryColor.withOpacity(0.3)),
         ),
         child: Row(mainAxisSize: MainAxisSize.min, children: [
-          const Icon(Icons.refresh_rounded,
+          Icon(Icons.refresh_rounded,
               size: 15, color: AppColor.primaryColor),
           const SizedBox(width: 6),
           Text('resend_otp_btn'.tr,

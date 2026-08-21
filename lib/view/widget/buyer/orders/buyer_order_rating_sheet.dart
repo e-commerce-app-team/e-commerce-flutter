@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
 import 'package:e_commerce/core/constant/color.dart';
@@ -58,7 +58,7 @@ class _BuyerOrderRatingSheetState extends State<BuyerOrderRatingSheet> {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColor.backgroundcolor,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(28),

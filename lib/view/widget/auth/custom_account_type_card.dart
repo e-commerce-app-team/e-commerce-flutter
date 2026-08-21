@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:e_commerce/core/constant/color.dart';
 
 class CustomAccountTypeCard extends StatelessWidget {
@@ -88,7 +88,7 @@ class CustomAccountTypeCard extends StatelessWidget {
 
             if (isSelected) ...[
               const SizedBox(width: 10),
-              const Icon(
+              Icon(
                 Icons.check_circle,
                 color: AppColor.primaryColor,
                 size: 28,

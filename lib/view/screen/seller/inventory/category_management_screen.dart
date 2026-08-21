@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/controller/seller/seller_inventory_controller.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
@@ -165,7 +165,7 @@ class _TreeNodeState extends State<_TreeNode> {
                     AnimatedRotation(
                       turns: _expanded ? 0.5 : 0,
                       duration: const Duration(milliseconds: 200),
-                      child: const Icon(Icons.keyboard_arrow_down_rounded,
+                      child: Icon(Icons.keyboard_arrow_down_rounded,
                           size: 18, color: AppColor.grey),
                     ),
                   const SizedBox(width: 4),
@@ -176,7 +176,7 @@ class _TreeNodeState extends State<_TreeNode> {
                   ),
               if (d == 0) ...[
              const SizedBox(width: 8),
-             const Icon(Icons.drag_indicator_rounded, color: AppColor.greyLight, size: 20),]
+             Icon(Icons.drag_indicator_rounded, color: AppColor.greyLight, size: 20),]
                 ]),
               ),
             ),
@@ -377,7 +377,7 @@ class _AddEditSheetState extends State<_AddEditSheet> {
                 color: AppColor.primarySurface,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.category_outlined, size: 18, color: AppColor.primaryColor),
+              child: Icon(Icons.category_outlined, size: 18, color: AppColor.primaryColor),
             ),
             const SizedBox(width: 10),
             Text(
@@ -406,15 +406,15 @@ class _AddEditSheetState extends State<_AddEditSheet> {
                 const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColor.greyBorder),
+                  borderSide: BorderSide(color: AppColor.greyBorder),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColor.greyBorder),
+                  borderSide: BorderSide(color: AppColor.greyBorder),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColor.primaryColor, width: 1.5),
+                  borderSide: BorderSide(color: AppColor.primaryColor, width: 1.5),
                 ),
               ),
             ),

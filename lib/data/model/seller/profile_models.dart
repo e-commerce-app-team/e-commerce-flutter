@@ -25,9 +25,9 @@ class SellerProfileModel {
   final String sellerType;
 
   /// ثابت - الباك لا يُرجع هذه القيم في store-settings بعد
-  final double  ratingAvg      = 0;
-  final int     reviewCount    = 0;
-  final int     followersCount = 0;
+  final double ratingAvg = 0;
+  final int reviewCount = 0;
+  final int followersCount = 0;
 
   const SellerProfileModel({
     required this.firstName,
@@ -45,43 +45,54 @@ class SellerProfileModel {
     this.latitude,
     this.longitude,
     this.workingHours = const [],
-    this.socialLinks  = const {},
-    this.sellerType   = 'vendor',
+    this.socialLinks = const {},
+    this.sellerType = 'vendor',
   });
 
   // ─── Getters لتوافق الـ UI القائم ────────────────────────────────────────
-  String get fullName      => '$firstName $lastName'.trim();
-  String get city          => detailedAddress ?? '';
-  String get description   => storeDescription ?? '';
-  String get returnPolicy  => storeReturnPolicy ?? '';
+  String get fullName => '$firstName $lastName'.trim();
+  String get city => detailedAddress ?? '';
+  String get description => storeDescription ?? '';
+  String get returnPolicy => storeReturnPolicy ?? '';
 
   /// Compatibility getters للـ widgets القائمة
-  String get category      => ''; // الباك لا يُرجع التصنيف في store-settings
-  int    get storeId       => 0;  // الباك لا يُرجع store ID في store-settings
-  String? get logo         => storeLogo;
-  String? get cover        => storeCoverPhoto;
-  String? get crNumber     => null;
-  String? get taxNumber    => null;
+  String get category => ''; // الباك لا يُرجع التصنيف في store-settings
+  int get storeId => 0; // الباك لا يُرجع store ID في store-settings
+  String? get logo => storeLogo;
+  String? get cover => storeCoverPhoto;
+  String? get crNumber => null;
+  String? get taxNumber => null;
 
   // ─── Image URLs ───────────────────────────────────────────────────────────
   String? get logoUrl => (storeLogo != null && storeLogo!.isNotEmpty)
-      ? (storeLogo!.startsWith('http') ? storeLogo : AppLink.storageUrl(storeLogo!))
+      ? (storeLogo!.startsWith('http')
+            ? storeLogo
+            : AppLink.storageUrl(storeLogo!))
       : null;
 
-  String? get coverUrl => (storeCoverPhoto != null && storeCoverPhoto!.isNotEmpty)
-      ? (storeCoverPhoto!.startsWith('http') ? storeCoverPhoto : AppLink.storageUrl(storeCoverPhoto!))
+  String? get coverUrl =>
+      (storeCoverPhoto != null && storeCoverPhoto!.isNotEmpty)
+      ? (storeCoverPhoto!.startsWith('http')
+            ? storeCoverPhoto
+            : AppLink.storageUrl(storeCoverPhoto!))
       : null;
 
-  String? get profilePhotoUrl => (profilePhoto != null && profilePhoto!.isNotEmpty)
-      ? (profilePhoto!.startsWith('http') ? profilePhoto : AppLink.storageUrl(profilePhoto!))
+  String? get profilePhotoUrl =>
+      (profilePhoto != null && profilePhoto!.isNotEmpty)
+      ? (profilePhoto!.startsWith('http')
+            ? profilePhoto
+            : AppLink.storageUrl(profilePhoto!))
       : null;
 
   bool get isWholesale => sellerType == 'wholesale';
-  bool get isActive    => true;
+  bool get isActive => true;
 
   /// يُفسّر الاستجابة القادمة من /seller/store-settings
   /// البنية:  { "success": true, "data": { "first_name": ..., "store_name": ..., ... } }
-  factory SellerProfileModel.fromJson(Map json, {String sellerType = 'vendor'}) {
+  factory SellerProfileModel.fromJson(
+    Map json, {
+    String sellerType = 'vendor',
+  }) {
     // البيانات قد تكون مباشرة أو ضمن مفتاح "data"
     final d = (json['data'] as Map?) ?? json;
 
@@ -106,23 +117,23 @@ class SellerProfileModel {
     }
 
     return SellerProfileModel(
-      firstName:         d['first_name']?.toString() ?? '',
-      lastName:          d['last_name']?.toString()  ?? '',
-      email:             d['email']?.toString()       ?? '',
-      phone:             d['phone']?.toString()       ?? '',
-      profilePhoto:      d['profile_photo']?.toString(),
-      storeName:         d['store_name']?.toString()  ?? '',
-      storeDescription:  d['store_description']?.toString(),
-      storeLogo:         d['store_logo']?.toString(),
-      storeCoverPhoto:   d['store_cover_photo']?.toString(),
+      firstName: d['first_name']?.toString() ?? '',
+      lastName: d['last_name']?.toString() ?? '',
+      email: d['email']?.toString() ?? '',
+      phone: d['phone']?.toString() ?? '',
+      profilePhoto: d['profile_photo']?.toString(),
+      storeName: d['store_name']?.toString() ?? '',
+      storeDescription: d['store_description']?.toString(),
+      storeLogo: d['store_logo']?.toString(),
+      storeCoverPhoto: d['store_cover_photo']?.toString(),
       storeReturnPolicy: d['return_policy']?.toString(),
-      storeEmail:        d['store_email']?.toString(),
-      detailedAddress:   d['detailed_address']?.toString(),
-      latitude:          parseDouble(d['latitude']),
-      longitude:         parseDouble(d['longitude']),
-      workingHours:      parseList(d['working_hours']),
-      socialLinks:       parseMap(d['social_links']),
-      sellerType:        sellerType,
+      storeEmail: d['store_email']?.toString(),
+      detailedAddress: d['detailed_address']?.toString(),
+      latitude: parseDouble(d['latitude']),
+      longitude: parseDouble(d['longitude']),
+      workingHours: parseList(d['working_hours']),
+      socialLinks: parseMap(d['social_links']),
+      sellerType: sellerType,
     );
   }
 
@@ -137,23 +148,25 @@ class SellerProfileModel {
     String? storeLogo,
     String? storeCoverPhoto,
     String? storeEmail,
+    double? latitude,
+    double? longitude,
   }) => SellerProfileModel(
-    firstName:         firstName         ?? this.firstName,
-    lastName:          lastName          ?? this.lastName,
-    email:             email,
-    phone:             phone             ?? this.phone,
-    profilePhoto:      profilePhoto,
-    storeName:         storeName         ?? this.storeName,
-    storeDescription:  storeDescription  ?? this.storeDescription,
-    storeLogo:         storeLogo         ?? this.storeLogo,
-    storeCoverPhoto:   storeCoverPhoto   ?? this.storeCoverPhoto,
+    firstName: firstName ?? this.firstName,
+    lastName: lastName ?? this.lastName,
+    email: email,
+    phone: phone ?? this.phone,
+    profilePhoto: profilePhoto,
+    storeName: storeName ?? this.storeName,
+    storeDescription: storeDescription ?? this.storeDescription,
+    storeLogo: storeLogo ?? this.storeLogo,
+    storeCoverPhoto: storeCoverPhoto ?? this.storeCoverPhoto,
     storeReturnPolicy: storeReturnPolicy ?? this.storeReturnPolicy,
-    storeEmail:        storeEmail        ?? this.storeEmail,
-    detailedAddress:   detailedAddress   ?? this.detailedAddress,
-    latitude:          latitude,
-    longitude:         longitude,
-    workingHours:      workingHours,
-    socialLinks:       socialLinks,
-    sellerType:        sellerType,
+    storeEmail: storeEmail ?? this.storeEmail,
+    detailedAddress: detailedAddress ?? this.detailedAddress,
+    latitude: latitude ?? this.latitude,
+    longitude: longitude ?? this.longitude,
+    workingHours: workingHours,
+    socialLinks: socialLinks,
+    sellerType: sellerType,
   );
 }

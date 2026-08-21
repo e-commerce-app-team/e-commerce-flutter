@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
 import 'package:e_commerce/core/constant/color.dart';
@@ -115,7 +115,7 @@ class _ShamCashPaymentScreenState extends State<ShamCashPaymentScreen> {
                   hintStyle: AppTextStyle.inputHint,
                   filled: true,
                   fillColor: AppColor.cardBackground,
-                  prefixIcon: const Icon(Icons.lock_outline_rounded,
+                  prefixIcon: Icon(Icons.lock_outline_rounded,
                       color: AppColor.primaryColor),
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -134,7 +134,7 @@ class _ShamCashPaymentScreenState extends State<ShamCashPaymentScreen> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
-                    borderSide: const BorderSide(color: AppColor.primaryColor, width: 1.5),
+                    borderSide: BorderSide(color: AppColor.primaryColor, width: 1.5),
                   ),
                 ),
               ),
@@ -191,7 +191,7 @@ class _ShamCashPaymentScreenState extends State<ShamCashPaymentScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const CircularProgressIndicator(color: AppColor.primaryColor),
+                      CircularProgressIndicator(color: AppColor.primaryColor),
                       const SizedBox(height: 18),
                       Text('payment_processing'.tr, style: AppTextStyle.heading3),
                       const SizedBox(height: 8),

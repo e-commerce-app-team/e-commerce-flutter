@@ -1,4 +1,4 @@
-import 'dart:io';
+﻿import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -10,9 +10,9 @@ import 'package:e_commerce/core/constant/routes.dart';
 import 'package:e_commerce/data/model/seller/ads_models.dart';
 import 'package:e_commerce/view/widget/seller/dashboard/shimmer_box.dart';
 
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // MAIN SCREEN
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 class AdsScreen extends StatelessWidget {
   const AdsScreen({super.key});
@@ -35,23 +35,23 @@ class AdsScreen extends StatelessWidget {
                     child: CustomScrollView(
                       physics: const BouncingScrollPhysics(),
                       slivers: [
-                        // ─── Wallet Banner ───────────────────────────────────
+                        // â”€â”€â”€ Wallet Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                         SliverToBoxAdapter(
                           child: _WalletBanner(ctrl: ctrl),
                         ),
 
-                        // ─── Pending Notice ──────────────────────────────────
+                        // â”€â”€â”€ Pending Notice â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                         if (ctrl.pendingCount > 0)
                           SliverToBoxAdapter(
                             child: _PendingNotice(count: ctrl.pendingCount),
                           ),
 
-                        // ─── Filter Tabs ─────────────────────────────────────
+                        // â”€â”€â”€ Filter Tabs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                         SliverToBoxAdapter(
                           child: _TabsRow(ctrl: ctrl),
                         ),
 
-                        // ─── Content ─────────────────────────────────────────
+                        // â”€â”€â”€ Content â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                         ctrl.filteredAds.isEmpty
                             ? SliverFillRemaining(
                                 hasScrollBody: false,
@@ -93,9 +93,9 @@ class AdsScreen extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // APP BAR
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 class _AdsAppBar extends StatelessWidget implements PreferredSizeWidget {
   final SellerAdsController ctrl;
@@ -106,7 +106,7 @@ class _AdsAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) => AppBar(
-        flexibleSpace: Container(decoration: const BoxDecoration(gradient: AppColor.headerGradient)),
+        flexibleSpace: Container(decoration: BoxDecoration(gradient: AppColor.headerGradient)),
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
@@ -146,9 +146,9 @@ class _AdsAppBar extends StatelessWidget implements PreferredSizeWidget {
       );
 }
 
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // WALLET BANNER
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 class _WalletBanner extends StatelessWidget {
   final SellerAdsController ctrl;
@@ -253,9 +253,9 @@ class _WalletBanner extends StatelessWidget {
       );
 }
 
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // PENDING NOTICE
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 class _PendingNotice extends StatelessWidget {
   final int count;
@@ -296,9 +296,9 @@ class _PendingNotice extends StatelessWidget {
       );
 }
 
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // FILTER TABS
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 class _TabsRow extends StatelessWidget {
   final SellerAdsController ctrl;
@@ -355,9 +355,9 @@ class _TabsRow extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // AD CARD
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 class _AdCard extends StatefulWidget {
   final AdModel ad;
@@ -483,7 +483,7 @@ class _AdCardState extends State<_AdCard> with SingleTickerProviderStateMixin {
             ),
           ),
           child: Column(children: [
-            // ─── Header ──────────────────────────────────────────
+            // â”€â”€â”€ Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             Padding(
               padding: const EdgeInsets.fromLTRB(14, 14, 14, 10),
               child: Row(children: [
@@ -523,7 +523,7 @@ class _AdCardState extends State<_AdCard> with SingleTickerProviderStateMixin {
                         Text(_typeName,
                             style: AppTextStyle.labelSmall.copyWith(
                                 fontSize: 11, color: _typeGradient.first)),
-                        Text(' · ',
+                        Text(' Â· ',
                             style: AppTextStyle.labelSmall.copyWith(
                                 color: AppColor.greyLight)),
                         Text(ad.duration.replaceAll('_', ' '),
@@ -557,7 +557,7 @@ class _AdCardState extends State<_AdCard> with SingleTickerProviderStateMixin {
               ]),
             ),
 
-            // ─── Image Preview (Banner only) ─────────────────────
+            // â”€â”€â”€ Image Preview (Banner only) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             if (ad.adType == 'banner' && ad.imageUrl != null) ...[
               Container(
                 margin: const EdgeInsets.fromLTRB(14, 0, 14, 10),
@@ -572,7 +572,7 @@ class _AdCardState extends State<_AdCard> with SingleTickerProviderStateMixin {
               ),
             ],
 
-            // ─── Rejection Reason ─────────────────────────────────
+            // â”€â”€â”€ Rejection Reason â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             if (ad.status == AdStatus.rejected && ad.adminNotes != null) ...[
               Container(
                 margin: const EdgeInsets.fromLTRB(14, 0, 14, 10),
@@ -604,7 +604,7 @@ class _AdCardState extends State<_AdCard> with SingleTickerProviderStateMixin {
               ),
             ],
 
-            // ─── Stats Row (Active/Expired) ───────────────────────
+            // â”€â”€â”€ Stats Row (Active/Expired) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             if (ad.status == AdStatus.active || ad.status == AdStatus.expired) ...[
               Container(
                 margin: const EdgeInsets.fromLTRB(14, 0, 14, 10),
@@ -637,7 +637,7 @@ class _AdCardState extends State<_AdCard> with SingleTickerProviderStateMixin {
               ),
             ],
 
-            // ─── Footer: cost + dates ─────────────────────────────
+            // â”€â”€â”€ Footer: cost + dates â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             Padding(
               padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
               child: Row(
@@ -654,7 +654,7 @@ class _AdCardState extends State<_AdCard> with SingleTickerProviderStateMixin {
                     ]),
                     Text(
                       ad.startsAt != null && ad.startsAt!.isNotEmpty
-                          ? '${ad.startsAt!.substring(0, 10)} → ${ad.expiresAt?.substring(0, 10) ?? ''}'
+                          ? '${ad.startsAt!.substring(0, 10)} â†’ ${ad.expiresAt?.substring(0, 10) ?? ''}'
                           : ad.createdAt.length > 10
                               ? ad.createdAt.substring(0, 10)
                               : ad.createdAt,
@@ -671,9 +671,9 @@ class _AdCardState extends State<_AdCard> with SingleTickerProviderStateMixin {
   String _fmtNum(int v) => v >= 1000 ? '${(v / 1000).toStringAsFixed(1)}k' : '$v';
 }
 
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // STAT CHIP
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 class _StatChip extends StatelessWidget {
   final IconData icon;
@@ -699,9 +699,9 @@ class _StatChip extends StatelessWidget {
       ]);
 }
 
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // EMPTY STATE
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 class _EmptyAds extends StatelessWidget {
   final VoidCallback onNew;
@@ -715,7 +715,7 @@ class _EmptyAds extends StatelessWidget {
             Container(
               width: 90,
               height: 90,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                   gradient: AppColor.mainGradient, shape: BoxShape.circle),
               child: const Icon(Icons.campaign_rounded,
                   size: 42, color: Colors.white),
@@ -748,9 +748,9 @@ class _EmptyAds extends StatelessWidget {
       );
 }
 
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // ERROR STATE
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 class _ErrorState extends StatelessWidget {
   final VoidCallback onRetry;
@@ -759,24 +759,24 @@ class _ErrorState extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Center(
         child: Column(mainAxisSize: MainAxisSize.min, children: [
-          const Icon(Icons.wifi_off_rounded, size: 52, color: AppColor.greyLight),
+          Icon(Icons.wifi_off_rounded, size: 52, color: AppColor.greyLight),
           const SizedBox(height: 12),
           Text('ads_error_connection'.tr,
               style: AppTextStyle.bodyMedium, textAlign: TextAlign.center),
           const SizedBox(height: 16),
           TextButton.icon(
             onPressed: onRetry,
-            icon: const Icon(Icons.refresh_rounded, color: AppColor.primaryColor),
-            label: Text('retry'.tr.isNotEmpty ? 'retry'.tr : 'إعادة المحاولة',
+            icon: Icon(Icons.refresh_rounded, color: AppColor.primaryColor),
+            label: Text('retry'.tr.isNotEmpty ? 'retry'.tr : 'Ø¥Ø¹Ø§Ø¯Ø© Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø©',
                 style: AppTextStyle.bodyLarge.copyWith(color: AppColor.primaryColor)),
           ),
         ]),
       );
 }
 
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // FLOATING ACTION BUTTON
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 class _CreateFAB extends StatelessWidget {
   final VoidCallback onTap;
@@ -803,9 +803,9 @@ class _CreateFAB extends StatelessWidget {
       );
 }
 
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // CREATE AD BOTTOM SHEET
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 class _CreateAdSheet extends StatelessWidget {
   const _CreateAdSheet();
@@ -836,7 +836,7 @@ class _CreateAdSheet extends StatelessWidget {
           // Progress Bar
           _StepProgress(currentStep: ctrl.currentStep),
 
-          const Divider(height: 1, color: AppColor.greyBorder),
+          Divider(height: 1, color: AppColor.greyBorder),
 
           // Body
           Expanded(
@@ -875,7 +875,7 @@ class _CreateAdSheet extends StatelessWidget {
   }
 }
 
-// ─── Sheet Header ───────────────────────────────────────────────
+// â”€â”€â”€ Sheet Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _SheetHeader extends StatelessWidget {
   final SellerAdsController ctrl;
@@ -905,7 +905,7 @@ class _SheetHeader extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(color: AppColor.greyBorder),
                 ),
-                child: const Icon(Icons.arrow_back_ios_rounded,
+                child: Icon(Icons.arrow_back_ios_rounded,
                     size: 15, color: AppColor.grey),
               ),
             ),
@@ -927,14 +927,14 @@ class _SheetHeader extends StatelessWidget {
                 color: AppColor.greyBorder.withOpacity(0.6),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.close_rounded, color: AppColor.grey, size: 18),
+              child: Icon(Icons.close_rounded, color: AppColor.grey, size: 18),
             ),
           ),
         ]),
       );
 }
 
-// ─── Step Progress ───────────────────────────────────────────────
+// â”€â”€â”€ Step Progress â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _StepProgress extends StatelessWidget {
   final int currentStep;
@@ -970,7 +970,7 @@ class _StepProgress extends StatelessWidget {
       );
 }
 
-// ─── Sheet Bottom CTA ────────────────────────────────────────────
+// â”€â”€â”€ Sheet Bottom CTA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _SheetBottomCTA extends StatelessWidget {
   final SellerAdsController ctrl;
@@ -1024,9 +1024,9 @@ class _SheetBottomCTA extends StatelessWidget {
       );
 }
 
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // STEP 1: TYPE SELECTION
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 class _StepType extends StatelessWidget {
   final SellerAdsController ctrl;
@@ -1202,9 +1202,9 @@ class _AdTypeCard extends StatelessWidget {
       );
 }
 
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // STEP 2: DETAILS
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 class _StepDetails extends StatelessWidget {
   final SellerAdsController ctrl;
@@ -1218,7 +1218,7 @@ class _StepDetails extends StatelessWidget {
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
-      // ─── Banner Image Upload ──────────────────────────────────
+      // â”€â”€â”€ Banner Image Upload â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       if (isBanner) ...[
         _SectionLabel(icon: Icons.image_rounded, label: 'ads_image_label'.tr),
         const SizedBox(height: 8),
@@ -1226,7 +1226,7 @@ class _StepDetails extends StatelessWidget {
         const SizedBox(height: 18),
       ],
 
-      // ─── Product Selector ─────────────────────────────────────
+      // â”€â”€â”€ Product Selector â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       if (isProduct) ...[
         _SectionLabel(icon: Icons.inventory_2_outlined, label: 'ads_product_label'.tr),
         const SizedBox(height: 8),
@@ -1234,7 +1234,7 @@ class _StepDetails extends StatelessWidget {
         const SizedBox(height: 18),
       ],
 
-      // ─── Title ────────────────────────────────────────────────
+      // â”€â”€â”€ Title â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       _SectionLabel(
         icon: isNotif ? Icons.title_rounded : Icons.edit_rounded,
         label: 'ads_title_label'.tr,
@@ -1253,7 +1253,7 @@ class _StepDetails extends StatelessWidget {
       ),
       const SizedBox(height: 14),
 
-      // ─── Description ──────────────────────────────────────────
+      // â”€â”€â”€ Description â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       _SectionLabel(
         icon: Icons.notes_rounded,
         label: 'ads_desc_label'.tr,
@@ -1270,7 +1270,7 @@ class _StepDetails extends StatelessWidget {
       ),
       const SizedBox(height: 20),
 
-      // ─── Duration ────────────────────────────────────────────
+      // â”€â”€â”€ Duration â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       _SectionLabel(icon: Icons.timer_outlined, label: 'ads_duration_label'.tr),
       const SizedBox(height: 10),
       ..._DurationOptions(ctrl: ctrl).build(),
@@ -1291,14 +1291,14 @@ class _StepDetails extends StatelessWidget {
             const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
         border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColor.greyBorder)),
+            borderSide: BorderSide(color: AppColor.greyBorder)),
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColor.greyBorder)),
+            borderSide: BorderSide(color: AppColor.greyBorder)),
         focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide:
-                const BorderSide(color: AppColor.primaryColor, width: 1.5)),
+                BorderSide(color: AppColor.primaryColor, width: 1.5)),
       );
 }
 
@@ -1316,7 +1316,7 @@ class _SectionLabel extends StatelessWidget {
       ]);
 }
 
-// ─── Banner Image Picker ─────────────────────────────────────────
+// â”€â”€â”€ Banner Image Picker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _BannerImagePicker extends StatelessWidget {
   final SellerAdsController ctrl;
@@ -1394,7 +1394,7 @@ class _BannerImagePicker extends StatelessWidget {
                         color: AppColor.primaryColor.withOpacity(0.12),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.cloud_upload_rounded,
+                      child: Icon(Icons.cloud_upload_rounded,
                           size: 24, color: AppColor.primaryColor),
                     ),
                     const SizedBox(height: 8),
@@ -1410,7 +1410,7 @@ class _BannerImagePicker extends StatelessWidget {
       );
 }
 
-// ─── Product Dropdown ────────────────────────────────────────────
+// â”€â”€â”€ Product Dropdown â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _ProductDropdown extends StatelessWidget {
   final SellerAdsController ctrl;
@@ -1430,7 +1430,7 @@ class _ProductDropdown extends StatelessWidget {
                   const Icon(Icons.info_outline_rounded,
                       size: 16, color: AppColor.warning),
                   const SizedBox(width: 8),
-                  Text('لا توجد منتجات متاحة',
+                  Text('Ù„Ø§ ØªÙˆØ¬Ø¯ Ù…Ù†ØªØ¬Ø§Øª Ù…ØªØ§Ø­Ø©',
                       style: AppTextStyle.bodyMedium),
                 ]),
               )
@@ -1441,13 +1441,13 @@ class _ProductDropdown extends StatelessWidget {
                     value: ctrl.selectedProductId,
                     isExpanded: true,
                     hint: Row(children: [
-                      const Icon(Icons.inventory_2_outlined,
+                      Icon(Icons.inventory_2_outlined,
                           size: 16, color: AppColor.greyLight),
                       const SizedBox(width: 8),
                       Text('ads_product_hint'.tr,
                           style: AppTextStyle.inputHint),
                     ]),
-                    icon: const Icon(Icons.keyboard_arrow_down_rounded,
+                    icon: Icon(Icons.keyboard_arrow_down_rounded,
                         color: AppColor.grey),
                     borderRadius: BorderRadius.circular(12),
                     items: ctrl.products
@@ -1469,7 +1469,7 @@ class _ProductDropdown extends StatelessWidget {
       );
 }
 
-// ─── Duration Options ────────────────────────────────────────────
+// â”€â”€â”€ Duration Options â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _DurationOptions {
   final SellerAdsController ctrl;
@@ -1565,9 +1565,9 @@ class _DurationOptions {
   }
 }
 
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // STEP 3: REVIEW
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 class _StepReview extends StatelessWidget {
   final SellerAdsController ctrl;
@@ -1599,7 +1599,7 @@ class _StepReview extends StatelessWidget {
           style: AppTextStyle.bodyLarge.copyWith(fontWeight: FontWeight.w600)),
       const SizedBox(height: 16),
 
-      // ─── Summary Card ────────────────────────────────────────
+      // â”€â”€â”€ Summary Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -1613,7 +1613,7 @@ class _StepReview extends StatelessWidget {
               icon: Icons.campaign_rounded, color: AppColor.primaryColor),
           _ReviewRow(
               label: 'ads_review_ad_title'.tr,
-              value: ctrl.titleCtrl.text.trim().isEmpty ? '—' : ctrl.titleCtrl.text.trim(),
+              value: ctrl.titleCtrl.text.trim().isEmpty ? 'â€”' : ctrl.titleCtrl.text.trim(),
               icon: Icons.title_rounded, color: AppColor.info),
           if (ctrl.selectedAdType == 'promoted_product' &&
               ctrl.selectedProductName != null)
@@ -1627,7 +1627,7 @@ class _StepReview extends StatelessWidget {
       ),
       const SizedBox(height: 14),
 
-      // ─── Cost Card ───────────────────────────────────────────
+      // â”€â”€â”€ Cost Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -1684,7 +1684,7 @@ class _StepReview extends StatelessWidget {
       ),
       const SizedBox(height: 14),
 
-      // ─── Notice ──────────────────────────────────────────────
+      // â”€â”€â”€ Notice â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
@@ -1742,9 +1742,9 @@ class _ReviewRow extends StatelessWidget {
       );
 }
 
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // SHIMMER LOADING
-// ═══════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 class _AdsShimmer extends StatelessWidget {
   const _AdsShimmer();

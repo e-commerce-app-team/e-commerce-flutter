@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/controller/auth/select_account_type_controller.dart';
@@ -35,7 +35,7 @@ class SelectAccountType extends StatelessWidget {
               clipper: DiagonalCurveClipper(),
               child: Container(
                 height: screenHeight * 0.45,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   gradient: AppColor.mainGradient,
                 ),
               ),

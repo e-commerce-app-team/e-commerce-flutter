@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/controller/buyer/cart_controller.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
@@ -26,7 +26,7 @@ class CartAddressSection extends GetView<CartController> {
           children: [
             Row(
               children: [
-                const Icon(Icons.location_on_outlined,
+                Icon(Icons.location_on_outlined,
                     color: AppColor.primaryColor),
                 const SizedBox(width: 8),
                 Text('delivery_address'.tr, style: AppTextStyle.heading3),

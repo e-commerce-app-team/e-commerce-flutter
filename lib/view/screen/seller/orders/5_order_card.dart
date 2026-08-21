@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/controller/seller/seller_orders_controller.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
@@ -81,7 +81,7 @@ class _OrderCardState extends State<OrderCard>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _CardHeader(order: order, config: config),
-                const Divider(height: 1, color: AppColor.greyBorder),
+                Divider(height: 1, color: AppColor.greyBorder),
                 _CardBody(order: order),
                 _DiscountAndShippingRow(order: order),
                 if (order.isPending) _PendingActions(order: order),
@@ -147,7 +147,7 @@ class _CardHeader extends StatelessWidget {
                 const SizedBox(height: 2),
                 Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.location_on_outlined,
                       size: 11,
                       color: AppColor.grey,
@@ -228,7 +228,7 @@ class _CardBody extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(14, 10, 14, 0),
       child: Row(
         children: [
-          const Icon(
+          Icon(
             Icons.shopping_bag_outlined,
             size: 14,
             color: AppColor.grey,
@@ -236,7 +236,7 @@ class _CardBody extends StatelessWidget {
           const SizedBox(width: 6),
           Expanded(
             child: Text(
-              order.items.map((i) => '${i.name} ×${i.qty}').join(' · '),
+              order.items.map((i) => '${i.name} Ã—${i.qty}').join(' Â· '),
               style: AppTextStyle.labelSmall.copyWith(fontSize: 11.5),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -366,7 +366,7 @@ class _PendingActions extends StatelessWidget {
               onPressed: () => _showRejectDialog(context, ctrl),
               style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 10),
-                side: const BorderSide(color: AppColor.greyBorder),
+                side: BorderSide(color: AppColor.greyBorder),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(11),
                 ),
@@ -466,11 +466,11 @@ class _AcceptOrderDialogState extends State<AcceptOrderDialog> {
             Container(
               width: 52,
               height: 52,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: AppColor.primarySurface,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.check_circle_outline_rounded,
                 color: AppColor.primaryColor,
                 size: 28,
@@ -675,7 +675,7 @@ class _RejectOrderDialogState extends State<RejectOrderDialog> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(11),
                     borderSide:
-                        const BorderSide(color: AppColor.greyBorder),
+                        BorderSide(color: AppColor.greyBorder),
                   ),
                   contentPadding: const EdgeInsets.all(12),
                 ),
@@ -765,7 +765,7 @@ class _PulseDotState extends State<_PulseDot>
       child: Container(
         width: 7,
         height: 7,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppColor.primaryColor,
           shape: BoxShape.circle,
         ),

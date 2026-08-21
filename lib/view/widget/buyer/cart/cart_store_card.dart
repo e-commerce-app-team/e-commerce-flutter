@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/controller/buyer/cart_controller.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
@@ -55,6 +55,7 @@ class CartStoreCard extends GetView<CartController> {
               final discount = controller.storeDiscount(group.sellerId);
               final shipping = controller.storeShippingCost(group.sellerId);
               final total = controller.storeTotal(group.sellerId);
+              final shippingPending = controller.storeShippingPending(group.sellerId);
 
               return Column(
                 children: [
@@ -70,7 +71,10 @@ class CartStoreCard extends GetView<CartController> {
                       valueColor: AppColor.success,
                     ),
                   ],
-                  if (shipping > 0) ...[
+                  if (shippingPending) ...[
+                    const SizedBox(height: 6),
+                    _TotalLine(label: 'shipping_fee'.tr, value: 'يحدد بعد قبول الطلب'),
+                  ] else if (shipping > 0) ...[
                     const SizedBox(height: 6),
                     _TotalLine(
                       label: 'shipping_fee'.tr,
@@ -83,7 +87,7 @@ class CartStoreCard extends GetView<CartController> {
                   ),
                   _TotalLine(
                     label: 'store_total'.tr,
-                    value: controller.formatPrice(total),
+                    value: shippingPending ? 'بانتظار الشحن' : controller.formatPrice(total),
                     bold: true,
                   ),
                 ],
@@ -119,7 +123,7 @@ class _StoreHeader extends StatelessWidget {
                     )
                   : Container(
                       color: AppColor.primarySurface,
-                      child: const Icon(Icons.storefront_rounded,
+                      child: Icon(Icons.storefront_rounded,
                           color: AppColor.primaryColor),
                     ),
             ),

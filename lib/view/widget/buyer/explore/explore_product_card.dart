@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
@@ -22,7 +22,7 @@ class ExploreProductCard extends StatelessWidget {
     required this.onAddToCart,
   }) : super(key: key);
 
-  static const List<List<Color>> _placeholderGradients = [
+  static List<List<Color>> _placeholderGradients = [
     [AppColor.primarySurface, AppColor.primaryLight],
     [AppColor.statViewsLight, AppColor.statViews],
     [AppColor.statOrdersLight, AppColor.statOrders],

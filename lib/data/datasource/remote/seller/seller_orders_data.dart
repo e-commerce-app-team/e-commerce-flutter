@@ -59,6 +59,23 @@ class SellerOrdersData {
     headers: _auth(token),
   );
 
+  Future<Either<StatusRequest, Map>> setShippingDetails({
+    required int orderId,
+    required String method,
+    required double cost,
+    required String estimatedDelivery,
+    required String token,
+  }) async => await crud.postData(
+    '${AppLink.server}/orders/shipping-details',
+    {
+      'order_id': orderId,
+      'shipping_method': method,
+      'shipping_cost': cost,
+      'estimated_delivery': estimatedDelivery,
+    },
+    headers: _auth(token),
+  );
+
   /// Update preparation time
   Future<Either<StatusRequest, Map>> updatePreparationTime({
     required int orderId,

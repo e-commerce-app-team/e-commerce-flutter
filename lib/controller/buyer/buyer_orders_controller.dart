@@ -273,6 +273,24 @@ class BuyerOrdersController extends GetxController {
     }
   }
 
+  Future<bool> payOrder(String orderId) async {
+    final token = _token;
+    if (token == null) return false;
+    final result = await _dataSource.payOrder(token, orderId);
+    return result.fold(
+      (_) { customSnackbar('error'.tr, 'server_error'.tr); return false; },
+      (response) {
+        if (response['success'] == true) {
+          customSnackbar('success'.tr, 'wallet_order_paid'.tr, isError: false);
+          _loadOrders();
+          return true;
+        }
+        customSnackbar('error'.tr, response['message']?.toString() ?? 'server_error'.tr);
+        return false;
+      },
+    );
+  }
+
   List<BuyerOrderModel> _parseOrdersResponse(Map response) {
     dynamic data = response['data'] ?? response;
     if (data is Map && data['data'] is List) {

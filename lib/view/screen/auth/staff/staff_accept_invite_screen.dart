@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/controller/auth/staff_accept_invite_controller.dart';
 import 'package:e_commerce/core/class/handling_dataview.dart';
@@ -30,11 +30,11 @@ class StaffAcceptInviteScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // ─── Logo / Icon ───────────────────────────────────────
+                    // â”€â”€â”€ Logo / Icon â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                     _InviteHeaderSection(storeName: c.storeName),
                     const SizedBox(height: 36),
 
-                    // ─── First Name field ──────────────────────────────────
+                    // â”€â”€â”€ First Name field â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                     _TextField(
                       label:      'First Name', // Ideally localized
                       hint:       'Enter your first name',
@@ -44,7 +44,7 @@ class StaffAcceptInviteScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
 
-                    // ─── Last Name field ───────────────────────────────────
+                    // â”€â”€â”€ Last Name field â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                     _TextField(
                       label:      'Last Name',
                       hint:       'Enter your last name',
@@ -54,7 +54,7 @@ class StaffAcceptInviteScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
 
-                    // ─── Password field ────────────────────────────────────
+                    // â”€â”€â”€ Password field â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                     _PasswordField(
                       label:      'staff_password_label'.tr,
                       hint:       'staff_password_hint'.tr,
@@ -65,7 +65,7 @@ class StaffAcceptInviteScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
 
-                    // ─── Confirm password field ────────────────────────────
+                    // â”€â”€â”€ Confirm password field â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                     _PasswordField(
                       label:      'staff_confirm_password_label'.tr,
                       hint:       'staff_confirm_password_hint'.tr,
@@ -81,7 +81,7 @@ class StaffAcceptInviteScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 32),
 
-                    // ─── Submit button ─────────────────────────────────────
+                    // â”€â”€â”€ Submit button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                     _AcceptInviteButton(
                       isLoading: c.statusRequest == StatusRequest.loading,
                       onTap:     c.submitAcceptInvite,
@@ -89,7 +89,7 @@ class StaffAcceptInviteScreen extends StatelessWidget {
 
                     const SizedBox(height: 20),
 
-                    // ─── Hint ──────────────────────────────────────────────
+                    // â”€â”€â”€ Hint â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                     Text(
                       'staff_login_hint'.tr,
                       textAlign: TextAlign.center,
@@ -107,7 +107,7 @@ class StaffAcceptInviteScreen extends StatelessWidget {
   }
 }
 
-// ─── Header Section ──────────────────────────────────────────────────────────
+// â”€â”€â”€ Header Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _InviteHeaderSection extends StatelessWidget {
   final String storeName;
@@ -162,7 +162,7 @@ class _InviteHeaderSection extends StatelessWidget {
                 border:       Border.all(color: AppColor.primaryColor.withOpacity(0.2)),
               ),
               child: Row(mainAxisSize: MainAxisSize.min, children: [
-                const Icon(Icons.store_outlined,
+                Icon(Icons.store_outlined,
                     size: 16, color: AppColor.primaryColor),
                 const SizedBox(width: 6),
                 Text(
@@ -184,7 +184,7 @@ class _InviteHeaderSection extends StatelessWidget {
       );
 }
 
-// ─── Text Field (For Names) ───────────────────────────────────────────────────
+// â”€â”€â”€ Text Field (For Names) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _TextField extends StatelessWidget {
   final String            label;
@@ -236,7 +236,7 @@ class _TextField extends StatelessWidget {
       );
 }
 
-// ─── Password Field ───────────────────────────────────────────────────────────
+// â”€â”€â”€ Password Field â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _PasswordField extends StatelessWidget {
   final String            label;
@@ -282,7 +282,7 @@ class _PasswordField extends StatelessWidget {
                 borderRadius: BorderRadius.circular(14),
                 borderSide:   BorderSide(color: AppColor.primaryColor, width: 1.5),
               ),
-              prefixIcon: const Icon(Icons.lock_outline_rounded,
+              prefixIcon: Icon(Icons.lock_outline_rounded,
                   color: AppColor.greyLight, size: 20),
               suffixIcon: IconButton(
                 icon: Icon(
@@ -300,7 +300,7 @@ class _PasswordField extends StatelessWidget {
       );
 }
 
-// ─── Accept Invite Button ─────────────────────────────────────────────────────
+// â”€â”€â”€ Accept Invite Button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _AcceptInviteButton extends StatelessWidget {
   final bool         isLoading;

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -50,7 +50,7 @@ class BranchesScreen extends StatelessWidget {
   }
 }
 
-// ─── Sliver App Bar ─────────────────────────────────────────────────────────
+// â”€â”€â”€ Sliver App Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _BranchesSliverAppBar extends StatelessWidget {
   final SellerBranchesController ctrl;
@@ -78,7 +78,7 @@ class _BranchesSliverAppBar extends StatelessWidget {
           ? null
           : FlexibleSpaceBar(
               background: Container(
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   gradient: AppColor.headerGradient,
                 ),
                 child: SafeArea(
@@ -164,7 +164,7 @@ class _HeaderStat extends StatelessWidget {
   );
 }
 
-// ─── Branch Card ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ Branch Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _BranchCard extends StatefulWidget {
   final BranchModel              branch;
@@ -220,7 +220,7 @@ class _BranchCardState extends State<_BranchCard>
                 boxShadow: AppColor.cardShadow,
               ),
               child: Column(children: [
-                // ── Header row ──
+                // â”€â”€ Header row â”€â”€
                 Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
@@ -273,7 +273,7 @@ class _BranchCardState extends State<_BranchCard>
                   ]),
                 ),
 
-                // ── Details ──
+                // â”€â”€ Details â”€â”€
                 Padding(
                   padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
                   child: Column(children: [
@@ -290,16 +290,16 @@ class _BranchCardState extends State<_BranchCard>
                   ]),
                 ),
 
-                // ── Actions ──
+                // â”€â”€ Actions â”€â”€
                 Container(
                   padding: const EdgeInsets.fromLTRB(12, 8, 12, 10),
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     border: Border(top: BorderSide(color: AppColor.greyBorder, width: 0.8)),
                   ),
                   child: Row(children: [
                     // Toggle switch
                     isToggling
-                        ? const SizedBox(
+                        ? SizedBox(
                             width: 20, height: 20,
                             child: CircularProgressIndicator(
                                 strokeWidth: 2.5, color: AppColor.primaryColor))
@@ -352,7 +352,7 @@ class _BranchCardState extends State<_BranchCard>
   }
 }
 
-// ─── Mini Map Pin (48×48 interactive map thumbnail) ─────────────────────────
+// â”€â”€â”€ Mini Map Pin (48Ã—48 interactive map thumbnail) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _MiniMapPin extends StatelessWidget {
   final double lat, lng;
@@ -402,7 +402,7 @@ class _MiniMapPin extends StatelessWidget {
   }
 }
 
-// ─── Supporting Widgets ──────────────────────────────────────────────────────
+// â”€â”€â”€ Supporting Widgets â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _MetaChip extends StatelessWidget {
   final IconData icon;
@@ -517,7 +517,7 @@ class _ActionBtn extends StatelessWidget {
   );
 }
 
-// ─── FAB ─────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ FAB â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _AddFab extends StatelessWidget {
   final SellerBranchesController ctrl;
@@ -546,7 +546,7 @@ class _AddFab extends StatelessWidget {
   );
 }
 
-// ─── Empty State ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ Empty State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _EmptyBranches extends StatelessWidget {
   const _EmptyBranches();
@@ -575,7 +575,7 @@ class _EmptyBranches extends StatelessWidget {
                     ),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.store_outlined,
+                  child: Icon(Icons.store_outlined,
                       size: 46, color: AppColor.primaryColor),
                 ),
                 const SizedBox(height: 22),
@@ -602,7 +602,7 @@ class _EmptyBranches extends StatelessWidget {
   );
 }
 
-// ─── Shimmer ─────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Shimmer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _BranchesShimmer extends StatelessWidget {
   const _BranchesShimmer();

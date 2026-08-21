@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
 import 'package:e_commerce/core/constant/color.dart';
@@ -40,13 +40,13 @@ class AppField extends StatelessWidget {
           contentPadding:
           const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: AppColor.greyBorder)),
+              borderSide: BorderSide(color: AppColor.greyBorder)),
           enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: AppColor.greyBorder)),
+              borderSide: BorderSide(color: AppColor.greyBorder)),
           focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
+              borderSide: BorderSide(
                   color: AppColor.primaryColor, width: 1.5)),
           errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),

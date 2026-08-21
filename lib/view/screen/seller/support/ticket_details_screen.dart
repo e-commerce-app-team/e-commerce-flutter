@@ -1,4 +1,4 @@
-import 'dart:io';
+﻿import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/controller/seller/ticket_details_controller.dart';
@@ -123,8 +123,8 @@ class _DateDivider extends StatelessWidget {
   String _formatDate() {
     final now  = DateTime.now();
     final diff = now.difference(date).inDays;
-    if (diff == 0) return 'اليوم';
-    if (diff == 1) return 'أمس';
+    if (diff == 0) return 'Ø§Ù„ÙŠÙˆÙ…';
+    if (diff == 1) return 'Ø£Ù…Ø³';
     return '${date.day}/${date.month}/${date.year}';
   }
 
@@ -212,7 +212,7 @@ class _ChatBubbleState extends State<_ChatBubble>
                       child: Row(mainAxisSize: MainAxisSize.min, children: [
                         Container(
                           width: 20, height: 20,
-                          decoration: const BoxDecoration(
+                          decoration: BoxDecoration(
                             gradient: AppColor.headerGradient,
                             shape: BoxShape.circle,
                           ),
@@ -329,7 +329,7 @@ class _ReplyBar extends StatelessWidget {
                     border: Border.all(
                         color: AppColor.primaryColor.withOpacity(0.25)),
                   ),
-                  child: const Icon(Icons.image_outlined,
+                  child: Icon(Icons.image_outlined,
                       color: AppColor.primaryColor, size: 20),
                 ),
               ),

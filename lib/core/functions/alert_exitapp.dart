@@ -1,4 +1,4 @@
-import 'dart:io';
+﻿import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -7,7 +7,7 @@ import 'package:e_commerce/core/constant/color.dart';
 Future<bool> alertExitApp() async {
   bool? shouldExit = await Get.defaultDialog<bool>(
     title: "warning".tr,
-    titleStyle: const TextStyle(
+    titleStyle: TextStyle(
       color: AppColor.primaryColor,
       fontWeight: FontWeight.bold,
       fontSize: 20,
@@ -38,7 +38,7 @@ Future<bool> alertExitApp() async {
 
       OutlinedButton(
         style: OutlinedButton.styleFrom(
-          side: const BorderSide(color: AppColor.primaryColor, width: 1.5),
+          side: BorderSide(color: AppColor.primaryColor, width: 1.5),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         ),
@@ -47,7 +47,7 @@ Future<bool> alertExitApp() async {
         },
         child: Text(
             "confirm".tr,
-            style: const TextStyle(color: AppColor.primaryColor, fontWeight: FontWeight.bold)
+            style: TextStyle(color: AppColor.primaryColor, fontWeight: FontWeight.bold)
         ),
       ),
     ],

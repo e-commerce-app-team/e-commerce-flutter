@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/color.dart';
@@ -296,11 +296,11 @@ class ExploreScreen extends StatelessWidget {
             Container(
               width: 100,
               height: 100,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: AppColor.primarySurface,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.search_off_rounded,
                 size: 46,
                 color: AppColor.primaryColor,
@@ -322,7 +322,7 @@ class ExploreScreen extends StatelessWidget {
             OutlinedButton(
               onPressed: controller.resetFilters,
               style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: AppColor.primaryColor),
+                side: BorderSide(color: AppColor.primaryColor),
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
@@ -354,7 +354,7 @@ class ExploreScreen extends StatelessWidget {
       backgroundColor: Colors.transparent,
       builder: (_) => Container(
         padding: const EdgeInsets.symmetric(vertical: 20),
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppColor.backgroundcolor,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(24),
@@ -390,8 +390,8 @@ class ExploreScreen extends StatelessWidget {
                   },
                   title: Text(option['label']!.tr, style: AppTextStyle.bodyLarge),
                   trailing: controller.sortBy == option['value']
-                      ? const Icon(Icons.check_circle_rounded, color: AppColor.primaryColor)
-                      : const Icon(Icons.circle_outlined, color: AppColor.greyBorder),
+                      ? Icon(Icons.check_circle_rounded, color: AppColor.primaryColor)
+                      : Icon(Icons.circle_outlined, color: AppColor.greyBorder),
                 ),
               ),
             ),

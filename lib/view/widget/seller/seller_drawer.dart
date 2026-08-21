@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/core/constant/routes.dart';
@@ -212,7 +212,7 @@ class SellerDrawer extends StatelessWidget {
                       color: AppColor.primaryColor.withOpacity(0.1),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.storefront_rounded,
                       color: AppColor.primaryColor,
                       size: 32,

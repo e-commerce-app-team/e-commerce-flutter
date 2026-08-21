@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart' hide SearchBar;
+﻿import 'package:flutter/material.dart' hide SearchBar;
 import 'package:get/get.dart';
 import 'package:e_commerce/controller/seller/seller_inventory_controller.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
@@ -36,7 +36,7 @@ class InventorySliverAppBar extends StatelessWidget {
       flexibleSpace: FlexibleSpaceBar(
         collapseMode: CollapseMode.pin,
         background: Container(
-          decoration: const BoxDecoration(gradient: AppColor.headerGradient),
+          decoration: BoxDecoration(gradient: AppColor.headerGradient),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -59,7 +59,7 @@ class InventorySliverAppBar extends StatelessWidget {
         preferredSize: const Size.fromHeight(46),
         child: Container(
           height: 46,
-          decoration: const BoxDecoration(gradient: AppColor.headerGradient),
+          decoration: BoxDecoration(gradient: AppColor.headerGradient),
           child: InventoryTabs(ctrl: ctrl),
         ),
       ),

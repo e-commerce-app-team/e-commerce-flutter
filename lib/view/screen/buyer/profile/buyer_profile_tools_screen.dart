@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+﻿import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -72,7 +72,7 @@ class _EditProfileState extends State<_EditProfile> {
       Center(child: InkWell(onTap: widget.controller.pickPhoto, child: CircleAvatar(
         radius: 46, backgroundColor: AppColor.primarySurface,
         backgroundImage: widget.controller.selectedPhoto == null ? null : FileImage(widget.controller.selectedPhoto!),
-        child: widget.controller.selectedPhoto == null ? const Icon(Icons.camera_alt_outlined, color: AppColor.primaryColor) : null,
+        child: widget.controller.selectedPhoto == null ? Icon(Icons.camera_alt_outlined, color: AppColor.primaryColor) : null,
       ))),
       const SizedBox(height: 24),
       _field(first, 'first_name'.tr), _field(last, 'last_name'.tr),
@@ -99,7 +99,7 @@ class _Addresses extends StatelessWidget {
   @override Widget build(BuildContext context) => ListView(
     padding: const EdgeInsets.all(16), children: [
       ...controller.addresses.map((address) => Card(child: ListTile(
-        leading: const Icon(Icons.location_on_outlined, color: AppColor.primaryColor),
+        leading: Icon(Icons.location_on_outlined, color: AppColor.primaryColor),
         title: Text(address['title']?.toString() ?? ''), subtitle: Text(address['details']?.toString() ?? ''),
         trailing: address['is_default'] == true ? Chip(label: Text('default_address'.tr)) : null,
         onTap: () => controller.setDefaultAddress(address['id'].toString()),
@@ -209,7 +209,7 @@ class _Conversations extends StatelessWidget {
           return Center(child: Text('server_error'.tr));
         }
         if (!snapshot.hasData) {
-          return const Center(child: CircularProgressIndicator(color: AppColor.primaryColor));
+          return Center(child: CircularProgressIndicator(color: AppColor.primaryColor));
         }
         final conversations = snapshot.data!.docs.toList()
           ..sort((a, b) {
@@ -237,7 +237,7 @@ class _Conversations extends StatelessWidget {
                       ? NetworkImage('${data['store_logo']}')
                       : null,
                   child: '${data['store_logo'] ?? ''}'.isEmpty
-                      ? const Icon(Icons.store_outlined, color: AppColor.primaryColor)
+                      ? Icon(Icons.store_outlined, color: AppColor.primaryColor)
                       : null,
                 ),
                 title: Text(data['store_name']?.toString() ?? ''),

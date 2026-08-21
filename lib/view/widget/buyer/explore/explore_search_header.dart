@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
@@ -81,12 +81,12 @@ class ExploreSearchHeader extends StatelessWidget {
                         border: InputBorder.none,
                         isCollapsed: true,
                         contentPadding: const EdgeInsets.symmetric(vertical: 16),
-                        prefixIcon: const Icon(Icons.search_rounded, color: AppColor.primaryColor, size: 24),
+                        prefixIcon: Icon(Icons.search_rounded, color: AppColor.primaryColor, size: 24),
                         prefixIconConstraints: const BoxConstraints(minWidth: 46),
                         suffixIcon: searchController.text.isEmpty
                             ? null
                             : IconButton(
-                                icon: const Icon(Icons.close_rounded, color: AppColor.grey, size: 20),
+                                icon: Icon(Icons.close_rounded, color: AppColor.grey, size: 20),
                                 onPressed: () {
                                   searchController.clear();
                                   onChanged('');

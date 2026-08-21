@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/controller/buyer/cart_controller.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
@@ -22,7 +22,7 @@ class CartScreen extends StatelessWidget {
       appBar: _buildAppBar(controller),
       body: Obx(() {
         if (controller.isLoading.value && controller.isEmpty) {
-          return const Center(
+          return Center(
             child: CircularProgressIndicator(color: AppColor.primaryColor),
           );
         }

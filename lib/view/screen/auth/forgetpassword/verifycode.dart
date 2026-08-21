@@ -1,4 +1,4 @@
-import 'package:e_commerce/controller/auth/verifycode_controller.dart';
+﻿import 'package:e_commerce/controller/auth/verifycode_controller.dart';
 import 'package:e_commerce/core/class/status_request.dart';
 import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/view/widget/auth/customtextbodyauth.dart';
@@ -31,7 +31,7 @@ class VerfiyCode extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
                 child: ListView(children: [
                   const SizedBox(height: 20),
-                  const Icon(Icons.mark_email_read_outlined, size: 80, color: AppColor.primaryColor),
+                  Icon(Icons.mark_email_read_outlined, size: 80, color: AppColor.primaryColor),
                   const SizedBox(height: 20),
                   CustomTextTitleAuth(text: "Check code".tr),
                   const SizedBox(height: 10),

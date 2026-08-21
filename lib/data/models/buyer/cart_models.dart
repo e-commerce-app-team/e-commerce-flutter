@@ -4,9 +4,14 @@ class ShippingOption {
   final String id;
   final String name;
   final String nameAr;
-  final double cost;
+  final double? cost;
   final String estimatedDelivery;
   final String estimatedDeliveryAr;
+  final String etaHint;
+  final String etaHintAr;
+  final String? storeAddress;
+  final double? storeLatitude;
+  final double? storeLongitude;
 
   const ShippingOption({
     required this.id,
@@ -15,22 +20,45 @@ class ShippingOption {
     required this.cost,
     required this.estimatedDelivery,
     required this.estimatedDeliveryAr,
+    this.etaHint = '',
+    this.etaHintAr = '',
+    this.storeAddress,
+    this.storeLatitude,
+    this.storeLongitude,
   });
 
   factory ShippingOption.fromJson(Map<String, dynamic> json) => ShippingOption(
-        id: json['id']?.toString() ?? 'standard',
-        name: json['name']?.toString() ?? '',
-        nameAr: json['name_ar']?.toString() ?? json['name']?.toString() ?? '',
-        cost: _toDouble(json['cost']),
-        estimatedDelivery: json['estimated_delivery']?.toString() ?? '',
-        estimatedDeliveryAr: json['estimated_delivery_ar']?.toString() ??
-            json['estimated_delivery']?.toString() ??
-            '',
-      );
+    id: json['id']?.toString() ?? 'standard',
+    name: json['name']?.toString() ?? '',
+    nameAr: json['name_ar']?.toString() ?? json['name']?.toString() ?? '',
+    cost: json['cost'] == null ? null : _toDouble(json['cost']),
+    estimatedDelivery: json['estimated_delivery']?.toString() ?? '',
+    estimatedDeliveryAr:
+        json['estimated_delivery_ar']?.toString() ??
+        json['estimated_delivery']?.toString() ??
+        '',
+    etaHint: json['eta_hint']?.toString() ?? '',
+    etaHintAr: json['eta_hint_ar']?.toString() ?? '',
+    storeAddress: json['store_address']?.toString(),
+    storeLatitude: json['store_latitude'] == null
+        ? null
+        : _toDouble(json['store_latitude']),
+    storeLongitude: json['store_longitude'] == null
+        ? null
+        : _toDouble(json['store_longitude']),
+  );
 
   String label(bool isArabic) => isArabic ? nameAr : name;
-  String etaLabel(bool isArabic) =>
-      isArabic ? estimatedDeliveryAr : estimatedDelivery;
+  String etaLabel(bool isArabic) => isArabic
+      ? (estimatedDeliveryAr.isNotEmpty ? estimatedDeliveryAr : etaHintAr)
+      : (estimatedDelivery.isNotEmpty ? estimatedDelivery : etaHint);
+
+  bool get isCostPending => cost == null;
+  bool get hasStoreLocation =>
+      storeAddress != null &&
+      storeAddress!.trim().isNotEmpty &&
+      storeLatitude != null &&
+      storeLongitude != null;
 }
 
 class CartItem {
@@ -83,20 +111,20 @@ class CartItem {
       );
 
   factory CartItem.fromJson(Map<String, dynamic> json) => CartItem(
-        id: json['id']?.toString() ?? '',
-        productId: json['product_id']?.toString() ?? '',
-        variantId: json['variant_id']?.toString(),
-        name: json['name']?.toString() ?? '',
-        imageUrl: json['image']?.toString() ?? '',
-        price: _toDouble(json['price']),
-        originalPrice: json['original_price'] != null
-            ? _toDouble(json['original_price'])
-            : null,
-        quantity: int.tryParse('${json['quantity']}') ?? 1,
-        maxStock: int.tryParse('${json['max_stock']}') ?? 99,
-        isOutOfStock: json['is_out_of_stock'] == true,
-        variant: json['variant']?.toString(),
-      );
+    id: json['id']?.toString() ?? '',
+    productId: json['product_id']?.toString() ?? '',
+    variantId: json['variant_id']?.toString(),
+    name: json['name']?.toString() ?? '',
+    imageUrl: json['image']?.toString() ?? '',
+    price: _toDouble(json['price']),
+    originalPrice: json['original_price'] != null
+        ? _toDouble(json['original_price'])
+        : null,
+    quantity: int.tryParse('${json['quantity']}') ?? 1,
+    maxStock: int.tryParse('${json['max_stock']}') ?? 99,
+    isOutOfStock: json['is_out_of_stock'] == true,
+    variant: json['variant']?.toString(),
+  );
 }
 
 class StoreCartGroup {
@@ -123,31 +151,30 @@ class StoreCartGroup {
   StoreCartGroup copyWith({
     List<CartItem>? items,
     List<ShippingOption>? shippingOptions,
-  }) =>
-      StoreCartGroup(
-        sellerId: sellerId,
-        storeName: storeName,
-        storeLogo: storeLogo,
-        items: items ?? this.items,
-        itemsCount: items?.fold<int>(0, (a, i) => a + i.quantity) ?? itemsCount,
-        subtotal: items?.fold<double>(0, (a, i) => a + i.lineTotal) ?? subtotal,
-        hasFreeShipping: hasFreeShipping,
-        shippingOptions: shippingOptions ?? this.shippingOptions,
-      );
+  }) => StoreCartGroup(
+    sellerId: sellerId,
+    storeName: storeName,
+    storeLogo: storeLogo,
+    items: items ?? this.items,
+    itemsCount: items?.fold<int>(0, (a, i) => a + i.quantity) ?? itemsCount,
+    subtotal: items?.fold<double>(0, (a, i) => a + i.lineTotal) ?? subtotal,
+    hasFreeShipping: hasFreeShipping,
+    shippingOptions: shippingOptions ?? this.shippingOptions,
+  );
 
   factory StoreCartGroup.fromJson(Map<String, dynamic> json) {
     final rawItems = json['items'];
     final items = rawItems is List
         ? rawItems
-            .map((e) => CartItem.fromJson(Map<String, dynamic>.from(e)))
-            .toList()
+              .map((e) => CartItem.fromJson(Map<String, dynamic>.from(e)))
+              .toList()
         : <CartItem>[];
 
     final rawShipping = json['shipping_options'];
     final shipping = rawShipping is List
         ? rawShipping
-            .map((e) => ShippingOption.fromJson(Map<String, dynamic>.from(e)))
-            .toList()
+              .map((e) => ShippingOption.fromJson(Map<String, dynamic>.from(e)))
+              .toList()
         : <ShippingOption>[];
 
     return StoreCartGroup(
@@ -189,37 +216,35 @@ class BuyerAddress {
     double? longitude,
     String? driverNotes,
     bool? isDefault,
-  }) =>
-      BuyerAddress(
-        id: id,
-        title: title ?? this.title,
-        details: details ?? this.details,
-        latitude: latitude ?? this.latitude,
-        longitude: longitude ?? this.longitude,
-        driverNotes: driverNotes ?? this.driverNotes,
-        isDefault: isDefault ?? this.isDefault,
-      );
+  }) => BuyerAddress(
+    id: id,
+    title: title ?? this.title,
+    details: details ?? this.details,
+    latitude: latitude ?? this.latitude,
+    longitude: longitude ?? this.longitude,
+    driverNotes: driverNotes ?? this.driverNotes,
+    isDefault: isDefault ?? this.isDefault,
+  );
 
   factory BuyerAddress.fromJson(Map<String, dynamic> json) => BuyerAddress(
-        id: json['id']?.toString() ?? '',
-        title: json['title']?.toString() ?? '',
-        details: json['details']?.toString() ?? '',
-        latitude: json['latitude'] != null ? _toDouble(json['latitude']) : null,
-        longitude:
-            json['longitude'] != null ? _toDouble(json['longitude']) : null,
-        driverNotes: json['driver_notes']?.toString(),
-        isDefault: json['is_default'] == true,
-      );
+    id: json['id']?.toString() ?? '',
+    title: json['title']?.toString() ?? '',
+    details: json['details']?.toString() ?? '',
+    latitude: json['latitude'] != null ? _toDouble(json['latitude']) : null,
+    longitude: json['longitude'] != null ? _toDouble(json['longitude']) : null,
+    driverNotes: json['driver_notes']?.toString(),
+    isDefault: json['is_default'] == true,
+  );
 
   Map<String, dynamic> toJson() => {
-        'title': title,
-        'details': details,
-        if (latitude != null) 'latitude': latitude,
-        if (longitude != null) 'longitude': longitude,
-        if (driverNotes != null && driverNotes!.isNotEmpty)
-          'driver_notes': driverNotes,
-        'is_default': isDefault,
-      };
+    'title': title,
+    'details': details,
+    if (latitude != null) 'latitude': latitude,
+    if (longitude != null) 'longitude': longitude,
+    if (driverNotes != null && driverNotes!.isNotEmpty)
+      'driver_notes': driverNotes,
+    'is_default': isDefault,
+  };
 }
 
 class AppliedStoreCoupon {
@@ -240,18 +265,21 @@ class CheckoutResult {
   final String orderId;
   final String orderNumber;
   final double totalPrice;
+  final bool shippingPending;
 
   const CheckoutResult({
     required this.orderId,
     required this.orderNumber,
     required this.totalPrice,
+    this.shippingPending = false,
   });
 
   factory CheckoutResult.fromJson(Map<String, dynamic> json) => CheckoutResult(
-        orderId: json['order_id']?.toString() ?? '',
-        orderNumber: json['order_number']?.toString() ?? '',
-        totalPrice: _toDouble(json['total_price']),
-      );
+    orderId: json['order_id']?.toString() ?? '',
+    orderNumber: json['order_number']?.toString() ?? '',
+    totalPrice: _toDouble(json['total_price']),
+    shippingPending: json['shipping_pending'] == true,
+  );
 }
 
 double _toDouble(dynamic value) {

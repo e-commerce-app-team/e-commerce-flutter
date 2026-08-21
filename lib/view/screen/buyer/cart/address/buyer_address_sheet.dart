@@ -25,7 +25,7 @@ class BuyerAddressSheet extends GetView<CartController> {
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.82,
       ),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColor.cardBackground,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -70,11 +70,16 @@ class BuyerAddressSheet extends GetView<CartController> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.location_off_outlined,
-                          size: 48, color: AppColor.greyLight),
+                      Icon(
+                        Icons.location_off_outlined,
+                        size: 48,
+                        color: AppColor.greyLight,
+                      ),
                       const SizedBox(height: 12),
-                      Text('no_saved_addresses'.tr,
-                          style: AppTextStyle.bodyMedium),
+                      Text(
+                        'no_saved_addresses'.tr,
+                        style: AppTextStyle.bodyMedium,
+                      ),
                     ],
                   ),
                 );
@@ -90,9 +95,9 @@ class BuyerAddressSheet extends GetView<CartController> {
                       controller.selectedAddress.value?.id == address.id;
 
                   return InkWell(
-                    onTap: () {
-                      controller.selectAddress(address);
-                      Get.back();
+                    onTap: () async {
+                      await controller.selectAddress(address);
+                      if (Get.isBottomSheetOpen == true) Get.back();
                     },
                     borderRadius: BorderRadius.circular(16),
                     child: Container(
@@ -126,8 +131,10 @@ class BuyerAddressSheet extends GetView<CartController> {
                               children: [
                                 Row(
                                   children: [
-                                    Text(address.title,
-                                        style: AppTextStyle.labelLarge),
+                                    Text(
+                                      address.title,
+                                      style: AppTextStyle.labelLarge,
+                                    ),
                                     if (address.isDefault) ...[
                                       const SizedBox(width: 8),
                                       Text(
@@ -140,8 +147,10 @@ class BuyerAddressSheet extends GetView<CartController> {
                                   ],
                                 ),
                                 const SizedBox(height: 4),
-                                Text(address.details,
-                                    style: AppTextStyle.bodySmall),
+                                Text(
+                                  address.details,
+                                  style: AppTextStyle.bodySmall,
+                                ),
                               ],
                             ),
                           ),

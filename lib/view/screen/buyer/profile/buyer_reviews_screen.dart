@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+﻿import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_commerce/controller/buyer/buyer_profile_controller.dart';
 import 'package:e_commerce/core/class/status_request.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
@@ -289,7 +289,7 @@ class _ReviewImageFallback extends StatelessWidget {
       width: 52,
       height: 52,
       color: AppColor.primarySurface,
-      child: const Icon(Icons.image_outlined, color: AppColor.primaryColor),
+      child: Icon(Icons.image_outlined, color: AppColor.primaryColor),
     );
   }
 }

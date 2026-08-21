@@ -1,4 +1,4 @@
-import 'dart:io';
+﻿import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -74,13 +74,13 @@ class SignUpBuyerControllerImp extends SignUpBuyerController {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "اختر طريقة استلام الرمز",
+              "Ø§Ø®ØªØ± Ø·Ø±ÙŠÙ‚Ø© Ø§Ø³ØªÙ„Ø§Ù… Ø§Ù„Ø±Ù…Ø²",
               style: Theme.of(Get.context!).textTheme.displayLarge?.copyWith(fontSize: 18),
             ),
             const SizedBox(height: 20),
             ListTile(
-              leading: const Icon(Icons.email, color: AppColor.primaryColor),
-              title: const Text("البريد الإلكتروني", style: TextStyle(fontWeight: FontWeight.bold)),
+              leading: Icon(Icons.email, color: AppColor.primaryColor),
+              title: const Text("Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ", style: TextStyle(fontWeight: FontWeight.bold)),
               subtitle: Text(email.text),
               onTap: () {
                 Get.back();
@@ -89,7 +89,7 @@ class SignUpBuyerControllerImp extends SignUpBuyerController {
             ),
             ListTile(
               leading: const Icon(Icons.chat, color: Colors.green),
-              title: const Text("واتساب (WhatsApp)", style: TextStyle(fontWeight: FontWeight.bold)),
+              title: const Text("ÙˆØ§ØªØ³Ø§Ø¨ (WhatsApp)", style: TextStyle(fontWeight: FontWeight.bold)),
               subtitle: Text(phone.text),
               onTap: () {
                 Get.back();
@@ -106,14 +106,14 @@ class SignUpBuyerControllerImp extends SignUpBuyerController {
     statusRequest = StatusRequest.loading;
     update();
 
-    // إرسال كود التحقق
+    // Ø¥Ø±Ø³Ø§Ù„ ÙƒÙˆØ¯ Ø§Ù„ØªØ­Ù‚Ù‚
     var response = await verifyCodeSignUpData.sendOtp(
         email.text, phone.text, firstName.text, method);
 
     response.fold((lift) async {
       statusRequest = StatusRequest.none;
       update();
-      customSnackbar("خطأ", "فشل الاتصال بالخادم. تأكد من إعدادات الشبكة.", isError: true);
+      customSnackbar("Ø®Ø·Ø£", "ÙØ´Ù„ Ø§Ù„Ø§ØªØµØ§Ù„ Ø¨Ø§Ù„Ø®Ø§Ø¯Ù…. ØªØ£ÙƒØ¯ Ù…Ù† Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Ø§Ù„Ø´Ø¨ÙƒØ©.", isError: true);
     }, (right) async {
       if (right["success"] == true) {
         statusRequest = StatusRequest.success;
@@ -128,16 +128,16 @@ class SignUpBuyerControllerImp extends SignUpBuyerController {
           "password_confirmation": confirmPassword.text,
         };
 
-        // توجيه لصفحة التحقق مع تمرير البيانات وانتظار النتيجة
+        // ØªÙˆØ¬ÙŠÙ‡ Ù„ØµÙØ­Ø© Ø§Ù„ØªØ­Ù‚Ù‚ Ù…Ø¹ ØªÙ…Ø±ÙŠØ± Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª ÙˆØ§Ù†ØªØ¸Ø§Ø± Ø§Ù„Ù†ØªÙŠØ¬Ø©
         var result = await Get.toNamed(AppRoute.verfiyCodeSignUp, arguments: {
           "textData": textData,
           "profileImage": profileImage,
           "method": method,
         });
 
-        // إذا عاد true — تم التحقق بنجاح، نكمل عملية إنشاء الحساب هنا
+        // Ø¥Ø°Ø§ Ø¹Ø§Ø¯ true â€” ØªÙ… Ø§Ù„ØªØ­Ù‚Ù‚ Ø¨Ù†Ø¬Ø§Ø­ØŒ Ù†ÙƒÙ…Ù„ Ø¹Ù…Ù„ÙŠØ© Ø¥Ù†Ø´Ø§Ø¡ Ø§Ù„Ø­Ø³Ø§Ø¨ Ù‡Ù†Ø§
         if (result == true) {
-          // جمع الملفات
+          // Ø¬Ù…Ø¹ Ø§Ù„Ù…Ù„ÙØ§Øª
           Map<String, File> filesData = {};
           if (profileImage != null) filesData['profile_photo'] = profileImage!;
 
@@ -145,13 +145,13 @@ class SignUpBuyerControllerImp extends SignUpBuyerController {
           registerResponse.fold((lRegister) {
             statusRequest = StatusRequest.none;
             update();
-            String errorMsg = "فشل الاتصال أثناء إنشاء الحساب";
+            String errorMsg = "ÙØ´Ù„ Ø§Ù„Ø§ØªØµØ§Ù„ Ø£Ø«Ù†Ø§Ø¡ Ø¥Ù†Ø´Ø§Ø¡ Ø§Ù„Ø­Ø³Ø§Ø¨";
             if (lRegister.toString().contains("offline")) {
-              errorMsg = "لا يوجد اتصال بالإنترنت. تأكد من الشبكة وحاول مرة أخرى.";
+              errorMsg = "Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ø§ØªØµØ§Ù„ Ø¨Ø§Ù„Ø¥Ù†ØªØ±Ù†Øª. ØªØ£ÙƒØ¯ Ù…Ù† Ø§Ù„Ø´Ø¨ÙƒØ© ÙˆØ­Ø§ÙˆÙ„ Ù…Ø±Ø© Ø£Ø®Ø±Ù‰.";
             } else if (lRegister.toString().contains("timeout")) {
-              errorMsg = "انقطع الاتصال بالخادم. حاول مرة أخرى.";
+              errorMsg = "Ø§Ù†Ù‚Ø·Ø¹ Ø§Ù„Ø§ØªØµØ§Ù„ Ø¨Ø§Ù„Ø®Ø§Ø¯Ù…. Ø­Ø§ÙˆÙ„ Ù…Ø±Ø© Ø£Ø®Ø±Ù‰.";
             }
-            customSnackbar("خطأ", errorMsg, isError: true);
+            customSnackbar("Ø®Ø·Ø£", errorMsg, isError: true);
           }, (rRegister) {
             if (rRegister["success"] == true) {
               statusRequest = StatusRequest.success;

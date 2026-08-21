@@ -7,12 +7,13 @@ import 'package:e_commerce/core/functions/format_price.dart' as price_fmt;
 import 'package:e_commerce/core/services/services.dart';
 import 'package:e_commerce/data/datasource/remote/buyer/cart_datasource.dart';
 import 'package:e_commerce/data/models/buyer/cart_models.dart';
-import 'package:e_commerce/view/screen/buyer/cart/checkout/order_success_screen.dart';
+import 'package:e_commerce/view/screen/buyer/cart/checkout/order_request_submitted_screen.dart';
 
 class CartController extends GetxController {
   final BuyerCartDataSource _cartData = BuyerCartDataSource(Get.find<Crud>());
-  final BuyerAddressDataSource _addressData =
-      BuyerAddressDataSource(Get.find<Crud>());
+  final BuyerAddressDataSource _addressData = BuyerAddressDataSource(
+    Get.find<Crud>(),
+  );
   final MyServices _services = Get.find<MyServices>();
 
   // ── State ───────────────────────────────────────────────────────────────────
@@ -57,15 +58,18 @@ class CartController extends GetxController {
   double get grandSubtotal =>
       storeGroups.fold(0.0, (acc, g) => acc + g.subtotal);
 
-  double get totalShipping => storeGroups.fold(0.0, (acc, g) {
-        final opt = _selectedShippingOption(g);
-        return acc + (opt?.cost ?? 0);
-      });
+  bool get hasPendingShipping => storeGroups.any((g) {
+    final option = _selectedShippingOption(g);
+    return option == null || option.isCostPending;
+  });
 
-  double get totalDiscount => appliedCoupons.values.fold(
-        0.0,
-        (acc, c) => acc + c.discountAmount,
-      );
+  double get totalShipping => storeGroups.fold(0.0, (acc, g) {
+    final opt = _selectedShippingOption(g);
+    return acc + (opt?.cost ?? 0);
+  });
+
+  double get totalDiscount =>
+      appliedCoupons.values.fold(0.0, (acc, c) => acc + c.discountAmount);
 
   double get grandTotal =>
       (grandSubtotal - totalDiscount + totalShipping).clamp(0, double.infinity);
@@ -164,29 +168,26 @@ class CartController extends GetxController {
     isLoading.value = false;
     _cartLoadInProgress = false;
 
-    result.fold(
-      (_) => customSnackbar('error'.tr, 'server_error'.tr),
-      (body) {
-        if (body['success'] != true && body['message'] != null) {
-          customSnackbar('error'.tr, body['message'].toString());
-          return;
-        }
-        final data = body['data'];
-        if (data is! Map) return;
+    result.fold((_) => customSnackbar('error'.tr, 'server_error'.tr), (body) {
+      if (body['success'] != true && body['message'] != null) {
+        customSnackbar('error'.tr, body['message'].toString());
+        return;
+      }
+      final data = body['data'];
+      if (data is! Map) return;
 
-        final stores = data['stores'];
-        if (stores is! List) return;
+      final stores = data['stores'];
+      if (stores is! List) return;
 
-        storeGroups.assignAll(
-          stores
-              .map((e) => StoreCartGroup.fromJson(Map<String, dynamic>.from(e)))
-              .toList(),
-        );
+      storeGroups.assignAll(
+        stores
+            .map((e) => StoreCartGroup.fromJson(Map<String, dynamic>.from(e)))
+            .toList(),
+      );
 
-        _initStoreSelections();
-        _applySpinWheelCouponIfAny();
-      },
-    );
+      _initStoreSelections();
+      _applySpinWheelCouponIfAny();
+    });
   }
 
   Future<void> loadAddresses() async {
@@ -202,7 +203,8 @@ class CartController extends GetxController {
         data.map((e) => BuyerAddress.fromJson(Map<String, dynamic>.from(e))),
       );
 
-      selectedAddress.value = addresses.firstWhereOrNull((a) => a.isDefault) ??
+      selectedAddress.value =
+          addresses.firstWhereOrNull((a) => a.isDefault) ??
           addresses.firstOrNull;
     });
   }
@@ -213,7 +215,8 @@ class CartController extends GetxController {
 
     final result = await _cartData.getWalletBalance(token);
     result.fold((_) {}, (body) {
-      final raw = body['available_balance'] ??
+      final raw =
+          body['available_balance'] ??
           body['balance'] ??
           (body['data'] is Map ? body['data']['available_balance'] : null);
       walletBalance.value = double.tryParse('$raw') ?? walletBalance.value;
@@ -224,11 +227,14 @@ class CartController extends GetxController {
     for (final group in storeGroups) {
       promoControllers.putIfAbsent(group.sellerId, TextEditingController.new);
 
-      if (!selectedShipping.containsKey(group.sellerId)) {
-        final first = group.shippingOptions.isNotEmpty
-            ? group.shippingOptions.first.id
-            : 'standard';
-        selectedShipping[group.sellerId] = first;
+      final currentSelection = selectedShipping[group.sellerId];
+      final selectionIsStillAvailable = group.shippingOptions.any(
+        (option) => option.id == currentSelection,
+      );
+      if (!selectionIsStillAvailable && group.shippingOptions.isNotEmpty) {
+        selectedShipping[group.sellerId] = group.shippingOptions.first.id;
+      } else if (group.shippingOptions.isEmpty) {
+        selectedShipping.remove(group.sellerId);
       }
 
       final coupon = appliedCoupons[group.sellerId];
@@ -239,8 +245,9 @@ class CartController extends GetxController {
   }
 
   void _applySpinWheelCouponIfAny() {
-    final pending =
-        _services.sharedPreferences.getString('pending_spin_coupon');
+    final pending = _services.sharedPreferences.getString(
+      'pending_spin_coupon',
+    );
     if (pending == null || pending.isEmpty || storeGroups.isEmpty) return;
 
     final firstStore = storeGroups.first;
@@ -265,10 +272,18 @@ class CartController extends GetxController {
     return _selectedShippingOption(group)?.cost ?? 0;
   }
 
+  bool storeShippingPending(String sellerId) {
+    final group = storeGroups.firstWhereOrNull((g) => g.sellerId == sellerId);
+    return group == null ||
+        (_selectedShippingOption(group)?.isCostPending ?? true);
+  }
+
   double storeTotal(String sellerId) {
     final group = storeGroups.firstWhereOrNull((g) => g.sellerId == sellerId);
     if (group == null) return 0;
-    return group.subtotal - storeDiscount(sellerId) + storeShippingCost(sellerId);
+    return group.subtotal -
+        storeDiscount(sellerId) +
+        storeShippingCost(sellerId);
   }
 
   void selectShipping(String sellerId, String optionId) {
@@ -276,11 +291,26 @@ class CartController extends GetxController {
     selectedShipping.refresh();
   }
 
-  void selectAddress(BuyerAddress address) {
+  Future<void> selectAddress(BuyerAddress address) async {
     selectedAddress.value = address;
     if (address.driverNotes != null && address.driverNotes!.isNotEmpty) {
       driverNotesCtrl.text = address.driverNotes!;
     }
+
+    // Keep the visual selection and the next checkout in sync after reopening
+    // the address picker. The server continues to own the default address.
+    final token = _token;
+    if (token == null || address.id.isEmpty) return;
+    final result = await _addressData.setDefault(token, address.id);
+    result.fold((_) {}, (body) {
+      if (body['success'] == true) {
+        addresses.assignAll(
+          addresses
+              .map((item) => item.copyWith(isDefault: item.id == address.id))
+              .toList(),
+        );
+      }
+    });
   }
 
   Future<void> addAddress(BuyerAddress draft) async {
@@ -288,17 +318,14 @@ class CartController extends GetxController {
     if (token == null) return;
 
     final result = await _addressData.createAddress(token, draft.toJson());
-    result.fold(
-      (_) => customSnackbar('error'.tr, 'server_error'.tr),
-      (body) {
-        if (body['success'] == true) {
-          customSnackbar('success'.tr, 'address_saved'.tr, isError: false);
-          loadAddresses();
-        } else {
-          customSnackbar('error'.tr, body['message']?.toString() ?? 'error'.tr);
-        }
-      },
-    );
+    result.fold((_) => customSnackbar('error'.tr, 'server_error'.tr), (body) {
+      if (body['success'] == true) {
+        customSnackbar('success'.tr, 'address_saved'.tr, isError: false);
+        loadAddresses();
+      } else {
+        customSnackbar('error'.tr, body['message']?.toString() ?? 'error'.tr);
+      }
+    });
   }
 
   Future<void> increaseQuantity(String itemId, String sellerId) async {
@@ -334,16 +361,13 @@ class CartController extends GetxController {
     if (token == null) return;
 
     final result = await _cartData.updateQty(token, itemId, qty);
-    result.fold(
-      (_) => customSnackbar('error'.tr, 'server_error'.tr),
-      (body) {
-        if (body['success'] != true) {
-          customSnackbar('error'.tr, body['message']?.toString() ?? 'error'.tr);
-          return;
-        }
-        loadCart();
-      },
-    );
+    result.fold((_) => customSnackbar('error'.tr, 'server_error'.tr), (body) {
+      if (body['success'] != true) {
+        customSnackbar('error'.tr, body['message']?.toString() ?? 'error'.tr);
+        return;
+      }
+      loadCart();
+    });
   }
 
   Future<void> removeItem(String itemId) async {
@@ -351,14 +375,11 @@ class CartController extends GetxController {
     if (token == null) return;
 
     final result = await _cartData.removeItem(token, itemId);
-    result.fold(
-      (_) => customSnackbar('error'.tr, 'server_error'.tr),
-      (body) {
-        if (body['success'] == true) {
-          loadCart();
-        }
-      },
-    );
+    result.fold((_) => customSnackbar('error'.tr, 'server_error'.tr), (body) {
+      if (body['success'] == true) {
+        loadCart();
+      }
+    });
   }
 
   Future<void> clearCart() async {
@@ -426,12 +447,17 @@ class CartController extends GetxController {
         appliedCoupons.refresh();
 
         if (coupon is Map && coupon['type'] == 'free_shipping') {
-          final pickup = group.shippingOptions
-              .firstWhereOrNull((o) => o.id == 'pickup' || o.cost == 0);
+          final pickup = group.shippingOptions.firstWhereOrNull(
+            (o) => o.id == 'pickup' || o.cost == 0,
+          );
           if (pickup != null) selectShipping(sellerId, pickup.id);
         }
 
-        customSnackbar('success'.tr, 'promo_applied_success'.tr, isError: false);
+        customSnackbar(
+          'success'.tr,
+          'promo_applied_success'.tr,
+          isError: false,
+        );
       },
     );
   }
@@ -465,51 +491,97 @@ class CartController extends GetxController {
       return;
     }
 
+    // Do not invent a fallback delivery method. The backend remains the source
+    // of truth; this simply prevents an avoidable request with no valid choice.
+    final unavailableStore = storeGroups.firstWhereOrNull(
+      (group) => _selectedShippingOption(group) == null,
+    );
+    if (unavailableStore != null) {
+      final isArabic = Get.locale?.languageCode == 'ar';
+      customSnackbar(
+        'notice'.tr,
+        isArabic
+            ? 'لا توجد طريقة استلام متاحة حاليًا لدى ${unavailableStore.storeName}.'
+            : 'No delivery method is currently available for ${unavailableStore.storeName}.',
+      );
+      return;
+    }
+
     isCheckingOut.value = true;
 
     final storesPayload = storeGroups.map((g) {
       return {
         'seller_id': int.tryParse(g.sellerId) ?? g.sellerId,
-        'shipping_option_id': selectedShipping[g.sellerId] ?? 'standard',
+        'shipping_option_id': selectedShipping[g.sellerId],
         if (appliedCoupons[g.sellerId] != null)
           'coupon_code': appliedCoupons[g.sellerId]!.code,
       };
     }).toList();
 
-    final result = await _cartData.checkout(
-      _token!,
-      {
-        'address_id': int.tryParse(selectedAddress.value!.id) ??
-            selectedAddress.value!.id,
-        'driver_notes': driverNotesCtrl.text.trim(),
-        'stores': storesPayload,
-        'idempotency_key': _checkoutIdempotencyKey ??=
-            'cart-${DateTime.now().microsecondsSinceEpoch}',
-      },
-    );
+    final result = await _cartData.checkout(_token!, {
+      'address_id':
+          int.tryParse(selectedAddress.value!.id) ?? selectedAddress.value!.id,
+      'driver_notes': driverNotesCtrl.text.trim(),
+      'stores': storesPayload,
+      'idempotency_key': _checkoutIdempotencyKey ??=
+          'cart-${DateTime.now().microsecondsSinceEpoch}',
+    });
 
     isCheckingOut.value = false;
 
     await result.fold(
       (_) async {
-        customSnackbar('error'.tr, 'server_error'.tr);
+        final isArabic = Get.locale?.languageCode == 'ar';
+        customSnackbar(
+          'error'.tr,
+          isArabic
+              ? 'تعذر إرسال الطلب الآن. تأكد من اتصال الخادم ثم حاول مجددًا.'
+              : 'The order request could not be sent. Check the server connection and try again.',
+        );
       },
       (body) async {
         if (body['success'] != true) {
-          customSnackbar('error'.tr, body['message']?.toString() ?? 'error'.tr);
+          customSnackbar('error'.tr, _checkoutErrorMessage(body));
           return;
         }
 
-        final checkout = CheckoutResult.fromJson(Map<String, dynamic>.from(body));
-        await loadWalletBalance();
+        final checkout = CheckoutResult.fromJson(
+          Map<String, dynamic>.from(body),
+        );
         _checkoutIdempotencyKey = null;
-        await Get.off(() => OrderSuccessScreen(
-              orderNumber: checkout.orderNumber,
-              totalAmount: checkout.totalPrice,
-            ));
+        await Get.off(
+          () => OrderRequestSubmittedScreen(
+            orderNumber: checkout.orderNumber,
+            provisionalTotal: checkout.totalPrice,
+            shippingPending: checkout.shippingPending,
+          ),
+        );
         await loadCart();
       },
     );
+  }
+
+  String _checkoutErrorMessage(Map body) {
+    if (Get.locale?.languageCode == 'ar') {
+      final arabicMessage = body['message_ar']?.toString();
+      if (arabicMessage != null && arabicMessage.trim().isNotEmpty) {
+        return arabicMessage;
+      }
+    }
+    final message = body['message']?.toString();
+    if (message != null && message.trim().isNotEmpty) return message;
+
+    final errors = body['errors'];
+    if (errors is Map) {
+      for (final value in errors.values) {
+        if (value is List && value.isNotEmpty) return value.first.toString();
+        if (value != null) return value.toString();
+      }
+    }
+
+    return Get.locale?.languageCode == 'ar'
+        ? 'تعذر إرسال الطلب. راجع بيانات الاستلام وحاول مجددًا.'
+        : 'The order request could not be submitted. Review the delivery details and try again.';
   }
 
   void startShopping() {

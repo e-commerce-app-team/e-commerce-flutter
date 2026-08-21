@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -30,7 +30,7 @@ class _BranchLocationPickerScreenState
   bool _mapReady    = false;
   bool _isLocating  = false;
   bool _isDragging  = false;
-  String _currentAddress = 'جاري تحديد الموقع...';
+  String _currentAddress = 'Ø¬Ø§Ø±ÙŠ ØªØ­Ø¯ÙŠØ¯ Ø§Ù„Ù…ÙˆÙ‚Ø¹...';
 
   final MapController        _mapController    = MapController();
   final TextEditingController _searchController = TextEditingController();
@@ -89,7 +89,7 @@ class _BranchLocationPickerScreenState
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        Get.snackbar('تنبيه', 'الرجاء تفعيل الـ GPS في هاتفك');
+        Get.snackbar('ØªÙ†Ø¨ÙŠÙ‡', 'Ø§Ù„Ø±Ø¬Ø§Ø¡ ØªÙØ¹ÙŠÙ„ Ø§Ù„Ù€ GPS ÙÙŠ Ù‡Ø§ØªÙÙƒ');
         return;
       }
       LocationPermission perm = await Geolocator.checkPermission();
@@ -106,7 +106,7 @@ class _BranchLocationPickerScreenState
       setState(() => _selectedPoint = myLatLng);
       _getAddressFromLatLng(myLatLng);
     } catch (_) {
-      Get.snackbar('خطأ', 'لم نتمكن من تحديد موقعك الحالي');
+      Get.snackbar('Ø®Ø·Ø£', 'Ù„Ù… Ù†ØªÙ…ÙƒÙ† Ù…Ù† ØªØ­Ø¯ÙŠØ¯ Ù…ÙˆÙ‚Ø¹Ùƒ Ø§Ù„Ø­Ø§Ù„ÙŠ');
     } finally {
       if (mounted) setState(() => _isLocating = false);
     }
@@ -124,7 +124,7 @@ class _BranchLocationPickerScreenState
         _getAddressFromLatLng(point);
       }
     } catch (_) {
-      Get.snackbar('عذراً', 'لم نتمكن من العثور على المكان');
+      Get.snackbar('Ø¹Ø°Ø±Ø§Ù‹', 'Ù„Ù… Ù†ØªÙ…ÙƒÙ† Ù…Ù† Ø§Ù„Ø¹Ø«ÙˆØ± Ø¹Ù„Ù‰ Ø§Ù„Ù…ÙƒØ§Ù†');
     }
   }
 
@@ -137,10 +137,10 @@ class _BranchLocationPickerScreenState
         final addr = [p.street, p.subLocality, p.locality, p.country]
             .where((e) => e != null && e.isNotEmpty)
             .join(', ');
-        if (mounted) setState(() => _currentAddress = addr.isNotEmpty ? addr : 'موقع محدد');
+        if (mounted) setState(() => _currentAddress = addr.isNotEmpty ? addr : 'Ù…ÙˆÙ‚Ø¹ Ù…Ø­Ø¯Ø¯');
       }
     } catch (_) {
-      if (mounted) setState(() => _currentAddress = 'موقع محدد');
+      if (mounted) setState(() => _currentAddress = 'Ù…ÙˆÙ‚Ø¹ Ù…Ø­Ø¯Ø¯');
     }
   }
 
@@ -149,7 +149,7 @@ class _BranchLocationPickerScreenState
     backgroundColor: AppColor.secondBackground,
     body: Stack(children: [
 
-      // ── Map ──────────────────────────────────────────────────────────────
+      // â”€â”€ Map â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       FlutterMap(
         mapController: _mapController,
         options: MapOptions(
@@ -174,7 +174,7 @@ class _BranchLocationPickerScreenState
         ],
       ),
 
-      // ── Animated center pin ───────────────────────────────────────────────
+      // â”€â”€ Animated center pin â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       IgnorePointer(
         child: Center(
           child: AnimatedBuilder(
@@ -227,7 +227,7 @@ class _BranchLocationPickerScreenState
         ),
       ),
 
-      // ── Top bar ───────────────────────────────────────────────────────────
+      // â”€â”€ Top bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       SafeArea(
         child: Column(children: [
           Padding(
@@ -236,7 +236,7 @@ class _BranchLocationPickerScreenState
               // Back button
               _CircleBtn(
                 onTap: Get.back,
-                child: const Icon(Icons.arrow_back_ios_rounded,
+                child: Icon(Icons.arrow_back_ios_rounded,
                     size: 18, color: AppColor.black),
               ),
               const SizedBox(width: 10),
@@ -255,10 +255,10 @@ class _BranchLocationPickerScreenState
                     onSubmitted: _searchPlace,
                     style: AppTextStyle.labelMedium.copyWith(fontSize: 13),
                     decoration: InputDecoration(
-                      hintText: 'ابحث عن منطقة أو شارع...',
+                      hintText: 'Ø§Ø¨Ø­Ø« Ø¹Ù† Ù…Ù†Ø·Ù‚Ø© Ø£Ùˆ Ø´Ø§Ø±Ø¹...',
                       hintStyle: AppTextStyle.labelMedium
                           .copyWith(fontSize: 13, color: AppColor.greyLight),
-                      prefixIcon: const Icon(Icons.search_rounded,
+                      prefixIcon: Icon(Icons.search_rounded,
                           color: AppColor.primaryColor, size: 20),
                       suffixIcon: _searchController.text.isNotEmpty
                           ? IconButton(
@@ -281,7 +281,7 @@ class _BranchLocationPickerScreenState
 
           const Spacer(),
 
-          // ── My location FAB ─────────────────────────────────────────────
+          // â”€â”€ My location FAB â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           Padding(
             padding: const EdgeInsets.only(right: 14, bottom: 12),
             child: Align(
@@ -290,17 +290,17 @@ class _BranchLocationPickerScreenState
                 size: 48,
                 onTap: _goToMyLocation,
                 child: _isLocating
-                    ? const Padding(
+                    ? Padding(
                         padding: EdgeInsets.all(12),
                         child: CircularProgressIndicator(
                             color: AppColor.primaryColor, strokeWidth: 2.5))
-                    : const Icon(Icons.my_location_rounded,
+                    : Icon(Icons.my_location_rounded,
                         color: AppColor.primaryColor, size: 22),
               ),
             ),
           ),
 
-          // ── Bottom info & confirm panel ──────────────────────────────────
+          // â”€â”€ Bottom info & confirm panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           Container(
             margin: const EdgeInsets.fromLTRB(12, 0, 12, 16),
             padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
@@ -324,7 +324,7 @@ class _BranchLocationPickerScreenState
                     color: AppColor.primarySurface,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Icon(Icons.pin_drop_rounded,
+                  child: Icon(Icons.pin_drop_rounded,
                       size: 18, color: AppColor.primaryColor),
                 ),
                 const SizedBox(width: 10),
@@ -372,7 +372,7 @@ class _BranchLocationPickerScreenState
   );
 }
 
-// ─── Circle icon button helper ────────────────────────────────────────────────
+// â”€â”€â”€ Circle icon button helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _CircleBtn extends StatelessWidget {
   final VoidCallback onTap;

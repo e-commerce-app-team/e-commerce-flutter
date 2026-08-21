@@ -1,4 +1,4 @@
-import 'dart:io';
+﻿import 'dart:io';
 import 'package:e_commerce/core/class/status_request.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -133,7 +133,7 @@ class SignUpSellerControllerImp extends SignUpSellerController {
       }
 
       if (currentPage == 1 && selectedCategoryId == null) {
-        customSnackbar("تنبيه", "ادخل تصنيف المتجر");
+        customSnackbar("ØªÙ†Ø¨ÙŠÙ‡", "Ø§Ø¯Ø®Ù„ ØªØµÙ†ÙŠÙ Ø§Ù„Ù…ØªØ¬Ø±");
         return;
       }
 
@@ -157,20 +157,20 @@ class SignUpSellerControllerImp extends SignUpSellerController {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "اختر طريقة استلام الرمز",
+              "Ø§Ø®ØªØ± Ø·Ø±ÙŠÙ‚Ø© Ø§Ø³ØªÙ„Ø§Ù… Ø§Ù„Ø±Ù…Ø²",
               style: Theme.of(Get.context!).textTheme.displayLarge?.copyWith(fontSize: 18),
             ),
             const SizedBox(height: 20),
             ListTile(
-              leading: const Icon(Icons.email, color: AppColor.primaryColor),
-              title: const Text("البريد الإلكتروني", style: TextStyle(fontWeight: FontWeight.bold)), onTap: () {
+              leading: Icon(Icons.email, color: AppColor.primaryColor),
+              title: const Text("Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ", style: TextStyle(fontWeight: FontWeight.bold)), onTap: () {
                 Get.back();
                 _sendOtpAndNavigate('email');
               },
             ),
             ListTile(
               leading: const Icon(Icons.chat, color: Colors.green),
-              title: const Text("واتساب (WhatsApp)", style: TextStyle(fontWeight: FontWeight.bold)),
+              title: const Text("ÙˆØ§ØªØ³Ø§Ø¨ (WhatsApp)", style: TextStyle(fontWeight: FontWeight.bold)),
               subtitle: Text(phone.text),
               onTap: () {
                 Get.back();
@@ -192,14 +192,14 @@ class SignUpSellerControllerImp extends SignUpSellerController {
     response.fold((lift) {
       statusRequest = StatusRequest.none;
       update();
-      customSnackbar("خطأ", "فشل الاتصال بالخادم. حاول مجدداً.", isError: true);
+      customSnackbar("Ø®Ø·Ø£", "ÙØ´Ù„ Ø§Ù„Ø§ØªØµØ§Ù„ Ø¨Ø§Ù„Ø®Ø§Ø¯Ù…. Ø­Ø§ÙˆÙ„ Ù…Ø¬Ø¯Ø¯Ø§Ù‹.", isError: true);
     }, (right) {
       statusRequest = StatusRequest.none;
       update();
       if (right["success"] == true) {
         _navigateToOtpScreen(method);
       } else {
-        String errorMessage = right['message'] ?? 'حدث خطأ غير متوقع';
+        String errorMessage = right['message'] ?? 'Ø­Ø¯Ø« Ø®Ø·Ø£ ØºÙŠØ± Ù…ØªÙˆÙ‚Ø¹';
         if (right['errors'] != null) {
           errorMessage = (right['errors'] as Map).values.first[0];
         }
@@ -250,11 +250,11 @@ class SignUpSellerControllerImp extends SignUpSellerController {
   Future<void> signUp() async {
     if (formstate.currentState!.validate()) {
       if (logoImage == null || idImage == null) {
-        customSnackbar("تنبيه".tr, "الرجاء رفع شعار المتجر وصورة الهوية ");
+        customSnackbar("ØªÙ†Ø¨ÙŠÙ‡".tr, "Ø§Ù„Ø±Ø¬Ø§Ø¡ Ø±ÙØ¹ Ø´Ø¹Ø§Ø± Ø§Ù„Ù…ØªØ¬Ø± ÙˆØµÙˆØ±Ø© Ø§Ù„Ù‡ÙˆÙŠØ© ");
         return;
       }
       if (accountType == 'wholesale' && crImage == null) {
-      customSnackbar("تنبيه","الرجاء رفع صورة السجل التجاري ");
+      customSnackbar("ØªÙ†Ø¨ÙŠÙ‡","Ø§Ù„Ø±Ø¬Ø§Ø¡ Ø±ÙØ¹ ØµÙˆØ±Ø© Ø§Ù„Ø³Ø¬Ù„ Ø§Ù„ØªØ¬Ø§Ø±ÙŠ ");
         return;
       }
     statusRequest=StatusRequest.loading;

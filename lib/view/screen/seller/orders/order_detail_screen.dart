@@ -172,7 +172,7 @@ class _StatusCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.timer_outlined,
                         size: 12,
                         color: AppColor.grey,
@@ -442,7 +442,7 @@ class _ProductRow extends StatelessWidget {
               color: AppColor.primarySurface,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.inventory_2_outlined,
               size: 18,
               color: AppColor.primaryColor,
@@ -466,7 +466,7 @@ class _ProductRow extends StatelessWidget {
             ),
           ),
           Text(
-            '×${item.qty}',
+            'Ã—${item.qty}',
             style: AppTextStyle.labelMedium.copyWith(
               color: AppColor.grey,
               fontSize: 13,
@@ -504,12 +504,18 @@ class _PriceCard extends StatelessWidget {
           ),
           _PriceRow(
             label: 'price_shipping'.tr,
-            value: order.shippingFee == 0
+            value: order.shippingCost == null
+                ? 'بانتظار تحديد التاجر'
+                : order.shippingFee == 0
                 ? 'order_free_ship_label'.tr
                 : (order.shippingFee >= 1000
                       ? 'SP ${order.shippingFee ~/ 1000}k'
                       : 'SP ${order.shippingFee}'),
-            valueColor: order.shippingFee == 0 ? AppColor.success : null,
+            valueColor: order.shippingCost == null
+                ? AppColor.info
+                : order.shippingFee == 0
+                ? AppColor.success
+                : null,
           ),
           if (order.discount > 0) ...[
             _PriceRow(
@@ -522,7 +528,7 @@ class _PriceCard extends StatelessWidget {
             if (order.discountInfo != null)
               _DiscountSourceChip(info: order.discountInfo!),
           ],
-          const Divider(height: 16, color: AppColor.greyBorder),
+          Divider(height: 16, color: AppColor.greyBorder),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -546,10 +552,10 @@ class _PriceCard extends StatelessWidget {
   String _discountLabel(SubOrderModel o) {
     if (o.discountInfo == null) return 'price_discount'.tr;
     if (o.discountInfo!.isCoupon) {
-      return '${'price_discount'.tr} — ${o.discountInfo!.couponCode ?? ""}';
+      return '${'price_discount'.tr} â€” ${o.discountInfo!.couponCode ?? ""}';
     }
     if (o.discountInfo!.isSpinWheel) {
-      return '${'price_discount'.tr} — ${'order_spin_label'.tr}';
+      return '${'price_discount'.tr} â€” ${'order_spin_label'.tr}';
     }
     return 'price_discount'.tr;
   }
@@ -810,69 +816,182 @@ class _DetailActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ctrl = Get.find<SellerOrdersController>();
-    return Row(
+    return Column(
       children: [
-        Expanded(
-          child: OutlinedButton(
-            onPressed: () => showDialog(
-              context: context,
-              builder: (_) => RejectOrderDialog(
-                order: order,
-                onConfirm: (reason) {
-                  ctrl.rejectOrder(order, reason);
-                  Get.back();
-                },
+        if (order.isPending || order.isProcessing) ...[
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: () => showDialog(
+                context: context,
+                builder: (_) =>
+                    _SellerShippingQuoteDialog(order: order, ctrl: ctrl),
               ),
-            ),
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 13),
-              side: const BorderSide(color: AppColor.greyBorder),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: Text(
-              'order_reject_title'.tr,
-              style: AppTextStyle.buttonMedium.copyWith(color: AppColor.grey),
-            ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          flex: 2,
-          child: ElevatedButton.icon(
-            onPressed: () => showDialog(
-              context: context,
-              builder: (_) => AcceptOrderDialog(
-                order: order,
-                onConfirm: (minutes) {
-                  ctrl.acceptOrder(order, estimatedMinutes: minutes);
-                  Get.back();
-                },
-              ),
-            ),
-            icon: const Icon(
-              Icons.check_rounded,
-              color: Colors.white,
-              size: 18,
-            ),
-            label: Text(
-              'order_accept_btn'.tr,
-              style: AppTextStyle.buttonMedium,
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColor.primaryColor,
-              elevation: 0,
-              padding: const EdgeInsets.symmetric(vertical: 13),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+              icon: const Icon(Icons.local_shipping_outlined),
+              label: const Text('تحديد طريقة وتكلفة التوصيل'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppColor.primaryColor,
+                side: BorderSide(color: AppColor.primaryColor.withOpacity(.35)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
           ),
+          const SizedBox(height: 12),
+        ],
+        Row(
+          children: [
+            Expanded(
+              child: OutlinedButton(
+                onPressed: () => showDialog(
+                  context: context,
+                  builder: (_) => RejectOrderDialog(
+                    order: order,
+                    onConfirm: (reason) {
+                      ctrl.rejectOrder(order, reason);
+                      Get.back();
+                    },
+                  ),
+                ),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 13),
+                  side: BorderSide(color: AppColor.greyBorder),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: Text(
+                  'order_reject_title'.tr,
+                  style: AppTextStyle.buttonMedium.copyWith(
+                    color: AppColor.grey,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              flex: 2,
+              child: ElevatedButton.icon(
+                onPressed: () => showDialog(
+                  context: context,
+                  builder: (_) => AcceptOrderDialog(
+                    order: order,
+                    onConfirm: (minutes) {
+                      ctrl.acceptOrder(order, estimatedMinutes: minutes);
+                      Get.back();
+                    },
+                  ),
+                ),
+                icon: const Icon(
+                  Icons.check_rounded,
+                  color: Colors.white,
+                  size: 18,
+                ),
+                label: Text(
+                  'order_accept_btn'.tr,
+                  style: AppTextStyle.buttonMedium,
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColor.primaryColor,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(vertical: 13),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );
   }
+}
+
+class _SellerShippingQuoteDialog extends StatefulWidget {
+  final SubOrderModel order;
+  final SellerOrdersController ctrl;
+  const _SellerShippingQuoteDialog({required this.order, required this.ctrl});
+  @override
+  State<_SellerShippingQuoteDialog> createState() =>
+      _SellerShippingQuoteDialogState();
+}
+
+class _SellerShippingQuoteDialogState
+    extends State<_SellerShippingQuoteDialog> {
+  String method = 'standard';
+  final costCtrl = TextEditingController();
+  final etaCtrl = TextEditingController();
+
+  @override
+  void dispose() {
+    costCtrl.dispose();
+    etaCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => AlertDialog(
+    title: const Text('تفاصيل التوصيل'),
+    content: SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          DropdownButtonFormField<String>(
+            value: method,
+            decoration: const InputDecoration(labelText: 'طريقة التسليم'),
+            items: const [
+              DropdownMenuItem(value: 'standard', child: Text('توصيل عادي')),
+              DropdownMenuItem(value: 'express', child: Text('توصيل سريع')),
+              DropdownMenuItem(value: 'pickup', child: Text('استلام شخصي')),
+            ],
+            onChanged: (v) => setState(() => method = v ?? method),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: costCtrl,
+            keyboardType: TextInputType.number,
+            enabled: method != 'pickup',
+            decoration: const InputDecoration(
+              labelText: 'تكلفة التوصيل',
+              suffixText: 'SP',
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: etaCtrl,
+            decoration: const InputDecoration(
+              labelText: 'موعد التسليم المتوقع',
+              hintText: 'مثال: 2-4 أيام',
+            ),
+          ),
+        ],
+      ),
+    ),
+    actions: [
+      TextButton(onPressed: Get.back, child: Text('cancel'.tr)),
+      ElevatedButton(
+        onPressed: () {
+          final cost = method == 'pickup'
+              ? 0.0
+              : double.tryParse(costCtrl.text.trim());
+          if (cost == null || cost < 0 || etaCtrl.text.trim().isEmpty) {
+            Get.snackbar('error'.tr, 'أدخل تكلفة وموعد تسليم صحيحين');
+            return;
+          }
+          widget.ctrl.setShippingDetails(
+            widget.order,
+            method: method,
+            cost: cost,
+            estimatedDelivery: etaCtrl.text.trim(),
+          );
+          Get.back();
+        },
+        child: const Text('حفظ التفاصيل'),
+      ),
+    ],
+  );
 }
 
 class _MessageBuyerButton extends StatelessWidget {
@@ -887,7 +1006,7 @@ class _MessageBuyerButton extends StatelessWidget {
       height: 50,
       child: OutlinedButton.icon(
         onPressed: () => ctrl.messageBuyer(order),
-        icon: const Icon(
+        icon: Icon(
           Icons.chat_bubble_outline_rounded,
           size: 18,
           color: AppColor.primaryColor,
@@ -899,7 +1018,7 @@ class _MessageBuyerButton extends StatelessWidget {
           ),
         ),
         style: OutlinedButton.styleFrom(
-          side: const BorderSide(color: AppColor.primaryColor, width: 1.5),
+          side: BorderSide(color: AppColor.primaryColor, width: 1.5),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
@@ -939,7 +1058,7 @@ class _SectionCard extends StatelessWidget {
               Text(title, style: AppTextStyle.heading3.copyWith(fontSize: 14)),
             ],
           ),
-          const Divider(height: 16, color: AppColor.greyBorder),
+          Divider(height: 16, color: AppColor.greyBorder),
           child,
         ],
       ),

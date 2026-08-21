@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
 import 'package:e_commerce/core/constant/color.dart';
@@ -90,7 +90,7 @@ class _ConversationTileState extends State<ConversationTile>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // اسم + وقت
+                          // Ø§Ø³Ù… + ÙˆÙ‚Øª
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -124,7 +124,7 @@ class _ConversationTileState extends State<ConversationTile>
                           ),
                           const SizedBox(height: 4),
 
-                          // رقم الطلب
+                          // Ø±Ù‚Ù… Ø§Ù„Ø·Ù„Ø¨
                           if (c.orderId != null) ...[
                             Container(
                               padding: const EdgeInsets.symmetric(
@@ -146,7 +146,7 @@ class _ConversationTileState extends State<ConversationTile>
                             const SizedBox(height: 5),
                           ],
 
-                          // آخر رسالة + badge
+                          // Ø¢Ø®Ø± Ø±Ø³Ø§Ù„Ø© + badge
                           Row(children: [
                             Expanded(
                               child: Text(
@@ -219,7 +219,7 @@ class _ConversationTileState extends State<ConversationTile>
   }
 }
 
-// ── Swipe Background ──────────────────────────────────────────────────────────
+// â”€â”€ Swipe Background â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _SwipeBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
@@ -236,14 +236,14 @@ class _SwipeBackground extends StatelessWidget {
       children: [
         const Icon(Icons.more_horiz_rounded, color: AppColor.error, size: 22),
         const SizedBox(height: 3),
-        Text('خيارات', style: AppTextStyle.labelSmall.copyWith(
+        Text('Ø®ÙŠØ§Ø±Ø§Øª', style: AppTextStyle.labelSmall.copyWith(
             color: AppColor.error, fontSize: 9)),
       ],
     ),
   );
 }
 
-// ── Context Menu Sheet ────────────────────────────────────────────────────────
+// â”€â”€ Context Menu Sheet â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _ContextMenuSheet extends StatelessWidget {
   final ConversationModel conversation;
   final VoidCallback onArchive;
@@ -274,7 +274,7 @@ class _ContextMenuSheet extends StatelessWidget {
         ),
         const SizedBox(height: 16),
 
-        // اسم المستخدم
+        // Ø§Ø³Ù… Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…
         Row(children: [
           _Avatar(initials: conversation.avatarInitials, hasUnread: false),
           const SizedBox(width: 12),
@@ -288,7 +288,7 @@ class _ContextMenuSheet extends StatelessWidget {
           ]),
         ]),
         const SizedBox(height: 16),
-        const Divider(color: AppColor.greyBorder, height: 1),
+        Divider(color: AppColor.greyBorder, height: 1),
         const SizedBox(height: 12),
 
         _MenuRow(
@@ -347,11 +347,11 @@ class _MenuRow extends StatelessWidget {
               color: color, fontSize: 14)),
       onTap: onTap,
     ),
-    if (!isLast) const Divider(color: AppColor.greyBorder, height: 1),
+    if (!isLast) Divider(color: AppColor.greyBorder, height: 1),
   ]);
 }
 
-// ── Report Dialog ─────────────────────────────────────────────────────────────
+// â”€â”€ Report Dialog â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _ReportDialog extends StatefulWidget {
   final ConversationModel conversation;
   const _ReportDialog({required this.conversation});
@@ -467,7 +467,7 @@ class _ReportDialogState extends State<_ReportDialog> {
   }
 }
 
-// ── Avatar ────────────────────────────────────────────────────────────────────
+// â”€â”€ Avatar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _Avatar extends StatelessWidget {
   final String initials;
   final bool   hasUnread;

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
@@ -31,7 +31,7 @@ class ProfileHeader extends StatelessWidget {
           height: 150,
           width: double.infinity,
           clipBehavior: Clip.antiAlias,
-          decoration: const BoxDecoration(gradient: AppColor.headerGradient),
+          decoration: BoxDecoration(gradient: AppColor.headerGradient),
           child: Stack(
             fit: StackFit.expand,
             children: [
@@ -128,7 +128,7 @@ class _CoverFallback extends StatelessWidget {
   const _CoverFallback();
   @override
   Widget build(BuildContext context) => Container(
-    decoration: const BoxDecoration(gradient: AppColor.headerGradient),
+    decoration: BoxDecoration(gradient: AppColor.headerGradient),
     child: Center(
       child: Icon(Icons.storefront_rounded,
           size: 46, color: Colors.white.withOpacity(0.18)),
@@ -141,7 +141,7 @@ class _LogoFallback extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
     color: AppColor.primarySurface,
-    child: const Icon(Icons.storefront_rounded,
+    child: Icon(Icons.storefront_rounded,
         size: 34, color: AppColor.primaryColor),
   );
 }
@@ -218,7 +218,7 @@ class ProfileInfoCard extends StatelessWidget {
         const SizedBox(height: 8),
         Row(children: [
           if (profile.category.isNotEmpty) ...[
-            const Icon(Icons.category_outlined, size: 13, color: AppColor.grey),
+            Icon(Icons.category_outlined, size: 13, color: AppColor.grey),
             const SizedBox(width: 4),
             Flexible(
               child: Text(profile.category,
@@ -228,7 +228,7 @@ class ProfileInfoCard extends StatelessWidget {
             const SizedBox(width: 12),
           ],
           if (profile.city.isNotEmpty) ...[
-            const Icon(Icons.location_on_outlined, size: 13, color: AppColor.grey),
+            Icon(Icons.location_on_outlined, size: 13, color: AppColor.grey),
             const SizedBox(width: 4),
             Flexible(
               child: Text(profile.city,
@@ -383,7 +383,7 @@ class ProfileMenuTile extends StatelessWidget {
       ),
     ),
     if (showDivider)
-      const Divider(height: 1, indent: 62, color: AppColor.greyBorder),
+      Divider(height: 1, indent: 62, color: AppColor.greyBorder),
   ]);
 }
 

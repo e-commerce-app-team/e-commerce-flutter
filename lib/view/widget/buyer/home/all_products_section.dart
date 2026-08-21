@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
@@ -6,7 +6,7 @@ import 'package:e_commerce/data/models/buyer/home_models.dart';
 import '../shared/buyer_product_card.dart';
 import '../shared/buyer_section_header.dart';
 
-/// All Products — a 2-column grid of the complete catalog, shown at the
+/// All Products â€” a 2-column grid of the complete catalog, shown at the
 /// bottom of the home screen. Includes a "Load More" button for
 /// pagination without infinite scroll (to avoid performance issues
 /// inside a nested scroll view).
@@ -79,7 +79,7 @@ class AllProductsSection extends StatelessWidget {
 
           if (isLoading && products.isNotEmpty) ...[
             const SizedBox(height: 24),
-            const Center(
+            Center(
               child: SizedBox(
                 width: 28,
                 height: 28,
@@ -122,7 +122,7 @@ class _LoadMoreButton extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            const Icon(
+            Icon(
               Icons.expand_more_rounded,
               color: AppColor.primaryColor,
               size: 20,

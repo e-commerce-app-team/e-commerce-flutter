@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
 import 'package:e_commerce/core/constant/color.dart';
 
@@ -35,7 +35,7 @@ class CustomSearchBar extends StatelessWidget {
             fontSize: 13,
             color: AppColor.grey.withOpacity(0.7),
           ),
-          prefixIcon: const Icon(
+          prefixIcon: Icon(
             Icons.search_rounded,
             color: AppColor.grey,
             size: 19,
@@ -48,7 +48,7 @@ class CustomSearchBar extends StatelessWidget {
                 controller.clear();
                 onClear?.call();
               },
-              child: const Icon(
+              child: Icon(
                 Icons.close_rounded,
                 color: AppColor.grey,
                 size: 18,

@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class LocaleController extends GetxController {
-
-  static const String themeLight = 'light';
-  static const String themeDark  = 'dark';
-  static const List<String> availableThemeKeys = [themeLight, themeDark];
+  static const String themeLight = 'orange_light';
+  static const String themeDark = 'orange_dark';
+  static final List<String> availableThemeKeys = appThemeOptions
+      .map((option) => option.key)
+      .toList();
 
   Locale? language;
 
@@ -16,15 +17,22 @@ class LocaleController extends GetxController {
   ThemeData appTheme = themeEnglish;
   String themeKey = themeLight;
 
-  bool get isDarkMode => themeKey == themeDark;
+  AppThemeOption get selectedTheme => appThemeOptions.firstWhere(
+    (option) => option.key == themeKey,
+    orElse: () => appThemeOptions.first,
+  );
+
+  bool get isDarkMode => selectedTheme.isDark;
 
   ThemeData get getCurrentTheme {
-    String? lang = language?.languageCode ?? myServices.sharedPreferences.getString("lang") ?? Get.deviceLocale!.languageCode;
-    if (lang == "ar") {
-      return isDarkMode ? themeArabicDark : themeArabic;
-    } else {
-      return isDarkMode ? themeEnglishDark : themeEnglish;
-    }
+    String? lang =
+        language?.languageCode ??
+        myServices.sharedPreferences.getString("lang") ??
+        Get.deviceLocale!.languageCode;
+    return buildAppTheme(
+      option: selectedTheme,
+      fontFamily: lang == "ar" ? "Cairo" : "PlayfairDisplay",
+    );
   }
 
   changeLang(String langcode) {
@@ -51,8 +59,10 @@ class LocaleController extends GetxController {
     if (savedThemeKey != null && availableThemeKeys.contains(savedThemeKey)) {
       themeKey = savedThemeKey;
     } else {
-      final legacyIsDark = myServices.sharedPreferences.getBool("isDarkMode") ?? false;
-      themeKey = legacyIsDark ? themeDark : themeLight;
+      final legacyIsDark =
+          myServices.sharedPreferences.getBool("isDarkMode") ?? false;
+      final legacyTheme = myServices.sharedPreferences.getString("themeKey");
+      themeKey = legacyTheme == "dark" || legacyIsDark ? themeDark : themeLight;
     }
 
     String? sharedPrefLang = myServices.sharedPreferences.getString("lang");

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
@@ -49,7 +49,7 @@ class WarehouseStockSection extends StatelessWidget {
         qty: warehouseQty[w.id] ?? '',
         onChanged: (v) => onQtyChanged(w.id, v),
       )),
-      const Divider(height: 18, color: AppColor.greyBorder),
+      Divider(height: 18, color: AppColor.greyBorder),
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -169,7 +169,7 @@ class _WarehouseRow extends StatelessWidget {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(color: AppColor.primaryColor, width: 1.5),
+                borderSide: BorderSide(color: AppColor.primaryColor, width: 1.5),
               ),
               suffixText: 'qty_unit'.tr,
               suffixStyle: AppTextStyle.labelSmall.copyWith(fontSize: 9),

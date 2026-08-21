@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/controller/seller/seller_orders_controller.dart';
 import 'package:e_commerce/core/class/status_request.dart';
@@ -82,7 +82,7 @@ class _OrdersSliverAppBar extends StatelessWidget {
       flexibleSpace: FlexibleSpaceBar(
         collapseMode: CollapseMode.pin,
         background: Container(
-          decoration: const BoxDecoration(gradient: AppColor.headerGradient),
+          decoration: BoxDecoration(gradient: AppColor.headerGradient),
           child: Padding(
             padding: EdgeInsets.fromLTRB(16, MediaQuery.of(context).padding.top + 12, 16, 0),
             child: Row(
@@ -147,7 +147,7 @@ class _OrdersAppBarBottom extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(gradient: AppColor.headerGradient),
+      decoration: BoxDecoration(gradient: AppColor.headerGradient),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -189,7 +189,7 @@ class _SearchBar extends StatelessWidget {
         decoration: InputDecoration(
           hintText: 'orders_search_hint'.tr,
           hintStyle: AppTextStyle.inputHint.copyWith(fontSize: 12),
-          prefixIcon: const Icon(
+          prefixIcon: Icon(
             Icons.search_rounded,
             color: AppColor.grey,
             size: 18,
@@ -328,7 +328,7 @@ class _EmptyOrders extends StatelessWidget {
             Container(
               width: 72,
               height: 72,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: AppColor.primarySurface,
                 shape: BoxShape.circle,
               ),

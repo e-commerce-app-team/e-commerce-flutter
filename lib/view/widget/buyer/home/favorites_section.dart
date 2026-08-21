@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
@@ -6,8 +6,8 @@ import 'package:e_commerce/data/models/buyer/home_models.dart';
 import '../shared/buyer_product_card.dart';
 import '../shared/buyer_section_header.dart';
 
-/// Favorites section — shows the user's saved/wishlisted products.
-/// Hidden when favoriteProducts is empty — replaced by a gentle empty
+/// Favorites section â€” shows the user's saved/wishlisted products.
+/// Hidden when favoriteProducts is empty â€” replaced by a gentle empty
 /// state nudge instead of a blank section.
 class FavoritesSection extends StatelessWidget {
   final List<BuyerProductItem> products;
@@ -95,7 +95,7 @@ class _EmptyFavoritesHint extends StatelessWidget {
                 color: AppColor.primaryColor.withOpacity(0.12),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.favorite_border_rounded,
                 color: AppColor.primaryColor,
                 size: 24,

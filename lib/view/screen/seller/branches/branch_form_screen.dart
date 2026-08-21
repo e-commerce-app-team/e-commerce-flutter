@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -181,7 +181,7 @@ class _FormSection extends StatelessWidget {
         Text(title,
             style: AppTextStyle.heading3.copyWith(fontSize: 14)),
       ]),
-      const Divider(height: 18, color: AppColor.greyBorder),
+      Divider(height: 18, color: AppColor.greyBorder),
       child,
     ]),
   );
@@ -237,7 +237,7 @@ class _LocationPickerButton extends StatelessWidget {
                 size: 16, color: AppColor.error),
           )
         else
-          const Icon(Icons.chevron_left_rounded,
+          Icon(Icons.chevron_left_rounded,
               size: 18, color: AppColor.greyLight),
       ]),
     ),
@@ -278,7 +278,7 @@ class _LocationPreview extends StatelessWidget {
                   point: latLng,
                   width: 40,
                   height: 40,
-                  child: const Icon(
+                  child: Icon(
                     Icons.location_on,
                     color: AppColor.primaryColor,
                     size: 35,
@@ -374,7 +374,7 @@ class _WorkingHoursRow extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 6),
-          child: Text('—',
+          child: Text('â€”',
               style: AppTextStyle.labelSmall
                   .copyWith(color: AppColor.greyLight)),
         ),

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
@@ -43,7 +43,7 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
   Widget build(BuildContext context) {
     return Container(
       height: MediaQuery.of(context).size.height * 0.82,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColor.backgroundcolor,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(28),
@@ -85,12 +85,12 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
                 ),
                 IconButton(
                   onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.close_rounded, color: AppColor.grey),
+                  icon: Icon(Icons.close_rounded, color: AppColor.grey),
                 ),
               ],
             ),
           ),
-          const Divider(height: 1, color: AppColor.greyBorder),
+          Divider(height: 1, color: AppColor.greyBorder),
           Expanded(
             child: ListView(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
@@ -218,14 +218,14 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
                     value: _freeShippingOnly,
                     onChanged: (v) => setState(() => _freeShippingOnly = v),
                   ),
-                  const Divider(height: 28, color: AppColor.greyBorder),
+                  Divider(height: 28, color: AppColor.greyBorder),
                   _SwitchRow(
                     icon: Icons.local_offer_outlined,
                     label: 'explore_discount_only'.tr,
                     value: _discountedOnly,
                     onChanged: (v) => setState(() => _discountedOnly = v),
                   ),
-                  const Divider(height: 28, color: AppColor.greyBorder),
+                  Divider(height: 28, color: AppColor.greyBorder),
                   _SwitchRow(
                     icon: Icons.inventory_2_outlined,
                     label: 'explore_in_stock_only'.tr,
@@ -239,14 +239,14 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
                     value: _openNowOnly,
                     onChanged: (v) => setState(() => _openNowOnly = v),
                   ),
-                  const Divider(height: 28, color: AppColor.greyBorder),
+                  Divider(height: 28, color: AppColor.greyBorder),
                   _SwitchRow(
                     icon: Icons.inventory_2_outlined,
                     label: 'explore_has_products_only'.tr,
                     value: _hasProductsOnly,
                     onChanged: (v) => setState(() => _hasProductsOnly = v),
                   ),
-                  const Divider(height: 28, color: AppColor.greyBorder),
+                  Divider(height: 28, color: AppColor.greyBorder),
                   _SwitchRow(
                     icon: Icons.near_me_outlined,
                     label: 'explore_nearby_only'.tr,
@@ -303,7 +303,7 @@ class _ExploreFilterSheetState extends State<ExploreFilterSheet> {
                       Navigator.pop(context);
                     },
                     style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: AppColor.greyBorder),
+                      side: BorderSide(color: AppColor.greyBorder),
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),

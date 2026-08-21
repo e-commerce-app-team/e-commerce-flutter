@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
 import 'package:e_commerce/core/constant/color.dart';
 
@@ -95,7 +95,7 @@ class _IconButton extends StatelessWidget {
                 child: Container(
                   constraints: const BoxConstraints(minWidth: 18),
                   padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     color: AppColor.primaryColor,
                     shape: BoxShape.circle,
                   ),
@@ -130,7 +130,7 @@ class _SearchBar extends StatelessWidget {
         ),
         child: Row(
           children: [
-            const Icon(Icons.search_rounded, color: AppColor.primaryColor),
+            Icon(Icons.search_rounded, color: AppColor.primaryColor),
             const SizedBox(width: 10),
             Expanded(
               child: Text(
@@ -140,7 +140,7 @@ class _SearchBar extends StatelessWidget {
                 style: AppTextStyle.inputHint,
               ),
             ),
-            const Icon(Icons.tune_rounded, color: AppColor.primaryColor),
+            Icon(Icons.tune_rounded, color: AppColor.primaryColor),
           ],
         ),
       ),

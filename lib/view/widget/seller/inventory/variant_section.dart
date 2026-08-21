@@ -1,4 +1,4 @@
-import 'dart:io';
+﻿import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -96,7 +96,7 @@ class _AttributesList extends StatelessWidget {
               border: Border.all(color: AppColor.primaryColor.withOpacity(0.25)),
             ),
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              const Icon(Icons.add_rounded, size: 17, color: AppColor.primaryColor),
+              Icon(Icons.add_rounded, size: 17, color: AppColor.primaryColor),
               const SizedBox(width: 6),
               Text('add_attribute_type'.tr,
                   style: AppTextStyle.labelMedium.copyWith(
@@ -178,7 +178,7 @@ class _AttributeCardState extends State<_AttributeCard> {
             ),
           ]),
         ),
-        const Divider(height: 12, indent: 12, endIndent: 12, color: AppColor.greyBorder),
+        Divider(height: 12, indent: 12, endIndent: 12, color: AppColor.greyBorder),
         Padding(
           padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -225,7 +225,7 @@ class _ValChip extends StatelessWidget {
       const SizedBox(width: 4),
       GestureDetector(
         onTap: onRemove,
-        child: const Icon(Icons.close_rounded, size: 12, color: AppColor.primaryColor),
+        child: Icon(Icons.close_rounded, size: 12, color: AppColor.primaryColor),
       ),
     ]),
   );
@@ -250,22 +250,22 @@ class _AddValField extends StatelessWidget {
         hintStyle: AppTextStyle.inputHint.copyWith(fontSize: 11),
         suffixIcon: GestureDetector(
           onTap: onAdd,
-          child: const Icon(Icons.add_rounded, size: 16, color: AppColor.primaryColor),
+          child: Icon(Icons.add_rounded, size: 16, color: AppColor.primaryColor),
         ),
         filled: true,
         fillColor: AppColor.secondBackground,
         contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: const BorderSide(color: AppColor.greyBorder),
+          borderSide: BorderSide(color: AppColor.greyBorder),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: const BorderSide(color: AppColor.greyBorder),
+          borderSide: BorderSide(color: AppColor.greyBorder),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: const BorderSide(color: AppColor.primaryColor, width: 1.5),
+          borderSide: BorderSide(color: AppColor.primaryColor, width: 1.5),
         ),
       ),
     ),
@@ -322,7 +322,7 @@ class _CombinationsTable extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(14, 12, 14, 0),
           child: Row(children: [
-            const Icon(Icons.table_chart_outlined, size: 15, color: AppColor.primaryColor),
+            Icon(Icons.table_chart_outlined, size: 15, color: AppColor.primaryColor),
             const SizedBox(width: 7),
             Text('variant_combinations_title'.tr,
                 style: AppTextStyle.heading3.copyWith(fontSize: 13)),
@@ -341,7 +341,7 @@ class _CombinationsTable extends StatelessWidget {
             ),
           ]),
         ),
-        const Divider(height: 12, indent: 14, endIndent: 14, color: AppColor.greyBorder),
+        Divider(height: 12, indent: 14, endIndent: 14, color: AppColor.greyBorder),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
           color: AppColor.secondBackground,
@@ -385,7 +385,7 @@ class _VarRow extends StatelessWidget {
       decoration: BoxDecoration(
         border: isLast
             ? null
-            : const Border(bottom: BorderSide(color: AppColor.greyBorder, width: 0.5)),
+            : Border(bottom: BorderSide(color: AppColor.greyBorder, width: 0.5)),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       child: Row(children: [
@@ -431,8 +431,8 @@ class _VarRow extends StatelessWidget {
                     ? ClipRRect(
                     borderRadius: BorderRadius.circular(7),
                     child: Image.file(variant.localImage!, fit: BoxFit.cover))
-                    : const Icon(Icons.check_rounded, size: 15, color: AppColor.primaryColor)
-                    : const Icon(Icons.camera_alt_outlined, size: 13, color: AppColor.greyLight),
+                    : Icon(Icons.check_rounded, size: 15, color: AppColor.primaryColor)
+                    : Icon(Icons.camera_alt_outlined, size: 13, color: AppColor.greyLight),
               ),
             ),
           ),
@@ -483,7 +483,7 @@ class _VarField extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: AppColor.primaryColor, width: 1.5),
+          borderSide: BorderSide(color: AppColor.primaryColor, width: 1.5),
         ),
       ),
     );

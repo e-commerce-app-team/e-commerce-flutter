@@ -1,4 +1,4 @@
-import 'dart:io';
+﻿import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -6,9 +6,9 @@ import 'package:e_commerce/core/constant/app_text_style.dart';
 import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/data/model/seller/chat_models.dart';
 
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // MessageBubble
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class MessageBubble extends StatelessWidget {
   final MessageModel message;
   final bool isMine;
@@ -57,7 +57,7 @@ class MessageBubble extends StatelessWidget {
                   ? CrossAxisAlignment.end
                   : CrossAxisAlignment.start,
               children: [
-                // ── Bubble ──────────────────────────────────────────────────────
+                // â”€â”€ Bubble â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                 Container(
                   constraints: BoxConstraints(
                     maxWidth: MediaQuery.of(context).size.width * 0.74,
@@ -85,7 +85,7 @@ class MessageBubble extends StatelessWidget {
                       : _TextBubble(content: content, isMine: isMine),
                 ),
 
-                // ── Timestamp + Read ─────────────────────────────────────────
+                // â”€â”€ Timestamp + Read â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                 if (showTime && createdAt != null)
                   Padding(
                     padding: const EdgeInsets.only(top: 4),
@@ -135,7 +135,7 @@ class MessageBubble extends StatelessWidget {
   }
 }
 
-// ── Text Bubble ───────────────────────────────────────────────────────────────
+// â”€â”€ Text Bubble â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _TextBubble extends StatelessWidget {
   final String content;
   final bool isMine;
@@ -155,7 +155,7 @@ class _TextBubble extends StatelessWidget {
   );
 }
 
-// ── Image Bubble ──────────────────────────────────────────────────────────────
+// â”€â”€ Image Bubble â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _ImageBubble extends StatelessWidget {
   final String? localPath;
   final bool isMine;
@@ -181,7 +181,7 @@ class _ImageBubble extends StatelessWidget {
               width: 220,
               height: 190,
               color: AppColor.greyBorder,
-              child: const Icon(
+              child: Icon(
                 Icons.broken_image_outlined,
                 color: AppColor.grey,
                 size: 34,
@@ -191,7 +191,7 @@ class _ImageBubble extends StatelessWidget {
   }
 }
 
-// ── Message Options Sheet ─────────────────────────────────────────────────────
+// â”€â”€ Message Options Sheet â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _MessageOptionsSheet extends StatelessWidget {
   final String content;
   final bool isMine;
@@ -314,14 +314,14 @@ class _MsgOptionTile extends StatelessWidget {
         ),
         onTap: onTap,
       ),
-      if (!isLast) const Divider(color: AppColor.greyBorder, height: 1),
+      if (!isLast) Divider(color: AppColor.greyBorder, height: 1),
     ],
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Date Separator
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class DateSeparator extends StatelessWidget {
   final String label;
   const DateSeparator({super.key, required this.label});
@@ -331,7 +331,7 @@ class DateSeparator extends StatelessWidget {
     padding: const EdgeInsets.symmetric(vertical: 14),
     child: Row(
       children: [
-        const Expanded(child: Divider(color: AppColor.greyBorder)),
+        Expanded(child: Divider(color: AppColor.greyBorder)),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Container(
@@ -348,15 +348,15 @@ class DateSeparator extends StatelessWidget {
             ),
           ),
         ),
-        const Expanded(child: Divider(color: AppColor.greyBorder)),
+        Expanded(child: Divider(color: AppColor.greyBorder)),
       ],
     ),
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Quick Replies Sheet
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class QuickRepliesSheet extends StatelessWidget {
   final List<QuickReplyModel> replies;
   final void Function(QuickReplyModel) onSelect;
@@ -396,7 +396,7 @@ class QuickRepliesSheet extends StatelessWidget {
                     color: AppColor.primarySurface,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.bolt_rounded,
                     size: 15,
                     color: AppColor.primaryColor,
@@ -415,7 +415,7 @@ class QuickRepliesSheet extends StatelessWidget {
               ],
             ),
           ),
-          const Divider(height: 1, color: AppColor.greyBorder),
+          Divider(height: 1, color: AppColor.greyBorder),
 
           Flexible(
             child: replies.isEmpty
@@ -473,9 +473,9 @@ class QuickRepliesSheet extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Chat Input Bar
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class ChatInputBar extends StatelessWidget {
   final TextEditingController controller;
   final bool isTyping;
@@ -511,7 +511,7 @@ class ChatInputBar extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          // زر الردود السريعة
+          // Ø²Ø± Ø§Ù„Ø±Ø¯ÙˆØ¯ Ø§Ù„Ø³Ø±ÙŠØ¹Ø©
           _CircleBtn(
             icon: Icons.bolt_rounded,
             color: AppColor.primaryColor,
@@ -520,7 +520,7 @@ class ChatInputBar extends StatelessWidget {
           ),
           const SizedBox(width: 7),
 
-          // زر الصورة
+          // Ø²Ø± Ø§Ù„ØµÙˆØ±Ø©
           _CircleBtn(
             icon: Icons.image_outlined,
             color: AppColor.grey,
@@ -529,7 +529,7 @@ class ChatInputBar extends StatelessWidget {
           ),
           const SizedBox(width: 7),
 
-          // حقل الإدخال
+          // Ø­Ù‚Ù„ Ø§Ù„Ø¥Ø¯Ø®Ø§Ù„
           Expanded(
             child: Container(
               constraints: const BoxConstraints(maxHeight: 130),
@@ -563,7 +563,7 @@ class ChatInputBar extends StatelessWidget {
           ),
           const SizedBox(width: 7),
 
-          // زر الإرسال
+          // Ø²Ø± Ø§Ù„Ø¥Ø±Ø³Ø§Ù„
           AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             width: 44,

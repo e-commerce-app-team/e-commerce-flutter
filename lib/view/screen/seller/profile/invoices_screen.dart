@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/controller/seller/seller_invoices_controller.dart';
@@ -33,14 +33,14 @@ class InvoicesScreen extends StatelessWidget {
                       sliver: SliverList(
                         delegate: SliverChildListDelegate([
 
-                          // ① بيانات الضريبة
+                          // â‘  Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ø¶Ø±ÙŠØ¨Ø©
                           _TaxSettingsCard(ctrl: ctrl),
                           const SizedBox(height: 18),
 
-                          // ② التقارير الشهرية
+                          // â‘¡ Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ± Ø§Ù„Ø´Ù‡Ø±ÙŠØ©
                           const _SectionLabel(
                             icon: Icons.calendar_month_rounded,
-                            title: 'التقارير الشهرية',
+                            title: 'Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ± Ø§Ù„Ø´Ù‡Ø±ÙŠØ©',
                           ),
                           const SizedBox(height: 10),
                           _MonthSelectorRow(ctrl: ctrl),
@@ -49,7 +49,7 @@ class InvoicesScreen extends StatelessWidget {
                             _VatSummaryCard(ctrl: ctrl),
                           const SizedBox(height: 18),
 
-                          // ③ قائمة الفواتير
+                          // â‘¢ Ù‚Ø§Ø¦Ù…Ø© Ø§Ù„ÙÙˆØ§ØªÙŠØ±
                           _InvoicesSectionHeader(ctrl: ctrl),
                           const SizedBox(height: 10),
 
@@ -77,9 +77,9 @@ class InvoicesScreen extends StatelessWidget {
   }
 }
 
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // App Bar
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 class _InvoicesAppBar extends StatelessWidget implements PreferredSizeWidget {
   const _InvoicesAppBar();
@@ -96,7 +96,7 @@ class _InvoicesAppBar extends StatelessWidget implements PreferredSizeWidget {
           color: Colors.white, size: 20),
       onPressed: () => Get.back(),
     ),
-    title: Text('الفواتير الضريبية', style: AppTextStyle.appBarTitle),
+    title: Text('Ø§Ù„ÙÙˆØ§ØªÙŠØ± Ø§Ù„Ø¶Ø±ÙŠØ¨ÙŠØ©', style: AppTextStyle.appBarTitle),
     centerTitle: true,
     actions: [
       Container(
@@ -110,7 +110,7 @@ class _InvoicesAppBar extends StatelessWidget implements PreferredSizeWidget {
         child: Row(mainAxisSize: MainAxisSize.min, children: [
           const Icon(Icons.business_center_outlined, size: 12, color: Colors.white),
           const SizedBox(width: 4),
-          Text('شركات', style: AppTextStyle.badge.copyWith(
+          Text('Ø´Ø±ÙƒØ§Øª', style: AppTextStyle.badge.copyWith(
               color: Colors.white, fontSize: 10)),
         ]),
       ),
@@ -118,9 +118,9 @@ class _InvoicesAppBar extends StatelessWidget implements PreferredSizeWidget {
   );
 }
 
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // Section Label
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 class _SectionLabel extends StatelessWidget {
   final IconData icon;
@@ -142,9 +142,9 @@ class _SectionLabel extends StatelessWidget {
   ]);
 }
 
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // Tax Settings Card
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 class _TaxSettingsCard extends StatelessWidget {
   final SellerInvoicesController ctrl;
@@ -179,10 +179,10 @@ class _TaxSettingsCard extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('البيانات الضريبية',
+              Text('Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ø¶Ø±ÙŠØ¨ÙŠØ©',
                   style: AppTextStyle.heading3.copyWith(fontSize: 14)),
               if (ctrl.taxSettings?.isComplete == false)
-                Text('يرجى إكمال بياناتك الضريبية',
+                Text('ÙŠØ±Ø¬Ù‰ Ø¥ÙƒÙ…Ø§Ù„ Ø¨ÙŠØ§Ù†Ø§ØªÙƒ Ø§Ù„Ø¶Ø±ÙŠØ¨ÙŠØ©',
                     style: AppTextStyle.labelSmall.copyWith(
                         color: AppColor.warning, fontSize: 10)),
             ]),
@@ -198,7 +198,7 @@ class _TaxSettingsCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(9),
               ),
               child: Text(
-                ctrl.isEditingSettings ? 'إلغاء' : 'تعديل',
+                ctrl.isEditingSettings ? 'Ø¥Ù„ØºØ§Ø¡' : 'ØªØ¹Ø¯ÙŠÙ„',
                 style: AppTextStyle.chip.copyWith(
                   color: ctrl.isEditingSettings
                       ? AppColor.error : AppColor.primaryColor,
@@ -209,7 +209,7 @@ class _TaxSettingsCard extends StatelessWidget {
           ),
         ]),
       ),
-      const Divider(height: 16, indent: 16, endIndent: 16, color: AppColor.greyBorder),
+      Divider(height: 16, indent: 16, endIndent: 16, color: AppColor.greyBorder),
 
       ctrl.isEditingSettings
           ? _TaxEditForm(ctrl: ctrl)
@@ -218,7 +218,7 @@ class _TaxSettingsCard extends StatelessWidget {
   );
 }
 
-// ── Read-only display ──────────────────────────────────────
+// â”€â”€ Read-only display â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _TaxDisplay extends StatelessWidget {
   final TaxSettingsModel? settings;
@@ -232,34 +232,34 @@ class _TaxDisplay extends StatelessWidget {
       child: Column(children: [
         _TaxRow(
           icon: Icons.tag_outlined,
-          label: 'الرقم الضريبي',
+          label: 'Ø§Ù„Ø±Ù‚Ù… Ø§Ù„Ø¶Ø±ÙŠØ¨ÙŠ',
           value: settings!.vatNumber?.isNotEmpty == true
-              ? settings!.vatNumber! : '—',
+              ? settings!.vatNumber! : 'â€”',
           valueMono: true,
         ),
         _TaxRow(
           icon: Icons.store_mall_directory_outlined,
-          label: 'رقم السجل التجاري',
+          label: 'Ø±Ù‚Ù… Ø§Ù„Ø³Ø¬Ù„ Ø§Ù„ØªØ¬Ø§Ø±ÙŠ',
           value: settings!.crNumber?.isNotEmpty == true
-              ? settings!.crNumber! : '—',
+              ? settings!.crNumber! : 'â€”',
           valueMono: true,
         ),
         _TaxRow(
           icon: Icons.business_outlined,
-          label: 'الاسم القانوني',
-          value: settings!.legalName.isNotEmpty ? settings!.legalName : '—',
+          label: 'Ø§Ù„Ø§Ø³Ù… Ø§Ù„Ù‚Ø§Ù†ÙˆÙ†ÙŠ',
+          value: settings!.legalName.isNotEmpty ? settings!.legalName : 'â€”',
         ),
         _TaxRow(
           icon: Icons.location_on_outlined,
-          label: 'العنوان',
-          value: settings!.address.isNotEmpty ? settings!.address : '—',
+          label: 'Ø§Ù„Ø¹Ù†ÙˆØ§Ù†',
+          value: settings!.address.isNotEmpty ? settings!.address : 'â€”',
           showDivider: false,
         ),
         const SizedBox(height: 12),
         Row(children: [
           _PillBadge(
             icon: Icons.percent_rounded,
-            label: 'نسبة الضريبة: ${(settings!.vatRate * 100).toInt()}%',
+            label: 'Ù†Ø³Ø¨Ø© Ø§Ù„Ø¶Ø±ÙŠØ¨Ø©: ${(settings!.vatRate * 100).toInt()}%',
             bg: AppColor.warningLight,
             fg: AppColor.warningDark,
           ),
@@ -267,7 +267,7 @@ class _TaxDisplay extends StatelessWidget {
           if (settings!.vatRegistered)
             _PillBadge(
               icon: Icons.verified_outlined,
-              label: 'مسجل رسمياً',
+              label: 'Ù…Ø³Ø¬Ù„ Ø±Ø³Ù…ÙŠØ§Ù‹',
               bg: AppColor.successLight,
               fg: AppColor.successDark,
             ),
@@ -310,7 +310,7 @@ class _TaxRow extends StatelessWidget {
         ),
       ]),
     ),
-    if (showDivider) const Divider(height: 1, color: AppColor.greyBorder),
+    if (showDivider) Divider(height: 1, color: AppColor.greyBorder),
   ]);
 }
 
@@ -338,7 +338,7 @@ class _PillBadge extends StatelessWidget {
   );
 }
 
-// ── Edit form ──────────────────────────────────────────────
+// â”€â”€ Edit form â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _TaxEditForm extends StatelessWidget {
   final SellerInvoicesController ctrl;
@@ -352,44 +352,44 @@ class _TaxEditForm extends StatelessWidget {
       child: Column(children: [
         AppField(
           controller: ctrl.vatCtrl,
-          label: 'الرقم الضريبي *',
-          hint: 'مثال: 300123456789012',
+          label: 'Ø§Ù„Ø±Ù‚Ù… Ø§Ù„Ø¶Ø±ÙŠØ¨ÙŠ *',
+          hint: 'Ù…Ø«Ø§Ù„: 300123456789012',
           keyboardType: TextInputType.number,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           validator: (v) {
-            if (v == null || v.trim().isEmpty) return 'الرقم الضريبي مطلوب';
-            if (v.length < 11) return 'يجب أن يكون 11 رقماً على الأقل';
+            if (v == null || v.trim().isEmpty) return 'Ø§Ù„Ø±Ù‚Ù… Ø§Ù„Ø¶Ø±ÙŠØ¨ÙŠ Ù…Ø·Ù„ÙˆØ¨';
+            if (v.length < 11) return 'ÙŠØ¬Ø¨ Ø£Ù† ÙŠÙƒÙˆÙ† 11 Ø±Ù‚Ù…Ø§Ù‹ Ø¹Ù„Ù‰ Ø§Ù„Ø£Ù‚Ù„';
             return null;
           },
         ),
         const SizedBox(height: 12),
         AppField(
           controller: ctrl.crCtrl,
-          label: 'رقم السجل التجاري *',
-          hint: 'مثال: 1234567890',
+          label: 'Ø±Ù‚Ù… Ø§Ù„Ø³Ø¬Ù„ Ø§Ù„ØªØ¬Ø§Ø±ÙŠ *',
+          hint: 'Ù…Ø«Ø§Ù„: 1234567890',
           keyboardType: TextInputType.number,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           validator: (v) {
-            if (v == null || v.trim().isEmpty) return 'رقم السجل التجاري مطلوب';
-            if (v.length < 5) return 'يجب أن يكون 5 أرقام على الأقل';
+            if (v == null || v.trim().isEmpty) return 'Ø±Ù‚Ù… Ø§Ù„Ø³Ø¬Ù„ Ø§Ù„ØªØ¬Ø§Ø±ÙŠ Ù…Ø·Ù„ÙˆØ¨';
+            if (v.length < 5) return 'ÙŠØ¬Ø¨ Ø£Ù† ÙŠÙƒÙˆÙ† 5 Ø£Ø±Ù‚Ø§Ù… Ø¹Ù„Ù‰ Ø§Ù„Ø£Ù‚Ù„';
             return null;
           },
         ),
         const SizedBox(height: 12),
         AppField(
           controller: ctrl.legalNameCtrl,
-          label: 'الاسم القانوني للمنشأة *',
-          hint: 'مثال: شركة أحمد للحرف اليدوية',
+          label: 'Ø§Ù„Ø§Ø³Ù… Ø§Ù„Ù‚Ø§Ù†ÙˆÙ†ÙŠ Ù„Ù„Ù…Ù†Ø´Ø£Ø© *',
+          hint: 'Ù…Ø«Ø§Ù„: Ø´Ø±ÙƒØ© Ø£Ø­Ù…Ø¯ Ù„Ù„Ø­Ø±Ù Ø§Ù„ÙŠØ¯ÙˆÙŠØ©',
           validator: (v) {
-            if (v == null || v.trim().length < 3) return 'الاسم القانوني مطلوب (3 أحرف على الأقل)';
+            if (v == null || v.trim().length < 3) return 'Ø§Ù„Ø§Ø³Ù… Ø§Ù„Ù‚Ø§Ù†ÙˆÙ†ÙŠ Ù…Ø·Ù„ÙˆØ¨ (3 Ø£Ø­Ø±Ù Ø¹Ù„Ù‰ Ø§Ù„Ø£Ù‚Ù„)';
             return null;
           },
         ),
         const SizedBox(height: 12),
         AppField(
           controller: ctrl.addressCtrl,
-          label: 'عنوان المنشأة',
-          hint: 'دمشق، المزة، شارع...',
+          label: 'Ø¹Ù†ÙˆØ§Ù† Ø§Ù„Ù…Ù†Ø´Ø£Ø©',
+          hint: 'Ø¯Ù…Ø´Ù‚ØŒ Ø§Ù„Ù…Ø²Ø©ØŒ Ø´Ø§Ø±Ø¹...',
           validator: null,
         ),
         const SizedBox(height: 16),
@@ -409,7 +409,7 @@ class _TaxEditForm extends StatelessWidget {
                 ? const SizedBox(width: 20, height: 20,
                     child: CircularProgressIndicator(
                         color: Colors.white, strokeWidth: 2.5))
-                : Text('حفظ البيانات', style: AppTextStyle.buttonMedium),
+                : Text('Ø­ÙØ¸ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª', style: AppTextStyle.buttonMedium),
           ),
         ),
       ]),
@@ -417,9 +417,9 @@ class _TaxEditForm extends StatelessWidget {
   );
 }
 
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // Month Selector
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 class _MonthSelectorRow extends StatelessWidget {
   final SellerInvoicesController ctrl;
@@ -467,16 +467,16 @@ class _MonthSelectorRow extends StatelessWidget {
   );
 }
 
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // VAT Summary Card
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 class _VatSummaryCard extends StatelessWidget {
   final SellerInvoicesController ctrl;
   const _VatSummaryCard({required this.ctrl});
 
   String _fmt(int v) {
-    if (v >= 1000000) return 'SP ${(v / 1000000).toStringAsFixed(1)}م';
+    if (v >= 1000000) return 'SP ${(v / 1000000).toStringAsFixed(1)}Ù…';
     if (v >= 1000)    return 'SP ${v ~/ 1000}k';
     return 'SP $v';
   }
@@ -507,7 +507,7 @@ class _VatSummaryCard extends StatelessWidget {
                   style: AppTextStyle.labelMedium.copyWith(
                       color: Colors.white70, fontSize: 11)),
               const SizedBox(height: 3),
-              Text('إجمالي المبيعات الخاضعة للضريبة',
+              Text('Ø¥Ø¬Ù…Ø§Ù„ÙŠ Ø§Ù„Ù…Ø¨ÙŠØ¹Ø§Øª Ø§Ù„Ø®Ø§Ø¶Ø¹Ø© Ù„Ù„Ø¶Ø±ÙŠØ¨Ø©',
                   style: AppTextStyle.labelSmall.copyWith(
                       color: Colors.white60, fontSize: 10)),
               const SizedBox(height: 4),
@@ -537,7 +537,7 @@ class _VatSummaryCard extends StatelessWidget {
         // Stats row
         Row(children: [
           _VatStat(
-            label: 'ضريبة القيمة المضافة',
+            label: 'Ø¶Ø±ÙŠØ¨Ø© Ø§Ù„Ù‚ÙŠÙ…Ø© Ø§Ù„Ù…Ø¶Ø§ÙØ©',
             value: _fmt(report.totalVat),
             icon: Icons.percent_rounded,
           ),
@@ -545,7 +545,7 @@ class _VatSummaryCard extends StatelessWidget {
               color: Colors.white.withOpacity(0.2),
               margin: const EdgeInsets.symmetric(horizontal: 4)),
           _VatStat(
-            label: 'فواتير صادرة',
+            label: 'ÙÙˆØ§ØªÙŠØ± ØµØ§Ø¯Ø±Ø©',
             value: '${report.invoiceCount}',
             icon: Icons.description_outlined,
           ),
@@ -554,7 +554,7 @@ class _VatSummaryCard extends StatelessWidget {
                 color: Colors.white.withOpacity(0.2),
                 margin: const EdgeInsets.symmetric(horizontal: 4)),
             _VatStat(
-              label: 'ملغاة',
+              label: 'Ù…Ù„ØºØ§Ø©',
               value: '${report.cancelledCount}',
               icon: Icons.cancel_outlined,
               accent: Colors.redAccent.shade100,
@@ -577,8 +577,8 @@ class _VatSummaryCard extends StatelessWidget {
                     size: 16, color: AppColor.warning),
             label: Text(
               ctrl.isDownloadingReport
-                  ? 'جاري التحضير...'
-                  : 'تحميل التقرير الشهري (PDF)',
+                  ? 'Ø¬Ø§Ø±ÙŠ Ø§Ù„ØªØ­Ø¶ÙŠØ±...'
+                  : 'ØªØ­Ù…ÙŠÙ„ Ø§Ù„ØªÙ‚Ø±ÙŠØ± Ø§Ù„Ø´Ù‡Ø±ÙŠ (PDF)',
               style: AppTextStyle.buttonMedium.copyWith(
                   color: AppColor.warning, fontSize: 13),
             ),
@@ -629,9 +629,9 @@ class _VatStat extends StatelessWidget {
   );
 }
 
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // Invoices Section Header + Filter
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 class _InvoicesSectionHeader extends StatelessWidget {
   final SellerInvoicesController ctrl;
@@ -648,14 +648,14 @@ class _InvoicesSectionHeader extends StatelessWidget {
             color: AppColor.primarySurface,
             borderRadius: BorderRadius.circular(8),
           ),
-          child: const Icon(Icons.receipt_outlined,
+          child: Icon(Icons.receipt_outlined,
               size: 14, color: AppColor.primaryColor),
         ),
         const SizedBox(width: 8),
-        Text('الفواتير', style: AppTextStyle.heading3.copyWith(fontSize: 14)),
+        Text('Ø§Ù„ÙÙˆØ§ØªÙŠØ±', style: AppTextStyle.heading3.copyWith(fontSize: 14)),
         const Spacer(),
         Text(
-          '${ctrl.filteredInvoices.length} فاتورة',
+          '${ctrl.filteredInvoices.length} ÙØ§ØªÙˆØ±Ø©',
           style: AppTextStyle.labelSmall.copyWith(
               color: AppColor.primaryColor, fontWeight: FontWeight.w700),
         ),
@@ -663,20 +663,20 @@ class _InvoicesSectionHeader extends StatelessWidget {
       const SizedBox(height: 10),
       Row(children: [
         _StatusChip(
-          label: 'الكل',
+          label: 'Ø§Ù„ÙƒÙ„',
           isSelected: ctrl.filterStatus == 'all',
           onTap: () => ctrl.setFilterStatus('all'),
         ),
         const SizedBox(width: 8),
         _StatusChip(
-          label: 'صادرة',
+          label: 'ØµØ§Ø¯Ø±Ø©',
           isSelected: ctrl.filterStatus == 'issued',
           activeColor: AppColor.success,
           onTap: () => ctrl.setFilterStatus('issued'),
         ),
         const SizedBox(width: 8),
         _StatusChip(
-          label: 'ملغاة',
+          label: 'Ù…Ù„ØºØ§Ø©',
           isSelected: ctrl.filterStatus == 'cancelled',
           activeColor: AppColor.error,
           onTap: () => ctrl.setFilterStatus('cancelled'),
@@ -721,9 +721,9 @@ class _StatusChip extends StatelessWidget {
   }
 }
 
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // Invoice Card
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 class _InvoiceCard extends StatefulWidget {
   final InvoiceModel invoice;
@@ -769,7 +769,7 @@ class _InvoiceCardState extends State<_InvoiceCard>
 
     final statusBg   = inv.isCancelled ? AppColor.errorLight   : AppColor.successLight;
     final statusText = inv.isCancelled ? AppColor.errorDark    : AppColor.successDark;
-    final statusLabel= inv.isCancelled ? 'ملغاة'              : 'صادرة';
+    final statusLabel= inv.isCancelled ? 'Ù…Ù„ØºØ§Ø©'              : 'ØµØ§Ø¯Ø±Ø©';
 
     return FadeTransition(
       opacity: _fade,
@@ -788,7 +788,7 @@ class _InvoiceCardState extends State<_InvoiceCard>
           ),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
-            // ── Header ────────────────────────────────────
+            // â”€â”€ Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             Padding(
               padding: const EdgeInsets.fromLTRB(14, 12, 14, 0),
               child: Row(children: [
@@ -827,12 +827,12 @@ class _InvoiceCardState extends State<_InvoiceCard>
               ]),
             ),
 
-            const Padding(
+            Padding(
               padding: EdgeInsets.symmetric(horizontal: 14),
               child: Divider(height: 14, color: AppColor.greyBorder),
             ),
 
-            // ── Order + Buyer ──────────────────────────────
+            // â”€â”€ Order + Buyer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14),
               child: Row(children: [
@@ -847,7 +847,7 @@ class _InvoiceCardState extends State<_InvoiceCard>
                           color: AppColor.primaryColor, fontSize: 10)),
                 ),
                 const SizedBox(width: 8),
-                const Icon(Icons.person_outline, size: 12, color: AppColor.greyLight),
+                Icon(Icons.person_outline, size: 12, color: AppColor.greyLight),
                 const SizedBox(width: 3),
                 Expanded(
                   child: Text(inv.buyerName,
@@ -858,7 +858,7 @@ class _InvoiceCardState extends State<_InvoiceCard>
             ),
             const SizedBox(height: 10),
 
-            // ── Price Breakdown ────────────────────────────
+            // â”€â”€ Price Breakdown â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14),
               child: Container(
@@ -869,12 +869,12 @@ class _InvoiceCardState extends State<_InvoiceCard>
                   border: Border.all(color: AppColor.greyBorder, width: 0.5),
                 ),
                 child: Row(children: [
-                   _PriceCol(label: 'قبل الضريبة', value: _fmt(inv.subtotal.round())),
+                   _PriceCol(label: 'Ù‚Ø¨Ù„ Ø§Ù„Ø¶Ø±ÙŠØ¨Ø©', value: _fmt(inv.subtotal.round())),
                   Container(width: 1, height: 30,
                       color: AppColor.greyBorder,
                       margin: const EdgeInsets.symmetric(horizontal: 8)),
                   _PriceCol(
-                    label: 'الضريبة (${inv.vatAmount > 0 ? ((inv.vatAmount / (inv.subtotal > 0 ? inv.subtotal : 1)) * 100).round().toString() : "0"}%)',
+                    label: 'Ø§Ù„Ø¶Ø±ÙŠØ¨Ø© (${inv.vatAmount > 0 ? ((inv.vatAmount / (inv.subtotal > 0 ? inv.subtotal : 1)) * 100).round().toString() : "0"}%)',
                     value: '+${_fmt(inv.vatAmount.round())}',
                     valueColor: AppColor.warning,
                   ),
@@ -882,7 +882,7 @@ class _InvoiceCardState extends State<_InvoiceCard>
                       color: AppColor.greyBorder,
                       margin: const EdgeInsets.symmetric(horizontal: 8)),
                   _PriceCol(
-                    label: 'الإجمالي',
+                    label: 'Ø§Ù„Ø¥Ø¬Ù…Ø§Ù„ÙŠ',
                     value: _fmt(inv.total.round()),
                     valueColor: AppColor.primaryColor,
                     bold: true,
@@ -892,15 +892,15 @@ class _InvoiceCardState extends State<_InvoiceCard>
             ),
             const SizedBox(height: 8),
 
-            // ── Commission Note ────────────────────────────
+            // â”€â”€ Commission Note â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14),
               child: Row(children: [
-                const Icon(Icons.info_outline_rounded,
+                Icon(Icons.info_outline_rounded,
                     size: 11, color: AppColor.greyLight),
                 const SizedBox(width: 4),
                 Text(
-                  'عمولة المنصة (${inv.commissionAmount > 0 ? ((inv.commissionAmount / (inv.subtotal > 0 ? inv.subtotal : 1)) * 100).round() : 10}%): ${_fmt(inv.commissionAmount.round())} — تُخصم تلقائياً من المحفظة',
+                  'Ø¹Ù…ÙˆÙ„Ø© Ø§Ù„Ù…Ù†ØµØ© (${inv.commissionAmount > 0 ? ((inv.commissionAmount / (inv.subtotal > 0 ? inv.subtotal : 1)) * 100).round() : 10}%): ${_fmt(inv.commissionAmount.round())} â€” ØªÙØ®ØµÙ… ØªÙ„Ù‚Ø§Ø¦ÙŠØ§Ù‹ Ù…Ù† Ø§Ù„Ù…Ø­ÙØ¸Ø©',
                   style: AppTextStyle.labelSmall.copyWith(
                       color: AppColor.greyLight, fontSize: 10),
                 ),
@@ -908,7 +908,7 @@ class _InvoiceCardState extends State<_InvoiceCard>
             ),
             const SizedBox(height: 10),
 
-            // ── Download Button ────────────────────────────
+            // â”€â”€ Download Button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             if (!inv.isCancelled)
               Padding(
                 padding: const EdgeInsets.fromLTRB(14, 0, 14, 12),
@@ -918,19 +918,19 @@ class _InvoiceCardState extends State<_InvoiceCard>
                     onPressed: isDownloading
                         ? null : () => widget.ctrl.downloadInvoicePdf(inv),
                     icon: isDownloading
-                        ? const SizedBox(width: 14, height: 14,
+                        ? SizedBox(width: 14, height: 14,
                             child: CircularProgressIndicator(
                                 color: AppColor.primaryColor, strokeWidth: 2))
-                        : const Icon(Icons.download_rounded,
+                        : Icon(Icons.download_rounded,
                             size: 16, color: AppColor.primaryColor),
                     label: Text(
-                      isDownloading ? 'جاري التحضير...' : 'تحميل الفاتورة PDF',
+                      isDownloading ? 'Ø¬Ø§Ø±ÙŠ Ø§Ù„ØªØ­Ø¶ÙŠØ±...' : 'ØªØ­Ù…ÙŠÙ„ Ø§Ù„ÙØ§ØªÙˆØ±Ø© PDF',
                       style: AppTextStyle.chip.copyWith(
                           color: AppColor.primaryColor,
                           fontWeight: FontWeight.w600),
                     ),
                     style: OutlinedButton.styleFrom(
-                      side: const BorderSide(
+                      side: BorderSide(
                           color: AppColor.primaryColor, width: 1.2),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)),
@@ -976,9 +976,9 @@ class _PriceCol extends StatelessWidget {
   );
 }
 
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // Empty State
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 class _EmptyInvoices extends StatelessWidget {
   final bool hasFilter;
@@ -994,14 +994,14 @@ class _EmptyInvoices extends StatelessWidget {
       ),
       const SizedBox(height: 12),
       Text(
-        hasFilter ? 'لا توجد فواتير بهذه الحالة' : 'لا توجد فواتير بعد',
+        hasFilter ? 'Ù„Ø§ ØªÙˆØ¬Ø¯ ÙÙˆØ§ØªÙŠØ± Ø¨Ù‡Ø°Ù‡ Ø§Ù„Ø­Ø§Ù„Ø©' : 'Ù„Ø§ ØªÙˆØ¬Ø¯ ÙÙˆØ§ØªÙŠØ± Ø¨Ø¹Ø¯',
         style: AppTextStyle.heading3.copyWith(color: AppColor.grey),
       ),
       const SizedBox(height: 6),
       Text(
         hasFilter
-            ? 'جرّب تغيير الفلتر'
-            : 'تُنشأ الفواتير تلقائياً عند اكتمال الطلبات',
+            ? 'Ø¬Ø±Ù‘Ø¨ ØªØºÙŠÙŠØ± Ø§Ù„ÙÙ„ØªØ±'
+            : 'ØªÙÙ†Ø´Ø£ Ø§Ù„ÙÙˆØ§ØªÙŠØ± ØªÙ„Ù‚Ø§Ø¦ÙŠØ§Ù‹ Ø¹Ù†Ø¯ Ø§ÙƒØªÙ…Ø§Ù„ Ø§Ù„Ø·Ù„Ø¨Ø§Øª',
         style: AppTextStyle.bodyMedium,
         textAlign: TextAlign.center,
       ),
@@ -1009,9 +1009,9 @@ class _EmptyInvoices extends StatelessWidget {
   );
 }
 
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // Shimmer Loading
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 class _InvoicesShimmer extends StatelessWidget {
   const _InvoicesShimmer();
@@ -1029,7 +1029,7 @@ class _InvoicesShimmer extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: AppColor.cardShadow,
         ),
-        child: const Column(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(children: [
@@ -1075,7 +1075,7 @@ class _InvoicesShimmer extends StatelessWidget {
             boxShadow: AppColor.cardShadow,
           ),
           padding: const EdgeInsets.all(14),
-          child: const Column(children: [
+          child: Column(children: [
             Row(children: [
               ShimmerBox(width: 40, height: 40, radius: 11),
               SizedBox(width: 10),

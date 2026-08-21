@@ -1,4 +1,4 @@
-import 'dart:math' as math;
+﻿import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -508,7 +508,7 @@ class _SegmentsList extends StatelessWidget {
                   color: AppColor.primarySurface,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(Icons.add_rounded,
+                child: Icon(Icons.add_rounded,
                     size: 18, color: AppColor.primaryColor),
               ),
             )
@@ -623,7 +623,7 @@ class _SegmentRowState extends State<_SegmentRow> {
             ),
           ]),
         ),
-        const Divider(height: 14,
+        Divider(height: 14,
             indent: 12, endIndent: 12, color: AppColor.greyBorder),
 
         Padding(
@@ -755,7 +755,7 @@ class _DropdownField extends StatelessWidget {
     child: DropdownButtonHideUnderline(
       child: DropdownButton<String>(
         value: value, isExpanded: true,
-        icon: const Icon(Icons.keyboard_arrow_down_rounded,
+        icon: Icon(Icons.keyboard_arrow_down_rounded,
             size: 16, color: AppColor.grey),
         style: AppTextStyle.inputText.copyWith(fontSize: 12),
         borderRadius: BorderRadius.circular(10),
@@ -797,13 +797,13 @@ class _SmallField extends StatelessWidget {
           const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
       border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: AppColor.greyBorder)),
+          borderSide: BorderSide(color: AppColor.greyBorder)),
       enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: AppColor.greyBorder)),
+          borderSide: BorderSide(color: AppColor.greyBorder)),
       focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(
+          borderSide: BorderSide(
               color: AppColor.primaryColor, width: 1.5)),
     ),
   );
@@ -877,7 +877,7 @@ class _SectionCard extends StatelessWidget {
           if (trailing != null) trailing!,
         ]),
       ),
-      const Divider(height: 16, indent: 16, endIndent: 16,
+      Divider(height: 16, indent: 16, endIndent: 16,
           color: AppColor.greyBorder),
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),

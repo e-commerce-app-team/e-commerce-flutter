@@ -43,6 +43,9 @@ class BuyerOrdersDataSource {
         headers: _headers(token),
       );
 
+  Future<Either<StatusRequest, Map>> payOrder(String token, String orderId) =>
+      _crud.postData(AppLink.buyerPayOrder(orderId), {}, headers: _headers(token));
+
   Future<Either<StatusRequest, Map>> rateStore(
     String token,
     String storeId, {

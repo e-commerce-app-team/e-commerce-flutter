@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/controller/auth/signup_controoler/signup_seller_controller.dart';
 import 'package:e_commerce/core/constant/color.dart';
@@ -37,7 +37,7 @@ class SignUpSeller extends StatelessWidget {
               right: 0,
               height: screenHeight * 0.35,
               child: Container(
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   gradient: AppColor.mainGradient,
                 ),
                 child: SafeArea(
@@ -81,7 +81,7 @@ class SignUpSeller extends StatelessWidget {
               bottom: 0,
               child: Container(
                 clipBehavior: Clip.hardEdge,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   color: AppColor.backgroundcolor,
                   borderRadius: BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40)),
                 ),
@@ -223,14 +223,14 @@ class SignUpSeller extends StatelessWidget {
                                 padding: const EdgeInsets.only(top: 30, left: 30, right: 30, bottom: 20),
                                 children: [
                                   ListTile(
-                                    leading: const Icon(Icons.image, color: AppColor.primaryColor),
+                                    leading: Icon(Icons.image, color: AppColor.primaryColor),
                                     title: Text("upload_logo".tr),
                                     trailing: contr.logoImage != null ? const Icon(Icons.check_circle, color: Colors.green) : const Icon(Icons.upload_file),
                                     onTap: () => contr.pickDocument('logo'),
                                   ),
                                   const Divider(),
                                   ListTile(
-                                    leading: const Icon(Icons.badge_outlined, color: AppColor.primaryColor),
+                                    leading: Icon(Icons.badge_outlined, color: AppColor.primaryColor),
                                     title: Text("upload_id".tr),
                                     trailing: contr.idImage != null ? const Icon(Icons.check_circle,
                                         color: Colors.green) : const Icon(Icons.upload_file),
@@ -251,7 +251,7 @@ class SignUpSeller extends StatelessWidget {
                                         iconData: Icons.receipt_long_outlined,
                                         label_text: "vat_number".tr),
                                     ListTile(
-                                      leading: const Icon(Icons.description_outlined, color: AppColor.primaryColor),
+                                      leading: Icon(Icons.description_outlined, color: AppColor.primaryColor),
                                       title: Text("upload_cr".tr),
                                       trailing: contr.crImage != null ? const Icon(Icons.check_circle, color: Colors.green) : const Icon(Icons.upload_file),
                                       onTap: () => contr.pickDocument('cr'),

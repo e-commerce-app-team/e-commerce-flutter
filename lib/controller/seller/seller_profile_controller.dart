@@ -26,7 +26,7 @@ class SellerProfileController extends GetxController {
 
   bool get isWholesale => sellerType == 'wholesale';
 
-  StatusRequest statusRequest     = StatusRequest.none;
+  StatusRequest statusRequest = StatusRequest.none;
   StatusRequest saveStatusRequest = StatusRequest.none;
 
   SellerProfileModel? profile;
@@ -44,8 +44,12 @@ class SellerProfileController extends GetxController {
   File? newProfilePhoto;
 
   // Shipping - محلي فقط (الباك لم ينفّذ endpoint الشحن بعد)
-  String shippingMethod = 'our_delivery';
+  String shippingMethod = 'self_delivery';
   String whoPaysShipping = 'buyer';
+  bool platformDeliveryEnabled = false;
+  bool pickupDeliveryEnabled = true;
+  bool standardDeliveryEnabled = true;
+  bool expressDeliveryEnabled = false;
   late final TextEditingController baseFeeCtrl;
   late final TextEditingController perKmCtrl;
   late final TextEditingController perKgCtrl;
@@ -57,20 +61,21 @@ class SellerProfileController extends GetxController {
     profileData = SellerProfileData(Get.find<Crud>());
     _initControllers();
     loadProfile();
+    loadShippingSettings();
   }
 
   void _initControllers() {
-    firstNameCtrl    = TextEditingController();
-    lastNameCtrl     = TextEditingController();
-    storeNameCtrl    = TextEditingController();
-    descCtrl         = TextEditingController();
-    cityCtrl         = TextEditingController();
-    phoneCtrl        = TextEditingController();
+    firstNameCtrl = TextEditingController();
+    lastNameCtrl = TextEditingController();
+    storeNameCtrl = TextEditingController();
+    descCtrl = TextEditingController();
+    cityCtrl = TextEditingController();
+    phoneCtrl = TextEditingController();
     returnPolicyCtrl = TextEditingController();
 
-    baseFeeCtrl   = TextEditingController();
-    perKmCtrl     = TextEditingController();
-    perKgCtrl     = TextEditingController();
+    baseFeeCtrl = TextEditingController();
+    perKmCtrl = TextEditingController();
+    perKgCtrl = TextEditingController();
     thresholdCtrl = TextEditingController();
   }
 
@@ -103,12 +108,12 @@ class SellerProfileController extends GetxController {
 
   void _fillFormFromProfile() {
     if (profile == null) return;
-    firstNameCtrl.text    = profile!.firstName;
-    lastNameCtrl.text     = profile!.lastName;
-    storeNameCtrl.text    = profile!.storeName;
-    descCtrl.text         = profile!.storeDescription ?? '';
-    cityCtrl.text         = profile!.detailedAddress ?? '';
-    phoneCtrl.text        = profile!.phone;
+    firstNameCtrl.text = profile!.firstName;
+    lastNameCtrl.text = profile!.lastName;
+    storeNameCtrl.text = profile!.storeName;
+    descCtrl.text = profile!.storeDescription ?? '';
+    cityCtrl.text = profile!.detailedAddress ?? '';
+    phoneCtrl.text = profile!.phone;
     returnPolicyCtrl.text = profile!.storeReturnPolicy ?? '';
   }
 
@@ -116,19 +121,67 @@ class SellerProfileController extends GetxController {
     final src = await showImagePickerBottomSheet();
     if (src == null) return;
 
-    final pickedFile = await ImagePicker().pickImage(source: src, imageQuality: 80);
+    final pickedFile = await ImagePicker().pickImage(
+      source: src,
+      imageQuality: 80,
+    );
     if (pickedFile != null) {
       onPicked(File(pickedFile.path));
       update();
     }
   }
 
-  Future<void> pickLogo()         => _pickImage((f) => newLogo = f);
-  Future<void> pickCover()        => _pickImage((f) => newCover = f);
+  Future<void> pickLogo() => _pickImage((f) => newLogo = f);
+  Future<void> pickCover() => _pickImage((f) => newCover = f);
   Future<void> pickProfilePhoto() => _pickImage((f) => newProfilePhoto = f);
 
-  void setShippingMethod(String m) { shippingMethod = m; update(); }
-  void setWhoPays(String w)        { whoPaysShipping = w; update(); }
+  void setShippingMethod(String m) {
+    if (m == 'our_delivery') return;
+    shippingMethod = m;
+    update();
+  }
+
+  void setWhoPays(String w) {
+    whoPaysShipping = w;
+    update();
+  }
+
+  void setPickupDelivery(bool value) {
+    pickupDeliveryEnabled = value;
+    update();
+  }
+
+  void setStandardDelivery(bool value) {
+    standardDeliveryEnabled = value;
+    update();
+  }
+
+  void setExpressDelivery(bool value) {
+    expressDeliveryEnabled = value;
+    update();
+  }
+
+  Future<void> loadShippingSettings() async {
+    final response = await profileData.getShippingSettings(_token);
+    response.fold((_) {}, (body) {
+      final data = body['data'] is Map
+          ? Map<String, dynamic>.from(body['data'])
+          : <String, dynamic>{};
+      final options = data['delivery_options'] is Map
+          ? Map<String, dynamic>.from(data['delivery_options'])
+          : <String, dynamic>{};
+      shippingMethod = data['shipping_mode']?.toString() ?? 'self_delivery';
+      platformDeliveryEnabled = false;
+      pickupDeliveryEnabled = options['pickup'] == null
+          ? true
+          : options['pickup'] == true;
+      standardDeliveryEnabled = options['standard'] == null
+          ? true
+          : options['standard'] == true;
+      expressDeliveryEnabled = options['express'] == true;
+      update();
+    });
+  }
 
   Future<void> saveProfile() async {
     if (storeNameCtrl.text.trim().isEmpty) {
@@ -140,13 +193,13 @@ class SellerProfileController extends GetxController {
     update();
 
     final data = <String, String>{
-      'store_name':        storeNameCtrl.text.trim(),
+      'store_name': storeNameCtrl.text.trim(),
       'store_description': descCtrl.text.trim(),
-      'detailed_address':  cityCtrl.text.trim(),
-      'return_policy':     returnPolicyCtrl.text.trim(),
-      'first_name':        firstNameCtrl.text.trim(),
-      'last_name':         lastNameCtrl.text.trim(),
-      'phone':             phoneCtrl.text.trim(),
+      'detailed_address': cityCtrl.text.trim(),
+      'return_policy': returnPolicyCtrl.text.trim(),
+      'first_name': firstNameCtrl.text.trim(),
+      'last_name': lastNameCtrl.text.trim(),
+      'phone': phoneCtrl.text.trim(),
     };
     final response = await profileData.updateProfile(
       _token,
@@ -167,12 +220,18 @@ class SellerProfileController extends GetxController {
           if (res['data'] != null || res['user'] != null) {
             final raw = res['data'] ?? res['user'];
             // نبني model مؤقتاً من البيانات المُرجَعة
-            profile = SellerProfileModel.fromJson({'data': raw}, sellerType: sellerType);
+            profile = SellerProfileModel.fromJson({
+              'data': raw,
+            }, sellerType: sellerType);
           }
-          newLogo  = null;
+          newLogo = null;
           newCover = null;
           saveStatusRequest = StatusRequest.success;
-          customSnackbar('success'.tr, 'profile_updated_success'.tr, isError: false);
+          customSnackbar(
+            'success'.tr,
+            'profile_updated_success'.tr,
+            isError: false,
+          );
         } else {
           saveStatusRequest = StatusRequest.failure;
           customSnackbar('warning'.tr, (res['message'] ?? '').toString());
@@ -188,12 +247,79 @@ class SellerProfileController extends GetxController {
     saveStatusRequest = StatusRequest.loading;
     update();
 
-    // TODO: ربط بـ /seller/shipping-settings عند توفره على الباك
-    // محاكاة نجاح محلي
-    await Future.delayed(const Duration(milliseconds: 500));
-    saveStatusRequest = StatusRequest.success;
-    customSnackbar('success'.tr, 'shipping_settings_saved'.tr, isError: false);
+    final response = await profileData.updateShippingSettings(_token, {
+      'shipping_mode': 'self_delivery',
+      'delivery_options': {
+        'pickup': pickupDeliveryEnabled,
+        'standard': standardDeliveryEnabled,
+        'express': expressDeliveryEnabled,
+      },
+    });
+    response.fold(
+      (failure) {
+        saveStatusRequest = failure;
+        customSnackbar('error'.tr, 'server_error'.tr);
+      },
+      (body) {
+        if (body['success'] == true) {
+          saveStatusRequest = StatusRequest.success;
+          customSnackbar(
+            'success'.tr,
+            'shipping_settings_saved'.tr,
+            isError: false,
+          );
+        } else {
+          saveStatusRequest = StatusRequest.failure;
+          customSnackbar(
+            'warning'.tr,
+            body['message']?.toString() ?? 'error'.tr,
+          );
+        }
+      },
+    );
     update();
+  }
+
+  Future<bool> saveMainStoreLocation({
+    required double latitude,
+    required double longitude,
+    required String address,
+  }) async {
+    final response = await profileData.updateProfile(
+      _token,
+      data: {
+        'detailed_address': address.trim(),
+        'latitude': latitude.toString(),
+        'longitude': longitude.toString(),
+      },
+    );
+    return response.fold(
+      (_) {
+        customSnackbar('error'.tr, 'server_error'.tr);
+        return false;
+      },
+      (body) {
+        if (body['success'] == true) {
+          if (profile != null) {
+            profile = profile!.copyWith(
+              detailedAddress: address.trim(),
+              latitude: latitude,
+              longitude: longitude,
+            );
+            update();
+          }
+          loadProfile();
+          customSnackbar(
+            'success'.tr,
+            'تم حفظ موقع المتجر الرئيسي',
+            isError: false,
+          );
+          return true;
+        }
+        customSnackbar('warning'.tr, body['message']?.toString() ?? 'error'.tr);
+        return false;
+      },
+    );
   }
 
   Future<void> logout() async {

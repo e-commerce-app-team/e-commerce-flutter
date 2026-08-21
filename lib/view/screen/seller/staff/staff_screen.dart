@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/controller/seller/seller_staff_controller.dart';
 import 'package:e_commerce/core/class/status_request.dart';
@@ -276,7 +276,7 @@ class _StaffCardState extends State<_StaffCard>
               ),
 
               if (m.permissions.isNotEmpty) ...[
-                const Padding(
+                Padding(
                   padding: EdgeInsets.symmetric(horizontal: 14),
                   child: Divider(height: 14, color: AppColor.greyBorder),
                 ),
@@ -286,14 +286,14 @@ class _StaffCardState extends State<_StaffCard>
                 ),
               ],
 
-              const Padding(
+              Padding(
                 padding: EdgeInsets.symmetric(horizontal: 14),
                 child: Divider(height: 14, color: AppColor.greyBorder),
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(14, 0, 14, 12),
                 child: Row(children: [
-                  const Icon(Icons.calendar_today_outlined,
+                  Icon(Icons.calendar_today_outlined,
                       size: 12, color: AppColor.greyLight),
                   const SizedBox(width: 4),
                   Text(
@@ -386,7 +386,7 @@ class _AvatarCircle extends StatelessWidget {
     if (parts.length >= 2) {
       return '${parts[0][0]}${parts[1][0]}';
     }
-    return parts[0].isNotEmpty ? parts[0][0] : '؟';
+    return parts[0].isNotEmpty ? parts[0][0] : 'ØŸ';
   }
 
   @override
@@ -625,9 +625,9 @@ class _EmptyStaff extends StatelessWidget {
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             Container(
               width: 90, height: 90,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                   color: AppColor.primarySurface, shape: BoxShape.circle),
-              child: const Icon(Icons.people_outline_rounded,
+              child: Icon(Icons.people_outline_rounded,
                   size: 44, color: AppColor.primaryColor),
             ),
             const SizedBox(height: 20),

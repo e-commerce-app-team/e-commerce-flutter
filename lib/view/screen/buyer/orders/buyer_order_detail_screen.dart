@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
 import 'package:e_commerce/core/constant/color.dart';
@@ -51,6 +51,21 @@ class BuyerOrderDetailScreen extends StatelessWidget {
     if (updated != null && updated.canRate) {
       await BuyerOrderRatingSheet.show(updated);
     }
+  }
+
+  Future<void> _payOrder(BuildContext context, BuyerOrderModel order) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('تأكيد الدفع', style: AppTextStyle.heading3),
+        content: Text('سيتم خصم ${formatBuyerPrice(order.totalAmount)} ${'currency'.tr} من الرصيد المتاح وحجزه في الضمان.', style: AppTextStyle.bodyMedium),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text('cancel'.tr)),
+          ElevatedButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('تأكيد الدفع')),
+        ],
+      ),
+    );
+    if (ok == true) await Get.find<BuyerOrdersController>().payOrder(order.id);
   }
 
   @override
@@ -124,6 +139,7 @@ class BuyerOrderDetailScreen extends StatelessWidget {
           ),
           bottomNavigationBar: _BottomActions(
             order: order,
+            onPay: () => _payOrder(context, order),
             onConfirm: () => _confirmDelivery(context, order),
             onReport: () => BuyerReturnRequestSheet.show(order),
             onRate: () => BuyerOrderRatingSheet.show(order),
@@ -162,7 +178,7 @@ class _SummaryCard extends StatelessWidget {
               color: AppColor.primarySurface,
               borderRadius: BorderRadius.circular(14),
             ),
-            child: const Icon(Icons.receipt_long_rounded, color: AppColor.primaryColor),
+            child: Icon(Icons.receipt_long_rounded, color: AppColor.primaryColor),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -205,7 +221,7 @@ class _EscrowNoteCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.info_outline_rounded, color: AppColor.primaryColor, size: 20),
+          Icon(Icons.info_outline_rounded, color: AppColor.primaryColor, size: 20),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
@@ -287,6 +303,7 @@ class _SectionCard extends StatelessWidget {
 
 class _BottomActions extends StatelessWidget {
   final BuyerOrderModel order;
+  final VoidCallback onPay;
   final VoidCallback onConfirm;
   final VoidCallback onReport;
   final VoidCallback onRate;
@@ -294,6 +311,7 @@ class _BottomActions extends StatelessWidget {
 
   const _BottomActions({
     required this.order,
+    required this.onPay,
     required this.onConfirm,
     required this.onReport,
     required this.onRate,
@@ -317,6 +335,8 @@ class _BottomActions extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          if (order.canPay)
+            _PrimaryBtn(label: 'تأكيد الدفع', icon: Icons.lock_outline_rounded, onTap: onPay),
           if (order.canConfirmDelivery)
             _PrimaryBtn(
               label: 'buyer_confirm_delivery_btn'.tr,

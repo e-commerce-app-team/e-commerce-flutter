@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
@@ -53,7 +53,7 @@ class ExploreSearchSuggestions extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.history_rounded, size: 15, color: AppColor.grey),
+                      Icon(Icons.history_rounded, size: 15, color: AppColor.grey),
                       const SizedBox(width: 6),
                       Text(term, style: AppTextStyle.labelMedium),
                     ],
@@ -69,14 +69,14 @@ class ExploreSearchSuggestions extends StatelessWidget {
             (suggestion) => ListTile(
               contentPadding: EdgeInsets.zero,
               onTap: () => onSelectSuggestion(suggestion),
-              leading: const Icon(Icons.search_rounded, color: AppColor.grey, size: 20),
+              leading: Icon(Icons.search_rounded, color: AppColor.grey, size: 20),
               title: Text(
                 suggestion,
                 style: AppTextStyle.bodyLarge,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              trailing: const Icon(Icons.call_made_rounded, color: AppColor.greyLight, size: 16),
+              trailing: Icon(Icons.call_made_rounded, color: AppColor.greyLight, size: 16),
             ),
           ),
         ] else ...[
@@ -84,7 +84,7 @@ class ExploreSearchSuggestions extends StatelessWidget {
             padding: const EdgeInsets.only(top: 60),
             child: Column(
               children: [
-                const Icon(Icons.search_rounded, size: 56, color: AppColor.greyBorder),
+                Icon(Icons.search_rounded, size: 56, color: AppColor.greyBorder),
                 const SizedBox(height: 14),
                 Text(
                   'explore_search_empty_hint'.tr,

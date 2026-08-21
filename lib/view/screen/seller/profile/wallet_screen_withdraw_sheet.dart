@@ -1,4 +1,4 @@
-part of 'wallet_screen.dart';
+﻿part of 'wallet_screen.dart';
 
 void _showWithdrawSheet(BuildContext context, SellerWalletController ctrl) {
   showModalBottomSheet(
@@ -46,7 +46,7 @@ class _WithdrawSheet extends StatelessWidget {
                   color: AppColor.primarySurface,
                   borderRadius: BorderRadius.circular(11),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.download_rounded,
                   size: 18,
                   color: AppColor.primaryColor,

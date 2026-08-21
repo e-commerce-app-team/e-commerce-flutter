@@ -1,4 +1,4 @@
-import 'package:e_commerce/controller/auth/login_controller.dart';
+﻿import 'package:e_commerce/controller/auth/login_controller.dart';
 import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/core/functions/alert_exitapp.dart';
 import 'package:e_commerce/core/functions/valid_input.dart';
@@ -33,7 +33,7 @@ class Login extends StatelessWidget {
                 .copyWith(color: AppColor.grey)),
         actions: [
           IconButton(
-            icon: const Icon(Icons.language, color: AppColor.grey),
+            icon: Icon(Icons.language, color: AppColor.grey),
             onPressed: () {
               String currentLang = localeController.myServices.sharedPreferences.getString("lang") ?? "en";
               if (currentLang == "ar") {

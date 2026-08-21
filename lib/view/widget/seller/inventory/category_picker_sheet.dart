@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
 import 'package:e_commerce/core/constant/color.dart';
@@ -57,7 +57,7 @@ class _CategoryPickerSheetState extends State<CategoryPickerSheet> {
                         color: AppColor.primarySurface,
                         borderRadius: BorderRadius.circular(9),
                       ),
-                      child: const Icon(Icons.arrow_back_ios_rounded, size: 13, color: AppColor.primaryColor),
+                      child: Icon(Icons.arrow_back_ios_rounded, size: 13, color: AppColor.primaryColor),
                     ),
                   )
                 else
@@ -73,7 +73,7 @@ class _CategoryPickerSheetState extends State<CategoryPickerSheet> {
                         fontSize: 14,
                       )),
                       if (e.key < _navStack.length - 1)
-                        const Padding(
+                        Padding(
                           padding: EdgeInsets.symmetric(horizontal: 3),
                           child: Icon(Icons.chevron_right_rounded, size: 13, color: AppColor.greyLight),
                         ),
@@ -82,17 +82,17 @@ class _CategoryPickerSheetState extends State<CategoryPickerSheet> {
                 ),
                 GestureDetector(
                   onTap: () => Get.back(),
-                  child: const Icon(Icons.close_rounded, color: AppColor.grey, size: 20),
+                  child: Icon(Icons.close_rounded, color: AppColor.grey, size: 20),
                 ),
               ],
             ),
           ),
-          const Divider(height: 1, color: AppColor.greyBorder),
+          Divider(height: 1, color: AppColor.greyBorder),
           Expanded(
             child: ListView.separated(
               padding: const EdgeInsets.symmetric(vertical: 6),
               itemCount: _currentLevel.length,
-              separatorBuilder: (_, __) => const Divider(
+              separatorBuilder: (_, __) => Divider(
                 height: 1, indent: 16, endIndent: 16, color: AppColor.greyBorder,
               ),
               itemBuilder: (_, i) {
@@ -143,9 +143,9 @@ class _CategoryPickerSheetState extends State<CategoryPickerSheet> {
                           ),
                         ),
                         if (isSelected)
-                          const Icon(Icons.check_rounded, color: AppColor.primaryColor, size: 18)
+                          Icon(Icons.check_rounded, color: AppColor.primaryColor, size: 18)
                         else if (cat.hasChildren)
-                          const Icon(Icons.chevron_right_rounded, color: AppColor.greyLight, size: 20),
+                          Icon(Icons.chevron_right_rounded, color: AppColor.greyLight, size: 20),
                       ],
                     ),
                   ),

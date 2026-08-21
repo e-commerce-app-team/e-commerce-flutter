@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
 import 'package:e_commerce/core/constant/color.dart';
@@ -272,7 +272,7 @@ class BuyerSubOrderTile extends StatelessWidget {
                   color: AppColor.primarySurface,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.storefront_rounded,
                   size: 18,
                   color: AppColor.primaryColor,

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/class/crud.dart';
 import 'package:e_commerce/core/constant/color.dart';
@@ -339,7 +339,7 @@ class _ProductBody extends StatelessWidget {
                   const SizedBox(width: 8),
                   Text(
                     '${rating.toStringAsFixed(1)} ($reviews ${'reviews'.tr})',
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppColor.greyText,
                       fontWeight: FontWeight.w600,
                     ),
@@ -352,7 +352,7 @@ class _ProductBody extends StatelessWidget {
                 children: [
                   Text(
                     _price(price),
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppColor.primaryColor,
                       fontSize: 26,
                       fontWeight: FontWeight.w900,
@@ -362,7 +362,7 @@ class _ProductBody extends StatelessWidget {
                     const SizedBox(width: 10),
                     Text(
                       _price(oldPrice),
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColor.greyText,
                         decoration: TextDecoration.lineThrough,
                       ),
@@ -407,7 +407,7 @@ class _ProductBody extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   description,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColor.greyText,
                     height: 1.65,
                     fontSize: 15,
@@ -656,7 +656,7 @@ class _StoreCard extends StatelessWidget {
             children: [
               Text(
                 'sold_by'.tr,
-                style: const TextStyle(color: AppColor.greyText, fontSize: 11),
+                style: TextStyle(color: AppColor.greyText, fontSize: 11),
               ),
               Text(
                 name,
@@ -674,7 +674,7 @@ class _StoreCard extends StatelessWidget {
           label: Text('message_seller'.tr),
           style: OutlinedButton.styleFrom(
             foregroundColor: AppColor.primaryColor,
-            side: const BorderSide(color: AppColor.primaryColor),
+            side: BorderSide(color: AppColor.primaryColor),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
@@ -735,7 +735,7 @@ class _InfoItem extends StatelessWidget {
         title,
         textAlign: TextAlign.center,
         maxLines: 2,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 11,
           color: AppColor.greyText,
           fontWeight: FontWeight.w700,
@@ -781,7 +781,7 @@ class _ReviewCard extends StatelessWidget {
                 _Stars(rating: rating),
                 Text(
                   '$reviews ${'reviews'.tr}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColor.greyText,
                     fontSize: 12,
                   ),
@@ -807,7 +807,7 @@ class _ReviewCard extends StatelessWidget {
               padding: const EdgeInsets.only(top: 7),
               child: Text(
                 myComment,
-                style: const TextStyle(color: AppColor.greyText),
+                style: TextStyle(color: AppColor.greyText),
               ),
             ),
         ],

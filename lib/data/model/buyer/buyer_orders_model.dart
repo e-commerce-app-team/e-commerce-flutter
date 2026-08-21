@@ -14,13 +14,7 @@ enum BuyerOrderTabFilter { all, active, completed, cancelled }
 
 enum BuyerOrderSort { newest, oldest, priceHigh, priceLow }
 
-enum BuyerReturnStatus {
-  none,
-  submitted,
-  underReview,
-  approved,
-  rejected,
-}
+enum BuyerReturnStatus { none, submitted, underReview, approved, rejected }
 
 class BuyerOrderItem {
   final String id;
@@ -46,7 +40,9 @@ class BuyerOrderItem {
       productId: product?['id']?.toString() ?? json['product_id']?.toString(),
       name: product?['name']?.toString() ?? json['name']?.toString() ?? '',
       quantity: (json['quantity'] as num?)?.toInt() ?? 1,
-      price: _toDouble(json['unit_price'] ?? json['price'] ?? json['total_price']),
+      price: _toDouble(
+        json['unit_price'] ?? json['price'] ?? json['total_price'],
+      ),
       imageUrl: _productImage(product),
     );
   }
@@ -58,6 +54,10 @@ class BuyerSubOrderModel {
   final String storeName;
   final String storeLogoUrl;
   final double totalPrice;
+  final String? shippingMethod;
+  final String? shippingLabel;
+  final double? shippingCost;
+  final String? estimatedDelivery;
   final BuyerOrderStatus status;
   final List<BuyerOrderItem> items;
 
@@ -68,6 +68,10 @@ class BuyerSubOrderModel {
     this.storeLogoUrl = '',
     required this.totalPrice,
     required this.status,
+    this.shippingMethod,
+    this.shippingLabel,
+    this.shippingCost,
+    this.estimatedDelivery,
     required this.items,
   });
 
@@ -81,12 +85,19 @@ class BuyerSubOrderModel {
     return BuyerSubOrderModel(
       id: '${json['id'] ?? ''}',
       sellerId: '${json['seller_id'] ?? seller?['id'] ?? ''}',
-      storeName: seller?['store_name']?.toString() ??
+      storeName:
+          seller?['store_name']?.toString() ??
           seller?['name']?.toString() ??
           json['store_name']?.toString() ??
           '',
       storeLogoUrl: seller?['store_logo']?.toString() ?? '',
       totalPrice: _toDouble(json['total_price'] ?? json['total']),
+      shippingMethod: json['shipping_method']?.toString(),
+      shippingLabel: json['shipping_label']?.toString(),
+      shippingCost: json['shipping_cost'] == null
+          ? null
+          : _toDouble(json['shipping_cost']),
+      estimatedDelivery: json['estimated_delivery']?.toString(),
       status: BuyerOrderStatusX.fromApi(json['status']?.toString()),
       items: itemsJson
           .map(_asMap)
@@ -112,12 +123,17 @@ class BuyerTimelineStep {
     this.isCurrent = false,
   });
 
-  factory BuyerTimelineStep.fromJson(Map<String, dynamic> json, {required bool isCurrent}) {
+  factory BuyerTimelineStep.fromJson(
+    Map<String, dynamic> json, {
+    required bool isCurrent,
+  }) {
     final timeStr = json['time']?.toString();
     return BuyerTimelineStep(
       status: json['status']?.toString() ?? '',
       title: json['title']?.toString() ?? '',
-      time: timeStr != null && timeStr.isNotEmpty ? DateTime.tryParse(timeStr) : null,
+      time: timeStr != null && timeStr.isNotEmpty
+          ? DateTime.tryParse(timeStr)
+          : null,
       isDone: json['is_done'] == true || json['done'] == true,
       isCurrent: isCurrent,
     );
@@ -186,6 +202,11 @@ class BuyerOrderModel {
 
   bool get canConfirmDelivery => status == BuyerOrderStatus.shipped;
 
+  bool get canPay =>
+      paymentStatus == 'unpaid' &&
+      (status == BuyerOrderStatus.pending ||
+          status == BuyerOrderStatus.processing);
+
   bool get canReportProblem =>
       status == BuyerOrderStatus.delivered && returnRequest == null;
 
@@ -196,8 +217,7 @@ class BuyerOrderModel {
     return shippedAt!.add(const Duration(days: 2));
   }
 
-  int get itemsCount =>
-      subOrders.fold(0, (sum, s) => sum + s.itemsCount);
+  int get itemsCount => subOrders.fold(0, (sum, s) => sum + s.itemsCount);
 
   String get itemsPreview {
     final names = subOrders.expand((s) => s.items.map((i) => i.name)).toList();
@@ -216,7 +236,8 @@ class BuyerOrderModel {
   List<BuyerTimelineStep> _buildDefaultTimeline() {
     const steps = ['pending', 'processing', 'shipped', 'delivered'];
     final currentIdx = _statusIndex(status);
-    final terminal = status == BuyerOrderStatus.delivered ||
+    final terminal =
+        status == BuyerOrderStatus.delivered ||
         status == BuyerOrderStatus.cancelled ||
         status == BuyerOrderStatus.returned ||
         status == BuyerOrderStatus.cancelledReturned;
@@ -266,8 +287,9 @@ class BuyerOrderModel {
       deliveredAt: deliveredAt ?? this.deliveredAt,
       subOrders: subOrders,
       timeline: timeline ?? this.timeline,
-      returnRequest:
-          clearReturnRequest ? null : (returnRequest ?? this.returnRequest),
+      returnRequest: clearReturnRequest
+          ? null
+          : (returnRequest ?? this.returnRequest),
       isRated: isRated ?? this.isRated,
       supportsDeliveryCompany: supportsDeliveryCompany,
       showQr: showQr,
@@ -307,7 +329,8 @@ class BuyerOrderModel {
       totalAmount: _toDouble(json['total_price'] ?? json['total_amount']),
       status: BuyerOrderStatusX.fromApi(json['status']?.toString()),
       paymentStatus: json['payment_status']?.toString(),
-      createdAt: DateTime.tryParse(json['created_at']?.toString() ?? '') ??
+      createdAt:
+          DateTime.tryParse(json['created_at']?.toString() ?? '') ??
           DateTime.now(),
       shippedAt: DateTime.tryParse(json['shipped_at']?.toString() ?? ''),
       deliveredAt: DateTime.tryParse(json['delivered_at']?.toString() ?? ''),

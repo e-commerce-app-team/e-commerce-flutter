@@ -1,4 +1,4 @@
-// lib/view/screen/seller/staff/invite_staff_sheet.dart
+﻿// lib/view/screen/seller/staff/invite_staff_sheet.dart
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -27,7 +27,7 @@ class _InviteStaffSheet extends StatelessWidget {
     return GetBuilder<SellerStaffController>(
       builder: (c) => Container(
         height: MediaQuery.of(context).size.height * 0.88,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppColor.secondBackground,
           borderRadius: BorderRadius.vertical(top: Radius.circular(26)),
         ),
@@ -61,7 +61,7 @@ class _InviteStaffSheet extends StatelessWidget {
   }
 }
 
-// ─── Handle & Header ───────────────────────────────────────────────────────────
+// â”€â”€â”€ Handle & Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _SheetHandle extends StatelessWidget {
   @override
@@ -97,7 +97,7 @@ class _SheetHeader extends StatelessWidget {
           Container(
             width: 44, height: 44,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
+              gradient: LinearGradient(
                 colors: [AppColor.primaryColor, AppColor.primaryDark],
                 begin: Alignment.topLeft,
                 end:   Alignment.bottomRight,
@@ -130,14 +130,14 @@ class _SheetHeader extends StatelessWidget {
           ),
           GestureDetector(
             onTap: Get.back,
-            child: const Icon(Icons.close_rounded,
+            child: Icon(Icons.close_rounded,
                 color: AppColor.grey, size: 22),
           ),
         ]),
       );
 }
 
-// ─── Email Section ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ Email Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _EmailSection extends StatelessWidget {
   final SellerStaffController ctrl;
@@ -175,14 +175,14 @@ class _EmailSection extends StatelessWidget {
           ),
           validator: (v) {
             if (v == null || v.trim().isEmpty) return 'field_required'.tr;
-            if (!GetUtils.isEmail(v.trim())) return 'البريد الإلكتروني غير صالح'.tr;
+            if (!GetUtils.isEmail(v.trim())) return 'Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ ØºÙŠØ± ØµØ§Ù„Ø­'.tr;
             return null;
           },
         ),
       );
 }
 
-// ─── Role Section ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ Role Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _RoleSection extends StatelessWidget {
   final SellerStaffController ctrl;
@@ -283,7 +283,7 @@ class _RoleVisual {
   });
 }
 
-// ─── Permissions Section ───────────────────────────────────────────────────────
+// â”€â”€â”€ Permissions Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _PermissionsSection extends StatelessWidget {
   final SellerStaffController ctrl;
@@ -426,7 +426,7 @@ class _PermissionTile extends StatelessWidget {
   }
 }
 
-// ─── Submit Button ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ Submit Button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _SubmitButton extends StatelessWidget {
   final SellerStaffController ctrl;
@@ -462,7 +462,7 @@ class _SubmitButton extends StatelessWidget {
   }
 }
 
-// ─── Shared Card ──────────────────────────────────────────────────────────────
+// â”€â”€â”€ Shared Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _FormCard extends StatelessWidget {
   final IconData icon;
@@ -495,7 +495,7 @@ class _FormCard extends StatelessWidget {
               Text(title, style: AppTextStyle.heading3.copyWith(fontSize: 13)),
             ]),
           ),
-          const Divider(height: 14, indent: 14, endIndent: 14,
+          Divider(height: 14, indent: 14, endIndent: 14,
               color: AppColor.greyBorder),
           Padding(
             padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
@@ -505,7 +505,7 @@ class _FormCard extends StatelessWidget {
       );
 }
 
-// ─── Helper for InputDecoration ───────────────────────────────────────────────
+// â”€â”€â”€ Helper for InputDecoration â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 InputDecoration _fieldDeco(
     {required String label,
@@ -525,14 +525,14 @@ InputDecoration _fieldDeco(
         const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
     border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: AppColor.greyBorder)),
+        borderSide: BorderSide(color: AppColor.greyBorder)),
     enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: AppColor.greyBorder)),
+        borderSide: BorderSide(color: AppColor.greyBorder)),
     focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide:
-            const BorderSide(color: AppColor.primaryColor, width: 1.5)),
+            BorderSide(color: AppColor.primaryColor, width: 1.5)),
     errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(color: AppColor.error)),

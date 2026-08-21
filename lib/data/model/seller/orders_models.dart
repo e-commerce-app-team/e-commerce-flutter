@@ -1,6 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+double _parseDouble(dynamic value) {
+  if (value is num) return value.toDouble();
+  return double.tryParse(value?.toString() ?? '') ?? 0.0;
+}
+
+double? _parseNullableDouble(dynamic value) {
+  if (value == null) return null;
+  return _parseDouble(value);
+}
+
+int _parseInt(dynamic value) {
+  if (value is int) return value;
+  if (value is num) return value.toInt();
+  return double.tryParse(value?.toString() ?? '')?.toInt() ?? 0;
+}
+
 String _formatDateTime(String? raw) {
   if (raw == null || raw.isEmpty) return '';
   try {
@@ -55,6 +71,7 @@ class OrderItemModel {
       if (val is String) return double.tryParse(val)?.toInt() ?? 0;
       return 0;
     }
+
     return OrderItemModel(
       name: json['name'] ?? '',
       qty: parseInt(json['pivot']?['quantity'] ?? json['qty']),
@@ -89,6 +106,7 @@ class TimelineStep {
 
 class SubOrderModel {
   final String subOrderId;
+  final int? parentOrderId;
   final int buyerId;
   final String buyerName;
   final String buyerPhone;
@@ -96,6 +114,10 @@ class SubOrderModel {
   final List<OrderItemModel> items;
   final int itemsTotal;
   final int shippingFee;
+  final double? shippingCost;
+  final String? shippingMethod;
+  final String? shippingLabel;
+  final String? estimatedDelivery;
   final int discount;
   final int subtotal;
   final String status;
@@ -115,6 +137,7 @@ class SubOrderModel {
 
   const SubOrderModel({
     required this.subOrderId,
+    this.parentOrderId,
     required this.buyerId,
     required this.buyerName,
     required this.buyerPhone,
@@ -122,6 +145,10 @@ class SubOrderModel {
     required this.items,
     required this.itemsTotal,
     required this.shippingFee,
+    this.shippingCost,
+    this.shippingMethod,
+    this.shippingLabel,
+    this.estimatedDelivery,
     required this.discount,
     required this.subtotal,
     required this.status,
@@ -141,53 +168,60 @@ class SubOrderModel {
   });
 
   factory SubOrderModel.fromJson(Map json) {
-    int parseInt(dynamic val) {
-      if (val == null) return 0;
-      if (val is int) return val;
-      if (val is double) return val.toInt();
-      if (val is String) return double.tryParse(val)?.toInt() ?? 0;
-      return 0;
-    }
-    
     final rawProducts = json['products'] ?? json['items'];
     final itemsList = (rawProducts is List ? rawProducts : [])
         .map((i) => OrderItemModel.fromJson(i is Map ? i : {}))
         .toList();
-        
+
     final rawTimeline = json['status_timeline'] ?? json['tracking_timeline'];
     final timelineList = (rawTimeline is List ? rawTimeline : [])
         .map((t) => TimelineStep.fromJson(t is Map ? t : {}))
         .toList();
     final discountJson = json['discount_info'];
-    
+
     final rawBuyer = json['buyer'];
     final buyerMap = rawBuyer is Map ? rawBuyer : null;
-    final bName = buyerMap != null ? '${buyerMap['first_name']} ${buyerMap['last_name']}' : (json['buyer_name'] ?? '');
-    
+    final bName = buyerMap != null
+        ? '${buyerMap['first_name']} ${buyerMap['last_name']}'
+        : (json['buyer_name'] ?? '');
+
     return SubOrderModel(
-      subOrderId: json['id'] != null ? '#ORD-${json['id']}' : (json['sub_order_id'] ?? ''),
-      buyerId: parseInt(buyerMap?['id'] ?? json['buyer_id']),
+      subOrderId: json['sub_order_id'] != null
+          ? '#ORD-${json['sub_order_id']}'
+          : (json['id'] != null ? '#ORD-${json['id']}' : ''),
+      parentOrderId: (json['parent_order_id'] ?? json['order_id']) == null
+          ? null
+          : _parseInt(json['parent_order_id'] ?? json['order_id']),
+      buyerId: _parseInt(buyerMap?['id'] ?? json['buyer_id']),
       buyerName: bName,
       buyerPhone: buyerMap?['phone'] ?? json['buyer_phone'] ?? '',
-      shippingAddress: json['shipping_address_details'] ?? json['shipping_address'] ?? '',
+      shippingAddress:
+          json['shipping_address_details'] ?? json['shipping_address'] ?? '',
       items: itemsList,
-      itemsTotal: parseInt(json['total_price'] ?? json['items_total']),
-      shippingFee: parseInt(json['shipping_fee']),
-      discount: parseInt(json['discount']),
-      subtotal: parseInt(json['total_price'] ?? json['subtotal']),
-      status: json['status'] ?? 'pending',
+      itemsTotal: _parseInt(json['total_price'] ?? json['items_total']),
+      shippingFee: _parseInt(json['shipping_cost'] ?? json['shipping_fee']),
+      shippingCost: _parseNullableDouble(json['shipping_cost']),
+      shippingMethod: json['shipping_method']?.toString(),
+      shippingLabel: json['shipping_label']?.toString(),
+      estimatedDelivery: json['estimated_delivery']?.toString(),
+      discount: _parseInt(json['discount']),
+      subtotal: _parseInt(json['total_price'] ?? json['subtotal']),
+      status: json['status']?.toString() ?? 'pending',
       paymentStatus: json['payment_status'],
       paymentMethod: json['payment_method'],
       customerNotes: json['customer_notes'],
-      shippingType: json['shipping_type'] ?? 'our_delivery',
+      shippingType:
+          json['shipping_method'] ?? json['shipping_type'] ?? 'self_delivery',
       createdAt: _formatDateTime(json['created_at']),
       qrToken: json['qr_token'],
       escrowReleaseAt: json['escrow_release_at'],
       timeline: timelineList,
-      discountInfo: discountJson is Map ? DiscountInfo.fromJson(discountJson) : null,
-      taxAmount: (json['tax_amount'] ?? 0).toDouble(),
-      platformCommission: (json['platform_commission'] ?? 0).toDouble(),
-      commissionRate: (json['commission_rate_snapshot'] ?? 0).toDouble(),
+      discountInfo: discountJson is Map
+          ? DiscountInfo.fromJson(discountJson)
+          : null,
+      taxAmount: _parseDouble(json['tax_amount']),
+      platformCommission: _parseDouble(json['platform_commission']),
+      commissionRate: _parseDouble(json['commission_rate_snapshot']),
     );
   }
 
@@ -198,48 +232,54 @@ class SubOrderModel {
     double? taxAmount,
     double? platformCommission,
     double? commissionRate,
-  }) =>
-      SubOrderModel(
-        subOrderId: subOrderId,
-        buyerId: buyerId,
-        buyerName: buyerName,
-        buyerPhone: buyerPhone,
-        shippingAddress: shippingAddress,
-        items: items,
-        itemsTotal: itemsTotal,
-        shippingFee: shippingFee,
-        discount: discount,
-        subtotal: subtotal,
-        status: status ?? this.status,
-        paymentStatus: paymentStatus,
-        paymentMethod: paymentMethod,
-        customerNotes: customerNotes,
-        shippingType: shippingType,
-        createdAt: createdAt,
-        qrToken: qrToken ?? this.qrToken,
-        escrowReleaseAt: escrowReleaseAt,
-        timeline: timeline,
-        discountInfo: discountInfo ?? this.discountInfo,
-        taxAmount: taxAmount ?? this.taxAmount,
-        platformCommission: platformCommission ?? this.platformCommission,
-        commissionRate: commissionRate ?? this.commissionRate,
-      );
+  }) => SubOrderModel(
+    subOrderId: subOrderId,
+    parentOrderId: parentOrderId,
+    buyerId: buyerId,
+    buyerName: buyerName,
+    buyerPhone: buyerPhone,
+    shippingAddress: shippingAddress,
+    items: items,
+    itemsTotal: itemsTotal,
+    shippingFee: shippingFee,
+    shippingCost: shippingCost,
+    shippingMethod: shippingMethod,
+    shippingLabel: shippingLabel,
+    estimatedDelivery: estimatedDelivery,
+    discount: discount,
+    subtotal: subtotal,
+    status: status ?? this.status,
+    paymentStatus: paymentStatus,
+    paymentMethod: paymentMethod,
+    customerNotes: customerNotes,
+    shippingType: shippingType,
+    createdAt: createdAt,
+    qrToken: qrToken ?? this.qrToken,
+    escrowReleaseAt: escrowReleaseAt,
+    timeline: timeline,
+    discountInfo: discountInfo ?? this.discountInfo,
+    taxAmount: taxAmount ?? this.taxAmount,
+    platformCommission: platformCommission ?? this.platformCommission,
+    commissionRate: commissionRate ?? this.commissionRate,
+  );
 
-  int get rawId => int.tryParse(subOrderId.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
+  int get rawId =>
+      parentOrderId ??
+      (int.tryParse(subOrderId.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0);
 
   bool get isPending => status == 'pending';
   bool get isProcessing => status == 'processing';
   bool get isShipped => status == 'shipped';
   bool get isDelivered => status == 'delivered';
-  bool get isCancelled => status == 'cancelled' || status == 'cancelled_returned';
+  bool get isCancelled =>
+      status == 'cancelled' || status == 'cancelled_returned';
   bool get isReturned => status == 'returned';
   bool get isOurDelivery => shippingType == 'our_delivery';
   bool get isSelfShipping => shippingType == 'self_shipping';
   bool get hasDiscount => discount > 0 || discountInfo != null;
   bool get showQR => isOurDelivery && (isProcessing || isShipped);
 
-  String _formatPrice(int v) =>
-      v >= 1000 ? 'SP ${v ~/ 1000}k' : 'SP $v';
+  String _formatPrice(int v) => v >= 1000 ? 'SP ${v ~/ 1000}k' : 'SP $v';
 
   String get formattedTotal => _formatPrice(subtotal);
 
@@ -252,7 +292,11 @@ class SubOrderModel {
       shippingAddress: 'دمشق، المزة، بناء 5',
       items: const [
         OrderItemModel(
-            name: 'مبايل ايفون', qty: 1, price: 45000, variant: 'اسود'),
+          name: 'مبايل ايفون',
+          qty: 1,
+          price: 45000,
+          variant: 'اسود',
+        ),
         OrderItemModel(name: 'مبايل ايفون', qty: 2, price: 15000),
       ],
       itemsTotal: 75000,
@@ -274,9 +318,7 @@ class SubOrderModel {
       buyerName: 'Soso Ahmad',
       buyerPhone: '0921234567',
       shippingAddress: 'حلب، العزيزية',
-      items: const [
-        OrderItemModel(name: 'لابتب', qty: 2, price: 14000),
-      ],
+      items: const [OrderItemModel(name: 'لابتب', qty: 2, price: 14000)],
       itemsTotal: 28000,
       shippingFee: 0,
       discount: 0,
@@ -285,10 +327,7 @@ class SubOrderModel {
       shippingType: 'our_delivery',
       createdAt: 'منذ 15 دقيقة',
       qrToken: 'MOCK_QR_TOKEN_2846',
-      discountInfo: const DiscountInfo(
-        source: 'spin_wheel',
-        amount: 0,
-      ),
+      discountInfo: const DiscountInfo(source: 'spin_wheel', amount: 0),
     ),
     SubOrderModel(
       subOrderId: '#ORD-2845',
@@ -307,10 +346,7 @@ class SubOrderModel {
       status: 'shipped',
       shippingType: 'self_shipping',
       createdAt: 'منذ ساعة',
-      discountInfo: const DiscountInfo(
-        source: 'free_shipping',
-        amount: 0,
-      ),
+      discountInfo: const DiscountInfo(source: 'free_shipping', amount: 0),
     ),
     SubOrderModel(
       subOrderId: '#ORD-2844',
@@ -318,9 +354,7 @@ class SubOrderModel {
       buyerName: 'Soaad Mosa',
       buyerPhone: '0941234567',
       shippingAddress: 'دمشق، باب توما',
-      items: const [
-        OrderItemModel(name: 'سوار ذهبي', qty: 1, price: 38000),
-      ],
+      items: const [OrderItemModel(name: 'سوار ذهبي', qty: 1, price: 38000)],
       itemsTotal: 38000,
       shippingFee: 5000,
       discount: 0,
@@ -330,12 +364,30 @@ class SubOrderModel {
       createdAt: 'منذ 3 ساعات',
       escrowReleaseAt: 'بعد 18 ساعة',
       timeline: const [
-        TimelineStep(status: 'pending', step: 'تم الدفع', time: '09:42', isDone: true),
         TimelineStep(
-            status: 'processing', step: 'قيد التجهيز', time: '09:50', isDone: true),
+          status: 'pending',
+          step: 'تم الدفع',
+          time: '09:42',
+          isDone: true,
+        ),
         TimelineStep(
-            status: 'shipped', step: 'استلم المندوب', time: '10:30', isDone: true),
-        TimelineStep(status: 'delivered', step: 'تم التسليم', time: '11:15', isDone: true),
+          status: 'processing',
+          step: 'قيد التجهيز',
+          time: '09:50',
+          isDone: true,
+        ),
+        TimelineStep(
+          status: 'shipped',
+          step: 'استلم المندوب',
+          time: '10:30',
+          isDone: true,
+        ),
+        TimelineStep(
+          status: 'delivered',
+          step: 'تم التسليم',
+          time: '11:15',
+          isDone: true,
+        ),
       ],
     ),
     SubOrderModel(
@@ -344,10 +396,7 @@ class SubOrderModel {
       buyerName: 'Rozan Salam',
       buyerPhone: '0951234567',
       shippingAddress: 'دمشق، الشعلان',
-      items: const [
-        OrderItemModel(
-            name: 'جلاية صحون', qty: 1, price: 22000),
-      ],
+      items: const [OrderItemModel(name: 'جلاية صحون', qty: 1, price: 22000)],
       itemsTotal: 22000,
       shippingFee: 5000,
       discount: 0,
@@ -417,6 +466,5 @@ class OrderStatusConfig {
     ),
   };
 
-  static OrderStatusConfig of(String status) =>
-      map[status] ?? map['pending']!;
+  static OrderStatusConfig of(String status) => map[status] ?? map['pending']!;
 }

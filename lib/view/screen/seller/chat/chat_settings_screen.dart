@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/controller/seller/seller_chat_controller.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
@@ -6,9 +6,9 @@ import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/data/model/seller/chat_models.dart';
 import 'package:e_commerce/link_api.dart';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// شاشة إعدادات الدردشة (ردود سريعة + ردود آلية)
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Ø´Ø§Ø´Ø© Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Ø§Ù„Ø¯Ø±Ø¯Ø´Ø© (Ø±Ø¯ÙˆØ¯ Ø³Ø±ÙŠØ¹Ø© + Ø±Ø¯ÙˆØ¯ Ø¢Ù„ÙŠØ©)
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class ChatSettingsScreen extends StatelessWidget {
   final SellerChatController ctrl;
   const ChatSettingsScreen({super.key, required this.ctrl});
@@ -62,9 +62,9 @@ class ChatSettingsScreen extends StatelessWidget {
   }
 }
 
-// ═════════════════════════════════════════════════════════════════════════════
-// TAB 1 — الردود السريعة
-// ═════════════════════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// TAB 1 â€” Ø§Ù„Ø±Ø¯ÙˆØ¯ Ø§Ù„Ø³Ø±ÙŠØ¹Ø©
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 class _QuickRepliesTab extends StatelessWidget {
   final SellerChatController ctrl;
   const _QuickRepliesTab({required this.ctrl});
@@ -90,7 +90,7 @@ class _QuickRepliesTab extends StatelessWidget {
                 physics: const BouncingScrollPhysics(),
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
                 children: [
-                  // بطاقة إرشادية
+                  // Ø¨Ø·Ø§Ù‚Ø© Ø¥Ø±Ø´Ø§Ø¯ÙŠØ©
                   Container(
                     padding: const EdgeInsets.all(13),
                     margin: const EdgeInsets.only(bottom: 14),
@@ -103,7 +103,7 @@ class _QuickRepliesTab extends StatelessWidget {
                     ),
                     child: Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.bolt_rounded,
                           size: 18,
                           color: AppColor.primaryColor,
@@ -160,7 +160,7 @@ class _QuickRepliesTab extends StatelessWidget {
   }
 }
 
-// ── Quick Reply Card ──────────────────────────────────────────────────────────
+// â”€â”€ Quick Reply Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _QuickReplyCard extends StatelessWidget {
   final QuickReplyModel reply;
   final int index;
@@ -199,7 +199,7 @@ class _QuickReplyCard extends StatelessWidget {
                     color: AppColor.primarySurface,
                     borderRadius: BorderRadius.circular(9),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.bolt_rounded,
                     size: 16,
                     color: AppColor.primaryColor,
@@ -217,7 +217,7 @@ class _QuickReplyCard extends StatelessWidget {
                 ),
                 // Edit
                 IconButton(
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.edit_outlined,
                     size: 18,
                     color: AppColor.grey,
@@ -238,7 +238,7 @@ class _QuickReplyCard extends StatelessWidget {
               ],
             ),
           ),
-          const Divider(
+          Divider(
             height: 12,
             indent: 14,
             endIndent: 14,
@@ -291,7 +291,7 @@ class _QuickReplyCard extends StatelessWidget {
   }
 }
 
-// ── Quick Reply Form Sheet ────────────────────────────────────────────────────
+// â”€â”€ Quick Reply Form Sheet â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _QuickReplyFormSheet extends StatefulWidget {
   final SellerChatController ctrl;
   final QuickReplyModel? existing;
@@ -353,7 +353,7 @@ class _QuickReplyFormSheetState extends State<_QuickReplyFormSheet> {
                   color: AppColor.primarySurface,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.bolt_rounded,
                   size: 18,
                   color: AppColor.primaryColor,
@@ -453,7 +453,7 @@ class _QuickReplyFormSheetState extends State<_QuickReplyFormSheet> {
   }
 }
 
-// ── Empty Quick Replies ───────────────────────────────────────────────────────
+// â”€â”€ Empty Quick Replies â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _EmptyQuickReplies extends StatelessWidget {
   final VoidCallback onAdd;
   const _EmptyQuickReplies({required this.onAdd});
@@ -470,7 +470,7 @@ class _EmptyQuickReplies extends StatelessWidget {
             color: AppColor.primarySurface,
             shape: BoxShape.circle,
           ),
-          child: const Icon(
+          child: Icon(
             Icons.bolt_rounded,
             size: 36,
             color: AppColor.primaryColor,
@@ -506,9 +506,9 @@ class _EmptyQuickReplies extends StatelessWidget {
   );
 }
 
-// ═════════════════════════════════════════════════════════════════════════════
-// TAB 2 — الردود الآلية
-// ═════════════════════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// TAB 2 â€” Ø§Ù„Ø±Ø¯ÙˆØ¯ Ø§Ù„Ø¢Ù„ÙŠØ©
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 class _AutoRepliesTab extends StatelessWidget {
   final SellerChatController ctrl;
   const _AutoRepliesTab({required this.ctrl});
@@ -520,7 +520,7 @@ class _AutoRepliesTab extends StatelessWidget {
         physics: const BouncingScrollPhysics(),
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
         children: [
-          // بطاقة إرشادية
+          // Ø¨Ø·Ø§Ù‚Ø© Ø¥Ø±Ø´Ø§Ø¯ÙŠØ©
           Container(
             padding: const EdgeInsets.all(13),
             margin: const EdgeInsets.only(bottom: 16),
@@ -596,7 +596,7 @@ class _AutoRepliesTab extends StatelessWidget {
   }
 }
 
-// ── Auto Reply Card ───────────────────────────────────────────────────────────
+// â”€â”€ Auto Reply Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _AutoReplyCard extends StatelessWidget {
   final AutoReplyModel autoReply;
   final SellerChatController ctrl;
@@ -698,7 +698,7 @@ class _AutoReplyCard extends StatelessWidget {
           ),
 
           if (autoReply.isEnabled) ...[
-            const Divider(
+            Divider(
               height: 14,
               indent: 14,
               endIndent: 14,
@@ -722,14 +722,14 @@ class _AutoReplyCard extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(14, 0, 14, 0),
                 child: Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.schedule_rounded,
                       size: 13,
                       color: AppColor.greyLight,
                     ),
                     const SizedBox(width: 5),
                     Text(
-                      '${'working_hours'.tr}: ${autoReply.startTime} — ${autoReply.endTime}',
+                      '${'working_hours'.tr}: ${autoReply.startTime} â€” ${autoReply.endTime}',
                       style: AppTextStyle.labelSmall.copyWith(fontSize: 11),
                     ),
                   ],
@@ -776,7 +776,7 @@ class _AutoReplyCard extends StatelessWidget {
   }
 }
 
-// ── Auto Reply Form Sheet ─────────────────────────────────────────────────────
+// â”€â”€ Auto Reply Form Sheet â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _AutoReplyFormSheet extends StatefulWidget {
   final SellerChatController ctrl;
   final AutoReplyModel? autoReply;
@@ -849,7 +849,7 @@ class _AutoReplyFormSheetState extends State<_AutoReplyFormSheet> {
                   color: AppColor.primarySurface,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.auto_awesome_rounded,
                   size: 18,
                   color: AppColor.primaryColor,
@@ -898,9 +898,9 @@ class _AutoReplyFormSheetState extends State<_AutoReplyFormSheet> {
                     decoration: _inputDeco('from'.tr, Icons.schedule_rounded),
                   ),
                 ),
-                const Padding(
+                Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10),
-                  child: Text('—', style: TextStyle(color: AppColor.grey)),
+                  child: Text('â€”', style: TextStyle(color: AppColor.grey)),
                 ),
                 Expanded(
                   child: TextField(
@@ -1094,9 +1094,9 @@ class _DraggableReplySwitchState extends State<_DraggableReplySwitch>
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Helpers
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _FieldLabel extends StatelessWidget {
   final String label;
   const _FieldLabel(this.label);
@@ -1117,23 +1117,23 @@ InputDecoration _inputDeco(String hint, IconData icon) => InputDecoration(
   contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
   border: OutlineInputBorder(
     borderRadius: BorderRadius.circular(12),
-    borderSide: const BorderSide(color: AppColor.greyBorder),
+    borderSide: BorderSide(color: AppColor.greyBorder),
   ),
   enabledBorder: OutlineInputBorder(
     borderRadius: BorderRadius.circular(12),
-    borderSide: const BorderSide(color: AppColor.greyBorder),
+    borderSide: BorderSide(color: AppColor.greyBorder),
   ),
   focusedBorder: OutlineInputBorder(
     borderRadius: BorderRadius.circular(12),
-    borderSide: const BorderSide(color: AppColor.primaryColor, width: 1.5),
+    borderSide: BorderSide(color: AppColor.primaryColor, width: 1.5),
   ),
 );
 
 // QuickReplyModel & AutoReplyModel are imported from chat_models.dart
 
-// ─────────────────────────────────────────────────────────────────────────────
-// TAB 3 — المستخدمين المحظورين
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// TAB 3 â€” Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…ÙŠÙ† Ø§Ù„Ù…Ø­Ø¸ÙˆØ±ÙŠÙ†
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _BlockedUsersTab extends StatelessWidget {
   final SellerChatController ctrl;
   const _BlockedUsersTab({required this.ctrl});
@@ -1168,7 +1168,7 @@ class _BlockedUsersTab extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 itemCount: c.blockedUsers.length,
                 separatorBuilder: (context, index) =>
-                    const Divider(height: 1, color: AppColor.greyBorder),
+                    Divider(height: 1, color: AppColor.greyBorder),
                 itemBuilder: (context, index) {
                   final blockedRecord = c.blockedUsers[index];
                   final blockedUser = blockedRecord['blocked'] ?? {};
@@ -1191,7 +1191,7 @@ class _BlockedUsersTab extends StatelessWidget {
                           ? NetworkImage(AppLink.storageUrl(avatar))
                           : null,
                       child: avatar == null
-                          ? const Icon(
+                          ? Icon(
                               Icons.person_rounded,
                               color: AppColor.primaryColor,
                             )

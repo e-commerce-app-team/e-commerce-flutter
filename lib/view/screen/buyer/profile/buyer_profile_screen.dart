@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+﻿import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_commerce/controller/buyer/buyer_profile_controller.dart';
 import 'package:e_commerce/core/class/handling_dataview.dart';
 import 'package:e_commerce/core/class/status_request.dart';
@@ -278,7 +278,7 @@ class _BuyerProfileHeader extends StatelessWidget {
           Container(
             height: 150,
             width: double.infinity,
-            decoration: const BoxDecoration(gradient: AppColor.headerGradient),
+            decoration: BoxDecoration(gradient: AppColor.headerGradient),
           ),
           PositionedDirectional(
             bottom: -42,
@@ -340,7 +340,7 @@ class _BuyerAvatarFallback extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
         color: AppColor.primarySurface,
-        child: const Icon(Icons.person_rounded, size: 34, color: AppColor.primaryColor),
+        child: Icon(Icons.person_rounded, size: 34, color: AppColor.primaryColor),
       );
 }
 

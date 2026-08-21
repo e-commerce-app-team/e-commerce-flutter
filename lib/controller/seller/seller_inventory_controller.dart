@@ -960,6 +960,11 @@ class SellerInventoryController extends GetxController {
           formStatusRequest = StatusRequest.none;
           update();
           final message = _responseErrorMessage(response);
+          if (message.contains('موقع المتجر') || message.toLowerCase().contains('store location')) {
+            customSnackbar('warning'.tr, 'حدد موقع متجرك الرئيسي أولًا');
+            await Get.toNamed('/seller/store-location');
+            return;
+          }
           customSnackbar('warning'.tr, message);
         }
       },

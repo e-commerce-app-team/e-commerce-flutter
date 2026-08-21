@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/controller/seller/seller_profile_controller.dart';
 import 'package:e_commerce/core/class/status_request.dart';
@@ -22,7 +22,7 @@ class StoreEditScreen extends StatelessWidget {
                 color: Colors.white, size: 20),
             onPressed: () => Get.back(),
           ),
-          title: Text('تعديل بيانات المتجر',
+          title: Text('ØªØ¹Ø¯ÙŠÙ„ Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ØªØ¬Ø±',
               style: AppTextStyle.appBarTitle),
           centerTitle: true,
         ),
@@ -35,41 +35,41 @@ class StoreEditScreen extends StatelessWidget {
                 delegate: SliverChildListDelegate([
 
                   _SectionCard(
-                    title: 'هوية المتجر',
+                    title: 'Ù‡ÙˆÙŠØ© Ø§Ù„Ù…ØªØ¬Ø±',
                     icon: Icons.image_outlined,
                     child: _StoreImagesSection(ctrl: ctrl),
                   ),
                   const SizedBox(height: 14),
 
                   _SectionCard(
-                    title: 'المعلومات الأساسية',
+                    title: 'Ø§Ù„Ù…Ø¹Ù„ÙˆÙ…Ø§Øª Ø§Ù„Ø£Ø³Ø§Ø³ÙŠØ©',
                     icon: Icons.info_outline_rounded,
                     child: Column(children: [
                       AppField(
                         controller: ctrl.storeNameCtrl,
-                        label: 'اسم المتجر *',
-                        hint: 'مثال: متجر أحمد للحرف اليدوية',
+                        label: 'Ø§Ø³Ù… Ø§Ù„Ù…ØªØ¬Ø± *',
+                        hint: 'Ù…Ø«Ø§Ù„: Ù…ØªØ¬Ø± Ø£Ø­Ù…Ø¯ Ù„Ù„Ø­Ø±Ù Ø§Ù„ÙŠØ¯ÙˆÙŠØ©',
                         validator: (v) => validInput(v ?? '', 2, 80, 'store_name'),
                       ),
                       const SizedBox(height: 14),
                       AppField(
                         controller: ctrl.descCtrl,
-                        label: 'وصف المتجر',
-                        hint: 'اكتب وصفاً جذاباً يعرّف بمتجرك...',
+                        label: 'ÙˆØµÙ Ø§Ù„Ù…ØªØ¬Ø±',
+                        hint: 'Ø§ÙƒØªØ¨ ÙˆØµÙØ§Ù‹ Ø¬Ø°Ø§Ø¨Ø§Ù‹ ÙŠØ¹Ø±Ù‘Ù Ø¨Ù…ØªØ¬Ø±Ùƒ...',
                         maxLines: 4,
                         validator: null,
                       ),
                       const SizedBox(height: 14),
                       AppField(
                         controller: ctrl.cityCtrl,
-                        label: 'المدينة',
-                        hint: 'مثال: دمشق',
+                        label: 'Ø§Ù„Ù…Ø¯ÙŠÙ†Ø©',
+                        hint: 'Ù…Ø«Ø§Ù„: Ø¯Ù…Ø´Ù‚',
                         validator: null,
                       ),
                       const SizedBox(height: 14),
                       AppField(
                         controller: ctrl.phoneCtrl,
-                        label: 'رقم التواصل',
+                        label: 'Ø±Ù‚Ù… Ø§Ù„ØªÙˆØ§ØµÙ„',
                         hint: '09XXXXXXXX',
                         keyboardType: TextInputType.phone,
                         validator: (v) => validInput(v ?? '', 10, 10, 'phone'),
@@ -79,12 +79,12 @@ class StoreEditScreen extends StatelessWidget {
                   const SizedBox(height: 14),
 
                   _SectionCard(
-                    title: 'سياسة الإرجاع',
+                    title: 'Ø³ÙŠØ§Ø³Ø© Ø§Ù„Ø¥Ø±Ø¬Ø§Ø¹',
                     icon: Icons.policy_outlined,
                     child: AppField(
                       controller: ctrl.returnPolicyCtrl,
-                      label: 'شروط الإرجاع',
-                      hint: 'مثال: يُقبل الإرجاع خلال 48 ساعة في حال وجود عيب...',
+                      label: 'Ø´Ø±ÙˆØ· Ø§Ù„Ø¥Ø±Ø¬Ø§Ø¹',
+                      hint: 'Ù…Ø«Ø§Ù„: ÙŠÙÙ‚Ø¨Ù„ Ø§Ù„Ø¥Ø±Ø¬Ø§Ø¹ Ø®Ù„Ø§Ù„ 48 Ø³Ø§Ø¹Ø© ÙÙŠ Ø­Ø§Ù„ ÙˆØ¬ÙˆØ¯ Ø¹ÙŠØ¨...',
                       maxLines: 3,
                       validator: null,
                     ),
@@ -92,7 +92,7 @@ class StoreEditScreen extends StatelessWidget {
                   const SizedBox(height: 14),
 
                   _SectionCard(
-                    title: 'أوقات الدوام',
+                    title: 'Ø£ÙˆÙ‚Ø§Øª Ø§Ù„Ø¯ÙˆØ§Ù…',
                     icon: Icons.access_time_rounded,
                     child: _WorkingHoursSection(),
                   ),
@@ -120,7 +120,7 @@ class _StoreImagesSection extends StatelessWidget {
     return Row(children: [
       // Logo
       _ImagePicker(
-        label: 'شعار المتجر',
+        label: 'Ø´Ø¹Ø§Ø± Ø§Ù„Ù…ØªØ¬Ø±',
         icon: Icons.store,
         hasImage: ctrl.newLogo != null,
         onTap: ctrl.pickLogo,
@@ -130,7 +130,7 @@ class _StoreImagesSection extends StatelessWidget {
       const SizedBox(width: 16),
       Expanded(
         child: _ImagePicker(
-          label: 'غلاف المتجر',
+          label: 'ØºÙ„Ø§Ù Ø§Ù„Ù…ØªØ¬Ø±',
           icon: Icons.panorama_outlined,
           hasImage: ctrl.newCover != null,
           onTap: ctrl.pickCover,
@@ -192,7 +192,7 @@ class _ImagePicker extends StatelessWidget {
               ),
               if (!hasImage) ...[
                 const SizedBox(height: 4),
-                Text('رفع',
+                Text('Ø±ÙØ¹',
                     style: AppTextStyle.labelSmall.copyWith(
                         fontSize: 10,
                         color: AppColor.greyLight)),
@@ -215,13 +215,13 @@ class _WorkingHoursSection extends StatefulWidget {
 
 class _WorkingHoursSectionState extends State<_WorkingHoursSection> {
   final days = [
-    _DayHours(day: 'السبت'),
-    _DayHours(day: 'الأحد'),
-    _DayHours(day: 'الإثنين'),
-    _DayHours(day: 'الثلاثاء'),
-    _DayHours(day: 'الأربعاء'),
-    _DayHours(day: 'الخميس'),
-    _DayHours(day: 'الجمعة', isOff: true),
+    _DayHours(day: 'Ø§Ù„Ø³Ø¨Øª'),
+    _DayHours(day: 'Ø§Ù„Ø£Ø­Ø¯'),
+    _DayHours(day: 'Ø§Ù„Ø¥Ø«Ù†ÙŠÙ†'),
+    _DayHours(day: 'Ø§Ù„Ø«Ù„Ø§Ø«Ø§Ø¡'),
+    _DayHours(day: 'Ø§Ù„Ø£Ø±Ø¨Ø¹Ø§Ø¡'),
+    _DayHours(day: 'Ø§Ù„Ø®Ù…ÙŠØ³'),
+    _DayHours(day: 'Ø§Ù„Ø¬Ù…Ø¹Ø©', isOff: true),
   ];
 
   @override
@@ -247,7 +247,7 @@ class _WorkingHoursSectionState extends State<_WorkingHoursSection> {
       initialTime: init,
       builder: (ctx, child) => Theme(
         data: Theme.of(ctx).copyWith(
-          colorScheme: const ColorScheme.light(
+          colorScheme: ColorScheme.light(
               primary: AppColor.primaryColor),
         ),
         child: child!,
@@ -331,7 +331,7 @@ class _DayRow extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               border: Border.all(color: AppColor.greyBorder),
             ),
-            child: Text('إجازة',
+            child: Text('Ø¥Ø¬Ø§Ø²Ø©',
                 style: AppTextStyle.labelSmall
                     .copyWith(color: AppColor.greyLight)),
           ),
@@ -340,18 +340,18 @@ class _DayRow extends StatelessWidget {
         Expanded(
           child: GestureDetector(
             onTap: onFromTap,
-            child: _TimeChip(label: 'من ${dayHours.fromStr}'),
+            child: _TimeChip(label: 'Ù…Ù† ${dayHours.fromStr}'),
           ),
         ),
-        const Padding(
+        Padding(
           padding: EdgeInsets.symmetric(horizontal: 6),
-          child: Text('–',
+          child: Text('â€“',
               style: TextStyle(color: AppColor.grey, fontSize: 14)),
         ),
         Expanded(
           child: GestureDetector(
             onTap: onToTap,
-            child: _TimeChip(label: 'حتى ${dayHours.toStr}'),
+            child: _TimeChip(label: 'Ø­ØªÙ‰ ${dayHours.toStr}'),
           ),
         ),
       ],
@@ -409,7 +409,7 @@ class _SectionCard extends StatelessWidget {
               style: AppTextStyle.heading3.copyWith(fontSize: 14)),
         ]),
       ),
-      const Divider(height: 18, indent: 16, endIndent: 16,
+      Divider(height: 18, indent: 16, endIndent: 16,
           color: AppColor.greyBorder),
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -450,13 +450,13 @@ class AppField extends StatelessWidget {
               const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: AppColor.greyBorder)),
+              borderSide: BorderSide(color: AppColor.greyBorder)),
           enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: AppColor.greyBorder)),
+              borderSide: BorderSide(color: AppColor.greyBorder)),
           focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
+              borderSide: BorderSide(
                   color: AppColor.primaryColor, width: 1.5)),
           errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
@@ -498,7 +498,7 @@ class _SaveBar extends StatelessWidget {
                   width: 22, height: 22,
                   child: CircularProgressIndicator(
                       color: Colors.white, strokeWidth: 2.5))
-              : Text('حفظ التعديلات',
+              : Text('Ø­ÙØ¸ Ø§Ù„ØªØ¹Ø¯ÙŠÙ„Ø§Øª',
                   style: AppTextStyle.buttonLarge),
         ),
       ),

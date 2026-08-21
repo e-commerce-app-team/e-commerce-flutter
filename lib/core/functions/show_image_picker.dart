@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:e_commerce/core/constant/color.dart';
@@ -7,7 +7,7 @@ Future<ImageSource?> showImagePickerBottomSheet() async {
   return await Get.bottomSheet<ImageSource>(
     Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColor.backgroundcolor,
         borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
       ),
@@ -26,7 +26,7 @@ Future<ImageSource?> showImagePickerBottomSheet() async {
 
           Text(
             "chooseImageSource".tr,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: AppColor.black,
@@ -42,7 +42,7 @@ Future<ImageSource?> showImagePickerBottomSheet() async {
                 color: AppColor.primaryColor.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.camera_alt_outlined, color: AppColor.primaryColor, size: 28),
+              child: Icon(Icons.camera_alt_outlined, color: AppColor.primaryColor, size: 28),
             ),
             title: Text(
               "camera".tr,
@@ -63,7 +63,7 @@ Future<ImageSource?> showImagePickerBottomSheet() async {
                 color: AppColor.primaryColor.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.photo_library_outlined, color: AppColor.primaryColor, size: 28),
+              child: Icon(Icons.photo_library_outlined, color: AppColor.primaryColor, size: 28),
             ),
             title: Text(
               "gallery".tr,

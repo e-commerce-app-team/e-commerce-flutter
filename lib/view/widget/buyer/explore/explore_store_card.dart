@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
@@ -19,7 +19,7 @@ class ExploreStoreCard extends StatelessWidget {
     required this.onFollowTap,
   }) : super(key: key);
 
-  static const List<List<Color>> _gradients = [
+  static List<List<Color>> _gradients = [
     [AppColor.primarySurface, AppColor.primaryLight],
     [AppColor.statViewsLight, AppColor.statViews],
     [AppColor.statOrdersLight, AppColor.statOrders],
@@ -83,7 +83,7 @@ class ExploreStoreCard extends StatelessWidget {
                       border: Border.all(color: AppColor.backgroundcolor, width: 2),
                     ),
                     child: store.logoUrl.isEmpty
-                        ? const Icon(
+                        ? Icon(
                             Icons.store_mall_directory_rounded,
                             color: AppColor.primaryColor,
                             size: 18,
@@ -155,7 +155,7 @@ class ExploreStoreCard extends StatelessWidget {
                       Container(
                         width: 3,
                         height: 3,
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           color: AppColor.greyLight,
                           shape: BoxShape.circle,
                         ),
@@ -170,7 +170,7 @@ class ExploreStoreCard extends StatelessWidget {
                         Container(
                           width: 3,
                           height: 3,
-                          decoration: const BoxDecoration(
+                          decoration: BoxDecoration(
                             color: AppColor.greyLight,
                             shape: BoxShape.circle,
                           ),

@@ -8,7 +8,6 @@ import 'package:e_commerce/data/model/seller/orders_models.dart';
 import 'package:e_commerce/data/datasource/remote/seller/seller_orders_data.dart';
 import 'package:e_commerce/view/screen/seller/chat/chat_room_screen.dart';
 import 'package:e_commerce/controller/seller/seller_chat_controller.dart';
-import 'package:dartz/dartz.dart';
 
 class SellerOrdersController extends GetxController {
   final MyServices _myServices = Get.find();
@@ -46,9 +45,11 @@ class SellerOrdersController extends GetxController {
     if (searchQuery.isEmpty) return filteredOrders;
     final q = searchQuery.toLowerCase();
     return filteredOrders
-        .where((o) =>
-    o.subOrderId.toLowerCase().contains(q) ||
-        o.buyerName.toLowerCase().contains(q))
+        .where(
+          (o) =>
+              o.subOrderId.toLowerCase().contains(q) ||
+              o.buyerName.toLowerCase().contains(q),
+        )
         .toList();
   }
 
@@ -71,7 +72,7 @@ class SellerOrdersController extends GetxController {
   Future<void> loadOrders() async {
     statusRequest = StatusRequest.loading;
     update();
-    
+
     final result = await _ordersData.getOrders(token: _token);
     result.fold(
       (failure) {
@@ -86,12 +87,13 @@ class SellerOrdersController extends GetxController {
             final List rawList = rawData is Map
                 ? ((rawData['data'] as List?) ?? [])
                 : ((rawData as List?) ?? []);
-            _allOrders = rawList.map((o) => SubOrderModel.fromJson(o as Map)).toList();
+            _allOrders = _flattenSellerOrders(rawList);
             statusRequest = StatusRequest.success;
-          } catch (e, stacktrace) {
-            print('Error parsing orders: $e');
-            print(stacktrace);
-            Get.snackbar('Error', 'Failed to parse orders: $e');
+          } catch (_) {
+            customSnackbar(
+              'error'.tr,
+              'تعذر تحميل الطلبات، يرجى المحاولة مجددًا',
+            );
             statusRequest = StatusRequest.serverfailure;
           }
         } else {
@@ -105,12 +107,12 @@ class SellerOrdersController extends GetxController {
   Future<void> refreshOrders() => loadOrders();
 
   Future<void> acceptOrder(
-      SubOrderModel order, {
-        int estimatedMinutes = 30,
-      }) async {
+    SubOrderModel order, {
+    int estimatedMinutes = 30,
+  }) async {
     actionStatusRequest = StatusRequest.loading;
     update();
-    
+
     final result = await _ordersData.acceptOrder(
       orderId: order.rawId,
       token: _token,
@@ -142,7 +144,7 @@ class SellerOrdersController extends GetxController {
   Future<void> rejectOrder(SubOrderModel order, String reason) async {
     actionStatusRequest = StatusRequest.loading;
     update();
-    
+
     final result = await _ordersData.rejectOrder(
       orderId: order.rawId,
       reason: reason,
@@ -172,18 +174,102 @@ class SellerOrdersController extends GetxController {
     );
   }
 
+  List<SubOrderModel> _flattenSellerOrders(List rawList) {
+    final rows = <SubOrderModel>[];
+    for (final raw in rawList) {
+      if (raw is! Map) continue;
+      final order = Map<String, dynamic>.from(raw);
+      final rawSubOrders = order['sub_orders'];
+      final subOrders = rawSubOrders is List ? rawSubOrders : const [];
+
+      if (subOrders.isEmpty) {
+        rows.add(SubOrderModel.fromJson(order));
+        continue;
+      }
+
+      for (final rawSub in subOrders) {
+        if (rawSub is! Map) continue;
+        final sub = Map<String, dynamic>.from(rawSub);
+        final sellerId = '${sub['seller_id'] ?? ''}';
+        if (_sellerId > 0 && sellerId.isNotEmpty && sellerId != '$_sellerId') {
+          continue;
+        }
+
+        final merged = <String, dynamic>{
+          ...sub,
+          'sub_order_id': sub['id'],
+          'parent_order_id': order['id'],
+          'buyer': order['buyer'],
+          'buyer_id': order['user_id'],
+          'payment_status': order['payment_status'],
+          'payment_method': order['payment_method'],
+          'created_at': order['created_at'],
+          'status_timeline': sub['status_timeline'] ?? order['status_timeline'],
+          'shipping_address_details':
+              sub['shipping_address_details'] ??
+              order['shipping_address_details'],
+        };
+        rows.add(SubOrderModel.fromJson(merged));
+      }
+    }
+    return rows;
+  }
+
+  Future<void> setShippingDetails(
+    SubOrderModel order, {
+    required String method,
+    required double cost,
+    required String estimatedDelivery,
+  }) async {
+    actionStatusRequest = StatusRequest.loading;
+    update();
+    final result = await _ordersData.setShippingDetails(
+      orderId: order.rawId,
+      method: method,
+      cost: cost,
+      estimatedDelivery: estimatedDelivery,
+      token: _token,
+    );
+    result.fold(
+      (failure) {
+        actionStatusRequest = failure;
+        customSnackbar('error'.tr, 'server_error'.tr);
+      },
+      (body) {
+        if (body['success'] == true) {
+          actionStatusRequest = StatusRequest.success;
+          customSnackbar(
+            'success'.tr,
+            'تم حفظ تكلفة التوصيل والموعد',
+            isError: false,
+          );
+          loadOrders();
+        } else {
+          actionStatusRequest = StatusRequest.none;
+          customSnackbar(
+            'warning'.tr,
+            body['message']?.toString() ?? 'error'.tr,
+          );
+        }
+      },
+    );
+    update();
+  }
+
   void messageBuyer(SubOrderModel order) {
     ConversationModel? existing;
     if (Get.isRegistered<SellerChatController>()) {
       final chatCtrl = Get.find<SellerChatController>();
       try {
-        existing = chatCtrl.conversations
-            .firstWhere((c) => c.buyerId == order.buyerId);
+        existing = chatCtrl.conversations.firstWhere(
+          (c) => c.buyerId == order.buyerId,
+        );
       } catch (_) {
         existing = null;
       }
     }
-    final conversation = existing ??
+    final conversation =
+        existing ??
         ConversationModel(
           id: 'conv_${order.buyerId}_$_sellerId',
           sellerId: _sellerId,
@@ -195,7 +281,7 @@ class SellerOrdersController extends GetxController {
           unreadSeller: 0,
         );
     Get.to(
-          () => ChatRoomScreen(conversation: conversation),
+      () => ChatRoomScreen(conversation: conversation),
       transition: Transition.cupertino,
     );
   }

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
 import 'package:e_commerce/core/constant/color.dart';
@@ -67,7 +67,7 @@ class _BuyerReturnRequestSheetState extends State<BuyerReturnRequestSheet> {
     return Container(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       height: MediaQuery.of(context).size.height * 0.78,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColor.backgroundcolor,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(28),
@@ -94,12 +94,12 @@ class _BuyerReturnRequestSheetState extends State<BuyerReturnRequestSheet> {
                 ),
                 IconButton(
                   onPressed: () => Get.back(),
-                  icon: const Icon(Icons.close_rounded, color: AppColor.grey),
+                  icon: Icon(Icons.close_rounded, color: AppColor.grey),
                 ),
               ],
             ),
           ),
-          const Divider(height: 1, color: AppColor.greyBorder),
+          Divider(height: 1, color: AppColor.greyBorder),
           Expanded(
             child: ListView(
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
@@ -146,7 +146,7 @@ class _BuyerReturnRequestSheetState extends State<BuyerReturnRequestSheet> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.add_photo_alternate_outlined, color: AppColor.grey),
+                      Icon(Icons.add_photo_alternate_outlined, color: AppColor.grey),
                       const SizedBox(height: 4),
                       Text(
                         'buyer_return_photos_hint'.tr,

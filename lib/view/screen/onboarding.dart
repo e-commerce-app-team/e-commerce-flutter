@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/controller/onboarding_controller.dart';
 import 'package:e_commerce/core/constant/color.dart';
@@ -32,7 +32,7 @@ class OnBoarding extends StatelessWidget {
             clipper: DiagonalCurveClipper(),
             child: Container(
               height: screenHeight * 0.62,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 gradient: AppColor.mainGradient,
               ),
             ),

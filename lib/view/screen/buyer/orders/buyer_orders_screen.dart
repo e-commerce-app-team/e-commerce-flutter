@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
@@ -78,7 +78,7 @@ class _BuyerOrdersSliverAppBar extends StatelessWidget {
       automaticallyImplyLeading: false,
       elevation: 0,
       backgroundColor: AppColor.primaryColor,
-      flexibleSpace: const FlexibleSpaceBar(
+      flexibleSpace: FlexibleSpaceBar(
         background: DecoratedBox(
           decoration: BoxDecoration(gradient: AppColor.headerGradient),
         ),
@@ -281,7 +281,7 @@ class _OrderCardSkeletonState extends State<_OrderCardSkeleton>
             Container(
               width: 46,
               height: 46,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: AppColor.secondBackground,
                 shape: BoxShape.circle,
               ),
@@ -343,11 +343,11 @@ class _EmptyOrders extends StatelessWidget {
               Container(
                 width: 110,
                 height: 110,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   color: AppColor.primarySurface,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.receipt_long_outlined,
                   size: 50,
                   color: AppColor.primaryColor,

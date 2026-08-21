@@ -24,6 +24,7 @@ import 'package:e_commerce/view/screen/seller/profile/invoices_screen.dart';
 import 'package:e_commerce/view/screen/seller/profile/language_settings_screen.dart';
 import 'package:e_commerce/view/screen/seller/profile/shipping_settings_screen.dart';
 import 'package:e_commerce/view/screen/seller/profile/store_edit_screen.dart';
+import 'package:e_commerce/view/screen/seller/profile/store_location_setup_screen.dart';
 import 'package:e_commerce/view/screen/seller/profile/theme_settings_screen.dart';
 import 'package:e_commerce/view/screen/seller/profile/wallet_screen.dart';
 import 'package:e_commerce/view/screen/seller/seller_main_screen.dart';
@@ -111,6 +112,7 @@ List<GetPage<dynamic>>? routes = [
     name: AppRoute.shippingSettings,
     page: () => const ShippingSettingsScreen(),
   ),
+  GetPage(name: '/seller/store-location', page: () => const StoreLocationSetupScreen()),
   GetPage(name: AppRoute.sellerBranches, page: () => const BranchesScreen()),
   GetPage(name: AppRoute.branchForm, page: () => const BranchFormScreen()),
   GetPage(

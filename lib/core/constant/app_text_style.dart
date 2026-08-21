@@ -3,12 +3,10 @@ import 'package:e_commerce/core/constant/color.dart';
 
 import 'color.dart';
 
-
 class AppTextStyle {
-
   static const String _fontEn = "PlayfairDisplay";
 
-  static const TextStyle displayLarge = TextStyle(
+  static TextStyle get displayLarge => TextStyle(
     fontSize: 32,
     fontWeight: FontWeight.w700,
     color: AppColor.black,
@@ -16,77 +14,77 @@ class AppTextStyle {
     letterSpacing: -0.5,
   );
 
-  static const TextStyle displayMedium = TextStyle(
+  static TextStyle get displayMedium => TextStyle(
     fontSize: 26,
     fontWeight: FontWeight.w700,
     color: AppColor.black,
     height: 1.3,
   );
 
-  static const TextStyle displaySmall = TextStyle(
+  static TextStyle get displaySmall => TextStyle(
     fontSize: 22,
     fontWeight: FontWeight.w700,
     color: AppColor.black,
     height: 1.4,
   );
 
-  static const TextStyle heading1 = TextStyle(
+  static TextStyle get heading1 => TextStyle(
     fontSize: 20,
     fontWeight: FontWeight.w700,
     color: AppColor.black,
     height: 1.4,
   );
 
-  static const TextStyle heading2 = TextStyle(
+  static TextStyle get heading2 => TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.w600,
     color: AppColor.black,
     height: 1.4,
   );
 
-  static const TextStyle heading3 = TextStyle(
+  static TextStyle get heading3 => TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w600,
     color: AppColor.black,
     height: 1.4,
   );
 
-  static const TextStyle bodyLarge = TextStyle(
+  static TextStyle get bodyLarge => TextStyle(
     fontSize: 15,
     fontWeight: FontWeight.w500,
     color: AppColor.black,
     height: 1.6,
   );
 
-  static const TextStyle bodyMedium = TextStyle(
+  static TextStyle get bodyMedium => TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.w400,
     color: AppColor.grey,
     height: 1.6,
   );
 
-  static const TextStyle bodySmall = TextStyle(
+  static TextStyle get bodySmall => TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.w400,
     color: AppColor.grey,
     height: 1.5,
   );
 
-  static const TextStyle labelLarge = TextStyle(
+  static TextStyle get labelLarge => TextStyle(
     fontSize: 13,
     fontWeight: FontWeight.w600,
     color: AppColor.black,
     height: 1.4,
   );
 
-  static const TextStyle labelMedium = TextStyle(
+  static TextStyle get labelMedium => TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.w500,
     color: AppColor.grey,
     height: 1.4,
   );
 
-  static const TextStyle labelSmall = TextStyle(
+  static TextStyle get labelSmall => TextStyle(
     fontSize: 10,
     fontWeight: FontWeight.w500,
     color: AppColor.grey,
@@ -94,7 +92,7 @@ class AppTextStyle {
     height: 1.3,
   );
 
-  static const TextStyle statNumber = TextStyle(
+  static TextStyle get statNumber => TextStyle(
     fontSize: 24,
     fontWeight: FontWeight.w700,
     color: AppColor.black,
@@ -102,7 +100,7 @@ class AppTextStyle {
     height: 1.2,
   );
 
-  static const TextStyle statNumberSmall = TextStyle(
+  static TextStyle get statNumberSmall => TextStyle(
     fontSize: 20,
     fontWeight: FontWeight.w700,
     color: AppColor.black,
@@ -110,7 +108,7 @@ class AppTextStyle {
     height: 1.2,
   );
 
-  static const TextStyle statLabel = TextStyle(
+  static TextStyle get statLabel => TextStyle(
     fontSize: 11,
     fontWeight: FontWeight.w500,
     color: AppColor.grey,
@@ -172,32 +170,32 @@ class AppTextStyle {
     height: 1.2,
   );
 
-  static const TextStyle inputText = TextStyle(
+  static TextStyle get inputText => TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.w400,
     color: AppColor.black,
     height: 1.5,
   );
 
-  static const TextStyle inputHint = TextStyle(
+  static TextStyle get inputHint => TextStyle(
     fontSize: 13,
     fontWeight: FontWeight.w400,
     color: AppColor.greyLight,
   );
 
-  static const TextStyle inputLabel = TextStyle(
+  static TextStyle get inputLabel => TextStyle(
     fontSize: 13,
     fontWeight: FontWeight.w500,
     color: AppColor.grey,
   );
 
-  static const TextStyle inputError = TextStyle(
+  static TextStyle get inputError => TextStyle(
     fontSize: 11,
     fontWeight: FontWeight.w500,
     color: AppColor.error,
   );
 
-  static const TextStyle orderNumber = TextStyle(
+  static TextStyle get orderNumber => TextStyle(
     fontSize: 13,
     fontWeight: FontWeight.w700,
     color: AppColor.black,
@@ -205,21 +203,21 @@ class AppTextStyle {
     letterSpacing: 0.3,
   );
 
-  static const TextStyle price = TextStyle(
+  static TextStyle get price => TextStyle(
     fontSize: 15,
     fontWeight: FontWeight.w700,
     color: AppColor.primaryColor,
     fontFamily: _fontEn,
   );
 
-  static const TextStyle priceLarge = TextStyle(
+  static TextStyle get priceLarge => TextStyle(
     fontSize: 22,
     fontWeight: FontWeight.w700,
     color: AppColor.primaryColor,
     fontFamily: _fontEn,
   );
 
-  static const TextStyle timestamp = TextStyle(
+  static TextStyle get timestamp => TextStyle(
     fontSize: 11,
     fontWeight: FontWeight.w400,
     color: AppColor.grey,

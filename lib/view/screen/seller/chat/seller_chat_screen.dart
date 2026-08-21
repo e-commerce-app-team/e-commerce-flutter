@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/controller/seller/seller_chat_controller.dart';
 import 'package:e_commerce/core/class/status_request.dart';
@@ -37,9 +37,9 @@ class SellerChatScreen extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// AppBar  (قابل للطي — SliverAppBar style داخل PreferredSize)
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// AppBar  (Ù‚Ø§Ø¨Ù„ Ù„Ù„Ø·ÙŠ â€” SliverAppBar style Ø¯Ø§Ø®Ù„ PreferredSize)
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _ChatAppBar extends StatefulWidget implements PreferredSizeWidget {
   final SellerChatController ctrl;
   const _ChatAppBar({required this.ctrl});
@@ -85,18 +85,18 @@ class _ChatAppBarState extends State<_ChatAppBar>
   Widget build(BuildContext context) {
     final ctrl = widget.ctrl;
     return Container(
-      decoration: const BoxDecoration(gradient: AppColor.headerGradient),
+      decoration: BoxDecoration(gradient: AppColor.headerGradient),
       child: SafeArea(
         bottom: false,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // ── Row الرئيسي ─────────────────────────────────────────────────
+            // â”€â”€ Row Ø§Ù„Ø±Ø¦ÙŠØ³ÙŠ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 10, 8, 6),
               child: Row(
                 children: [
-                  // أيقونة + عنوان
+                  // Ø£ÙŠÙ‚ÙˆÙ†Ø© + Ø¹Ù†ÙˆØ§Ù†
                   Container(
                     width: 36,
                     height: 36,
@@ -130,7 +130,7 @@ class _ChatAppBarState extends State<_ChatAppBar>
                   ),
                   const Spacer(),
 
-                  // زر فلتر غير المقروءة
+                  // Ø²Ø± ÙÙ„ØªØ± ØºÙŠØ± Ø§Ù„Ù…Ù‚Ø±ÙˆØ¡Ø©
                   _AppBarIconBtn(
                     icon: ctrl.filterUnread
                         ? Icons.mark_chat_unread_rounded
@@ -140,7 +140,7 @@ class _ChatAppBarState extends State<_ChatAppBar>
                     active: ctrl.filterUnread,
                   ),
 
-                  // زر إعدادات الدردشة
+                  // Ø²Ø± Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Ø§Ù„Ø¯Ø±Ø¯Ø´Ø©
                   _AppBarIconBtn(
                     icon: Icons.tune_rounded,
                     onTap: () => Get.to(
@@ -149,7 +149,7 @@ class _ChatAppBarState extends State<_ChatAppBar>
                     ),
                   ),
 
-                  // زر طي/بسط
+                  // Ø²Ø± Ø·ÙŠ/Ø¨Ø³Ø·
                   _AppBarIconBtn(
                     icon: _collapsed
                         ? Icons.keyboard_arrow_down_rounded
@@ -160,7 +160,7 @@ class _ChatAppBarState extends State<_ChatAppBar>
               ),
             ),
 
-            // ── شريط البحث القابل للطي ────────────────────────────────────
+            // â”€â”€ Ø´Ø±ÙŠØ· Ø§Ù„Ø¨Ø­Ø« Ø§Ù„Ù‚Ø§Ø¨Ù„ Ù„Ù„Ø·ÙŠ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             SizeTransition(
               sizeFactor: _height,
               axisAlignment: -1,
@@ -249,14 +249,14 @@ class _SearchBar extends StatelessWidget {
       decoration: InputDecoration(
         hintText: 'search_conversations'.tr,
         hintStyle: AppTextStyle.inputHint.copyWith(fontSize: 12),
-        prefixIcon: const Icon(
+        prefixIcon: Icon(
           Icons.search_rounded,
           color: AppColor.grey,
           size: 18,
         ),
         suffixIcon: ctrl.searchQuery.isNotEmpty
             ? IconButton(
-                icon: const Icon(
+                icon: Icon(
                   Icons.close_rounded,
                   size: 16,
                   color: AppColor.grey,
@@ -274,9 +274,9 @@ class _SearchBar extends StatelessWidget {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// قائمة المحادثات
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Ù‚Ø§Ø¦Ù…Ø© Ø§Ù„Ù…Ø­Ø§Ø¯Ø«Ø§Øª
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _ConversationsList extends StatelessWidget {
   final SellerChatController ctrl;
   const _ConversationsList({required this.ctrl});
@@ -318,7 +318,7 @@ class _ConversationsList extends StatelessWidget {
           style: AppTextStyle.heading3.copyWith(color: AppColor.error),
         ),
         content: Text(
-          '${'block_confirm_msg'.tr} ${conv.buyerName}؟',
+          '${'block_confirm_msg'.tr} ${conv.buyerName}ØŸ',
           style: AppTextStyle.bodyMedium,
         ),
         actions: [
@@ -355,9 +355,9 @@ class _ConversationsList extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Empty State
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _EmptyConversations extends StatelessWidget {
   final bool hasSearch;
   const _EmptyConversations({required this.hasSearch});
@@ -400,9 +400,9 @@ class _EmptyConversations extends StatelessWidget {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Shimmer
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _ConversationsShimmer extends StatelessWidget {
   const _ConversationsShimmer();
 

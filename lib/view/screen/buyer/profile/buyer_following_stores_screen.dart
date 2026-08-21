@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+﻿import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_commerce/controller/buyer/buyer_profile_controller.dart';
 import 'package:e_commerce/core/class/status_request.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
@@ -223,7 +223,7 @@ class _StoreAvatarFallback extends StatelessWidget {
       width: 56,
       height: 56,
       color: AppColor.primarySurface,
-      child: const Icon(Icons.store, color: AppColor.primaryColor),
+      child: Icon(Icons.store, color: AppColor.primaryColor),
     );
   }
 }
@@ -245,11 +245,11 @@ class _FollowingEmptyState extends StatelessWidget {
                 Container(
                   width: 84,
                   height: 84,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     color: AppColor.primarySurface,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.store_outlined,
                     color: AppColor.primaryColor,
                     size: 38,

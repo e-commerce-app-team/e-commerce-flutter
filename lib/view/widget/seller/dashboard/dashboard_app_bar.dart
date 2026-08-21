@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
 import 'package:e_commerce/core/constant/color.dart';
@@ -27,7 +27,7 @@ class DashboardAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: AppColor.headerGradient,
       ),
       child: SafeArea(
@@ -153,7 +153,7 @@ class DashboardAppBar extends StatelessWidget implements PreferredSizeWidget {
                     ),
                   ),
                   Text(
-                    ' · $reviewCount ${'reviews'.tr}',
+                    ' Â· $reviewCount ${'reviews'.tr}',
                     style: AppTextStyle.bodySmall.copyWith(
                       color: Colors.white.withOpacity(0.65),
                       fontSize: 13,

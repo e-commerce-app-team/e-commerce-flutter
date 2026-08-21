@@ -1,4 +1,4 @@
-import 'package:e_commerce/controller/buyer/buyer_chat_room_controller.dart';
+﻿import 'package:e_commerce/controller/buyer/buyer_chat_room_controller.dart';
 import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/data/model/seller/chat_models.dart';
 import 'package:e_commerce/view/widget/buyer/shared/buyer_network_image.dart';
@@ -156,7 +156,7 @@ class _BuyerMessageInput extends StatelessWidget {
       top: false,
       child: Container(
         padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppColor.white,
           border: Border(top: BorderSide(color: AppColor.greyBorder)),
         ),
@@ -168,7 +168,7 @@ class _BuyerMessageInput extends StatelessWidget {
                 minLines: 1,
                 maxLines: 4,
                 decoration: InputDecoration(
-                  hintText: 'اكتب رسالتك...',
+                  hintText: 'Ø§ÙƒØªØ¨ Ø±Ø³Ø§Ù„ØªÙƒ...',
                   filled: true,
                   fillColor: AppColor.secondBackground,
                   border: OutlineInputBorder(
@@ -183,7 +183,7 @@ class _BuyerMessageInput extends StatelessWidget {
             const SizedBox(width: 6),
             IconButton(
               onPressed: controller.sendImage,
-              icon: const Icon(Icons.attach_file_rounded, color: AppColor.primaryColor),
+              icon: Icon(Icons.attach_file_rounded, color: AppColor.primaryColor),
               tooltip: 'attach_image'.tr,
             ),
             const SizedBox(width: 8),
@@ -193,7 +193,7 @@ class _BuyerMessageInput extends StatelessWidget {
               child: Container(
                 width: 48,
                 height: 48,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   gradient: AppColor.mainGradient,
                   shape: BoxShape.circle,
                 ),
@@ -212,7 +212,7 @@ class _EmptyConversation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    return Center(
       child: Padding(
         padding: EdgeInsets.all(24),
         child: Column(
@@ -221,12 +221,12 @@ class _EmptyConversation extends StatelessWidget {
             Icon(Icons.chat_bubble_outline_rounded, size: 64, color: AppColor.greyLight),
             SizedBox(height: 12),
             Text(
-              'ابدأ المحادثة مع التاجر',
+              'Ø§Ø¨Ø¯Ø£ Ø§Ù„Ù…Ø­Ø§Ø¯Ø«Ø© Ù…Ø¹ Ø§Ù„ØªØ§Ø¬Ø±',
               style: TextStyle(fontSize: 17, fontWeight: FontWeight.w900),
             ),
             SizedBox(height: 6),
             Text(
-              'اسأل عن المقاسات، التوفر، أو تفاصيل المنتج.',
+              'Ø§Ø³Ø£Ù„ Ø¹Ù† Ø§Ù„Ù…Ù‚Ø§Ø³Ø§ØªØŒ Ø§Ù„ØªÙˆÙØ±ØŒ Ø£Ùˆ ØªÙØ§ØµÙŠÙ„ Ø§Ù„Ù…Ù†ØªØ¬.',
               textAlign: TextAlign.center,
               style: TextStyle(color: AppColor.greyText),
             ),

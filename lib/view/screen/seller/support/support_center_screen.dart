@@ -1,4 +1,4 @@
-import 'dart:io';
+﻿import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -49,7 +49,7 @@ class SupportCenterScreen extends StatelessWidget {
       flexibleSpace: FlexibleSpaceBar(
         stretchModes: const [StretchMode.zoomBackground],
         background: Container(
-          decoration: const BoxDecoration(gradient: AppColor.headerGradient),
+          decoration: BoxDecoration(gradient: AppColor.headerGradient),
           child: SafeArea(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 50, 16, 16),
@@ -160,7 +160,7 @@ class _QuickContactSection extends StatelessWidget {
       'label':    'contact_whatsapp',
       'icon':     Icons.chat_rounded,
       'gradient': [const Color(0xff25D366), const Color(0xff128C7E)],
-      'url':      'https://wa.me/+963947989738?text=مرحباً،%20أحتاج%20دعماً%20بخصوص%20متجري',
+      'url':      'https://wa.me/+963947989738?text=Ù…Ø±Ø­Ø¨Ø§Ù‹ØŒ%20Ø£Ø­ØªØ§Ø¬%20Ø¯Ø¹Ù…Ø§Ù‹%20Ø¨Ø®ØµÙˆØµ%20Ù…ØªØ¬Ø±ÙŠ',
     },
     {
       'label':    'contact_email',
@@ -481,7 +481,7 @@ class _RecentTicketsSection extends StatelessWidget {
                           color: AppColor.primaryColor,
                           fontWeight: FontWeight.w600)),
                   const SizedBox(width: 2),
-                  const Icon(Icons.arrow_forward_ios_rounded,
+                  Icon(Icons.arrow_forward_ios_rounded,
                       size: 11, color: AppColor.primaryColor),
                 ]),
               ),
@@ -512,9 +512,9 @@ class _EmptyTickets extends StatelessWidget {
     child: Column(children: [
       Container(
         width: 60, height: 60,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
             color: AppColor.primarySurface, shape: BoxShape.circle),
-        child: const Icon(Icons.confirmation_number_outlined,
+        child: Icon(Icons.confirmation_number_outlined,
             color: AppColor.primaryColor, size: 28),
       ),
       const SizedBox(height: 12),
@@ -855,7 +855,7 @@ class _NewTicketSheet extends StatelessWidget {
                                   color: AppColor.greyBorder,
                                   style: BorderStyle.solid),
                             ),
-                            child: const Column(
+                            child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(Icons.add_photo_alternate_outlined,
@@ -946,17 +946,17 @@ class _SheetHeader extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('new_ticket_title'.tr,
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
                   color: AppColor.textPrimary)),
           Text('new_ticket_sub'.tr,
-              style: const TextStyle(fontSize: 11, color: AppColor.greyText)),
+              style: TextStyle(fontSize: 11, color: AppColor.greyText)),
         ],
       )),
       IconButton(
         onPressed: Get.back,
-        icon: const Icon(Icons.close_rounded, color: AppColor.greyText),
+        icon: Icon(Icons.close_rounded, color: AppColor.greyText),
       ),
     ]),
   );
@@ -983,13 +983,13 @@ InputDecoration _inputDeco(String hint, IconData icon) => InputDecoration(
   contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
   border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppColor.greyBorder)),
+      borderSide: BorderSide(color: AppColor.greyBorder)),
   enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppColor.greyBorder)),
+      borderSide: BorderSide(color: AppColor.greyBorder)),
   focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppColor.primaryColor, width: 1.5)),
+      borderSide: BorderSide(color: AppColor.primaryColor, width: 1.5)),
   errorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
       borderSide: const BorderSide(color: AppColor.error)),
@@ -1008,7 +1008,7 @@ class _SupportShimmer extends StatelessWidget {
       SliverToBoxAdapter(
         child: Container(
           height: 200,
-          decoration: const BoxDecoration(gradient: AppColor.headerGradient),
+          decoration: BoxDecoration(gradient: AppColor.headerGradient),
         ),
       ),
       SliverPadding(

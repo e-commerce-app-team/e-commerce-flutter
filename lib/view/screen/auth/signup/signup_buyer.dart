@@ -1,4 +1,4 @@
-import 'dart:io';
+﻿import 'dart:io';
 import 'package:e_commerce/view/widget/auth/customtextbodyauth.dart';
 import 'package:e_commerce/view/widget/auth/customtexttitleauth.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +38,7 @@ class SignUpBuyer extends StatelessWidget {
               right: 0,
               height: screenHeight * 0.50,
               child: Container(
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   gradient: AppColor.mainGradient,
                 ),
                 child: SafeArea(
@@ -72,7 +72,7 @@ class SignUpBuyer extends StatelessWidget {
               bottom: 0,
               child: Container(
                 clipBehavior: Clip.hardEdge,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   color: AppColor.backgroundcolor,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(50),
@@ -99,7 +99,7 @@ class SignUpBuyer extends StatelessWidget {
                                     ? FileImage(contr.profileImage!)
                                     : null,
                                 child: contr.profileImage == null
-                                    ? const Icon(Icons.person, size: 50, color: AppColor.grey)
+                                    ? Icon(Icons.person, size: 50, color: AppColor.grey)
                                     : null,
                               ),
                               Positioned(
@@ -107,7 +107,7 @@ class SignUpBuyer extends StatelessWidget {
                                 right: 0,
                                 child: InkWell(
                                   onTap: () => contr.pickImage(),
-                                  child: const CircleAvatar(
+                                  child: CircleAvatar(
                                     radius: 18,
                                     backgroundColor: AppColor.primaryColor,
                                     child: Icon(Icons.camera_alt, color: Colors.white, size: 18),

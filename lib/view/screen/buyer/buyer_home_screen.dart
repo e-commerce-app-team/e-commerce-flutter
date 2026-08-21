@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/core/constant/routes.dart';
@@ -40,19 +40,19 @@ void _openProduct(BuyerProductItem product) {
 
 /// NEXUS Buyer Home Screen.
 ///
-/// Section order (top → bottom):
+/// Section order (top â†’ bottom):
 ///   1.  Header (NEXUS + greeting + search)
 ///   2.  Hero Banner Carousel (seller ads)
 ///   3.  Categories (glassmorphism pills)
 ///   4.  Flash Sale / Deals (countdown)
 ///   5.  Featured Stores (boosted + high rating)
-///   6.  Featured Products (ads + rating ≥4.5)
+///   6.  Featured Products (ads + rating â‰¥4.5)
 ///   7.  Nearby Stores (location-based)
 ///   8.  New Arrivals
 ///   9.  Recommended For You (personalized)
 ///  10.  Deals & Offers (discount products)
 ///  11.  Trending Now (2-col grid)
-///  12.  Favorites (conditional — only if items saved)
+///  12.  Favorites (conditional â€” only if items saved)
 ///  13.  All Products (paginated 2-col grid)
 class BuyerHomeScreen extends StatelessWidget {
   const BuyerHomeScreen({super.key});
@@ -67,7 +67,7 @@ class BuyerHomeScreen extends StatelessWidget {
         bottom: false,
         child: GetBuilder<BuyerHomeController>(
           builder: (controller) {
-            // ── Full-screen shimmer on first load ─────────────────────────
+            // â”€â”€ Full-screen shimmer on first load â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             if (controller.isLoading) {
               return const _HomeLoadingShimmer();
             }
@@ -79,12 +79,12 @@ class BuyerHomeScreen extends StatelessWidget {
                 padding: EdgeInsets.zero,
                 physics: const BouncingScrollPhysics(),
                 children: [
-                  // ① Header
+                  // â‘  Header
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
                     child: BuyerHomeHeader(
-                      userName: 'خالد',
-                      deliveryLocation: 'دمشق - المزة، شارع الشيخ سعد',
+                      userName: 'Ø®Ø§Ù„Ø¯',
+                      deliveryLocation: 'Ø¯Ù…Ø´Ù‚ - Ø§Ù„Ù…Ø²Ø©ØŒ Ø´Ø§Ø±Ø¹ Ø§Ù„Ø´ÙŠØ® Ø³Ø¹Ø¯',
                       notificationCount: 0,
                       cartCount: 0,
                       searchHint: 'search_hint_home'.tr,
@@ -96,7 +96,7 @@ class BuyerHomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
 
-                  // ② Hero Banner
+                  // â‘¡ Hero Banner
                   if (controller.banners.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -104,7 +104,7 @@ class BuyerHomeScreen extends StatelessWidget {
                     ),
                   const SizedBox(height: 28),
 
-                  // ③ Categories
+                  // â‘¢ Categories
                   if (controller.categories.isNotEmpty) ...[
                     CategoriesBar(
                       categories: controller.categories,
@@ -114,7 +114,7 @@ class BuyerHomeScreen extends StatelessWidget {
                     const SizedBox(height: 32),
                   ],
 
-                  // ④ Flash Sale
+                  // â‘£ Flash Sale
                   if (controller.flashSaleProducts.isNotEmpty)
                     FlashSaleSection(
                       products: controller.flashSaleProducts,
@@ -126,7 +126,7 @@ class BuyerHomeScreen extends StatelessWidget {
                   if (controller.flashSaleProducts.isNotEmpty)
                     const SizedBox(height: 32),
 
-                  // ⑤ Featured Stores
+                  // â‘¤ Featured Stores
                   if (controller.featuredStores.isNotEmpty)
                     FeaturedStoresSection(
                       stores: controller.featuredStores,
@@ -144,7 +144,7 @@ class BuyerHomeScreen extends StatelessWidget {
                   if (controller.featuredStores.isNotEmpty)
                     const SizedBox(height: 32),
 
-                  // ⑥ Featured Products
+                  // â‘¥ Featured Products
                   if (controller.featuredProducts.isNotEmpty)
                     FeaturedProductsSection(
                       products: controller.featuredProducts,
@@ -157,7 +157,7 @@ class BuyerHomeScreen extends StatelessWidget {
                   if (controller.featuredProducts.isNotEmpty)
                     const SizedBox(height: 32),
 
-                  // ⑦ Nearby Stores
+                  // â‘¦ Nearby Stores
                   if (controller.nearbyStores.isNotEmpty)
                     NearbyStoresSection(
                       stores: controller.nearbyStores,
@@ -175,7 +175,7 @@ class BuyerHomeScreen extends StatelessWidget {
                   if (controller.nearbyStores.isNotEmpty)
                     const SizedBox(height: 32),
 
-                  // ⑧ New Arrivals
+                  // â‘§ New Arrivals
                   if (controller.newArrivals.isNotEmpty)
                     NewArrivalsSection(
                       products: controller.newArrivals,
@@ -188,7 +188,7 @@ class BuyerHomeScreen extends StatelessWidget {
                   if (controller.newArrivals.isNotEmpty)
                     const SizedBox(height: 32),
 
-                  // ⑨ Recommended For You
+                  // â‘¨ Recommended For You
                   if (controller.recommendedProducts.isNotEmpty)
                     RecommendedSection(
                       products: controller.recommendedProducts,
@@ -201,7 +201,7 @@ class BuyerHomeScreen extends StatelessWidget {
                   if (controller.recommendedProducts.isNotEmpty)
                     const SizedBox(height: 32),
 
-                  // ⑩ Deals & Offers
+                  // â‘© Deals & Offers
                   if (controller.offerProducts.isNotEmpty)
                     OffersSection(
                       products: controller.offerProducts,
@@ -214,7 +214,7 @@ class BuyerHomeScreen extends StatelessWidget {
                   if (controller.offerProducts.isNotEmpty)
                     const SizedBox(height: 32),
 
-                  // ⑪ Trending Now
+                  // â‘ª Trending Now
                   if (controller.trendingProducts.isNotEmpty)
                     TrendingProductsSection(
                       products: controller.trendingProducts,
@@ -227,7 +227,7 @@ class BuyerHomeScreen extends StatelessWidget {
                   if (controller.trendingProducts.isNotEmpty)
                     const SizedBox(height: 32),
 
-                  // ⑫ Favorites (always shown if user is logged in)
+                  // â‘« Favorites (always shown if user is logged in)
                   FavoritesSection(
                     products: controller.favoriteProducts,
                     onSeeAll: () {},
@@ -238,7 +238,7 @@ class BuyerHomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 32),
 
-                  // ─── Section divider ──────────────────────────────────────
+                  // â”€â”€â”€ Section divider â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Row(
@@ -253,7 +253,7 @@ class BuyerHomeScreen extends StatelessWidget {
                         Container(
                           width: 8,
                           height: 8,
-                          decoration: const BoxDecoration(
+                          decoration: BoxDecoration(
                             gradient: AppColor.mainGradient,
                             shape: BoxShape.circle,
                           ),
@@ -270,7 +270,7 @@ class BuyerHomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 32),
 
-                  // ⑬ All Products
+                  // â‘¬ All Products
                   AllProductsSection(
                     products: controller.allProducts,
                     isLoading: controller.isAllProductsLoading,
@@ -294,7 +294,7 @@ class BuyerHomeScreen extends StatelessWidget {
   }
 }
 
-// ─── Loading shimmer placeholder ─────────────────────────────────────────────
+// â”€â”€â”€ Loading shimmer placeholder â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _HomeLoadingShimmer extends StatelessWidget {
   const _HomeLoadingShimmer();

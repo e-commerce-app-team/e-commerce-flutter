@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
@@ -65,7 +65,7 @@ class ExploreToolbar extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: AppColor.greyBorder),
               ),
-              child: const Icon(Icons.swap_vert_rounded, size: 20, color: AppColor.black),
+              child: Icon(Icons.swap_vert_rounded, size: 20, color: AppColor.black),
             ),
           ),
         ],
@@ -157,7 +157,7 @@ class ExploreActiveFilterChips extends StatelessWidget {
                     const SizedBox(width: 6),
                     GestureDetector(
                       onTap: () => onRemove(chip['key'] ?? ''),
-                      child: const Icon(Icons.close_rounded, size: 15, color: AppColor.primaryColor),
+                      child: Icon(Icons.close_rounded, size: 15, color: AppColor.primaryColor),
                     ),
                   ],
                 ),

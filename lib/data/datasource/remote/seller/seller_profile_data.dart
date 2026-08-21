@@ -45,11 +45,14 @@ class SellerProfileData {
   /// Shipping settings - TODO: الباك لم ينفّذ هذا الـ endpoint بعد
   Future<Either<StatusRequest, Map>> updateShippingSettings(
     String token,
-    Map<String, String> data,
+    Map<String, dynamic> data,
   ) async =>
       await crud.postData(
         AppLink.sellerShippingSettings,
         data,
         headers: _auth(token),
       );
+
+  Future<Either<StatusRequest, Map>> getShippingSettings(String token) async =>
+      await crud.getData(AppLink.sellerShippingSettings, headers: _auth(token));
 }

@@ -1,4 +1,4 @@
-import 'package:e_commerce/controller/auth/resetpassword_controller.dart';
+﻿import 'package:e_commerce/controller/auth/resetpassword_controller.dart';
 import 'package:e_commerce/core/class/status_request.dart';
 import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/core/functions/valid_input.dart';
@@ -35,7 +35,7 @@ class ResetPassword extends StatelessWidget {
                   key: controller.formstate,
                   child: ListView(children: [
                     const SizedBox(height: 20),
-                    const Icon(Icons.password_outlined, size: 80, color: AppColor.primaryColor),
+                    Icon(Icons.password_outlined, size: 80, color: AppColor.primaryColor),
                     const SizedBox(height: 20),
                     CustomTextTitleAuth(text: "35".tr),
                     const SizedBox(height: 10),

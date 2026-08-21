@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
 import 'package:e_commerce/core/constant/color.dart';
@@ -208,17 +208,17 @@ class _CategoryDrillDown extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 child: Row(
                   children: [
-                    const Icon(Icons.arrow_back_ios_rounded, size: 12, color: AppColor.primaryColor),
+                    Icon(Icons.arrow_back_ios_rounded, size: 12, color: AppColor.primaryColor),
                     const SizedBox(width: 6),
                     ...navStack.map((c) => Row(mainAxisSize: MainAxisSize.min, children: [
                       Text(c.name, style: AppTextStyle.labelSmall.copyWith(color: AppColor.primaryColor, fontSize: 11)),
-                      const Padding(padding: EdgeInsets.symmetric(horizontal: 3), child: Icon(Icons.chevron_right_rounded, size: 12, color: AppColor.greyLight)),
+                      Padding(padding: EdgeInsets.symmetric(horizontal: 3), child: Icon(Icons.chevron_right_rounded, size: 12, color: AppColor.greyLight)),
                     ])),
                   ],
                 ),
               ),
             ),
-            const Divider(height: 1, color: AppColor.greyBorder),
+            Divider(height: 1, color: AppColor.greyBorder),
           ],
           if (selectedCat != null)
             Padding(
@@ -232,11 +232,11 @@ class _CategoryDrillDown extends StatelessWidget {
                     border: Border.all(color: AppColor.primaryColor.withOpacity(0.3)),
                   ),
                   child: Row(mainAxisSize: MainAxisSize.min, children: [
-                    const Icon(Icons.check_rounded, size: 11, color: AppColor.primaryColor),
+                    Icon(Icons.check_rounded, size: 11, color: AppColor.primaryColor),
                     const SizedBox(width: 4),
                     Text(selectedCat!.name, style: AppTextStyle.chip.copyWith(color: AppColor.primaryColor, fontWeight: FontWeight.w600)),
                     const SizedBox(width: 4),
-                    GestureDetector(onTap: onClear, child: const Icon(Icons.close_rounded, size: 11, color: AppColor.primaryColor)),
+                    GestureDetector(onTap: onClear, child: Icon(Icons.close_rounded, size: 11, color: AppColor.primaryColor)),
                   ]),
                 ),
               ]),

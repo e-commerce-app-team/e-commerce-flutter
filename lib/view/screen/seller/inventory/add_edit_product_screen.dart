@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/controller/seller/seller_inventory_controller.dart';
@@ -265,7 +265,7 @@ class _BasicInfoSection extends StatelessWidget {
               ctrl.refreshCategories();
             },
             child: Row(mainAxisSize: MainAxisSize.min, children: [
-              const Icon(Icons.settings_outlined, size: 12, color: AppColor.primaryColor),
+              Icon(Icons.settings_outlined, size: 12, color: AppColor.primaryColor),
               const SizedBox(width: 4),
               Text('manage_categories_btn'.tr,
                   style: AppTextStyle.labelSmall.copyWith(
@@ -386,7 +386,7 @@ class _DatePickerBtn extends StatelessWidget {
         lastDate: DateTime.now().add(const Duration(days: 365)),
         builder: (ctx, child) => Theme(
           data: Theme.of(ctx).copyWith(
-              colorScheme: const ColorScheme.light(primary: AppColor.primaryColor)),
+              colorScheme: ColorScheme.light(primary: AppColor.primaryColor)),
           child: child!,
         ),
       );
@@ -406,7 +406,7 @@ class _DatePickerBtn extends StatelessWidget {
           border: Border.all(color: AppColor.greyBorder),
         ),
         child: Row(children: [
-          const Icon(Icons.calendar_today_outlined, size: 15, color: AppColor.grey),
+          Icon(Icons.calendar_today_outlined, size: 15, color: AppColor.grey),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
@@ -668,7 +668,7 @@ class _SCard extends StatelessWidget {
           Text(title, style: AppTextStyle.heading3.copyWith(fontSize: 14)),
         ]),
       ),
-      const Divider(height: 18, indent: 16, endIndent: 16, color: AppColor.greyBorder),
+      Divider(height: 18, indent: 16, endIndent: 16, color: AppColor.greyBorder),
       Padding(padding: const EdgeInsets.fromLTRB(16, 0, 16, 16), child: child),
     ]),
   );

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/controller/seller/seller_orders_controller.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
@@ -106,7 +106,7 @@ class _OrderCardState extends State<OrderCard>
                                     .copyWith(fontSize: 12)),
                             const SizedBox(height: 2),
                             Row(children: [
-                              const Icon(Icons.location_on_outlined,
+                              Icon(Icons.location_on_outlined,
                                   size: 12, color: AppColor.grey),
                               const SizedBox(width: 3),
                               Expanded(
@@ -164,14 +164,14 @@ class _OrderCardState extends State<OrderCard>
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Row(children: [
-                        const Icon(Icons.shopping_bag_outlined,
+                        Icon(Icons.shopping_bag_outlined,
                             size: 14, color: AppColor.grey),
                         const SizedBox(width: 6),
                         Expanded(
                           child: Text(
                             order.items
-                                .map((i) => '${i.name} ×${i.qty}')
-                                .join(' · '),
+                                .map((i) => '${i.name} Ã—${i.qty}')
+                                .join(' Â· '),
                             style: AppTextStyle.labelSmall
                                 .copyWith(fontSize: 11),
                             maxLines: 1,
@@ -220,23 +220,23 @@ class _PendingActions extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(14, 10, 14, 0),
       child: Row(children: [
-        // رفض
+        // Ø±ÙØ¶
         Expanded(
           child: OutlinedButton(
             onPressed: () => _showRejectDialog(context, ctrl),
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 10),
-              side: const BorderSide(color: AppColor.greyBorder),
+              side: BorderSide(color: AppColor.greyBorder),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(11)),
             ),
-            child: Text('رفض'.tr,
+            child: Text('Ø±ÙØ¶'.tr,
                 style: AppTextStyle.buttonSmall.copyWith(
                     color: AppColor.grey, fontSize: 13)),
           ),
         ),
         const SizedBox(width: 10),
-        // قبول
+        // Ù‚Ø¨ÙˆÙ„
         Expanded(
           flex: 2,
           child: ElevatedButton(
@@ -251,7 +251,7 @@ class _PendingActions extends StatelessWidget {
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               const Icon(Icons.check_rounded, size: 16, color: Colors.white),
               const SizedBox(width: 4),
-              Text('قبول الطلب'.tr, style: AppTextStyle.buttonSmall),
+              Text('Ù‚Ø¨ÙˆÙ„ Ø§Ù„Ø·Ù„Ø¨'.tr, style: AppTextStyle.buttonSmall),
             ]),
           ),
         ),
@@ -309,10 +309,10 @@ class _QRHint extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('عرض رمز QR للمندوب',
+                Text('Ø¹Ø±Ø¶ Ø±Ù…Ø² QR Ù„Ù„Ù…Ù†Ø¯ÙˆØ¨',
                     style: AppTextStyle.labelLarge.copyWith(
                         color: AppColor.statOrders, fontSize: 12)),
-                Text('اضغط لعرض الرمز عند استلام البضاعة',
+                Text('Ø§Ø¶ØºØ· Ù„Ø¹Ø±Ø¶ Ø§Ù„Ø±Ù…Ø² Ø¹Ù†Ø¯ Ø§Ø³ØªÙ„Ø§Ù… Ø§Ù„Ø¨Ø¶Ø§Ø¹Ø©',
                     style: AppTextStyle.labelSmall.copyWith(fontSize: 10)),
               ],
             ),
@@ -347,7 +347,7 @@ class _PulseDotState extends State<_PulseDot>
         .animate(CurvedAnimation(parent: _c, curve: Curves.easeInOut)),
     child: Container(
       width: 7, height: 7,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColor.primaryColor, shape: BoxShape.circle),
     ),
   );
@@ -376,19 +376,19 @@ class _AcceptOrderDialogState extends State<AcceptOrderDialog> {
       child: Column(mainAxisSize: MainAxisSize.min, children: [
         Container(
           width: 52, height: 52,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: AppColor.primarySurface, shape: BoxShape.circle),
-          child: const Icon(Icons.check_circle_outline_rounded,
+          child: Icon(Icons.check_circle_outline_rounded,
               color: AppColor.primaryColor, size: 28),
         ),
         const SizedBox(height: 12),
-        Text('قبول الطلب', style: AppTextStyle.heading3),
+        Text('Ù‚Ø¨ÙˆÙ„ Ø§Ù„Ø·Ù„Ø¨', style: AppTextStyle.heading3),
         const SizedBox(height: 4),
         Text(widget.order.subOrderId,
             style: AppTextStyle.labelMedium
                 .copyWith(color: AppColor.primaryColor)),
         const SizedBox(height: 16),
-        Text('وقت التجهيز المتوقع',
+        Text('ÙˆÙ‚Øª Ø§Ù„ØªØ¬Ù‡ÙŠØ² Ø§Ù„Ù…ØªÙˆÙ‚Ø¹',
             style: AppTextStyle.labelLarge.copyWith(fontSize: 13)),
         const SizedBox(height: 10),
         Wrap(
@@ -411,7 +411,7 @@ class _AcceptOrderDialogState extends State<AcceptOrderDialog> {
                   ),
                 ),
                 child: Text(
-                  m < 60 ? '$m دقيقة' : '${m ~/ 60} ساعة',
+                  m < 60 ? '$m Ø¯Ù‚ÙŠÙ‚Ø©' : '${m ~/ 60} Ø³Ø§Ø¹Ø©',
                   style: AppTextStyle.chip.copyWith(
                     color: isSelected ? Colors.white : AppColor.grey,
                     fontWeight: FontWeight.w600,
@@ -426,7 +426,7 @@ class _AcceptOrderDialogState extends State<AcceptOrderDialog> {
           Expanded(
             child: TextButton(
               onPressed: () => Get.back(),
-              child: Text('إلغاء',
+              child: Text('Ø¥Ù„ØºØ§Ø¡',
                   style: AppTextStyle.buttonSmall
                       .copyWith(color: AppColor.grey)),
             ),
@@ -445,7 +445,7 @@ class _AcceptOrderDialogState extends State<AcceptOrderDialog> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
               ),
-              child: Text('تأكيد القبول', style: AppTextStyle.buttonMedium),
+              child: Text('ØªØ£ÙƒÙŠØ¯ Ø§Ù„Ù‚Ø¨ÙˆÙ„', style: AppTextStyle.buttonMedium),
             ),
           ),
         ]),
@@ -469,10 +469,10 @@ class _RejectOrderDialogState extends State<RejectOrderDialog> {
   String? _selected;
   final _otherCtrl = TextEditingController();
   final _reasons = [
-    'نفد المخزون',
-    'المنتج غير متاح مؤقتاً',
-    'لا أستطيع التوصيل لهذه المنطقة',
-    'سبب آخر',
+    'Ù†ÙØ¯ Ø§Ù„Ù…Ø®Ø²ÙˆÙ†',
+    'Ø§Ù„Ù…Ù†ØªØ¬ ØºÙŠØ± Ù…ØªØ§Ø­ Ù…Ø¤Ù‚ØªØ§Ù‹',
+    'Ù„Ø§ Ø£Ø³ØªØ·ÙŠØ¹ Ø§Ù„ØªÙˆØµÙŠÙ„ Ù„Ù‡Ø°Ù‡ Ø§Ù„Ù…Ù†Ø·Ù‚Ø©',
+    'Ø³Ø¨Ø¨ Ø¢Ø®Ø±',
   ];
 
   @override
@@ -492,9 +492,9 @@ class _RejectOrderDialogState extends State<RejectOrderDialog> {
               color: AppColor.error, size: 28),
         ),
         const SizedBox(height: 12),
-        Text('رفض الطلب', style: AppTextStyle.heading3),
+        Text('Ø±ÙØ¶ Ø§Ù„Ø·Ù„Ø¨', style: AppTextStyle.heading3),
         const SizedBox(height: 4),
-        Text('سيتم إعادة المبلغ للمشتري تلقائياً',
+        Text('Ø³ÙŠØªÙ… Ø¥Ø¹Ø§Ø¯Ø© Ø§Ù„Ù…Ø¨Ù„Øº Ù„Ù„Ù…Ø´ØªØ±ÙŠ ØªÙ„Ù‚Ø§Ø¦ÙŠØ§Ù‹',
             style: AppTextStyle.bodySmall
                 .copyWith(color: AppColor.grey, fontSize: 12),
             textAlign: TextAlign.center),
@@ -522,18 +522,18 @@ class _RejectOrderDialogState extends State<RejectOrderDialog> {
                 )),
           ),
         )),
-        if (_selected == 'سبب آخر') ...[
+        if (_selected == 'Ø³Ø¨Ø¨ Ø¢Ø®Ø±') ...[
           TextField(
             controller: _otherCtrl,
             maxLines: 2,
             style: AppTextStyle.inputText,
             decoration: InputDecoration(
-              hintText: 'اكتب السبب...',
+              hintText: 'Ø§ÙƒØªØ¨ Ø§Ù„Ø³Ø¨Ø¨...',
               hintStyle: AppTextStyle.inputHint,
               filled: true, fillColor: AppColor.secondBackground,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(11),
-                borderSide: const BorderSide(color: AppColor.greyBorder),
+                borderSide: BorderSide(color: AppColor.greyBorder),
               ),
               contentPadding: const EdgeInsets.all(12),
             ),
@@ -544,7 +544,7 @@ class _RejectOrderDialogState extends State<RejectOrderDialog> {
           Expanded(
             child: TextButton(
               onPressed: () => Get.back(),
-              child: Text('إلغاء',
+              child: Text('Ø¥Ù„ØºØ§Ø¡',
                   style: AppTextStyle.buttonSmall
                       .copyWith(color: AppColor.grey)),
             ),
@@ -554,7 +554,7 @@ class _RejectOrderDialogState extends State<RejectOrderDialog> {
             flex: 2,
             child: ElevatedButton(
               onPressed: _selected == null ? null : () {
-                final reason = _selected == 'سبب آخر'
+                final reason = _selected == 'Ø³Ø¨Ø¨ Ø¢Ø®Ø±'
                     ? _otherCtrl.text.trim()
                     : _selected!;
                 Get.back();
@@ -568,7 +568,7 @@ class _RejectOrderDialogState extends State<RejectOrderDialog> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
               ),
-              child: Text('تأكيد الرفض', style: AppTextStyle.buttonMedium),
+              child: Text('ØªØ£ÙƒÙŠØ¯ Ø§Ù„Ø±ÙØ¶', style: AppTextStyle.buttonMedium),
             ),
           ),
         ]),

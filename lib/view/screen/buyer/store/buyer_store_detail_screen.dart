@@ -1,4 +1,4 @@
-import 'package:e_commerce/controller/buyer/buyer_store_detail_controller.dart';
+﻿import 'package:e_commerce/controller/buyer/buyer_store_detail_controller.dart';
 import 'package:e_commerce/core/class/status_request.dart';
 import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/core/constant/routes.dart';
@@ -16,7 +16,7 @@ class BuyerStoreDetailScreen extends StatelessWidget {
     final args = Get.arguments;
     final storeId = args is Map ? args['store_id']?.toString() : args?.toString();
     if (storeId == null || storeId.isEmpty) {
-      return const Scaffold(body: Center(child: Text('لم يتم تحديد المتجر')));
+      return const Scaffold(body: Center(child: Text('Ù„Ù… ÙŠØªÙ… ØªØ­Ø¯ÙŠØ¯ Ø§Ù„Ù…ØªØ¬Ø±')));
     }
 
     Get.put(BuyerStoreDetailController(storeId: storeId), tag: storeId);
@@ -174,11 +174,11 @@ class _StoreHeader extends StatelessWidget {
                             ),
                             _InfoPill(
                               icon: Icons.inventory_2_outlined,
-                              label: '${store.productsCount} منتج',
+                              label: '${store.productsCount} Ù…Ù†ØªØ¬',
                             ),
                             _InfoPill(
                               icon: Icons.people_alt_outlined,
-                              label: '${store.followersCount} متابع',
+                              label: '${store.followersCount} Ù…ØªØ§Ø¨Ø¹',
                             ),
                           ],
                         ),
@@ -193,14 +193,14 @@ class _StoreHeader extends StatelessWidget {
         Container(
           width: double.infinity,
           padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
-          decoration: const BoxDecoration(color: AppColor.backgroundcolor),
+          decoration: BoxDecoration(color: AppColor.backgroundcolor),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (store.description.isNotEmpty)
                 Text(
                   store.description,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColor.greyText,
                     fontSize: 14,
                     height: 1.6,
@@ -235,7 +235,7 @@ class _StoreHeader extends StatelessWidget {
                   Expanded(
                     child: _PrimaryAction(
                       icon: Icons.chat_bubble_outline_rounded,
-                      label: 'مراسلة التاجر',
+                      label: 'Ù…Ø±Ø§Ø³Ù„Ø© Ø§Ù„ØªØ§Ø¬Ø±',
                       onTap: () => Get.toNamed(
                         AppRoute.buyerChatRoom,
                         arguments: {
@@ -255,7 +255,7 @@ class _StoreHeader extends StatelessWidget {
                   Expanded(
                     child: _SecondaryAction(
                       icon: Icons.rate_review_outlined,
-                      label: 'تقييم المتجر',
+                      label: 'ØªÙ‚ÙŠÙŠÙ… Ø§Ù„Ù…ØªØ¬Ø±',
                       onTap: () => _showReviewSheet(context, controller),
                     ),
                   ),
@@ -287,7 +287,7 @@ class _SearchAndFilterBar extends StatelessWidget {
               onChanged: controller.onSearchChanged,
               textInputAction: TextInputAction.search,
               decoration: InputDecoration(
-                hintText: 'ابحث داخل هذا المتجر',
+                hintText: 'Ø§Ø¨Ø­Ø« Ø¯Ø§Ø®Ù„ Ù‡Ø°Ø§ Ø§Ù„Ù…ØªØ¬Ø±',
                 prefixIcon: const Icon(Icons.search_rounded),
                 filled: true,
                 fillColor: AppColor.secondBackground,
@@ -313,7 +313,7 @@ class _SearchAndFilterBar extends StatelessWidget {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  const Icon(Icons.tune_rounded, color: AppColor.primaryColor),
+                  Icon(Icons.tune_rounded, color: AppColor.primaryColor),
                   if (controller.activeFilterCount > 0)
                     PositionedDirectional(
                       top: 9,
@@ -374,11 +374,11 @@ class _DepartmentNavigator extends StatelessWidget {
               Expanded(
                 child: Text(
                   controller.departmentPath.isEmpty
-                      ? 'أقسام المتجر'
+                      ? 'Ø£Ù‚Ø³Ø§Ù… Ø§Ù„Ù…ØªØ¬Ø±'
                       : controller.departmentPath.map((e) => e.name).join(' / '),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColor.black,
                     fontSize: 17,
                     fontWeight: FontWeight.w900,
@@ -388,7 +388,7 @@ class _DepartmentNavigator extends StatelessWidget {
               if (controller.selectedDepartmentId != null)
                 TextButton(
                   onPressed: controller.clearFilters,
-                  child: const Text('الكل'),
+                  child: const Text('Ø§Ù„ÙƒÙ„'),
                 ),
             ],
           ),
@@ -428,9 +428,9 @@ class _ProductsHeader extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(18, 22, 18, 12),
       child: Row(
         children: [
-          const Expanded(
+          Expanded(
             child: Text(
-              'منتجات المتجر',
+              'Ù…Ù†ØªØ¬Ø§Øª Ø§Ù„Ù…ØªØ¬Ø±',
               style: TextStyle(
                 color: AppColor.black,
                 fontSize: 20,
@@ -439,8 +439,8 @@ class _ProductsHeader extends StatelessWidget {
             ),
           ),
           Text(
-            '${controller.products.length} نتيجة',
-            style: const TextStyle(
+            '${controller.products.length} Ù†ØªÙŠØ¬Ø©',
+            style: TextStyle(
               color: AppColor.greyText,
               fontWeight: FontWeight.w700,
             ),
@@ -480,7 +480,7 @@ class _ProductGrid extends StatelessWidget {
       return const SliverToBoxAdapter(
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: 56),
-          child: Center(child: Text('لا توجد منتجات مطابقة حالياً')),
+          child: Center(child: Text('Ù„Ø§ ØªÙˆØ¬Ø¯ Ù…Ù†ØªØ¬Ø§Øª Ù…Ø·Ø§Ø¨Ù‚Ø© Ø­Ø§Ù„ÙŠØ§Ù‹')),
         ),
       );
     }
@@ -529,7 +529,7 @@ class _StoreProductCard extends StatelessWidget {
                   PositionedDirectional(
                     top: 9,
                     start: 9,
-                    child: _DarkChip(label: 'عرض'),
+                    child: _DarkChip(label: 'Ø¹Ø±Ø¶'),
                   ),
                 PositionedDirectional(
                   top: 9,
@@ -562,7 +562,7 @@ class _StoreProductCard extends StatelessWidget {
                   product.name,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColor.black,
                     fontWeight: FontWeight.w800,
                     fontSize: 13.5,
@@ -581,7 +581,7 @@ class _StoreProductCard extends StatelessWidget {
                     const Spacer(),
                     if (product.stock <= 0)
                       const Text(
-                        'غير متوفر',
+                        'ØºÙŠØ± Ù…ØªÙˆÙØ±',
                         style: TextStyle(
                           color: AppColor.error,
                           fontSize: 11,
@@ -593,18 +593,18 @@ class _StoreProductCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 if (product.oldPrice != null)
                   Text(
-                    '${formatPrice(product.oldPrice!)} ل.س',
-                    style: const TextStyle(
+                    '${formatPrice(product.oldPrice!)} Ù„.Ø³',
+                    style: TextStyle(
                       color: AppColor.greyLight,
                       fontSize: 11,
                       decoration: TextDecoration.lineThrough,
                     ),
                   ),
                 Text(
-                  '${formatPrice(product.price)} ل.س',
+                  '${formatPrice(product.price)} Ù„.Ø³',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColor.primaryColor,
                     fontSize: 15,
                     fontWeight: FontWeight.w900,
@@ -632,8 +632,8 @@ class _ReviewsSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'آراء المشترين',
+          Text(
+            'Ø¢Ø±Ø§Ø¡ Ø§Ù„Ù…Ø´ØªØ±ÙŠÙ†',
             style: TextStyle(
               color: AppColor.black,
               fontSize: 19,
@@ -689,15 +689,15 @@ void _showFilterSheet(
               ),
               const SizedBox(height: 18),
               const Text(
-                'فلترة منتجات المتجر',
+                'ÙÙ„ØªØ±Ø© Ù…Ù†ØªØ¬Ø§Øª Ø§Ù„Ù…ØªØ¬Ø±',
                 style: TextStyle(fontSize: 19, fontWeight: FontWeight.w900),
               ),
               const SizedBox(height: 18),
               Row(
                 children: [
-                  Expanded(child: _PriceField(controller: minCtrl, hint: 'أقل سعر')),
+                  Expanded(child: _PriceField(controller: minCtrl, hint: 'Ø£Ù‚Ù„ Ø³Ø¹Ø±')),
                   const SizedBox(width: 10),
-                  Expanded(child: _PriceField(controller: maxCtrl, hint: 'أعلى سعر')),
+                  Expanded(child: _PriceField(controller: maxCtrl, hint: 'Ø£Ø¹Ù„Ù‰ Ø³Ø¹Ø±')),
                 ],
               ),
               const SizedBox(height: 18),
@@ -705,11 +705,11 @@ void _showFilterSheet(
                 spacing: 8,
                 runSpacing: 8,
                 children: {
-                  'latest': 'الأحدث',
-                  'price_asc': 'الأقل سعراً',
-                  'price_desc': 'الأعلى سعراً',
-                  'best_selling': 'الأكثر مبيعاً',
-                  'rating': 'الأعلى تقييماً',
+                  'latest': 'Ø§Ù„Ø£Ø­Ø¯Ø«',
+                  'price_asc': 'Ø§Ù„Ø£Ù‚Ù„ Ø³Ø¹Ø±Ø§Ù‹',
+                  'price_desc': 'Ø§Ù„Ø£Ø¹Ù„Ù‰ Ø³Ø¹Ø±Ø§Ù‹',
+                  'best_selling': 'Ø§Ù„Ø£ÙƒØ«Ø± Ù…Ø¨ÙŠØ¹Ø§Ù‹',
+                  'rating': 'Ø§Ù„Ø£Ø¹Ù„Ù‰ ØªÙ‚ÙŠÙŠÙ…Ø§Ù‹',
                 }.entries.map((entry) {
                   final selected = sort == entry.key;
                   return ChoiceChip(
@@ -730,7 +730,7 @@ void _showFilterSheet(
                   Expanded(
                     child: _SecondaryAction(
                       icon: Icons.refresh_rounded,
-                      label: 'مسح',
+                      label: 'Ù…Ø³Ø­',
                       onTap: () {
                         Get.back();
                         controller.clearFilters();
@@ -742,7 +742,7 @@ void _showFilterSheet(
                     flex: 2,
                     child: _PrimaryAction(
                       icon: Icons.check_rounded,
-                      label: 'تطبيق',
+                      label: 'ØªØ·Ø¨ÙŠÙ‚',
                       onTap: () {
                         Get.back();
                         controller.applyFilters(
@@ -800,7 +800,7 @@ void _showReviewSheet(
             ),
             const SizedBox(height: 18),
             const Text(
-              'قيّم تجربتك مع المتجر',
+              'Ù‚ÙŠÙ‘Ù… ØªØ¬Ø±Ø¨ØªÙƒ Ù…Ø¹ Ø§Ù„Ù…ØªØ¬Ø±',
               style: TextStyle(fontSize: 19, fontWeight: FontWeight.w900),
             ),
             const SizedBox(height: 14),
@@ -827,7 +827,7 @@ void _showReviewSheet(
               minLines: 3,
               maxLines: 5,
               decoration: InputDecoration(
-                hintText: 'اكتب تعليقك عن جودة المنتجات والخدمة',
+                hintText: 'Ø§ÙƒØªØ¨ ØªØ¹Ù„ÙŠÙ‚Ùƒ Ø¹Ù† Ø¬ÙˆØ¯Ø© Ø§Ù„Ù…Ù†ØªØ¬Ø§Øª ÙˆØ§Ù„Ø®Ø¯Ù…Ø©',
                 filled: true,
                 fillColor: AppColor.secondBackground,
                 border: OutlineInputBorder(
@@ -839,7 +839,7 @@ void _showReviewSheet(
             const SizedBox(height: 18),
             _PrimaryAction(
               icon: Icons.send_rounded,
-              label: 'إرسال التقييم',
+              label: 'Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„ØªÙ‚ÙŠÙŠÙ…',
               onTap: ctrl.submitReview,
             ),
           ],
@@ -912,15 +912,15 @@ class _DepartmentTile extends StatelessWidget {
               department.name,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColor.black,
                 fontWeight: FontWeight.w900,
                 fontSize: 13,
               ),
             ),
             Text(
-              department.hasChildren ? 'افتح الفروع' : '${department.productsCount} منتج',
-              style: const TextStyle(
+              department.hasChildren ? 'Ø§ÙØªØ­ Ø§Ù„ÙØ±ÙˆØ¹' : '${department.productsCount} Ù…Ù†ØªØ¬',
+              style: TextStyle(
                 color: AppColor.greyText,
                 fontWeight: FontWeight.w700,
                 fontSize: 11,
@@ -954,7 +954,7 @@ class _ReviewTile extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  review.buyerName.isEmpty ? 'مشتري' : review.buyerName,
+                  review.buyerName.isEmpty ? 'Ù…Ø´ØªØ±ÙŠ' : review.buyerName,
                   style: const TextStyle(fontWeight: FontWeight.w900),
                 ),
               ),
@@ -966,7 +966,7 @@ class _ReviewTile extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               review.comment,
-              style: const TextStyle(color: AppColor.greyText, height: 1.5),
+              style: TextStyle(color: AppColor.greyText, height: 1.5),
             ),
           ],
         ],
@@ -1070,7 +1070,7 @@ class _ContactChip extends StatelessWidget {
               label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColor.greyText,
                 fontWeight: FontWeight.w700,
                 fontSize: 12,
@@ -1155,7 +1155,7 @@ class _SecondaryAction extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColor.primaryColor,
                 fontWeight: FontWeight.w900,
               ),
@@ -1278,22 +1278,22 @@ class _StoreError extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.storefront_outlined, size: 72, color: AppColor.greyLight),
+            Icon(Icons.storefront_outlined, size: 72, color: AppColor.greyLight),
             const SizedBox(height: 16),
             const Text(
-              'تعذر تحميل بيانات المتجر',
+              'ØªØ¹Ø°Ø± ØªØ­Ù…ÙŠÙ„ Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ØªØ¬Ø±',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'تأكد من الاتصال أو من توفر المتجر في الباك.',
+            Text(
+              'ØªØ£ÙƒØ¯ Ù…Ù† Ø§Ù„Ø§ØªØµØ§Ù„ Ø£Ùˆ Ù…Ù† ØªÙˆÙØ± Ø§Ù„Ù…ØªØ¬Ø± ÙÙŠ Ø§Ù„Ø¨Ø§Ùƒ.',
               textAlign: TextAlign.center,
               style: TextStyle(color: AppColor.greyText),
             ),
             const SizedBox(height: 18),
             _PrimaryAction(
               icon: Icons.refresh_rounded,
-              label: 'إعادة المحاولة',
+              label: 'Ø¥Ø¹Ø§Ø¯Ø© Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø©',
               onTap: () {
                 onRetry();
               },

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/controller/buyer/cart_controller.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
@@ -22,7 +22,7 @@ class CartEmptyState extends GetView<CartController> {
                 color: AppColor.primarySurface,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.shopping_bag_outlined,
+              child: Icon(Icons.shopping_bag_outlined,
                   size: 52, color: AppColor.primaryColor),
             ),
             const SizedBox(height: 24),
