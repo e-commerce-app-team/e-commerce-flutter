@@ -20,11 +20,22 @@ class BuyerStoreDetailDataSource {
   }
 
   Future<Either<StatusRequest, Map>> getDepartments(
-    String storeId, {
-    String? token,
-  }) {
-    return _crud.getData(
+      String storeId, {
+        String? token,
+        int? parentId,
+      }) {
+    final params = <String, String>{
+      if (parentId != null) 'parent_id': parentId.toString(),
+    };
+
+    final url = Uri.parse(
       AppLink.buyerStoreDepartments(storeId),
+    ).replace(
+      queryParameters: params.isEmpty ? null : params,
+    ).toString();
+
+    return _crud.getData(
+      url,
       headers: _auth(token),
     );
   }

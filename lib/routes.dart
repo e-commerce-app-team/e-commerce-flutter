@@ -45,21 +45,25 @@ import 'package:e_commerce/view/screen/buyer/profile/buyer_profile_screen.dart';
 import 'package:e_commerce/view/screen/buyer/profile/buyer_following_stores_screen.dart';
 import 'package:e_commerce/view/screen/buyer/profile/buyer_reviews_screen.dart';
 import 'package:e_commerce/view/screen/buyer/profile/buyer_profile_tools_screen.dart';
+import 'package:e_commerce/view/screen/wallet/buyer_wallet_screen.dart';
+import 'package:e_commerce/view/screen/wallet/wallet_qr_screen.dart';
+import 'package:e_commerce/view/screen/wallet/wallet_scanner_screen.dart';
 import 'package:e_commerce/view/screen/buyer/cart/address/buyer_address_map_screen.dart';
 import 'package:get/get.dart';
 
 List<GetPage<dynamic>>? routes = [
-
-  GetPage(name: "/", page: () => const OnBoarding(), middlewares: [
-
-    MyMiddleWare()
-
-  ]),
-
+  GetPage(
+    name: "/",
+    page: () => const OnBoarding(),
+    middlewares: [MyMiddleWare()],
+  ),
 
   GetPage(name: AppRoute.login, page: () => const Login()),
 
-  GetPage(name: AppRoute.selectAccountType, page: () => const SelectAccountType()),
+  GetPage(
+    name: AppRoute.selectAccountType,
+    page: () => const SelectAccountType(),
+  ),
 
   GetPage(name: AppRoute.signUpBuyer, page: () => const SignUpBuyer()),
 
@@ -71,13 +75,22 @@ List<GetPage<dynamic>>? routes = [
 
   GetPage(name: AppRoute.resetPassword, page: () => const ResetPassword()),
 
-  GetPage(name: AppRoute.successResetpassword, page: () => const SuccessResetPassword()),
+  GetPage(
+    name: AppRoute.successResetpassword,
+    page: () => const SuccessResetPassword(),
+  ),
 
   GetPage(name: AppRoute.successSignUp, page: () => const SuccessSignUp()),
 
-  GetPage(name: AppRoute.verfiyCodeSignUp, page: () => const VerfiyCodeSignUp()),
+  GetPage(
+    name: AppRoute.verfiyCodeSignUp,
+    page: () => const VerfiyCodeSignUp(),
+  ),
 
-  GetPage(name: AppRoute.verifyCodeSellerSignUp, page: () => const VerifyCodeSellerSignUp()),
+  GetPage(
+    name: AppRoute.verifyCodeSellerSignUp,
+    page: () => const VerifyCodeSellerSignUp(),
+  ),
 
   GetPage(name: AppRoute.sellerMain, page: () => const SellerMainScreen()),
 
@@ -87,47 +100,99 @@ List<GetPage<dynamic>>? routes = [
 
   GetPage(name: AppRoute.ads, page: () => const AdsScreen()),
   GetPage(name: AppRoute.sellerInvoices, page: () => const InvoicesScreen()),
-  GetPage(name: AppRoute.changePassword, page: () => const ChangePasswordScreen()),
+  GetPage(
+    name: AppRoute.changePassword,
+    page: () => const ChangePasswordScreen(),
+  ),
   GetPage(name: AppRoute.coupons, page: () => const SellerCouponsScreen()),
   GetPage(name: AppRoute.sellerWallet, page: () => const WalletScreen()),
   GetPage(name: AppRoute.storeEdit, page: () => const StoreEditScreen()),
-  GetPage(name: AppRoute.shippingSettings, page: () => const ShippingSettingsScreen()),
+  GetPage(
+    name: AppRoute.shippingSettings,
+    page: () => const ShippingSettingsScreen(),
+  ),
   GetPage(name: AppRoute.sellerBranches, page: () => const BranchesScreen()),
-  GetPage(name: AppRoute.branchForm,page: () => const BranchFormScreen()),
-  GetPage(name: AppRoute.branchLocationPicker, page: () {
-     final args = Get.arguments;
-     return BranchLocationPickerScreen(
-       initialLat: args?.latitude,
-       initialLng: args?.longitude,
-     );
-
-   }),
+  GetPage(name: AppRoute.branchForm, page: () => const BranchFormScreen()),
+  GetPage(
+    name: AppRoute.branchLocationPicker,
+    page: () {
+      final args = Get.arguments;
+      return BranchLocationPickerScreen(
+        initialLat: args?.latitude,
+        initialLng: args?.longitude,
+      );
+    },
+  ),
   GetPage(name: AppRoute.sellerStaff, page: () => const StaffScreen()),
-  GetPage(name: AppRoute.sellerSupport, page: () => const SupportCenterScreen()),
+  GetPage(
+    name: AppRoute.sellerSupport,
+    page: () => const SupportCenterScreen(),
+  ),
   GetPage(name: AppRoute.sellerTickets, page: () => const TicketsScreen()),
-  GetPage(name: AppRoute.ticketDetails, page: () => const TicketDetailsScreen()),
-  GetPage(name: AppRoute.chatSettings, page: () => ChatSettingsScreen(
-    ctrl: Get.find<SellerChatController>(),
-
-  )),
-  GetPage(name: AppRoute.languageSettings, page: () => const LanguageSettingsScreen()),
-  GetPage(name: AppRoute.themeSettings, page: () => const ThemeSettingsScreen()),
+  GetPage(
+    name: AppRoute.ticketDetails,
+    page: () => const TicketDetailsScreen(),
+  ),
+  GetPage(
+    name: AppRoute.chatSettings,
+    page: () => ChatSettingsScreen(ctrl: Get.find<SellerChatController>()),
+  ),
+  GetPage(
+    name: AppRoute.languageSettings,
+    page: () => const LanguageSettingsScreen(),
+  ),
+  GetPage(
+    name: AppRoute.themeSettings,
+    page: () => const ThemeSettingsScreen(),
+  ),
   GetPage(name: AppRoute.buyerMain, page: () => const BuyerMainScreen()),
   GetPage(name: AppRoute.explore, page: () => const ExploreScreen()),
-  GetPage(name: AppRoute.buyerStoreDetail, page: () => const BuyerStoreDetailScreen()),
-  GetPage(name: AppRoute.buyerChatRoom, page: () => const BuyerChatRoomScreen()),
+  GetPage(
+    name: AppRoute.buyerStoreDetail,
+    page: () => const BuyerStoreDetailScreen(),
+  ),
+  GetPage(
+    name: AppRoute.buyerChatRoom,
+    page: () => const BuyerChatRoomScreen(),
+  ),
   GetPage(name: AppRoute.buyerProfile, page: () => const BuyerProfileScreen()),
-  GetPage(name: '/buyer/following-stores', page: () => const BuyerFollowingStoresScreen()),
+  GetPage(
+    name: '/buyer/following-stores',
+    page: () => const BuyerFollowingStoresScreen(),
+  ),
   GetPage(name: '/buyer/reviews', page: () => const BuyerReviewsScreen()),
-  GetPage(name: '/buyer/edit-profile', page: () => const BuyerProfileToolsScreen(mode: 'edit')),
-  GetPage(name: '/buyer/addresses', page: () => const BuyerProfileToolsScreen(mode: 'addresses')),
-  GetPage(name: '/buyer/wallet', page: () => const BuyerProfileToolsScreen(mode: 'wallet')),
-  GetPage(name: '/buyer/notification-settings', page: () => const BuyerProfileToolsScreen(mode: 'notifications')),
-  GetPage(name: '/buyer/conversations', page: () => const BuyerProfileToolsScreen(mode: 'conversations')),
-  GetPage(name: '/buyer/address-map', page: () => const BuyerAddressMapScreen()),
+  GetPage(
+    name: '/buyer/edit-profile',
+    page: () => const BuyerProfileToolsScreen(mode: 'edit'),
+  ),
+  GetPage(
+    name: '/buyer/addresses',
+    page: () => const BuyerProfileToolsScreen(mode: 'addresses'),
+  ),
+  GetPage(name: '/buyer/wallet', page: () => BuyerWalletScreen()),
+  GetPage(name: '/wallet/my-qr', page: () => WalletQrScreen()),
+  GetPage(name: '/wallet/scan', page: () => WalletScannerScreen()),
+  GetPage(
+    name: '/buyer/notification-settings',
+    page: () => const BuyerProfileToolsScreen(mode: 'notifications'),
+  ),
+  GetPage(
+    name: '/buyer/conversations',
+    page: () => const BuyerProfileToolsScreen(mode: 'conversations'),
+  ),
+  GetPage(
+    name: '/buyer/address-map',
+    page: () => const BuyerAddressMapScreen(),
+  ),
 
-  GetPage(name: AppRoute.buyerProductDetail, page: () => const BuyerProductDetailScreen()),
-  GetPage(name: AppRoute.buyerOrderDetail, page: () => const BuyerOrderDetailScreen()),
+  GetPage(
+    name: AppRoute.buyerProductDetail,
+    page: () => const BuyerProductDetailScreen(),
+  ),
+  GetPage(
+    name: AppRoute.buyerOrderDetail,
+    page: () => const BuyerOrderDetailScreen(),
+  ),
   GetPage(
     name: AppRoute.staffAcceptInvite,
     page: () => const StaffAcceptInviteScreen(),

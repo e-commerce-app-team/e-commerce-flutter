@@ -25,6 +25,7 @@ class SellerWalletController extends GetxController {
 
   final withdrawAmountCtrl = TextEditingController();
   final shaamPhoneCtrl     = TextEditingController();
+  final shamCashQrCtrl     = TextEditingController();
   final bankNameCtrl       = TextEditingController();
   final bankIbanCtrl       = TextEditingController();
   final bankHolderCtrl     = TextEditingController();
@@ -44,6 +45,7 @@ class SellerWalletController extends GetxController {
 
   String get formattedAvailable => _fmt(wallet?.available ?? 0);
   String get formattedReserved  => _fmt(wallet?.reserved  ?? 0);
+  String get formattedTotal => _fmt(wallet?.total ?? 0);
 
   String _fmt(int v) {
     if (v >= 1000000) return 'SP ${(v / 1000000).toStringAsFixed(1)}م';
@@ -134,7 +136,7 @@ class SellerWalletController extends GetxController {
       body = {
         'amount':         amount,
         'payout_method':  'sham cash',
-        'sham_code':      shaamPhoneCtrl.text.trim(),
+        'sham_cash_qr':   shamCashQrCtrl.text.trim(),
         // qr_image: يحتاج multipart - الباك يقبله بدونه لو أرسلناه بـ postData
       };
     } else {
@@ -202,6 +204,7 @@ class SellerWalletController extends GetxController {
   void _clearWithdrawForm() {
     withdrawAmountCtrl.clear();
     shaamPhoneCtrl.clear();
+    shamCashQrCtrl.clear();
     bankNameCtrl.clear();
     bankIbanCtrl.clear();
     bankHolderCtrl.clear();
@@ -220,6 +223,12 @@ class SellerWalletController extends GetxController {
   String? validateShaamPhone(String? v) {
     if (v == null || v.trim().isEmpty) return 'wallet_phone_required'.tr;
     if (v.trim().length < 9)           return 'wallet_phone_invalid'.tr;
+    return null;
+  }
+
+  String? validateShamCashQr(String? v) {
+    if (v == null || v.trim().isEmpty) return 'wallet_sham_qr_required'.tr;
+    if (v.trim().length < 8) return 'wallet_sham_qr_invalid'.tr;
     return null;
   }
 
@@ -249,6 +258,7 @@ class SellerWalletController extends GetxController {
   void onClose() {
     withdrawAmountCtrl.dispose();
     shaamPhoneCtrl.dispose();
+    shamCashQrCtrl.dispose();
     bankNameCtrl.dispose();
     bankIbanCtrl.dispose();
     bankHolderCtrl.dispose();

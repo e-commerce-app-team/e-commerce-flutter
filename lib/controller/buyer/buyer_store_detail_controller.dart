@@ -66,13 +66,8 @@ class BuyerStoreDetailController extends GetxController {
   List<BuyerStoreDepartmentModel> get visibleDepartments =>
       departments.where((item) => item.isVisible).toList();
 
-  List<BuyerStoreDepartmentModel> get currentDepartments {
-    final list = departmentPath.isEmpty
-        ? visibleDepartments
-        : departmentPath.last.children.where((item) => item.isVisible).toList();
-    return list;
-  }
-
+  List<BuyerStoreDepartmentModel> get currentDepartments =>
+      visibleDepartments;
   int get activeFilterCount {
     return [
       selectedDepartmentId,
@@ -98,7 +93,6 @@ class BuyerStoreDetailController extends GetxController {
       _loadDepartments(),
       _loadReviews(),
     ]);
-    await loadProducts(reset: true);
 
     statusRequest = store == null ? StatusRequest.failure : StatusRequest.success;
     update();
@@ -156,21 +150,55 @@ class BuyerStoreDetailController extends GetxController {
     });
   }
 
-  void openDepartment(BuyerStoreDepartmentModel department) {
+  Future<void> openDepartment(
+      BuyerStoreDepartmentModel department,
+      ) async {
     selectedDepartmentId = department.id;
-    if (department.hasChildren) departmentPath = [...departmentPath, department];
-    loadProducts(reset: true);
-  }
 
+    if (department.hasChildren) {
+      departmentPath = [...departmentPath, department];
+
+      await _loadDepartments(parentId: department.id);
+
+      products = [];
+      productsStatus = StatusRequest.success;
+      update();
+      return;
+    }
+
+    // وصلنا إلى آخر مستوى.
+    departmentPath = [...departmentPath, department];
+
+    await loadProducts(reset: true);
+  }
   void popDepartment() {
     if (departmentPath.isEmpty) {
       selectedDepartmentId = null;
-    } else {
-      final path = [...departmentPath]..removeLast();
-      departmentPath = path;
-      selectedDepartmentId = path.isEmpty ? null : path.last.id;
+      products = [];
+      update();
+      return;
     }
-    loadProducts(reset: true);
+
+    final path = [...departmentPath]..removeLast();
+    departmentPath = path;
+
+    if (path.isEmpty) {
+      selectedDepartmentId = null;
+      products = [];
+    } else {
+      selectedDepartmentId = path.last.id;
+
+      // إذا رجعنا لقسم أب، لا نعرض منتجاته.
+      if (path.last.hasChildren) {
+        products = [];
+        productsStatus = StatusRequest.loading;
+      } else {
+        loadProducts(reset: true);
+        return;
+      }
+    }
+
+    update();
   }
 
   void selectDepartmentOnly(BuyerStoreDepartmentModel department) {
@@ -189,14 +217,20 @@ class BuyerStoreDetailController extends GetxController {
     loadProducts(reset: true);
   }
 
-  void clearFilters() {
+  Future<void> clearFilters() async {
     minPrice = null;
     maxPrice = null;
     sortBy = 'latest';
     selectedDepartmentId = null;
     departmentPath = [];
     searchController.clear();
-    loadProducts(reset: true);
+
+    products = [];
+    productsStatus = StatusRequest.success;
+
+    await _loadDepartments();
+
+    update();
   }
 
   Future<void> toggleFollow() async {
@@ -283,18 +317,35 @@ class BuyerStoreDetailController extends GetxController {
     );
   }
 
-  Future<void> _loadDepartments() async {
-    final result = await _dataSource.getDepartments(storeId, token: _token);
+  Future<void> _loadDepartments({int? parentId}) async {
+    final result = await _dataSource.getDepartments(
+      storeId,
+      token: _token,
+      parentId: parentId,
+    );
+
     result.fold(
-      (_) => departments = [],
-      (response) {
-        departments = _extractList(response)
-            .map((item) => BuyerStoreDepartmentModel.fromJson(item))
+          (_) {
+        departments = [];
+      },
+          (response) {
+        final list = _extractList(response);
+
+        final parsed = list
+            .map(
+              (item) => BuyerStoreDepartmentModel.fromJson(
+            Map<String, dynamic>.from(item),
+          ),
+        )
+            .where((item) => item.isVisible)
             .toList();
+
+        departments = parsed;
       },
     );
-  }
 
+    update();
+  }
   Future<void> _loadReviews() async {
     final result = await _dataSource.getReviews(storeId, token: _token);
     result.fold(

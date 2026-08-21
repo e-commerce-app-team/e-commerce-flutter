@@ -75,6 +75,7 @@ dependencies:
 
   # QR Code & Scanning
   qr_flutter: ^4.1.0
+  mobile_scanner: ^7.4.0
 
   # UI Components
   grouped_list: ^5.1.2

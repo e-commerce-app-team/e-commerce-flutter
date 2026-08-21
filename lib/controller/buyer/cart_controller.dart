@@ -7,7 +7,6 @@ import 'package:e_commerce/core/functions/format_price.dart' as price_fmt;
 import 'package:e_commerce/core/services/services.dart';
 import 'package:e_commerce/data/datasource/remote/buyer/cart_datasource.dart';
 import 'package:e_commerce/data/models/buyer/cart_models.dart';
-import 'package:e_commerce/view/screen/buyer/cart/checkout/sham_cash_payment_screen.dart';
 import 'package:e_commerce/view/screen/buyer/cart/checkout/order_success_screen.dart';
 
 class CartController extends GetxController {
@@ -27,6 +26,7 @@ class CartController extends GetxController {
   final RxBool isAddingToCart = false.obs;
   bool _cartLoadInProgress = false;
   final RxDouble walletBalance = 0.0.obs;
+  String? _checkoutIdempotencyKey;
 
   /// Per-store selected shipping option id
   final RxMap<String, String> selectedShipping = <String, String>{}.obs;
@@ -213,8 +213,10 @@ class CartController extends GetxController {
 
     final result = await _cartData.getWalletBalance(token);
     result.fold((_) {}, (body) {
-      walletBalance.value =
-          double.tryParse('${body['balance']}') ?? walletBalance.value;
+      final raw = body['available_balance'] ??
+          body['balance'] ??
+          (body['data'] is Map ? body['data']['available_balance'] : null);
+      walletBalance.value = double.tryParse('$raw') ?? walletBalance.value;
     });
   }
 
@@ -481,6 +483,8 @@ class CartController extends GetxController {
             selectedAddress.value!.id,
         'driver_notes': driverNotesCtrl.text.trim(),
         'stores': storesPayload,
+        'idempotency_key': _checkoutIdempotencyKey ??=
+            'cart-${DateTime.now().microsecondsSinceEpoch}',
       },
     );
 
@@ -498,21 +502,12 @@ class CartController extends GetxController {
 
         final checkout = CheckoutResult.fromJson(Map<String, dynamic>.from(body));
         await loadWalletBalance();
-
-        final paid = await Get.to<bool>(() => ShamCashPaymentScreen(
-              orderId: checkout.orderId,
+        _checkoutIdempotencyKey = null;
+        await Get.off(() => OrderSuccessScreen(
               orderNumber: checkout.orderNumber,
               totalAmount: checkout.totalPrice,
-              walletBalance: walletBalance.value,
             ));
-
-        if (paid == true) {
-          await Get.off(() => OrderSuccessScreen(
-                orderNumber: checkout.orderNumber,
-                totalAmount: checkout.totalPrice,
-              ));
-          await loadCart();
-        }
+        await loadCart();
       },
     );
   }

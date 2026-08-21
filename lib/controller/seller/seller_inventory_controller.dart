@@ -119,9 +119,11 @@ class SellerInventoryController extends GetxController {
     if (_searchQuery.isNotEmpty) {
       final q = _searchQuery.toLowerCase();
       list = list
-          .where((p) =>
-              p.name.toLowerCase().contains(q) ||
-              p.sku.toLowerCase().contains(q))
+          .where(
+            (p) =>
+                p.name.toLowerCase().contains(q) ||
+                p.sku.toLowerCase().contains(q),
+          )
           .toList();
     }
 
@@ -149,6 +151,7 @@ class SellerInventoryController extends GetxController {
       ids.add(c.id);
       for (final child in c.children) collect(child);
     }
+
     collect(found);
     return ids;
   }
@@ -170,8 +173,7 @@ class SellerInventoryController extends GetxController {
   // ─── Counts (derived from loaded data) ────────────────────────────────────
 
   int get allCount => _allProducts.length;
-  int get activeCount =>
-      _allProducts.where((p) => p.status == 'active').length;
+  int get activeCount => _allProducts.where((p) => p.status == 'active').length;
   int get lowStockCount =>
       _allProducts.where((p) => p.isLowStock || p.isOutOfStock).length;
   int get draftCount => _allProducts.where((p) => p.status == 'draft').length;
@@ -200,8 +202,9 @@ class SellerInventoryController extends GetxController {
               ? ((rawData['data'] as List?) ?? [])
               : ((rawData as List?) ?? []);
 
-          _allProducts =
-              rawList.map((p) => ProductModel.fromJson(p as Map)).toList();
+          _allProducts = rawList
+              .map((p) => ProductModel.fromJson(p as Map))
+              .toList();
 
           // Enrich with category names from local tree
           _enrichProductsWithCategoryNames();
@@ -279,15 +282,18 @@ class SellerInventoryController extends GetxController {
 
   /// Loads warehouse list from backend API
   Future<void> _loadWarehouses() async {
-    final response = await inventoryData.crud.getData(AppLink.sellerBranches, headers: {"Authorization": "Bearer $_token"});
-    
+    final response = await inventoryData.crud.getData(
+      AppLink.sellerBranches,
+      headers: {"Authorization": "Bearer $_token"},
+    );
+
     // Always include the main branch
     final mainBranch = const WarehouseModel(
-      id: 0, 
-      name: 'المستودع الرئيسي', 
-      type: 'warehouse', 
-      city: '', 
-      isActive: true
+      id: 0,
+      name: 'المستودع الرئيسي',
+      type: 'warehouse',
+      city: '',
+      isActive: true,
     );
     warehouses = [mainBranch];
 
@@ -339,8 +345,7 @@ class SellerInventoryController extends GetxController {
           // Revert on server error
           if (idx != -1) _allProducts[idx] = p;
           _applyFilters();
-          customSnackbar(
-              'warning'.tr, (response['message'] ?? '').toString());
+          customSnackbar('warning'.tr, (response['message'] ?? '').toString());
         }
       },
     );
@@ -356,23 +361,28 @@ class SellerInventoryController extends GetxController {
     result.fold(
       (failure) {
         // Revert
-        if (idx != -1) _allProducts.insert(idx, p);
-        else _allProducts.add(p);
+        if (idx != -1)
+          _allProducts.insert(idx, p);
+        else
+          _allProducts.add(p);
         _applyFilters();
         customSnackbar('error'.tr, 'server_error'.tr);
       },
       (response) {
         if (response['success'] == true) {
           customSnackbar(
-              'delete_success_title'.tr, 'delete_success_msg'.tr,
-              isError: false);
+            'delete_success_title'.tr,
+            'delete_success_msg'.tr,
+            isError: false,
+          );
         } else {
           // Revert
-          if (idx != -1) _allProducts.insert(idx, p);
-          else _allProducts.add(p);
+          if (idx != -1)
+            _allProducts.insert(idx, p);
+          else
+            _allProducts.add(p);
           _applyFilters();
-          customSnackbar(
-              'warning'.tr, (response['message'] ?? '').toString());
+          customSnackbar('warning'.tr, (response['message'] ?? '').toString());
         }
       },
     );
@@ -381,7 +391,10 @@ class SellerInventoryController extends GetxController {
   // ─── Category Actions (local-only — backend requires super_admin) ──────────
 
   List<CategoryModel> _insertChild(
-      List<CategoryModel> cats, int parentId, CategoryModel newCat) {
+    List<CategoryModel> cats,
+    int parentId,
+    CategoryModel newCat,
+  ) {
     return cats.map((cat) {
       if (cat.id == parentId) {
         return CategoryModel(
@@ -406,7 +419,10 @@ class SellerInventoryController extends GetxController {
   }
 
   List<CategoryModel> _updateName(
-      List<CategoryModel> cats, int id, String name) {
+    List<CategoryModel> cats,
+    int id,
+    String name,
+  ) {
     return cats.map((cat) {
       if (cat.id == id) return cat.copyWithName(name);
       if (cat.hasChildren) {
@@ -425,44 +441,44 @@ class SellerInventoryController extends GetxController {
   List<CategoryModel> _deleteNode(List<CategoryModel> cats, int id) {
     return cats
         .where((c) => c.id != id)
-        .map((c) => CategoryModel(
-              id: c.id,
-              name: c.name,
-              parentId: c.parentId,
-              productCount: c.productCount,
-              children: _deleteNode(c.children, id),
-            ))
+        .map(
+          (c) => CategoryModel(
+            id: c.id,
+            name: c.name,
+            parentId: c.parentId,
+            productCount: c.productCount,
+            children: _deleteNode(c.children, id),
+          ),
+        )
         .toList();
   }
 
   Future<void> addCategory(String name, int? parentId) async {
     final result = await inventoryData.createDepartment(_token, name, parentId);
-    result.fold(
-      (failure) => customSnackbar('error'.tr, 'server_error'.tr),
-      (response) async {
-        if (response['success'] == true) {
-          await refreshCategories();
-          customSnackbar('success'.tr, 'category_added'.tr, isError: false);
-        } else {
-          customSnackbar('warning'.tr, (response['message'] ?? '').toString());
-        }
-      },
-    );
+    result.fold((failure) => customSnackbar('error'.tr, 'server_error'.tr), (
+      response,
+    ) async {
+      if (response['success'] == true || response['status'] == 'success') {
+        await refreshCategories();
+        customSnackbar('success'.tr, 'category_added'.tr, isError: false);
+      } else {
+        customSnackbar('warning'.tr, (response['message'] ?? '').toString());
+      }
+    });
   }
 
   Future<void> updateCategory(int id, String newName) async {
     final result = await inventoryData.updateDepartment(_token, id, newName);
-    result.fold(
-      (failure) => customSnackbar('error'.tr, 'server_error'.tr),
-      (response) async {
-        if (response['success'] == true) {
-          await refreshCategories();
-          customSnackbar('success'.tr, 'category_updated'.tr, isError: false);
-        } else {
-          customSnackbar('warning'.tr, (response['message'] ?? '').toString());
-        }
-      },
-    );
+    result.fold((failure) => customSnackbar('error'.tr, 'server_error'.tr), (
+      response,
+    ) async {
+      if (response['success'] == true) {
+        await refreshCategories();
+        customSnackbar('success'.tr, 'category_updated'.tr, isError: false);
+      } else {
+        customSnackbar('warning'.tr, (response['message'] ?? '').toString());
+      }
+    });
   }
 
   void deleteCategory(CategoryModel cat) async {
@@ -471,17 +487,20 @@ class SellerInventoryController extends GetxController {
       return;
     }
     final result = await inventoryData.deleteDepartment(_token, cat.id);
-    result.fold(
-      (failure) => customSnackbar('error'.tr, 'server_error'.tr),
-      (response) async {
-        if (response['success'] == true) {
-          await refreshCategories();
-          customSnackbar('delete_success_title'.tr, 'category_deleted'.tr, isError: false);
-        } else {
-          customSnackbar('warning'.tr, (response['message'] ?? '').toString());
-        }
-      },
-    );
+    result.fold((failure) => customSnackbar('error'.tr, 'server_error'.tr), (
+      response,
+    ) async {
+      if (response['success'] == true) {
+        await refreshCategories();
+        customSnackbar(
+          'delete_success_title'.tr,
+          'category_deleted'.tr,
+          isError: false,
+        );
+      } else {
+        customSnackbar('warning'.tr, (response['message'] ?? '').toString());
+      }
+    });
   }
 
   void reorderRootCategories(int oldIndex, int newIndex) {
@@ -654,10 +673,12 @@ class SellerInventoryController extends GetxController {
     formData.variants = combinations.map((combo) {
       final key = combo.join(' / ');
       final attrs = Map<String, String>.fromIterables(attrNames, combo);
-      variantStockCtrls[key] =
-          TextEditingController(text: oldStockValues[key] ?? '');
-      variantPriceCtrls[key] =
-          TextEditingController(text: oldPriceValues[key] ?? '');
+      variantStockCtrls[key] = TextEditingController(
+        text: oldStockValues[key] ?? '',
+      );
+      variantPriceCtrls[key] = TextEditingController(
+        text: oldPriceValues[key] ?? '',
+      );
       return ProductVariantModel(
         combinationKey: key,
         attributes: attrs,
@@ -673,7 +694,7 @@ class SellerInventoryController extends GetxController {
     for (final list in lists) {
       result = [
         for (final existing in result)
-          for (final value in list) [...existing, value]
+          for (final value in list) [...existing, value],
       ];
     }
     return result;
@@ -686,11 +707,13 @@ class SellerInventoryController extends GetxController {
   ) {
     for (final v in variants) {
       variantStockCtrls[v.combinationKey] = TextEditingController(
-        text: oldStock[v.combinationKey]?.text ??
+        text:
+            oldStock[v.combinationKey]?.text ??
             (v.stock > 0 ? v.stock.toString() : ''),
       );
       variantPriceCtrls[v.combinationKey] = TextEditingController(
-        text: oldPrice[v.combinationKey]?.text ??
+        text:
+            oldPrice[v.combinationKey]?.text ??
             (v.price != null ? v.price.toString() : ''),
       );
     }
@@ -720,11 +743,13 @@ class SellerInventoryController extends GetxController {
     if (src == null) return;
     final f = await ImagePicker().pickImage(source: src, imageQuality: 80);
     if (f == null) return;
-    final idx =
-        formData.variants.indexWhere((v) => v.combinationKey == combinationKey);
+    final idx = formData.variants.indexWhere(
+      (v) => v.combinationKey == combinationKey,
+    );
     if (idx != -1) {
-      formData.variants[idx] =
-          formData.variants[idx].copyWith(localImage: File(f.path));
+      formData.variants[idx] = formData.variants[idx].copyWith(
+        localImage: File(f.path),
+      );
       update();
     }
   }
@@ -737,8 +762,7 @@ class SellerInventoryController extends GetxController {
     final source = await showImagePickerBottomSheet();
     if (source == null) return;
     if (source == ImageSource.camera) {
-      final f =
-          await ImagePicker().pickImage(source: source, imageQuality: 80);
+      final f = await ImagePicker().pickImage(source: source, imageQuality: 80);
       if (f != null) {
         productImages.add(File(f.path));
         update();
@@ -787,7 +811,8 @@ class SellerInventoryController extends GetxController {
     }
     if (formWholesale) {
       if (p.wholesalePrice != null) wsPrice.text = p.wholesalePrice.toString();
-      if (p.minWholesaleQty != null) wsMinQty.text = p.minWholesaleQty.toString();
+      if (p.minWholesaleQty != null)
+        wsMinQty.text = p.minWholesaleQty.toString();
     }
     formData.variantsEnabled = p.hasVariants;
     if (p.hasVariants && p.variants.isNotEmpty) {
@@ -806,8 +831,16 @@ class SellerInventoryController extends GetxController {
 
   void _clearForm() {
     for (final c in [
-      nameCtrl, descCtrl, priceCtrl, salePriceCtrl,
-      skuCtrl, stockCtrl, wsPrice, wsMinQty, weightCtrl, taxExemptReasonCtrl
+      nameCtrl,
+      descCtrl,
+      priceCtrl,
+      salePriceCtrl,
+      skuCtrl,
+      stockCtrl,
+      wsPrice,
+      wsMinQty,
+      weightCtrl,
+      taxExemptReasonCtrl,
     ]) {
       c.clear();
     }
@@ -855,22 +888,46 @@ class SellerInventoryController extends GetxController {
       customSnackbar('warning'.tr, 'warehouse_qty_required'.tr);
       return;
     }
+    if (!isEditing && skuCtrl.text.trim().isEmpty) {
+      skuCtrl.text =
+          'SKU-${myServices.userId}-${DateTime.now().microsecondsSinceEpoch}';
+    }
+    final normalizedSku = skuCtrl.text.trim().toLowerCase();
+    final duplicateSku =
+        normalizedSku.isNotEmpty &&
+        _allProducts.any(
+          (product) =>
+              product.sku.trim().toLowerCase() == normalizedSku &&
+              product.id != _editingProduct?.id,
+        );
+    if (duplicateSku) {
+      customSnackbar('warning'.tr, 'SKU موجود مسبقًا، اختر SKU مختلفًا');
+      return;
+    }
 
     formStatusRequest = StatusRequest.loading;
     update();
 
     final fields = _buildProductFields();
-    final variants =
-        formData.variantsEnabled ? formData.variants : <ProductVariantModel>[];
+    final variants = formData.variantsEnabled
+        ? formData.variants
+        : <ProductVariantModel>[];
 
     final Either<StatusRequest, Map> result;
     if (isEditing) {
       result = await inventoryData.updateProduct(
-        _token, _editingProduct!.id, fields, productImages, variants,
+        _token,
+        _editingProduct!.id,
+        fields,
+        productImages,
+        variants,
       );
     } else {
       result = await inventoryData.createProduct(
-        _token, fields, productImages, variants,
+        _token,
+        fields,
+        productImages,
+        variants,
       );
     }
 
@@ -881,7 +938,12 @@ class SellerInventoryController extends GetxController {
         customSnackbar('error'.tr, 'server_error'.tr);
       },
       (response) async {
-        if (response['success'] == true) {
+        final httpStatus = int.tryParse('${response['_http_status'] ?? ''}');
+        final requestSucceeded =
+            response['success'] == true ||
+            response['status'] == 'success' ||
+            (httpStatus != null && httpStatus >= 200 && httpStatus < 300);
+        if (requestSucceeded) {
           formStatusRequest = StatusRequest.success;
           update();
           _clearForm();
@@ -897,15 +959,29 @@ class SellerInventoryController extends GetxController {
         } else {
           formStatusRequest = StatusRequest.none;
           update();
-          // Show the first validation error from the backend (if any)
-          final errors = response['errors'] as Map?;
-          final message = errors != null
-              ? (errors.values.first as List).first.toString()
-              : (response['message'] ?? 'unknown_error'.tr).toString();
+          final message = _responseErrorMessage(response);
           customSnackbar('warning'.tr, message);
         }
       },
     );
+  }
+
+  String _responseErrorMessage(Map response) {
+    final errors = response['errors'];
+    if (errors is Map && errors.isNotEmpty) {
+      final firstError = errors.values.first;
+      if (firstError is Iterable && firstError.isNotEmpty) {
+        return firstError.first.toString();
+      }
+      if (firstError != null) return firstError.toString();
+    }
+    if (errors is Iterable && errors.isNotEmpty) {
+      return errors.first.toString();
+    }
+    final message = response['message'] ?? response['error'];
+    return message?.toString().trim().isNotEmpty == true
+        ? message.toString()
+        : 'unknown_error'.tr;
   }
 
   /// Builds the product fields map with the correct backend field names.
@@ -956,7 +1032,8 @@ class SellerInventoryController extends GetxController {
           .where((e) => e.value.isNotEmpty && (int.tryParse(e.value) ?? 0) > 0)
           .toList();
       for (int i = 0; i < stockList.length; i++) {
-        fields['warehouse_stock[$i][warehouse_id]'] = stockList[i].key.toString();
+        fields['warehouse_stock[$i][warehouse_id]'] = stockList[i].key
+            .toString();
         fields['warehouse_stock[$i][qty]'] = stockList[i].value;
       }
     }
@@ -976,8 +1053,16 @@ class SellerInventoryController extends GetxController {
   void onClose() {
     searchCtrl.dispose();
     for (final c in [
-      nameCtrl, descCtrl, priceCtrl, salePriceCtrl,
-      skuCtrl, stockCtrl, alertCtrl, weightCtrl, wsPrice, wsMinQty
+      nameCtrl,
+      descCtrl,
+      priceCtrl,
+      salePriceCtrl,
+      skuCtrl,
+      stockCtrl,
+      alertCtrl,
+      weightCtrl,
+      wsPrice,
+      wsMinQty,
     ]) {
       c.dispose();
     }

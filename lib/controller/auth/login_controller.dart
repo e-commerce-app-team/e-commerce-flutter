@@ -16,7 +16,6 @@ abstract class LoginController extends GetxController {
 }
 
 class LoginControllerImp extends LoginController {
-
   GlobalKey<FormState> formstate = GlobalKey<FormState>();
 
   late TextEditingController email;
@@ -39,57 +38,94 @@ class LoginControllerImp extends LoginController {
       statusRequest = StatusRequest.loading;
       update();
 
-
       var response = await loginData.postData(email.text, password.text);
-      response.fold((left){
-      statusRequest=left;
-      update();}, (right){
-        if(right["success"]==true) {
-          myServices.sharedPreferences.setString("id", right['user']['id'].toString());
-          myServices.sharedPreferences.setString("role", right['user']['role']);
-          myServices.sharedPreferences.setString("token", right['access_token']);
-          myServices.sharedPreferences.setString("email", right['user']['email']);
-
-          // ─── Save permissions for staff members ───────────────────────
-          final rawPerms = right['user']['permissions'];
-          if (rawPerms != null && rawPerms is List) {
-            myServices.sharedPreferences.setStringList(
-              'permissions',
-              List<String>.from(rawPerms.map((e) => e.toString())),
+      response.fold(
+        (left) {
+          statusRequest = left;
+          update();
+        },
+        (right) async {
+          if (right["success"] == true) {
+            myServices.sharedPreferences.setString(
+              "id",
+              right['user']['id'].toString(),
             );
-          } else {
-            // Owners have no restriction list — clear any stale data
-            myServices.sharedPreferences.setStringList('permissions', []);
-          }
+            myServices.sharedPreferences.setString(
+              "role",
+              right['user']['role'],
+            );
+            myServices.sharedPreferences.setString(
+              "token",
+              right['access_token'],
+            );
+            myServices.sharedPreferences.setString(
+              "email",
+              right['user']['email'],
+            );
+            final firstName = right['user']['first_name']?.toString() ?? '';
+            final lastName = right['user']['last_name']?.toString() ?? '';
+            final fullName = '${firstName.trim()} ${lastName.trim()}'.trim();
+            await myServices.sharedPreferences.setString(
+              'first_name',
+              firstName,
+            );
+            await myServices.sharedPreferences.setString('last_name', lastName);
+            if (fullName.isNotEmpty) {
+              await myServices.sharedPreferences.setString('name', fullName);
+            } else if (right['user']['name'] != null) {
+              await myServices.sharedPreferences.setString(
+                'name',
+                right['user']['name'].toString(),
+              );
+            }
+            for (final key in ['full_name', 'display_name', 'username']) {
+              final value = right['user'][key]?.toString().trim() ?? '';
+              if (value.isNotEmpty) {
+                await myServices.sharedPreferences.setString(key, value);
+              }
+            }
 
-          String role = right['user']['role'];
-          if (role == "buyer") {
-            myServices.sharedPreferences.setString("onboarding", "1");
-            Get.offAllNamed(AppRoute.buyerMain);
-          } else if (role == "vendor" || role == "wholesale") {
-            myServices.sharedPreferences.setString("onboarding", "1");
-            Get.offAllNamed(AppRoute.sellerMain);
-          } else if (role == "staff") {
-            // Staff member — goes to same seller main screen
-            // but SellerMainScreen will filter tabs based on permissions
-            myServices.sharedPreferences.setString("onboarding", "1");
-            Get.offAllNamed(AppRoute.sellerMain);
+            // ─── Save permissions for staff members ───────────────────────
+            final rawPerms = right['user']['permissions'];
+            if (rawPerms != null && rawPerms is List) {
+              myServices.sharedPreferences.setStringList(
+                'permissions',
+                List<String>.from(rawPerms.map((e) => e.toString())),
+              );
+            } else {
+              // Owners have no restriction list — clear any stale data
+              myServices.sharedPreferences.setStringList('permissions', []);
+            }
+
+            String role = right['user']['role'];
+            if (role == "buyer") {
+              myServices.sharedPreferences.setString("onboarding", "1");
+              Get.offAllNamed(AppRoute.buyerMain);
+            } else if (role == "vendor" || role == "wholesale") {
+              myServices.sharedPreferences.setString("onboarding", "1");
+              Get.offAllNamed(AppRoute.sellerMain);
+            } else if (role == "staff") {
+              // Staff member — goes to same seller main screen
+              // but SellerMainScreen will filter tabs based on permissions
+              myServices.sharedPreferences.setString("onboarding", "1");
+              Get.offAllNamed(AppRoute.sellerMain);
+            } else {
+              customSnackbar("تنبيه".tr, "${right['message']}");
+              statusRequest = StatusRequest.failure;
+              update();
+            }
           } else {
-            customSnackbar("تنبيه".tr, "${right['message']}");
             statusRequest = StatusRequest.failure;
+            customSnackbar("warning".tr, right['message'] ?? "login_failed".tr);
             update();
           }
-        }else {
-          statusRequest = StatusRequest.failure;
-          customSnackbar("warning".tr, right['message'] ?? "login_failed".tr);
-          update();
-        }
-      }
+        },
       );
     }
 
-   // Get.offNamed(AppRoute.sellerMain);
+    // Get.offNamed(AppRoute.sellerMain);
   }
+
   @override
   goToSignUp() {
     Get.offNamed(AppRoute.selectAccountType);
@@ -97,7 +133,6 @@ class LoginControllerImp extends LoginController {
 
   @override
   void onInit() {
-
     email = TextEditingController();
     password = TextEditingController();
     super.onInit();
@@ -115,4 +150,3 @@ class LoginControllerImp extends LoginController {
     Get.toNamed(AppRoute.forgetPassword);
   }
 }
-

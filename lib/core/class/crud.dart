@@ -8,7 +8,6 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 
 class Crud {
-
   Map<String, String> _setHeaders(Map<String, String>? customHeaders) {
     Map<String, String> headers = {
       'Content-Type': 'application/json',
@@ -20,14 +19,15 @@ class Crud {
     return headers;
   }
 
-
-  Future<Either<StatusRequest, Map>> getData(String linkurl, {Map<String, String>? headers}) async {
+  Future<Either<StatusRequest, Map>> getData(
+    String linkurl, {
+    Map<String, String>? headers,
+  }) async {
     try {
       if (await checkInternet()) {
-        var response = await http.get(
-          Uri.parse(linkurl),
-          headers: _setHeaders(headers),
-        ).timeout(const Duration(seconds: 15));
+        var response = await http
+            .get(Uri.parse(linkurl), headers: _setHeaders(headers))
+            .timeout(const Duration(seconds: 15));
 
         return _handleResponse(response);
       } else {
@@ -42,17 +42,24 @@ class Crud {
     }
   }
 
-
-  Future<Either<StatusRequest, Map>> postData(String linkurl, Map<String, dynamic> data, {Map<String, String>? headers}) async {
+  Future<Either<StatusRequest, Map>> postData(
+    String linkurl,
+    Map<String, dynamic> data, {
+    Map<String, String>? headers,
+  }) async {
     try {
       if (await checkInternet()) {
         print("=========== API REQUEST TO: $linkurl ===========");
-        var response = await http.post(
-          Uri.parse(linkurl),
-          body: jsonEncode(data),
-          headers: _setHeaders(headers),
-        ).timeout(const Duration(seconds: 15));
-        print("=========== API STATUS CODE: ${response.statusCode} ===========");
+        var response = await http
+            .post(
+              Uri.parse(linkurl),
+              body: jsonEncode(data),
+              headers: _setHeaders(headers),
+            )
+            .timeout(const Duration(seconds: 15));
+        print(
+          "=========== API STATUS CODE: ${response.statusCode} ===========",
+        );
         print("=========== API RESPONSE BODY: ${response.body} ===========");
         return _handleResponse(response);
       } else {
@@ -68,8 +75,12 @@ class Crud {
     }
   }
 
-
-  Future<Either<StatusRequest, Map>> postDataWithFiles(String linkurl, Map<String, String> data, Map<String, File> files, {Map<String, String>? headers}) async {
+  Future<Either<StatusRequest, Map>> postDataWithFiles(
+    String linkurl,
+    Map<String, String> data,
+    Map<String, File> files, {
+    Map<String, String>? headers,
+  }) async {
     try {
       if (await checkInternet()) {
         print("=========== API REQUEST (FILES) TO: $linkurl ===========");
@@ -96,9 +107,13 @@ class Crud {
           request.files.add(multipartFile);
         }
 
-        var myrequest = await request.send().timeout(const Duration(seconds: 60)); // زيادة التايم أوت من 15 إلى 60 ثانية
+        var myrequest = await request.send().timeout(
+          const Duration(seconds: 60),
+        ); // زيادة التايم أوت من 15 إلى 60 ثانية
         var response = await http.Response.fromStream(myrequest);
-        print("=========== API STATUS CODE: ${response.statusCode} ===========");
+        print(
+          "=========== API STATUS CODE: ${response.statusCode} ===========",
+        );
         print("=========== API RESPONSE BODY: ${response.body} ===========");
         return _handleResponse(response);
       } else {
@@ -109,16 +124,18 @@ class Crud {
     } on SocketException {
       return const Left(StatusRequest.offlinefailure);
     } catch (e) {
-      print("=========== CRASH IN CRUD CATCH (postDataWithFiles): $e ===========");
+      print(
+        "=========== CRASH IN CRUD CATCH (postDataWithFiles): $e ===========",
+      );
       return const Left(StatusRequest.serverfailure);
     }
   }
 
   /// HTTP DELETE — used for deleting products.
   Future<Either<StatusRequest, Map>> deleteData(
-      String linkurl, {
-        Map<String, String>? headers,
-      }) async {
+    String linkurl, {
+    Map<String, String>? headers,
+  }) async {
     try {
       if (await checkInternet()) {
         var response = await http
@@ -139,17 +156,19 @@ class Crud {
 
   /// HTTP PATCH — used for partial resource updates.
   Future<Either<StatusRequest, Map>> patchData(
-      String linkurl,
-      Map<String, dynamic> data, {
-        Map<String, String>? headers,
-      }) async {
+    String linkurl,
+    Map<String, dynamic> data, {
+    Map<String, String>? headers,
+  }) async {
     try {
       if (await checkInternet()) {
-        var response = await http.patch(
-          Uri.parse(linkurl),
-          body: jsonEncode(data),
-          headers: _setHeaders(headers),
-        ).timeout(const Duration(seconds: 15));
+        var response = await http
+            .patch(
+              Uri.parse(linkurl),
+              body: jsonEncode(data),
+              headers: _setHeaders(headers),
+            )
+            .timeout(const Duration(seconds: 15));
         return _handleResponse(response);
       } else {
         return const Left(StatusRequest.offlinefailure);
@@ -165,17 +184,19 @@ class Crud {
 
   /// HTTP PUT — used for resource updates.
   Future<Either<StatusRequest, Map>> putData(
-      String linkurl,
-      Map<String, dynamic> data, {
-        Map<String, String>? headers,
-      }) async {
+    String linkurl,
+    Map<String, dynamic> data, {
+    Map<String, String>? headers,
+  }) async {
     try {
       if (await checkInternet()) {
-        var response = await http.put(
-          Uri.parse(linkurl),
-          body: jsonEncode(data),
-          headers: _setHeaders(headers),
-        ).timeout(const Duration(seconds: 15));
+        var response = await http
+            .put(
+              Uri.parse(linkurl),
+              body: jsonEncode(data),
+              headers: _setHeaders(headers),
+            )
+            .timeout(const Duration(seconds: 15));
         return _handleResponse(response);
       } else {
         return const Left(StatusRequest.offlinefailure);
@@ -191,11 +212,11 @@ class Crud {
 
   /// HTTP PUT multipart — used for updating products with images.
   Future<Either<StatusRequest, Map>> putDataWithFiles(
-      String linkurl,
-      Map<String, String> data,
-      Map<String, File> files, {
-        Map<String, String>? headers,
-      }) async {
+    String linkurl,
+    Map<String, String> data,
+    Map<String, File> files, {
+    Map<String, String>? headers,
+  }) async {
     try {
       if (await checkInternet()) {
         // Use POST with _method=PUT to bypass Laravel multipart PUT limitation
@@ -222,8 +243,9 @@ class Crud {
           request.files.add(multipartFile);
         }
 
-        var myrequest =
-        await request.send().timeout(const Duration(seconds: 30));
+        var myrequest = await request.send().timeout(
+          const Duration(seconds: 30),
+        );
         var response = await http.Response.fromStream(myrequest);
         return _handleResponse(response);
       } else {
@@ -242,19 +264,29 @@ class Crud {
     try {
       final requestUrl = response.request?.url.toString() ?? 'unknown URL';
       if (response.statusCode < 200 || response.statusCode >= 300) {
-        print('=========== API ERROR ${response.statusCode}: $requestUrl ===========');
+        print(
+          '=========== API ERROR ${response.statusCode}: $requestUrl ===========',
+        );
         print('=========== API ERROR BODY: ${response.body} ===========');
       }
       if (response.statusCode >= 200 && response.statusCode < 300) {
         dynamic decoded = jsonDecode(response.body);
         Map responsebody = decoded is List ? {'data': decoded} : decoded;
+        responsebody['_http_status'] = response.statusCode;
         return Right(responsebody);
-      } else if (response.statusCode == 422 || response.statusCode == 401 || response.statusCode == 403 || response.statusCode == 429 || response.statusCode == 400) {
+      } else if (response.statusCode == 422 ||
+          response.statusCode == 401 ||
+          response.statusCode == 403 ||
+          response.statusCode == 429 ||
+          response.statusCode == 400) {
         dynamic decoded = jsonDecode(response.body);
         Map responsebody = decoded is List ? {'data': decoded} : decoded;
+        responsebody['_http_status'] = response.statusCode;
         return Right(responsebody);
       } else {
-        print("=========== SERVER RETURNED ERROR CODE: ${response.statusCode} ===========");
+        print(
+          "=========== SERVER RETURNED ERROR CODE: ${response.statusCode} ===========",
+        );
         return const Left(StatusRequest.serverfailure);
       }
     } catch (e) {

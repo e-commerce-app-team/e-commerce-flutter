@@ -23,20 +23,26 @@ class ChatSettingsScreen extends StatelessWidget {
           backgroundColor: AppColor.primaryColor,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_rounded,
-                color: Colors.white, size: 20),
+            icon: const Icon(
+              Icons.arrow_back_ios_rounded,
+              color: Colors.white,
+              size: 20,
+            ),
             onPressed: () => Get.back(),
           ),
-          title: Text('chat_settings'.tr,
-              style: AppTextStyle.appBarTitle),
+          title: Text('chat_settings'.tr, style: AppTextStyle.appBarTitle),
           centerTitle: true,
           bottom: TabBar(
             indicatorColor: Colors.white,
             indicatorWeight: 3,
             labelStyle: AppTextStyle.labelLarge.copyWith(
-                color: Colors.white, fontSize: 13),
+              color: Colors.white,
+              fontSize: 13,
+            ),
             unselectedLabelStyle: AppTextStyle.labelMedium.copyWith(
-                color: Colors.white60, fontSize: 13),
+              color: Colors.white60,
+              fontSize: 13,
+            ),
             tabs: [
               Tab(text: 'quick_replies_tab'.tr),
               Tab(text: 'auto_replies_tab'.tr),
@@ -72,11 +78,11 @@ class _QuickRepliesTab extends StatelessWidget {
           onPressed: () => _showAddSheet(context, c),
           backgroundColor: AppColor.primaryColor,
           icon: const Icon(Icons.add_rounded, color: Colors.white),
-          label: Text('add_quick_reply'.tr,
-              style: AppTextStyle.buttonSmall),
+          label: Text('add_quick_reply'.tr, style: AppTextStyle.buttonSmall),
           elevation: 4,
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14)),
+            borderRadius: BorderRadius.circular(14),
+          ),
         ),
         body: c.quickReplies.isEmpty
             ? _EmptyQuickReplies(onAdd: () => _showAddSheet(context, c))
@@ -92,31 +98,39 @@ class _QuickRepliesTab extends StatelessWidget {
                       color: AppColor.primarySurface,
                       borderRadius: BorderRadius.circular(13),
                       border: Border.all(
-                          color: AppColor.primaryColor.withOpacity(0.2)),
+                        color: AppColor.primaryColor.withOpacity(0.2),
+                      ),
                     ),
-                    child: Row(children: [
-                      const Icon(Icons.bolt_rounded,
-                          size: 18, color: AppColor.primaryColor),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          'quick_replies_hint'.tr,
-                          style: AppTextStyle.labelSmall.copyWith(
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.bolt_rounded,
+                          size: 18,
+                          color: AppColor.primaryColor,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'quick_replies_hint'.tr,
+                            style: AppTextStyle.labelSmall.copyWith(
                               color: AppColor.primaryColor,
                               fontSize: 11,
-                              height: 1.5),
+                              height: 1.5,
+                            ),
+                          ),
                         ),
-                      ),
-                    ]),
+                      ],
+                    ),
                   ),
 
-                  ...c.quickReplies.asMap().entries.map((e) =>
-                      _QuickReplyCard(
-                        reply: e.value,
-                        index: e.key,
-                        ctrl: c,
-                        onEdit: () => _showEditSheet(context, c, e.value),
-                      )),
+                  ...c.quickReplies.asMap().entries.map(
+                    (e) => _QuickReplyCard(
+                      reply: e.value,
+                      index: e.key,
+                      ctrl: c,
+                      onEdit: () => _showEditSheet(context, c, e.value),
+                    ),
+                  ),
                 ],
               ),
       ),
@@ -132,8 +146,11 @@ class _QuickRepliesTab extends StatelessWidget {
     );
   }
 
-  void _showEditSheet(BuildContext context, SellerChatController c,
-      QuickReplyModel reply) {
+  void _showEditSheet(
+    BuildContext context,
+    SellerChatController c,
+    QuickReplyModel reply,
+  ) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -146,13 +163,15 @@ class _QuickRepliesTab extends StatelessWidget {
 // ── Quick Reply Card ──────────────────────────────────────────────────────────
 class _QuickReplyCard extends StatelessWidget {
   final QuickReplyModel reply;
-  final int             index;
+  final int index;
   final SellerChatController ctrl;
-  final VoidCallback    onEdit;
+  final VoidCallback onEdit;
 
   const _QuickReplyCard({
-    required this.reply, required this.index,
-    required this.ctrl,  required this.onEdit,
+    required this.reply,
+    required this.index,
+    required this.ctrl,
+    required this.onEdit,
   });
 
   @override
@@ -165,51 +184,78 @@ class _QuickReplyCard extends StatelessWidget {
         boxShadow: AppColor.cardShadow,
         border: Border.all(color: AppColor.greyBorder, width: 0.8),
       ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        // Header
-        Padding(
-          padding: const EdgeInsets.fromLTRB(14, 12, 10, 0),
-          child: Row(children: [
-            Container(
-              width: 32, height: 32,
-              decoration: BoxDecoration(
-                color: AppColor.primarySurface,
-                borderRadius: BorderRadius.circular(9),
-              ),
-              child: const Icon(Icons.bolt_rounded,
-                  size: 16, color: AppColor.primaryColor),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          Padding(
+            padding: const EdgeInsets.fromLTRB(14, 12, 10, 0),
+            child: Row(
+              children: [
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: AppColor.primarySurface,
+                    borderRadius: BorderRadius.circular(9),
+                  ),
+                  child: const Icon(
+                    Icons.bolt_rounded,
+                    size: 16,
+                    color: AppColor.primaryColor,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    reply.title,
+                    style: AppTextStyle.labelLarge.copyWith(
+                      color: AppColor.primaryColor,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+                // Edit
+                IconButton(
+                  icon: const Icon(
+                    Icons.edit_outlined,
+                    size: 18,
+                    color: AppColor.grey,
+                  ),
+                  onPressed: onEdit,
+                  splashRadius: 18,
+                ),
+                // Delete
+                IconButton(
+                  icon: const Icon(
+                    Icons.delete_outline_rounded,
+                    size: 18,
+                    color: AppColor.error,
+                  ),
+                  onPressed: () => _confirmDelete(context),
+                  splashRadius: 18,
+                ),
+              ],
             ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(reply.title,
-                  style: AppTextStyle.labelLarge.copyWith(
-                      color: AppColor.primaryColor, fontSize: 13)),
-            ),
-            // Edit
-            IconButton(
-              icon: const Icon(Icons.edit_outlined,
-                  size: 18, color: AppColor.grey),
-              onPressed: onEdit,
-              splashRadius: 18,
-            ),
-            // Delete
-            IconButton(
-              icon: const Icon(Icons.delete_outline_rounded,
-                  size: 18, color: AppColor.error),
-              onPressed: () => _confirmDelete(context),
-              splashRadius: 18,
-            ),
-          ]),
-        ),
-        const Divider(height: 12, indent: 14, endIndent: 14,
-            color: AppColor.greyBorder),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(14, 0, 14, 12),
-          child: Text(reply.content,
+          ),
+          const Divider(
+            height: 12,
+            indent: 14,
+            endIndent: 14,
+            color: AppColor.greyBorder,
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(14, 0, 14, 12),
+            child: Text(
+              reply.content,
               style: AppTextStyle.bodySmall.copyWith(
-                  fontSize: 12.5, height: 1.5)),
-        ),
-      ]),
+                fontSize: 12.5,
+                height: 1.5,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -218,21 +264,21 @@ class _QuickReplyCard extends StatelessWidget {
       context: context,
       builder: (_) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('delete_quick_reply'.tr,
-            style: AppTextStyle.heading3),
-        content: Text('"${reply.title}"',
-            style: AppTextStyle.bodyMedium),
+        title: Text('delete_quick_reply'.tr, style: AppTextStyle.heading3),
+        content: Text('"${reply.title}"', style: AppTextStyle.bodyMedium),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text('cancel'.tr,
-                style: TextStyle(color: AppColor.grey)),
+            child: Text('cancel'.tr, style: TextStyle(color: AppColor.grey)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-                backgroundColor: AppColor.error, elevation: 0,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10))),
+              backgroundColor: AppColor.error,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
             onPressed: () {
               Get.back();
               ctrl.deleteQuickReply(reply.id);
@@ -248,7 +294,7 @@ class _QuickReplyCard extends StatelessWidget {
 // ── Quick Reply Form Sheet ────────────────────────────────────────────────────
 class _QuickReplyFormSheet extends StatefulWidget {
   final SellerChatController ctrl;
-  final QuickReplyModel?     existing;
+  final QuickReplyModel? existing;
   const _QuickReplyFormSheet({required this.ctrl, this.existing});
 
   @override
@@ -265,7 +311,7 @@ class _QuickReplyFormSheetState extends State<_QuickReplyFormSheet> {
   @override
   void initState() {
     super.initState();
-    _titleCtrl   = TextEditingController(text: widget.existing?.title   ?? '');
+    _titleCtrl = TextEditingController(text: widget.existing?.title ?? '');
     _contentCtrl = TextEditingController(text: widget.existing?.content ?? '');
   }
 
@@ -285,87 +331,113 @@ class _QuickReplyFormSheetState extends State<_QuickReplyFormSheet> {
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        Container(
-          width: 40, height: 4,
-          decoration: BoxDecoration(
-              color: AppColor.greyBorder,
-              borderRadius: BorderRadius.circular(2)),
-        ),
-        const SizedBox(height: 16),
-
-        Row(children: [
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
           Container(
-            width: 36, height: 36,
+            width: 40,
+            height: 4,
             decoration: BoxDecoration(
-              color: AppColor.primarySurface,
-              borderRadius: BorderRadius.circular(10),
+              color: AppColor.greyBorder,
+              borderRadius: BorderRadius.circular(2),
             ),
-            child: const Icon(Icons.bolt_rounded,
-                size: 18, color: AppColor.primaryColor),
           ),
-          const SizedBox(width: 10),
-          Text(
-            _isEdit ? 'edit_quick_reply'.tr : 'add_quick_reply'.tr,
-            style: AppTextStyle.heading3,
+          const SizedBox(height: 16),
+
+          Row(
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: AppColor.primarySurface,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(
+                  Icons.bolt_rounded,
+                  size: 18,
+                  color: AppColor.primaryColor,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                _isEdit ? 'edit_quick_reply'.tr : 'add_quick_reply'.tr,
+                style: AppTextStyle.heading3,
+              ),
+            ],
           ),
-        ]),
-        const SizedBox(height: 18),
+          const SizedBox(height: 18),
 
-        _FieldLabel('quick_reply_title'.tr),
-        const SizedBox(height: 6),
-        TextField(
-          controller: _titleCtrl,
-          style: AppTextStyle.inputText,
-          decoration: _inputDeco('quick_reply_title_hint'.tr,
-              Icons.title_rounded),
-        ),
-        const SizedBox(height: 14),
-
-        _FieldLabel('quick_reply_content'.tr),
-        const SizedBox(height: 6),
-        TextField(
-          controller: _contentCtrl,
-          maxLines: 4,
-          style: AppTextStyle.inputText,
-          decoration: _inputDeco('quick_reply_content_hint'.tr,
-              Icons.message_outlined),
-        ),
-        const SizedBox(height: 20),
-
-        SizedBox(
-          width: double.infinity, height: 50,
-          child: ElevatedButton(
-            onPressed: _loading ? null : _save,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColor.primaryColor,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14)),
+          _FieldLabel('quick_reply_title'.tr),
+          const SizedBox(height: 6),
+          TextField(
+            controller: _titleCtrl,
+            style: AppTextStyle.inputText,
+            decoration: _inputDeco(
+              'quick_reply_title_hint'.tr,
+              Icons.title_rounded,
             ),
-            child: _loading
-                ? const SizedBox(width: 22, height: 22,
-                    child: CircularProgressIndicator(
-                        color: Colors.white, strokeWidth: 2.5))
-                : Text(
-                    _isEdit ? 'save_changes'.tr : 'add_quick_reply'.tr,
-                    style: AppTextStyle.buttonLarge),
           ),
-        ),
-      ]),
+          const SizedBox(height: 14),
+
+          _FieldLabel('quick_reply_content'.tr),
+          const SizedBox(height: 6),
+          TextField(
+            controller: _contentCtrl,
+            maxLines: 4,
+            style: AppTextStyle.inputText,
+            decoration: _inputDeco(
+              'quick_reply_content_hint'.tr,
+              Icons.message_outlined,
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: ElevatedButton(
+              onPressed: _loading ? null : _save,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColor.primaryColor,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+              child: _loading
+                  ? const SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2.5,
+                      ),
+                    )
+                  : Text(
+                      _isEdit ? 'save_changes'.tr : 'add_quick_reply'.tr,
+                      style: AppTextStyle.buttonLarge,
+                    ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Future<void> _save() async {
-    final title   = _titleCtrl.text.trim();
+    final title = _titleCtrl.text.trim();
     final content = _contentCtrl.text.trim();
     if (title.isEmpty || content.isEmpty) {
-      Get.snackbar('warning'.tr, 'fill_all_fields'.tr,
-          backgroundColor: AppColor.errorLight,
-          colorText: AppColor.errorDark,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: const EdgeInsets.all(16),
-          borderRadius: 12);
+      Get.snackbar(
+        'warning'.tr,
+        'fill_all_fields'.tr,
+        backgroundColor: AppColor.errorLight,
+        colorText: AppColor.errorDark,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 12,
+      );
       return;
     }
     setState(() => _loading = true);
@@ -374,7 +446,10 @@ class _QuickReplyFormSheetState extends State<_QuickReplyFormSheet> {
     } else {
       await widget.ctrl.addQuickReply(title, content);
     }
-    if (mounted) { setState(() => _loading = false); Get.back(); }
+    if (mounted) {
+      setState(() => _loading = false);
+      Get.back();
+    }
   }
 }
 
@@ -385,34 +460,49 @@ class _EmptyQuickReplies extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Center(
-    child: Column(mainAxisSize: MainAxisSize.min, children: [
-      Container(
-        width: 76, height: 76,
-        decoration: BoxDecoration(
-          color: AppColor.primarySurface,
-          shape: BoxShape.circle,
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 76,
+          height: 76,
+          decoration: BoxDecoration(
+            color: AppColor.primarySurface,
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(
+            Icons.bolt_rounded,
+            size: 36,
+            color: AppColor.primaryColor,
+          ),
         ),
-        child: const Icon(Icons.bolt_rounded,
-            size: 36, color: AppColor.primaryColor),
-      ),
-      const SizedBox(height: 16),
-      Text('no_quick_replies'.tr,
-          style: AppTextStyle.heading3.copyWith(color: AppColor.grey)),
-      const SizedBox(height: 6),
-      Text('add_quick_reply_hint'.tr,
-          style: AppTextStyle.bodyMedium, textAlign: TextAlign.center),
-      const SizedBox(height: 20),
-      ElevatedButton.icon(
-        onPressed: onAdd,
-        icon: const Icon(Icons.add_rounded, color: Colors.white),
-        label: Text('add_quick_reply'.tr, style: AppTextStyle.buttonMedium),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColor.primaryColor, elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        const SizedBox(height: 16),
+        Text(
+          'no_quick_replies'.tr,
+          style: AppTextStyle.heading3.copyWith(color: AppColor.grey),
         ),
-      ),
-    ]),
+        const SizedBox(height: 6),
+        Text(
+          'add_quick_reply_hint'.tr,
+          style: AppTextStyle.bodyMedium,
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 20),
+        ElevatedButton.icon(
+          onPressed: onAdd,
+          icon: const Icon(Icons.add_rounded, color: Colors.white),
+          label: Text('add_quick_reply'.tr, style: AppTextStyle.buttonMedium),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColor.primaryColor,
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          ),
+        ),
+      ],
+    ),
   );
 }
 
@@ -442,32 +532,52 @@ class _AutoRepliesTab extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.info_outline_rounded,
-                    size: 17, color: AppColor.info),
+                const Icon(
+                  Icons.info_outline_rounded,
+                  size: 17,
+                  color: AppColor.info,
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     'auto_replies_hint'.tr,
                     style: AppTextStyle.labelSmall.copyWith(
-                        color: AppColor.infoDark, fontSize: 11, height: 1.5),
+                      color: AppColor.infoDark,
+                      fontSize: 11,
+                      height: 1.5,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
 
-          ...c.autoReplies.map((ar) => _AutoReplyCard(
-            autoReply: ar,
-            ctrl: c,
-            onEdit: () => _showEditSheet(context, c, ar),
-          )),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: () => _showAddSheet(context, c),
+              icon: const Icon(Icons.add_rounded),
+              label: Text('add_auto_reply'.tr),
+            ),
+          ),
+          const SizedBox(height: 12),
+          ...c.autoReplies.map(
+            (ar) => _AutoReplyCard(
+              autoReply: ar,
+              ctrl: c,
+              onEdit: () => _showEditSheet(context, c, ar),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  void _showEditSheet(BuildContext context, SellerChatController c,
-      AutoReplyModel ar) {
+  void _showEditSheet(
+    BuildContext context,
+    SellerChatController c,
+    AutoReplyModel ar,
+  ) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -475,33 +585,52 @@ class _AutoRepliesTab extends StatelessWidget {
       builder: (_) => _AutoReplyFormSheet(ctrl: c, autoReply: ar),
     );
   }
+
+  void _showAddSheet(BuildContext context, SellerChatController c) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => _AutoReplyFormSheet(ctrl: c),
+    );
+  }
 }
 
 // ── Auto Reply Card ───────────────────────────────────────────────────────────
 class _AutoReplyCard extends StatelessWidget {
-  final AutoReplyModel       autoReply;
+  final AutoReplyModel autoReply;
   final SellerChatController ctrl;
-  final VoidCallback         onEdit;
+  final VoidCallback onEdit;
 
   const _AutoReplyCard({
-    required this.autoReply, required this.ctrl, required this.onEdit,
+    required this.autoReply,
+    required this.ctrl,
+    required this.onEdit,
   });
 
   IconData get _icon {
     switch (autoReply.trigger) {
-      case 'welcome':      return Icons.waving_hand_rounded;
-      case 'away':         return Icons.access_time_rounded;
-      case 'instant_ack':  return Icons.check_circle_outline_rounded;
-      default:             return Icons.auto_awesome_rounded;
+      case 'welcome':
+        return Icons.waving_hand_rounded;
+      case 'away':
+        return Icons.access_time_rounded;
+      case 'instant_ack':
+        return Icons.check_circle_outline_rounded;
+      default:
+        return Icons.auto_awesome_rounded;
     }
   }
 
   Color get _color {
     switch (autoReply.trigger) {
-      case 'welcome':     return AppColor.success;
-      case 'away':        return AppColor.warning;
-      case 'instant_ack': return AppColor.info;
-      default:            return AppColor.primaryColor;
+      case 'welcome':
+        return AppColor.success;
+      case 'away':
+        return AppColor.warning;
+      case 'instant_ack':
+        return AppColor.info;
+      default:
+        return AppColor.primaryColor;
     }
   }
 
@@ -520,95 +649,129 @@ class _AutoReplyCard extends StatelessWidget {
           width: autoReply.isEnabled ? 1.2 : 0.8,
         ),
       ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        // Header
-        Padding(
-          padding: const EdgeInsets.fromLTRB(14, 13, 14, 0),
-          child: Row(children: [
-            Container(
-              width: 40, height: 40,
-              decoration: BoxDecoration(
-                color: autoReply.isEnabled
-                    ? _color.withOpacity(0.12)
-                    : AppColor.secondBackground,
-                borderRadius: BorderRadius.circular(11),
-              ),
-              child: Icon(_icon,
-                  size: 20,
-                  color: autoReply.isEnabled ? _color : AppColor.greyLight),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                Text('auto_reply_${autoReply.trigger}'.tr,
-                    style: AppTextStyle.labelLarge.copyWith(fontSize: 14)),
-                Text('auto_reply_${autoReply.trigger}_desc'.tr,
-                    style: AppTextStyle.labelSmall.copyWith(fontSize: 11)),
-              ]),
-            ),
-            Switch.adaptive(
-              value: autoReply.isEnabled,
-              onChanged: (v) => ctrl.toggleAutoReply(autoReply.id, v),
-              activeColor: _color,
-            ),
-          ]),
-        ),
-
-        if (autoReply.isEnabled) ...[
-          const Divider(
-              height: 14, indent: 14, endIndent: 14,
-              color: AppColor.greyBorder),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
           Padding(
-            padding: const EdgeInsets.fromLTRB(14, 0, 14, 0),
-            child: Text(autoReply.content,
-                style: AppTextStyle.bodySmall.copyWith(
-                    fontSize: 12.5, height: 1.5, color: AppColor.grey)),
+            padding: const EdgeInsets.fromLTRB(14, 13, 14, 0),
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: autoReply.isEnabled
+                        ? _color.withOpacity(0.12)
+                        : AppColor.secondBackground,
+                    borderRadius: BorderRadius.circular(11),
+                  ),
+                  child: Icon(
+                    _icon,
+                    size: 20,
+                    color: autoReply.isEnabled ? _color : AppColor.greyLight,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'auto_reply_${autoReply.trigger}'.tr,
+                        style: AppTextStyle.labelLarge.copyWith(fontSize: 14),
+                      ),
+                      Text(
+                        'auto_reply_${autoReply.trigger}_desc'.tr,
+                        style: AppTextStyle.labelSmall.copyWith(fontSize: 11),
+                      ),
+                    ],
+                  ),
+                ),
+                _DraggableReplySwitch(
+                  value: autoReply.isEnabled,
+                  color: _color,
+                  onChanged: (v) => ctrl.toggleAutoReply(autoReply.id, v),
+                ),
+              ],
+            ),
           ),
 
-          if (autoReply.trigger == 'away' &&
-              autoReply.startTime != null) ...[
-            const SizedBox(height: 10),
+          if (autoReply.isEnabled) ...[
+            const Divider(
+              height: 14,
+              indent: 14,
+              endIndent: 14,
+              color: AppColor.greyBorder,
+            ),
             Padding(
               padding: const EdgeInsets.fromLTRB(14, 0, 14, 0),
-              child: Row(children: [
-                const Icon(Icons.schedule_rounded,
-                    size: 13, color: AppColor.greyLight),
-                const SizedBox(width: 5),
-                Text(
-                  '${'working_hours'.tr}: ${autoReply.startTime} — ${autoReply.endTime}',
-                  style: AppTextStyle.labelSmall.copyWith(fontSize: 11),
+              child: Text(
+                autoReply.content,
+                style: AppTextStyle.bodySmall.copyWith(
+                  fontSize: 12.5,
+                  height: 1.5,
+                  color: AppColor.grey,
                 ),
-              ]),
-            ),
-          ],
-
-          Padding(
-            padding: const EdgeInsets.fromLTRB(14, 10, 14, 12),
-            child: GestureDetector(
-              onTap: onEdit,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 14, vertical: 8),
-                decoration: BoxDecoration(
-                  color: _color.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: _color.withOpacity(0.2)),
-                ),
-                child: Row(mainAxisSize: MainAxisSize.min, children: [
-                  Icon(Icons.edit_outlined, size: 14, color: _color),
-                  const SizedBox(width: 6),
-                  Text('edit_reply'.tr,
-                      style: AppTextStyle.chip.copyWith(
-                          color: _color, fontWeight: FontWeight.w600)),
-                ]),
               ),
             ),
-          ),
-        ] else
-          const SizedBox(height: 13),
-      ]),
+
+            if (autoReply.trigger == 'away' && autoReply.startTime != null) ...[
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(14, 0, 14, 0),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.schedule_rounded,
+                      size: 13,
+                      color: AppColor.greyLight,
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      '${'working_hours'.tr}: ${autoReply.startTime} — ${autoReply.endTime}',
+                      style: AppTextStyle.labelSmall.copyWith(fontSize: 11),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14, 10, 14, 12),
+              child: GestureDetector(
+                onTap: onEdit,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: _color.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: _color.withOpacity(0.2)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.edit_outlined, size: 14, color: _color),
+                      const SizedBox(width: 6),
+                      Text(
+                        'edit_reply'.tr,
+                        style: AppTextStyle.chip.copyWith(
+                          color: _color,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ] else
+            const SizedBox(height: 13),
+        ],
+      ),
     );
   }
 }
@@ -616,14 +779,15 @@ class _AutoReplyCard extends StatelessWidget {
 // ── Auto Reply Form Sheet ─────────────────────────────────────────────────────
 class _AutoReplyFormSheet extends StatefulWidget {
   final SellerChatController ctrl;
-  final AutoReplyModel       autoReply;
-  const _AutoReplyFormSheet({required this.ctrl, required this.autoReply});
+  final AutoReplyModel? autoReply;
+  const _AutoReplyFormSheet({required this.ctrl, this.autoReply});
 
   @override
   State<_AutoReplyFormSheet> createState() => _AutoReplyFormSheetState();
 }
 
 class _AutoReplyFormSheetState extends State<_AutoReplyFormSheet> {
+  late TextEditingController _keywordCtrl;
   late TextEditingController _contentCtrl;
   late TextEditingController _startCtrl;
   late TextEditingController _endCtrl;
@@ -632,16 +796,20 @@ class _AutoReplyFormSheetState extends State<_AutoReplyFormSheet> {
   @override
   void initState() {
     super.initState();
-    _contentCtrl = TextEditingController(text: widget.autoReply.content);
-    _startCtrl   = TextEditingController(
-        text: widget.autoReply.startTime ?? '09:00');
-    _endCtrl     = TextEditingController(
-        text: widget.autoReply.endTime   ?? '21:00');
+    _keywordCtrl = TextEditingController(text: widget.autoReply?.trigger ?? '');
+    _contentCtrl = TextEditingController(text: widget.autoReply?.content ?? '');
+    _startCtrl = TextEditingController(
+      text: widget.autoReply?.startTime ?? '09:00',
+    );
+    _endCtrl = TextEditingController(
+      text: widget.autoReply?.endTime ?? '21:00',
+    );
   }
 
   @override
   void dispose() {
     _contentCtrl.dispose();
+    _keywordCtrl.dispose();
     _startCtrl.dispose();
     _endCtrl.dispose();
     super.dispose();
@@ -650,7 +818,8 @@ class _AutoReplyFormSheetState extends State<_AutoReplyFormSheet> {
   @override
   Widget build(BuildContext context) {
     final bottom = MediaQuery.of(context).viewInsets.bottom;
-    final isAway = widget.autoReply.trigger == 'away';
+    final isEdit = widget.autoReply != null;
+    final isAway = widget.autoReply?.trigger == 'away';
 
     return Container(
       padding: EdgeInsets.fromLTRB(20, 12, 20, 24 + bottom),
@@ -658,108 +827,270 @@ class _AutoReplyFormSheetState extends State<_AutoReplyFormSheet> {
         color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        Container(
-          width: 40, height: 4,
-          decoration: BoxDecoration(
-              color: AppColor.greyBorder,
-              borderRadius: BorderRadius.circular(2)),
-        ),
-        const SizedBox(height: 16),
-
-        Row(children: [
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
           Container(
-            width: 36, height: 36,
+            width: 40,
+            height: 4,
             decoration: BoxDecoration(
-              color: AppColor.primarySurface,
-              borderRadius: BorderRadius.circular(10),
+              color: AppColor.greyBorder,
+              borderRadius: BorderRadius.circular(2),
             ),
-            child: const Icon(Icons.auto_awesome_rounded,
-                size: 18, color: AppColor.primaryColor),
           ),
-          const SizedBox(width: 10),
-          Text('edit_auto_reply'.tr, style: AppTextStyle.heading3),
-        ]),
-        const SizedBox(height: 18),
+          const SizedBox(height: 16),
 
-        _FieldLabel('auto_reply_content_label'.tr),
-        const SizedBox(height: 6),
-        TextField(
-          controller: _contentCtrl,
-          maxLines: 4,
-          style: AppTextStyle.inputText,
-          decoration: _inputDeco('auto_reply_content_hint'.tr,
-              Icons.message_outlined),
-        ),
+          Row(
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: AppColor.primarySurface,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(
+                  Icons.auto_awesome_rounded,
+                  size: 18,
+                  color: AppColor.primaryColor,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                (isEdit ? 'edit_auto_reply' : 'add_auto_reply').tr,
+                style: AppTextStyle.heading3,
+              ),
+            ],
+          ),
+          const SizedBox(height: 18),
 
-        if (isAway) ...[
-          const SizedBox(height: 14),
-          _FieldLabel('working_hours'.tr),
+          _FieldLabel('keyword'.tr),
           const SizedBox(height: 6),
-          Row(children: [
-            Expanded(
-              child: TextField(
-                controller: _startCtrl,
-                style: AppTextStyle.inputText,
-                keyboardType: TextInputType.datetime,
-                decoration: _inputDeco('from'.tr, Icons.schedule_rounded),
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Text('—', style: TextStyle(color: AppColor.grey)),
-            ),
-            Expanded(
-              child: TextField(
-                controller: _endCtrl,
-                style: AppTextStyle.inputText,
-                keyboardType: TextInputType.datetime,
-                decoration: _inputDeco('to'.tr, Icons.schedule_outlined),
-              ),
-            ),
-          ]),
-        ],
-
-        const SizedBox(height: 20),
-        SizedBox(
-          width: double.infinity, height: 50,
-          child: ElevatedButton(
-            onPressed: _loading ? null : _save,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColor.primaryColor, elevation: 0,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14)),
-            ),
-            child: _loading
-                ? const SizedBox(width: 22, height: 22,
-                    child: CircularProgressIndicator(
-                        color: Colors.white, strokeWidth: 2.5))
-                : Text('save_changes'.tr, style: AppTextStyle.buttonLarge),
+          TextField(
+            controller: _keywordCtrl,
+            style: AppTextStyle.inputText,
+            decoration: _inputDeco('keyword'.tr, Icons.key_rounded),
           ),
-        ),
-      ]),
+          const SizedBox(height: 14),
+          _FieldLabel('auto_reply_content_label'.tr),
+          const SizedBox(height: 6),
+          TextField(
+            controller: _contentCtrl,
+            maxLines: 4,
+            style: AppTextStyle.inputText,
+            decoration: _inputDeco(
+              'auto_reply_content_hint'.tr,
+              Icons.message_outlined,
+            ),
+          ),
+
+          if (isAway) ...[
+            const SizedBox(height: 14),
+            _FieldLabel('working_hours'.tr),
+            const SizedBox(height: 6),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _startCtrl,
+                    style: AppTextStyle.inputText,
+                    keyboardType: TextInputType.datetime,
+                    decoration: _inputDeco('from'.tr, Icons.schedule_rounded),
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: Text('—', style: TextStyle(color: AppColor.grey)),
+                ),
+                Expanded(
+                  child: TextField(
+                    controller: _endCtrl,
+                    style: AppTextStyle.inputText,
+                    keyboardType: TextInputType.datetime,
+                    decoration: _inputDeco('to'.tr, Icons.schedule_outlined),
+                  ),
+                ),
+              ],
+            ),
+          ],
+
+          const SizedBox(height: 20),
+          SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: ElevatedButton(
+              onPressed: _loading ? null : _save,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColor.primaryColor,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+              child: _loading
+                  ? const SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2.5,
+                      ),
+                    )
+                  : Text(
+                      widget.autoReply == null
+                          ? 'add_auto_reply'.tr
+                          : 'save_changes'.tr,
+                      style: AppTextStyle.buttonLarge,
+                    ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Future<void> _save() async {
     final content = _contentCtrl.text.trim();
     if (content.isEmpty) {
-      Get.snackbar('warning'.tr, 'fill_all_fields'.tr,
-          backgroundColor: AppColor.errorLight,
-          colorText: AppColor.errorDark,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: const EdgeInsets.all(16),
-          borderRadius: 12);
+      Get.snackbar(
+        'warning'.tr,
+        'fill_all_fields'.tr,
+        backgroundColor: AppColor.errorLight,
+        colorText: AppColor.errorDark,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 12,
+      );
       return;
     }
     setState(() => _loading = true);
-    final updated = widget.autoReply.copyWith(
-      content:   content,
-      startTime: _startCtrl.text.trim().isEmpty ? null : _startCtrl.text.trim(),
-      endTime:   _endCtrl.text.trim().isEmpty   ? null : _endCtrl.text.trim(),
+    final keyword = _keywordCtrl.text.trim();
+    if (keyword.isEmpty) {
+      setState(() => _loading = false);
+      Get.snackbar('warning'.tr, 'fill_all_fields'.tr);
+      return;
+    }
+    final success = widget.autoReply == null
+        ? await widget.ctrl.addAutoReply(keyword, content)
+        : await widget.ctrl.updateAutoReply(
+            widget.autoReply!.copyWith(
+              content: content,
+              startTime: _startCtrl.text.trim().isEmpty
+                  ? null
+                  : _startCtrl.text.trim(),
+              endTime: _endCtrl.text.trim().isEmpty
+                  ? null
+                  : _endCtrl.text.trim(),
+            ),
+          );
+    if (mounted && success) {
+      setState(() => _loading = false);
+      Get.back();
+    } else if (mounted) {
+      setState(() => _loading = false);
+    }
+  }
+}
+
+class _DraggableReplySwitch extends StatefulWidget {
+  final bool value;
+  final Color color;
+  final Future<bool> Function(bool value) onChanged;
+
+  const _DraggableReplySwitch({
+    required this.value,
+    required this.color,
+    required this.onChanged,
+  });
+
+  @override
+  State<_DraggableReplySwitch> createState() => _DraggableReplySwitchState();
+}
+
+class _DraggableReplySwitchState extends State<_DraggableReplySwitch>
+    with SingleTickerProviderStateMixin {
+  static const double _width = 50;
+  static const double _height = 30;
+  double _position = 0;
+  bool _dragging = false;
+  bool _pending = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _position = widget.value ? 1 : 0;
+  }
+
+  @override
+  void didUpdateWidget(covariant _DraggableReplySwitch oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!_dragging && !_pending && oldWidget.value != widget.value) {
+      setState(() => _position = widget.value ? 1 : 0);
+    }
+  }
+
+  void _update(DragUpdateDetails details) {
+    if (_pending) return;
+    setState(() {
+      _dragging = true;
+      final delta = details.primaryDelta! / (_width - _height);
+      _position = (_position + (widget.value ? delta : delta)).clamp(0.0, 1.0);
+    });
+  }
+
+  Future<void> _end(DragEndDetails details) async {
+    if (!_dragging || _pending) return;
+    final target = _position >= 0.5;
+    if (target == widget.value) {
+      setState(() {
+        _dragging = false;
+        _position = widget.value ? 1 : 0;
+      });
+      return;
+    }
+
+    setState(() => _pending = true);
+    final success = await widget.onChanged(target);
+    if (!mounted) return;
+    setState(() {
+      _pending = false;
+      _dragging = false;
+      _position = success == target ? (target ? 1 : 0) : (widget.value ? 1 : 0);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onHorizontalDragUpdate: _update,
+      onHorizontalDragEnd: _end,
+      onTap: _pending ? null : () => _end(DragEndDetails()),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 120),
+        width: _width,
+        height: _height,
+        padding: const EdgeInsets.all(3),
+        decoration: BoxDecoration(
+          color: Color.lerp(AppColor.greyBorder, widget.color, _position),
+          borderRadius: BorderRadius.circular(_height / 2),
+        ),
+        child: Align(
+          alignment: Alignment.lerp(
+            Alignment.centerLeft,
+            Alignment.centerRight,
+            _position,
+          )!,
+          child: Container(
+            width: _height - 6,
+            height: _height - 6,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
+          ),
+        ),
+      ),
     );
-    await widget.ctrl.updateAutoReply(updated);
-    if (mounted) { setState(() => _loading = false); Get.back(); }
   }
 }
 
@@ -771,8 +1102,10 @@ class _FieldLabel extends StatelessWidget {
   const _FieldLabel(this.label);
 
   @override
-  Widget build(BuildContext context) => Text(label,
-      style: AppTextStyle.inputLabel.copyWith(fontWeight: FontWeight.w600));
+  Widget build(BuildContext context) => Text(
+    label,
+    style: AppTextStyle.inputLabel.copyWith(fontWeight: FontWeight.w600),
+  );
 }
 
 InputDecoration _inputDeco(String hint, IconData icon) => InputDecoration(
@@ -783,14 +1116,17 @@ InputDecoration _inputDeco(String hint, IconData icon) => InputDecoration(
   fillColor: AppColor.secondBackground,
   contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
   border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppColor.greyBorder)),
+    borderRadius: BorderRadius.circular(12),
+    borderSide: const BorderSide(color: AppColor.greyBorder),
+  ),
   enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppColor.greyBorder)),
+    borderRadius: BorderRadius.circular(12),
+    borderSide: const BorderSide(color: AppColor.greyBorder),
+  ),
   focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppColor.primaryColor, width: 1.5)),
+    borderRadius: BorderRadius.circular(12),
+    borderSide: const BorderSide(color: AppColor.primaryColor, width: 1.5),
+  ),
 );
 
 // QuickReplyModel & AutoReplyModel are imported from chat_models.dart
@@ -812,11 +1148,17 @@ class _BlockedUsersTab extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.block_rounded, size: 64, color: AppColor.greyLight.withOpacity(0.5)),
+                    Icon(
+                      Icons.block_rounded,
+                      size: 64,
+                      color: AppColor.greyLight.withOpacity(0.5),
+                    ),
                     const SizedBox(height: 12),
                     Text(
                       'no_blocked_users'.tr,
-                      style: AppTextStyle.bodyMedium.copyWith(color: AppColor.greyLight),
+                      style: AppTextStyle.bodyMedium.copyWith(
+                        color: AppColor.greyLight,
+                      ),
                     ),
                   ],
                 ),
@@ -825,28 +1167,61 @@ class _BlockedUsersTab extends StatelessWidget {
                 physics: const BouncingScrollPhysics(),
                 padding: const EdgeInsets.all(16),
                 itemCount: c.blockedUsers.length,
-                separatorBuilder: (context, index) => const Divider(height: 1, color: AppColor.greyBorder),
+                separatorBuilder: (context, index) =>
+                    const Divider(height: 1, color: AppColor.greyBorder),
                 itemBuilder: (context, index) {
                   final blockedRecord = c.blockedUsers[index];
                   final blockedUser = blockedRecord['blocked'] ?? {};
                   final firstName = blockedUser['first_name'] ?? '';
                   final lastName = blockedUser['last_name'] ?? '';
-                  final name = '$firstName $lastName'.trim().isNotEmpty ? '$firstName $lastName' : 'User #${blockedRecord['blocked_id']}';
+                  final name = '$firstName $lastName'.trim().isNotEmpty
+                      ? '$firstName $lastName'
+                      : 'User #${blockedRecord['blocked_id']}';
                   final email = blockedUser['email'] ?? '';
                   final avatar = blockedUser['profile_photo'];
 
                   return ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     leading: CircleAvatar(
                       backgroundColor: AppColor.primarySurface,
-                      backgroundImage: avatar != null ? NetworkImage(AppLink.storageUrl(avatar)) : null,
-                      child: avatar == null ? const Icon(Icons.person_rounded, color: AppColor.primaryColor) : null,
+                      backgroundImage: avatar != null
+                          ? NetworkImage(AppLink.storageUrl(avatar))
+                          : null,
+                      child: avatar == null
+                          ? const Icon(
+                              Icons.person_rounded,
+                              color: AppColor.primaryColor,
+                            )
+                          : null,
                     ),
-                    title: Text(name, style: AppTextStyle.labelLarge.copyWith(fontSize: 14)),
-                    subtitle: email.isNotEmpty ? Text(email, style: AppTextStyle.labelSmall.copyWith(color: AppColor.greyLight)) : null,
+                    title: Text(
+                      name,
+                      style: AppTextStyle.labelLarge.copyWith(fontSize: 14),
+                    ),
+                    subtitle: email.isNotEmpty
+                        ? Text(
+                            email,
+                            style: AppTextStyle.labelSmall.copyWith(
+                              color: AppColor.greyLight,
+                            ),
+                          )
+                        : null,
                     trailing: TextButton(
-                      onPressed: () => _confirmUnblock(context, c, blockedRecord['blocked_id']),
-                      child: Text('unblock'.tr, style: AppTextStyle.labelLarge.copyWith(fontSize: 14, color: Colors.red)),
+                      onPressed: () => _confirmUnblock(
+                        context,
+                        c,
+                        blockedRecord['blocked_id'],
+                      ),
+                      child: Text(
+                        'unblock'.tr,
+                        style: AppTextStyle.labelLarge.copyWith(
+                          fontSize: 14,
+                          color: Colors.red,
+                        ),
+                      ),
                     ),
                   );
                 },
@@ -855,7 +1230,11 @@ class _BlockedUsersTab extends StatelessWidget {
     );
   }
 
-  void _confirmUnblock(BuildContext context, SellerChatController c, dynamic userId) {
+  void _confirmUnblock(
+    BuildContext context,
+    SellerChatController c,
+    dynamic userId,
+  ) {
     int id = int.tryParse(userId.toString()) ?? 0;
     if (id == 0) return;
     Get.defaultDialog(
@@ -868,9 +1247,13 @@ class _BlockedUsersTab extends StatelessWidget {
       onConfirm: () {
         c.unblockUser(id);
         Get.back();
-        Get.snackbar('success'.tr, 'unblocked_success'.tr, backgroundColor: Colors.green, colorText: Colors.white);
+        Get.snackbar(
+          'success'.tr,
+          'unblocked_success'.tr,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
       },
     );
   }
 }
-

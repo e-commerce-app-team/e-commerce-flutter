@@ -5,7 +5,7 @@ import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/data/datasource/static/account_type_data.dart';
 
 class CustomDotControllerAccount extends GetView<SelectAccountTypeController> {
-  const CustomDotControllerAccount({Key? key}) : super(key: key);
+  CustomDotControllerAccount({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +15,8 @@ class CustomDotControllerAccount extends GetView<SelectAccountTypeController> {
         children: List.generate(
           AccountTypeData.data.length,
               (index) => AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            margin: const EdgeInsets.only(right: 5),
+            duration: Duration(milliseconds: 300),
+            margin: EdgeInsets.only(right: 5),
             height: 8,
             width: controller.currentPage == index ? 20 : 8,
             decoration: BoxDecoration(

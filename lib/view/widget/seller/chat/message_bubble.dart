@@ -23,10 +23,11 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final type      = message.type;
-    final content   = message.content;
-    final localPath = message.imageUrl; // Treat imageUrl as localPath for now to avoid extensive changes
-    final readAt    = message.readAt;
+    final type = message.type;
+    final content = message.content;
+    final localPath = message
+        .imageUrl; // Treat imageUrl as localPath for now to avoid extensive changes
+    final readAt = message.readAt;
     final createdAt = message.createdAt;
 
     return TweenAnimationBuilder<double>(
@@ -38,82 +39,84 @@ class MessageBubble extends StatelessWidget {
         return Transform.scale(
           scale: val,
           alignment: isMine ? Alignment.bottomRight : Alignment.bottomLeft,
-          child: Opacity(
-            opacity: val.clamp(0.0, 1.0),
-            child: child,
-          ),
+          child: Opacity(opacity: val.clamp(0.0, 1.0), child: child),
         );
       },
-      child: Padding(
-        padding: EdgeInsets.only(
-          left:   isMine ? 56 : 0,
-          right:  isMine ? 0 : 56,
-          bottom: 5,
-        ),
-        child: GestureDetector(
-          onLongPress: () => _showMessageOptions(context, content),
-          child: Column(
-            crossAxisAlignment:
-                isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-          children: [
-            // ── Bubble ──────────────────────────────────────────────────────
-            Container(
-              constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width * 0.74,
-              ),
-              decoration: BoxDecoration(
-                color: isMine ? AppColor.primaryColor : AppColor.white,
-                borderRadius: BorderRadius.only(
-                  topLeft:     const Radius.circular(18),
-                  topRight:    const Radius.circular(18),
-                  bottomLeft:  Radius.circular(isMine ? 18 : 4),
-                  bottomRight: Radius.circular(isMine ? 4  : 18),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: isMine
-                        ? AppColor.primaryColor.withOpacity(0.18)
-                        : AppColor.black.withOpacity(0.07),
-                    blurRadius: 8,
-                    offset: const Offset(0, 3),
+      child: Align(
+        alignment: isMine ? Alignment.centerRight : Alignment.centerLeft,
+        child: Padding(
+          padding: EdgeInsets.only(
+            left: isMine ? 56 : 0,
+            right: isMine ? 0 : 56,
+            bottom: 5,
+          ),
+          child: GestureDetector(
+            onLongPress: () => _showMessageOptions(context, content),
+            child: Column(
+              crossAxisAlignment: isMine
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
+              children: [
+                // ── Bubble ──────────────────────────────────────────────────────
+                Container(
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width * 0.74,
                   ),
-                ],
-              ),
-              child: type == 'image'
-                  ? _ImageBubble(localPath: localPath, isMine: isMine)
-                  : _TextBubble(content: content, isMine: isMine),
-            ),
-
-            // ── Timestamp + Read ─────────────────────────────────────────
-            if (showTime && createdAt != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 4),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      _formatTime(createdAt),
-                      style: AppTextStyle.timestamp.copyWith(fontSize: 10),
+                  decoration: BoxDecoration(
+                    color: isMine ? AppColor.primaryColor : AppColor.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: const Radius.circular(18),
+                      topRight: const Radius.circular(18),
+                      bottomLeft: Radius.circular(isMine ? 18 : 4),
+                      bottomRight: Radius.circular(isMine ? 4 : 18),
                     ),
-                    if (isMine) ...[
-                      const SizedBox(width: 4),
-                      Icon(
-                        readAt != null
-                            ? Icons.done_all_rounded
-                            : Icons.done_rounded,
-                        size: 13,
-                        color: readAt != null
-                            ? AppColor.info
-                            : AppColor.greyLight,
+                    boxShadow: [
+                      BoxShadow(
+                        color: isMine
+                            ? AppColor.primaryColor.withOpacity(0.18)
+                            : AppColor.black.withOpacity(0.07),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
                       ),
                     ],
-                  ],
+                  ),
+                  child: type == 'image'
+                      ? _ImageBubble(localPath: localPath, isMine: isMine)
+                      : _TextBubble(content: content, isMine: isMine),
                 ),
-              ),
-          ],
+
+                // ── Timestamp + Read ─────────────────────────────────────────
+                if (showTime && createdAt != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _formatTime(createdAt),
+                          style: AppTextStyle.timestamp.copyWith(fontSize: 10),
+                        ),
+                        if (isMine) ...[
+                          const SizedBox(width: 4),
+                          Icon(
+                            readAt != null
+                                ? Icons.done_all_rounded
+                                : Icons.done_rounded,
+                            size: 13,
+                            color: readAt != null
+                                ? AppColor.info
+                                : AppColor.greyLight,
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
         ),
       ),
-          )  );
+    );
   }
 
   String _formatTime(DateTime dt) {
@@ -135,7 +138,7 @@ class MessageBubble extends StatelessWidget {
 // ── Text Bubble ───────────────────────────────────────────────────────────────
 class _TextBubble extends StatelessWidget {
   final String content;
-  final bool   isMine;
+  final bool isMine;
   const _TextBubble({required this.content, required this.isMine});
 
   @override
@@ -155,29 +158,34 @@ class _TextBubble extends StatelessWidget {
 // ── Image Bubble ──────────────────────────────────────────────────────────────
 class _ImageBubble extends StatelessWidget {
   final String? localPath;
-  final bool    isMine;
+  final bool isMine;
   const _ImageBubble({this.localPath, required this.isMine});
 
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.only(
-        topLeft:     const Radius.circular(18),
-        topRight:    const Radius.circular(18),
-        bottomLeft:  Radius.circular(isMine ? 18 : 4),
-        bottomRight: Radius.circular(isMine ? 4  : 18),
+        topLeft: const Radius.circular(18),
+        topRight: const Radius.circular(18),
+        bottomLeft: Radius.circular(isMine ? 18 : 4),
+        bottomRight: Radius.circular(isMine ? 4 : 18),
       ),
       child: localPath != null
           ? Image.file(
               File(localPath!),
-              width: 220, height: 190,
+              width: 220,
+              height: 190,
               fit: BoxFit.cover,
             )
           : Container(
-              width: 220, height: 190,
+              width: 220,
+              height: 190,
               color: AppColor.greyBorder,
-              child: const Icon(Icons.broken_image_outlined,
-                  color: AppColor.grey, size: 34),
+              child: const Icon(
+                Icons.broken_image_outlined,
+                color: AppColor.grey,
+                size: 34,
+              ),
             ),
     );
   }
@@ -186,7 +194,7 @@ class _ImageBubble extends StatelessWidget {
 // ── Message Options Sheet ─────────────────────────────────────────────────────
 class _MessageOptionsSheet extends StatelessWidget {
   final String content;
-  final bool   isMine;
+  final bool isMine;
   const _MessageOptionsSheet({required this.content, required this.isMine});
 
   @override
@@ -197,66 +205,73 @@ class _MessageOptionsSheet extends StatelessWidget {
         color: AppColor.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
       ),
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        Container(
-          width: 40, height: 4,
-          decoration: BoxDecoration(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
               color: AppColor.greyBorder,
-              borderRadius: BorderRadius.circular(2)),
-        ),
-        const SizedBox(height: 16),
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(height: 16),
 
-        _MsgOptionTile(
-          icon: Icons.copy_rounded,
-          label: 'copy_message'.tr,
-          onTap: () {
-            Clipboard.setData(ClipboardData(text: content));
-            Get.back();
-            Get.snackbar(
-              'copied'.tr, 'message_copied'.tr,
-              backgroundColor: AppColor.successLight,
-              colorText: AppColor.successDark,
-              snackPosition: SnackPosition.BOTTOM,
-              margin: const EdgeInsets.all(16),
-              borderRadius: 12,
-              duration: const Duration(seconds: 2),
-            );
-          },
-        ),
-
-        _MsgOptionTile(
-          icon: Icons.reply_rounded,
-          label: 'reply'.tr,
-          onTap: () => Get.back(),
-        ),
-
-        if (!isMine)
           _MsgOptionTile(
-            icon: Icons.flag_outlined,
-            label: 'report_message'.tr,
-            color: AppColor.warning,
-            isLast: true,
+            icon: Icons.copy_rounded,
+            label: 'copy_message'.tr,
             onTap: () {
+              Clipboard.setData(ClipboardData(text: content));
               Get.back();
               Get.snackbar(
-                'report_submitted'.tr, 'report_submitted_msg'.tr,
-                backgroundColor: AppColor.warningLight,
-                colorText: AppColor.warningDark,
+                'copied'.tr,
+                'message_copied'.tr,
+                backgroundColor: AppColor.successLight,
+                colorText: AppColor.successDark,
                 snackPosition: SnackPosition.BOTTOM,
                 margin: const EdgeInsets.all(16),
                 borderRadius: 12,
+                duration: const Duration(seconds: 2),
               );
             },
-          )
-        else
+          ),
+
           _MsgOptionTile(
-            icon: Icons.delete_outline_rounded,
-            label: 'delete_message'.tr,
-            color: AppColor.error,
-            isLast: true,
+            icon: Icons.reply_rounded,
+            label: 'reply'.tr,
             onTap: () => Get.back(),
           ),
-      ]),
+
+          if (!isMine)
+            _MsgOptionTile(
+              icon: Icons.flag_outlined,
+              label: 'report_message'.tr,
+              color: AppColor.warning,
+              isLast: true,
+              onTap: () {
+                Get.back();
+                Get.snackbar(
+                  'report_submitted'.tr,
+                  'report_submitted_msg'.tr,
+                  backgroundColor: AppColor.warningLight,
+                  colorText: AppColor.warningDark,
+                  snackPosition: SnackPosition.BOTTOM,
+                  margin: const EdgeInsets.all(16),
+                  borderRadius: 12,
+                );
+              },
+            )
+          else
+            _MsgOptionTile(
+              icon: Icons.delete_outline_rounded,
+              label: 'delete_message'.tr,
+              color: AppColor.error,
+              isLast: true,
+              onTap: () => Get.back(),
+            ),
+        ],
+      ),
     );
   }
 }
@@ -269,29 +284,39 @@ class _MsgOptionTile extends StatelessWidget {
   final bool isLast;
 
   const _MsgOptionTile({
-    required this.icon, required this.label,
-    required this.onTap, this.color, this.isLast = false,
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.color,
+    this.isLast = false,
   });
 
   @override
-  Widget build(BuildContext context) => Column(children: [
-    ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: Container(
-        width: 38, height: 38,
-        decoration: BoxDecoration(
-          color: (color ?? AppColor.grey).withOpacity(0.1),
-          borderRadius: BorderRadius.circular(10),
+  Widget build(BuildContext context) => Column(
+    children: [
+      ListTile(
+        contentPadding: EdgeInsets.zero,
+        leading: Container(
+          width: 38,
+          height: 38,
+          decoration: BoxDecoration(
+            color: (color ?? AppColor.grey).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, color: color ?? AppColor.grey, size: 18),
         ),
-        child: Icon(icon, color: color ?? AppColor.grey, size: 18),
-      ),
-      title: Text(label,
+        title: Text(
+          label,
           style: AppTextStyle.labelLarge.copyWith(
-              color: color ?? AppColor.black, fontSize: 14)),
-      onTap: onTap,
-    ),
-    if (!isLast) const Divider(color: AppColor.greyBorder, height: 1),
-  ]);
+            color: color ?? AppColor.black,
+            fontSize: 14,
+          ),
+        ),
+        onTap: onTap,
+      ),
+      if (!isLast) const Divider(color: AppColor.greyBorder, height: 1),
+    ],
+  );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -304,24 +329,28 @@ class DateSeparator extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 14),
-    child: Row(children: [
-      const Expanded(child: Divider(color: AppColor.greyBorder)),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-          decoration: BoxDecoration(
-            color: AppColor.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColor.greyBorder),
-            boxShadow: AppColor.cardShadow,
+    child: Row(
+      children: [
+        const Expanded(child: Divider(color: AppColor.greyBorder)),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+            decoration: BoxDecoration(
+              color: AppColor.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColor.greyBorder),
+              boxShadow: AppColor.cardShadow,
+            ),
+            child: Text(
+              label,
+              style: AppTextStyle.labelSmall.copyWith(fontSize: 10),
+            ),
           ),
-          child: Text(label,
-              style: AppTextStyle.labelSmall.copyWith(fontSize: 10)),
         ),
-      ),
-      const Expanded(child: Divider(color: AppColor.greyBorder)),
-    ]),
+        const Expanded(child: Divider(color: AppColor.greyBorder)),
+      ],
+    ),
   );
 }
 
@@ -352,77 +381,94 @@ class QuickRepliesSheet extends StatelessWidget {
           top: BorderSide(color: AppColor.primaryColor.withOpacity(0.15)),
         ),
       ),
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        // Header
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-          child: Row(children: [
-            Container(
-              width: 28, height: 28,
-              decoration: BoxDecoration(
-                color: AppColor.primarySurface,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(Icons.bolt_rounded,
-                  size: 15, color: AppColor.primaryColor),
-            ),
-            const SizedBox(width: 8),
-            Text('quick_replies'.tr,
-                style: AppTextStyle.heading3.copyWith(fontSize: 14)),
-            const Spacer(),
-            Text('type_slash_hint'.tr,
-                style: AppTextStyle.labelSmall.copyWith(fontSize: 10)),
-          ]),
-        ),
-        const Divider(height: 1, color: AppColor.greyBorder),
-
-        Flexible(
-          child: replies.isEmpty
-              ? Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Text('no_quick_replies'.tr,
-                        style: AppTextStyle.bodyMedium),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Header
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+            child: Row(
+              children: [
+                Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    color: AppColor.primarySurface,
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                )
-              : ListView.separated(
-                  shrinkWrap: true,
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                  itemCount: replies.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 7),
-                  itemBuilder: (_, i) => GestureDetector(
-                    onTap: () => onSelect(replies[i]),
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: AppColor.secondBackground,
-                        borderRadius: BorderRadius.circular(13),
-                        border: Border.all(color: AppColor.greyBorder),
+                  child: const Icon(
+                    Icons.bolt_rounded,
+                    size: 15,
+                    color: AppColor.primaryColor,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'quick_replies'.tr,
+                  style: AppTextStyle.heading3.copyWith(fontSize: 14),
+                ),
+                const Spacer(),
+                Text(
+                  'type_slash_hint'.tr,
+                  style: AppTextStyle.labelSmall.copyWith(fontSize: 10),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1, color: AppColor.greyBorder),
+
+          Flexible(
+            child: replies.isEmpty
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Text(
+                        'no_quick_replies'.tr,
+                        style: AppTextStyle.bodyMedium,
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            replies[i].title,
-                            style: AppTextStyle.labelLarge.copyWith(
-                              color: AppColor.primaryColor, fontSize: 12,
+                    ),
+                  )
+                : ListView.separated(
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                    itemCount: replies.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 7),
+                    itemBuilder: (_, i) => GestureDetector(
+                      onTap: () => onSelect(replies[i]),
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: AppColor.secondBackground,
+                          borderRadius: BorderRadius.circular(13),
+                          border: Border.all(color: AppColor.greyBorder),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              replies[i].title,
+                              style: AppTextStyle.labelLarge.copyWith(
+                                color: AppColor.primaryColor,
+                                fontSize: 12,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            replies[i].content,
-                            style: AppTextStyle.bodySmall.copyWith(
-                                fontSize: 11.5),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
+                            const SizedBox(height: 4),
+                            Text(
+                              replies[i].content,
+                              style: AppTextStyle.bodySmall.copyWith(
+                                fontSize: 11.5,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-        ),
-      ]),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -452,12 +498,15 @@ class ChatInputBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.fromLTRB(
-          12, 8, 12, MediaQuery.of(context).padding.bottom + 8),
+        12,
+        8,
+        12,
+        MediaQuery.of(context).padding.bottom + 8,
+      ),
       decoration: BoxDecoration(
         color: AppColor.white,
         boxShadow: AppColor.bottomNavShadow,
-        border: Border(
-            top: BorderSide(color: AppColor.greyBorder, width: 0.5)),
+        border: Border(top: BorderSide(color: AppColor.greyBorder, width: 0.5)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -466,7 +515,7 @@ class ChatInputBar extends StatelessWidget {
           _CircleBtn(
             icon: Icons.bolt_rounded,
             color: AppColor.primaryColor,
-            bg:    AppColor.primarySurface,
+            bg: AppColor.primarySurface,
             onTap: onQuickReply,
           ),
           const SizedBox(width: 7),
@@ -475,7 +524,7 @@ class ChatInputBar extends StatelessWidget {
           _CircleBtn(
             icon: Icons.image_outlined,
             color: AppColor.grey,
-            bg:    AppColor.secondBackground,
+            bg: AppColor.secondBackground,
             onTap: onImage,
           ),
           const SizedBox(width: 7),
@@ -505,7 +554,9 @@ class ChatInputBar extends StatelessWidget {
                   hintStyle: AppTextStyle.inputHint.copyWith(fontSize: 12.5),
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 10),
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                 ),
               ),
             ),
@@ -515,11 +566,12 @@ class ChatInputBar extends StatelessWidget {
           // زر الإرسال
           AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            width: 44, height: 44,
+            width: 44,
+            height: 44,
             decoration: BoxDecoration(
               gradient: isTyping ? AppColor.mainGradient : null,
-              color:    isTyping ? null : AppColor.greyBorder,
-              shape:    BoxShape.circle,
+              color: isTyping ? null : AppColor.greyBorder,
+              shape: BoxShape.circle,
               boxShadow: isTyping ? AppColor.primaryShadow : null,
             ),
             child: Material(
@@ -549,15 +601,18 @@ class _CircleBtn extends StatelessWidget {
   final Color color, bg;
   final VoidCallback onTap;
   const _CircleBtn({
-    required this.icon, required this.color,
-    required this.bg,   required this.onTap,
+    required this.icon,
+    required this.color,
+    required this.bg,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) => GestureDetector(
     onTap: onTap,
     child: Container(
-      width: 40, height: 40,
+      width: 40,
+      height: 40,
       decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
       child: Icon(icon, size: 19, color: color),
     ),

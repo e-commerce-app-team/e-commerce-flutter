@@ -27,15 +27,11 @@ class SellerChatScreen extends StatelessWidget {
                 color: AppColor.primaryColor,
                 backgroundColor: Colors.white,
                 child: ctrl.filteredConversations.isEmpty
-                    ? _EmptyConversations(hasSearch: ctrl.searchQuery.isNotEmpty)
+                    ? _EmptyConversations(
+                        hasSearch: ctrl.searchQuery.isNotEmpty,
+                      )
                     : _ConversationsList(ctrl: ctrl),
               ),
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: ctrl.simulateBuyerMessage,
-          label: const Text('محاكاة المشتري', style: TextStyle(color: Colors.white)),
-          icon: const Icon(Icons.bug_report, color: Colors.white),
-          backgroundColor: AppColor.primaryColor,
-        ),
       ),
     );
   }
@@ -59,18 +55,26 @@ class _ChatAppBarState extends State<_ChatAppBar>
     with SingleTickerProviderStateMixin {
   bool _collapsed = false;
   late AnimationController _anim;
-  late Animation<double>   _height;
+  late Animation<double> _height;
 
   @override
   void initState() {
     super.initState();
-    _anim   = AnimationController(vsync: this, duration: const Duration(milliseconds: 250));
-    _height = Tween<double>(begin: 1.0, end: 0.0)
-        .animate(CurvedAnimation(parent: _anim, curve: Curves.easeInOut));
+    _anim = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 250),
+    );
+    _height = Tween<double>(
+      begin: 1.0,
+      end: 0.0,
+    ).animate(CurvedAnimation(parent: _anim, curve: Curves.easeInOut));
   }
 
   @override
-  void dispose() { _anim.dispose(); super.dispose(); }
+  void dispose() {
+    _anim.dispose();
+    super.dispose();
+  }
 
   void _toggle() {
     setState(() => _collapsed = !_collapsed);
@@ -94,25 +98,33 @@ class _ChatAppBarState extends State<_ChatAppBar>
                 children: [
                   // أيقونة + عنوان
                   Container(
-                    width: 36, height: 36,
+                    width: 36,
+                    height: 36,
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.15),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.chat_bubble_rounded,
-                        color: Colors.white, size: 18),
+                    child: const Icon(
+                      Icons.chat_bubble_rounded,
+                      color: Colors.white,
+                      size: 18,
+                    ),
                   ),
                   const SizedBox(width: 10),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('chat_title'.tr,
-                          style: AppTextStyle.appBarTitle.copyWith(fontSize: 17)),
+                      Text(
+                        'chat_title'.tr,
+                        style: AppTextStyle.appBarTitle.copyWith(fontSize: 17),
+                      ),
                       if (ctrl.totalUnread > 0)
                         Text(
                           '${ctrl.totalUnread} ${'unread_messages'.tr}',
                           style: AppTextStyle.labelSmall.copyWith(
-                              color: Colors.white70, fontSize: 10),
+                            color: Colors.white70,
+                            fontSize: 10,
+                          ),
                         ),
                     ],
                   ),
@@ -167,11 +179,13 @@ class _ChatAppBarState extends State<_ChatAppBar>
 class _AppBarIconBtn extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
-  final int?  badge;
-  final bool  active;
+  final int? badge;
+  final bool active;
   const _AppBarIconBtn({
-    required this.icon, required this.onTap,
-    this.badge, this.active = false,
+    required this.icon,
+    required this.onTap,
+    this.badge,
+    this.active = false,
   });
 
   @override
@@ -179,21 +193,30 @@ class _AppBarIconBtn extends StatelessWidget {
     clipBehavior: Clip.none,
     children: [
       IconButton(
-        icon: Icon(icon,
-            color: active ? const Color(0xffFFD700) : Colors.white, size: 22),
+        icon: Icon(
+          icon,
+          color: active ? const Color(0xffFFD700) : Colors.white,
+          size: 22,
+        ),
         onPressed: onTap,
         splashRadius: 20,
       ),
       if (badge != null && badge! > 0)
         Positioned(
-          top: 6, right: 6,
+          top: 6,
+          right: 6,
           child: Container(
-            width: 16, height: 16,
+            width: 16,
+            height: 16,
             decoration: const BoxDecoration(
-                color: AppColor.error, shape: BoxShape.circle),
+              color: AppColor.error,
+              shape: BoxShape.circle,
+            ),
             child: Center(
-              child: Text('$badge',
-                  style: AppTextStyle.badge.copyWith(fontSize: 8)),
+              child: Text(
+                '$badge',
+                style: AppTextStyle.badge.copyWith(fontSize: 8),
+              ),
             ),
           ),
         ),
@@ -214,7 +237,8 @@ class _SearchBar extends StatelessWidget {
       boxShadow: [
         BoxShadow(
           color: Colors.black.withOpacity(0.08),
-          blurRadius: 8, offset: const Offset(0, 2),
+          blurRadius: 8,
+          offset: const Offset(0, 2),
         ),
       ],
     ),
@@ -225,15 +249,26 @@ class _SearchBar extends StatelessWidget {
       decoration: InputDecoration(
         hintText: 'search_conversations'.tr,
         hintStyle: AppTextStyle.inputHint.copyWith(fontSize: 12),
-        prefixIcon: const Icon(Icons.search_rounded, color: AppColor.grey, size: 18),
+        prefixIcon: const Icon(
+          Icons.search_rounded,
+          color: AppColor.grey,
+          size: 18,
+        ),
         suffixIcon: ctrl.searchQuery.isNotEmpty
             ? IconButton(
-                icon: const Icon(Icons.close_rounded, size: 16, color: AppColor.grey),
+                icon: const Icon(
+                  Icons.close_rounded,
+                  size: 16,
+                  color: AppColor.grey,
+                ),
                 onPressed: ctrl.clearSearch,
               )
             : null,
         border: InputBorder.none,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 11,
+        ),
       ),
     ),
   );
@@ -263,20 +298,25 @@ class _ConversationsList extends StatelessWidget {
             transition: Transition.cupertino,
           );
         },
-        onArchive:  () => ctrl.archiveConversation(convs[i].id),
-        onBlock:    () => _confirmBlock(context, ctrl, convs[i]),
+        onArchive: () => ctrl.archiveConversation(convs[i].id),
+        onBlock: () => _confirmBlock(context, ctrl, convs[i]),
       ),
     );
   }
 
   void _confirmBlock(
-      BuildContext context, SellerChatController ctrl, ConversationModel conv) {
+    BuildContext context,
+    SellerChatController ctrl,
+    ConversationModel conv,
+  ) {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('block_user'.tr,
-            style: AppTextStyle.heading3.copyWith(color: AppColor.error)),
+        title: Text(
+          'block_user'.tr,
+          style: AppTextStyle.heading3.copyWith(color: AppColor.error),
+        ),
         content: Text(
           '${'block_confirm_msg'.tr} ${conv.buyerName}؟',
           style: AppTextStyle.bodyMedium,
@@ -284,15 +324,18 @@ class _ConversationsList extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text('cancel'.tr,
-                style: AppTextStyle.labelLarge.copyWith(color: AppColor.grey)),
+            child: Text(
+              'cancel'.tr,
+              style: AppTextStyle.labelLarge.copyWith(color: AppColor.grey),
+            ),
           ),
           TextButton(
             onPressed: () {
               Get.back();
               ctrl.blockUser(conv.buyerId, conv.id);
               Get.snackbar(
-                'block_user'.tr, '${conv.buyerName} ${'has_been_blocked'.tr}',
+                'block_user'.tr,
+                '${conv.buyerName} ${'has_been_blocked'.tr}',
                 backgroundColor: AppColor.errorLight,
                 colorText: AppColor.errorDark,
                 icon: const Icon(Icons.block_rounded, color: AppColor.error),
@@ -301,8 +344,10 @@ class _ConversationsList extends StatelessWidget {
                 borderRadius: 12,
               );
             },
-            child: Text('block'.tr,
-                style: AppTextStyle.labelLarge.copyWith(color: AppColor.error)),
+            child: Text(
+              'block'.tr,
+              style: AppTextStyle.labelLarge.copyWith(color: AppColor.error),
+            ),
           ),
         ],
       ),
@@ -319,30 +364,39 @@ class _EmptyConversations extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Center(
-    child: Column(mainAxisSize: MainAxisSize.min, children: [
-      Container(
-        width: 80, height: 80,
-        decoration: BoxDecoration(
-          color: AppColor.primarySurface,
-          shape: BoxShape.circle,
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 80,
+          height: 80,
+          decoration: BoxDecoration(
+            color: AppColor.primarySurface,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            hasSearch
+                ? Icons.search_off_rounded
+                : Icons.chat_bubble_outline_rounded,
+            size: 36,
+            color: AppColor.primaryColor,
+          ),
         ),
-        child: Icon(
-          hasSearch ? Icons.search_off_rounded : Icons.chat_bubble_outline_rounded,
-          size: 36, color: AppColor.primaryColor,
+        const SizedBox(height: 16),
+        Text(
+          hasSearch ? 'no_results'.tr : 'no_conversations'.tr,
+          style: AppTextStyle.heading3.copyWith(color: AppColor.grey),
         ),
-      ),
-      const SizedBox(height: 16),
-      Text(
-        hasSearch ? 'no_results'.tr : 'no_conversations'.tr,
-        style: AppTextStyle.heading3.copyWith(color: AppColor.grey),
-      ),
-      const SizedBox(height: 6),
-      Text(
-        hasSearch ? 'try_different_keywords'.tr : 'buyer_messages_appear_here'.tr,
-        style: AppTextStyle.bodyMedium,
-        textAlign: TextAlign.center,
-      ),
-    ]),
+        const SizedBox(height: 6),
+        Text(
+          hasSearch
+              ? 'try_different_keywords'.tr
+              : 'buyer_messages_appear_here'.tr,
+          style: AppTextStyle.bodyMedium,
+          textAlign: TextAlign.center,
+        ),
+      ],
+    ),
   );
 }
 
@@ -366,30 +420,32 @@ class _ConversationsShimmer extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: AppColor.cardShadow,
       ),
-      child: Row(children: [
-        const ShimmerBox.circle(size: 48),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
+        children: [
+          const ShimmerBox.circle(size: 48),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                ShimmerBox(width: 120, height: 12),
+                SizedBox(height: 8),
+                ShimmerBox(width: 200, height: 10),
+              ],
+            ),
+          ),
+          Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: const [
-              ShimmerBox(width: 120, height: 12),
+              ShimmerBox(width: 38, height: 10),
               SizedBox(height: 8),
-              ShimmerBox(width: 200, height: 10),
+              ShimmerBox(width: 22, height: 22, radius: 11),
             ],
           ),
-        ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: const [
-            ShimmerBox(width: 38, height: 10),
-            SizedBox(height: 8),
-            ShimmerBox(width: 22, height: 22, radius: 11),
-          ],
-        ),
-      ]),
+        ],
+      ),
     ),
   );
 }

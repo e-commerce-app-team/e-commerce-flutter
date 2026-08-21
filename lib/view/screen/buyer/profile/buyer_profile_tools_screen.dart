@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -201,7 +200,7 @@ class _Conversations extends StatelessWidget {
     }
     final query = FirebaseFirestore.instance
         .collection('conversations')
-        .where('buyer_id', isEqualTo: buyerId);
+        .where('buyer_uid', isEqualTo: buyerId.toString());
 
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: query.snapshots(),

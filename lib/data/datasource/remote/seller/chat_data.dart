@@ -33,6 +33,12 @@ class SellerChatData {
   Future<Either<StatusRequest, Map>> updateAutoReply(String token, String id, String keyword, String message) async =>
       await crud.putData('${AppLink.chatAutoReplies}/$id', {'keyword': keyword, 'message': message}, headers: _auth(token));
 
+  Future<Either<StatusRequest, Map>> addAutoReply(String token, String keyword, String message) async =>
+      await crud.postData(AppLink.chatAutoReplies, {'keyword': keyword, 'message': message}, headers: _auth(token));
+
+  Future<Either<StatusRequest, Map>> getChatUser(String token, int userId) async =>
+      await crud.getData('${AppLink.server}/users/$userId', headers: _auth(token));
+
   Future<Either<StatusRequest, Map>> blockUser(String token, int userId) async =>
       await crud.postData(AppLink.chatBlockUser, {'blocked_id': userId}, headers: _auth(token));
 

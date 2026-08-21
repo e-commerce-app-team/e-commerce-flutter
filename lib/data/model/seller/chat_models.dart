@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class MessageModel {
   final String   id;
   final int      senderId;
+  final int?     receiverId;
   final String   content;
   final String   type;
   final String?  imageUrl;
@@ -14,6 +15,7 @@ class MessageModel {
   const MessageModel({
     required this.id,
     required this.senderId,
+    this.receiverId,
     required this.content,
     required this.type,
     this.imageUrl,
@@ -28,6 +30,7 @@ class MessageModel {
     return MessageModel(
       id:        doc.id,
       senderId:  d['sender_id']  ?? 0,
+      receiverId: d['receiver_id'],
       content:   d['content']    ?? '',
       type:      d['type']       ?? 'text',
       imageUrl:  d['image_url'],
@@ -36,8 +39,9 @@ class MessageModel {
     );
   }
 
-  Map<String, dynamic> toMap(int senderId, String content, String type) => {
+  Map<String, dynamic> toMap(int senderId, String content, String type, {int? receiverId}) => {
     'sender_id':  senderId,
+    'receiver_id': receiverId,
     'content':    content,
     'type':       type,
     'image_url':  null,
@@ -69,6 +73,18 @@ class ConversationModel {
     required this.lastTime,
     required this.unreadSeller,
   });
+
+  ConversationModel copyWith({String? buyerName}) => ConversationModel(
+    id: id,
+    sellerId: sellerId,
+    buyerId: buyerId,
+    buyerName: buyerName ?? this.buyerName,
+    buyerAvatar: buyerAvatar,
+    orderId: orderId,
+    lastMessage: lastMessage,
+    lastTime: lastTime,
+    unreadSeller: unreadSeller,
+  );
 
   factory ConversationModel.fromFirestore(DocumentSnapshot doc) {
     final d = doc.data() as Map<String, dynamic>;

@@ -5,6 +5,9 @@ import 'package:e_commerce/controller/seller/seller_orders_controller.dart';
 import 'package:e_commerce/core/constant/app_text_style.dart';
 import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/data/model/seller/orders_models.dart';
+import 'package:e_commerce/data/datasource/remote/wallet_data.dart';
+import 'package:e_commerce/core/class/crud.dart';
+import 'package:e_commerce/core/services/services.dart';
 import 'package:e_commerce/view/widget/seller/orders/order_card.dart';
 
 class OrderDetailScreen extends StatelessWidget {
@@ -90,8 +93,10 @@ class _DetailAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
           Text(
             order.createdAt,
-            style: AppTextStyle.timestamp
-                .copyWith(color: Colors.white70, fontSize: 11),
+            style: AppTextStyle.timestamp.copyWith(
+              color: Colors.white70,
+              fontSize: 11,
+            ),
           ),
         ],
       ),
@@ -99,10 +104,7 @@ class _DetailAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: [
         if (order.showQR)
           IconButton(
-            icon: const Icon(
-              Icons.qr_code_2_rounded,
-              color: Colors.white,
-            ),
+            icon: const Icon(Icons.qr_code_2_rounded, color: Colors.white),
             onPressed: () => _navigateToQR(order),
           ),
       ],
@@ -111,7 +113,7 @@ class _DetailAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   void _navigateToQR(SubOrderModel order) {
     Get.to(
-          () => const QRScreen(),
+      () => const QRScreen(),
       arguments: order,
       transition: Transition.downToUp,
     );
@@ -132,10 +134,7 @@ class _StatusCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: AppColor.cardShadow,
-        border: Border.all(
-          color: config.accent.withOpacity(0.2),
-          width: 1,
-        ),
+        border: Border.all(color: config.accent.withOpacity(0.2), width: 1),
       ),
       child: Row(
         children: [
@@ -181,8 +180,7 @@ class _StatusCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         order.estimatedReady!,
-                        style:
-                        AppTextStyle.labelSmall.copyWith(fontSize: 11),
+                        style: AppTextStyle.labelSmall.copyWith(fontSize: 11),
                       ),
                     ],
                   ),
@@ -191,8 +189,7 @@ class _StatusCard extends StatelessWidget {
             ),
           ),
           Container(
-            padding:
-            const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
               color: config.bg,
               borderRadius: BorderRadius.circular(10),
@@ -251,14 +248,19 @@ class _StatusCard extends StatelessWidget {
 
 String _timelineStepTranslate(String status, String defaultTitle) {
   switch (status) {
-    case 'pending': return 'timeline_pending'.tr;
-    case 'processing': return 'timeline_processing'.tr;
-    case 'shipped': return 'timeline_shipped'.tr;
-    case 'delivered': return 'timeline_delivered'.tr;
-    case 'cancelled': 
+    case 'pending':
+      return 'timeline_pending'.tr;
+    case 'processing':
+      return 'timeline_processing'.tr;
+    case 'shipped':
+      return 'timeline_shipped'.tr;
+    case 'delivered':
+      return 'timeline_delivered'.tr;
+    case 'cancelled':
     case 'cancelled_returned':
       return 'timeline_cancelled'.tr;
-    default: return defaultTitle;
+    default:
+      return defaultTitle;
   }
 }
 
@@ -299,24 +301,28 @@ class _TimelineRow extends StatelessWidget {
                 width: 24,
                 height: 24,
                 decoration: BoxDecoration(
-                  color: step.isDone
-                      ? AppColor.primaryColor
-                      : Colors.white,
-                  border: step.isDone ? null : Border.all(color: AppColor.greyLight, width: 2),
+                  color: step.isDone ? AppColor.primaryColor : Colors.white,
+                  border: step.isDone
+                      ? null
+                      : Border.all(color: AppColor.greyLight, width: 2),
                   shape: BoxShape.circle,
-                  boxShadow: step.isDone ? [
-                    BoxShadow(
-                      color: AppColor.primaryColor.withOpacity(0.3),
-                      blurRadius: 6,
-                      offset: const Offset(0, 2),
-                    )
-                  ] : null,
+                  boxShadow: step.isDone
+                      ? [
+                          BoxShadow(
+                            color: AppColor.primaryColor.withOpacity(0.3),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
+                          ),
+                        ]
+                      : null,
                 ),
-                child: step.isDone ? const Icon(
-                  Icons.check_rounded,
-                  size: 14,
-                  color: Colors.white,
-                ) : null,
+                child: step.isDone
+                    ? const Icon(
+                        Icons.check_rounded,
+                        size: 14,
+                        color: Colors.white,
+                      )
+                    : null,
               ),
               if (!isLast)
                 Container(
@@ -347,9 +353,7 @@ class _TimelineRow extends StatelessWidget {
                     style: AppTextStyle.labelLarge.copyWith(
                       fontSize: 13,
                       height: 1.4,
-                      color: step.isDone
-                          ? AppColor.black
-                          : AppColor.greyLight,
+                      color: step.isDone ? AppColor.black : AppColor.greyLight,
                     ),
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
@@ -357,7 +361,7 @@ class _TimelineRow extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  step.time, 
+                  step.time,
                   style: AppTextStyle.timestamp.copyWith(
                     color: step.isDone ? AppColor.grey : AppColor.greyLight,
                     fontWeight: step.isDone ? FontWeight.w600 : FontWeight.w400,
@@ -470,7 +474,9 @@ class _ProductRow extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           Text(
-            item.price >= 1000 ? 'SP ${item.price ~/ 1000}k' : 'SP ${item.price}',
+            item.price >= 1000
+                ? 'SP ${item.price ~/ 1000}k'
+                : 'SP ${item.price}',
             style: AppTextStyle.price.copyWith(fontSize: 13),
           ),
         ],
@@ -492,21 +498,25 @@ class _PriceCard extends StatelessWidget {
         children: [
           _PriceRow(
             label: 'price_items_total'.tr,
-            value: order.itemsTotal >= 1000 ? 'SP ${order.itemsTotal ~/ 1000}k' : 'SP ${order.itemsTotal}',
+            value: order.itemsTotal >= 1000
+                ? 'SP ${order.itemsTotal ~/ 1000}k'
+                : 'SP ${order.itemsTotal}',
           ),
           _PriceRow(
             label: 'price_shipping'.tr,
             value: order.shippingFee == 0
                 ? 'order_free_ship_label'.tr
-                : (order.shippingFee >= 1000 ? 'SP ${order.shippingFee ~/ 1000}k' : 'SP ${order.shippingFee}'),
-            valueColor: order.shippingFee == 0
-                ? AppColor.success
-                : null,
+                : (order.shippingFee >= 1000
+                      ? 'SP ${order.shippingFee ~/ 1000}k'
+                      : 'SP ${order.shippingFee}'),
+            valueColor: order.shippingFee == 0 ? AppColor.success : null,
           ),
           if (order.discount > 0) ...[
             _PriceRow(
               label: _discountLabel(order),
-              value: order.discount >= 1000 ? '- SP ${order.discount ~/ 1000}k' : '- SP ${order.discount}',
+              value: order.discount >= 1000
+                  ? '- SP ${order.discount ~/ 1000}k'
+                  : '- SP ${order.discount}',
               valueColor: AppColor.success,
             ),
             if (order.discountInfo != null)
@@ -521,7 +531,9 @@ class _PriceCard extends StatelessWidget {
                 style: AppTextStyle.heading3.copyWith(fontSize: 14),
               ),
               Text(
-                order.subtotal >= 1000 ? 'SP ${order.subtotal ~/ 1000}k' : 'SP ${order.subtotal}',
+                order.subtotal >= 1000
+                    ? 'SP ${order.subtotal ~/ 1000}k'
+                    : 'SP ${order.subtotal}',
                 style: AppTextStyle.priceLarge.copyWith(fontSize: 18),
               ),
             ],
@@ -551,32 +563,31 @@ class _DiscountSourceChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final (icon, label, color, bg) = info.isCoupon
         ? (
-    Icons.local_offer_rounded,
-    '${info.couponCode}',
-    AppColor.statOrders,
-    AppColor.statOrdersLight
-    )
+            Icons.local_offer_rounded,
+            '${info.couponCode}',
+            AppColor.statOrders,
+            AppColor.statOrdersLight,
+          )
         : info.isSpinWheel
         ? (
-    Icons.casino_outlined,
-    'order_spin_label'.tr,
-    AppColor.warning,
-    AppColor.warningLight
-    )
+            Icons.casino_outlined,
+            'order_spin_label'.tr,
+            AppColor.warning,
+            AppColor.warningLight,
+          )
         : (
-    Icons.local_shipping_outlined,
-    'order_free_ship_label'.tr,
-    AppColor.success,
-    AppColor.successLight
-    );
+            Icons.local_shipping_outlined,
+            'order_free_ship_label'.tr,
+            AppColor.success,
+            AppColor.successLight,
+          );
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
       child: Row(
         children: [
           Container(
-            padding:
-            const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               color: bg,
               borderRadius: BorderRadius.circular(20),
@@ -667,72 +678,80 @@ class _QRActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
-      child: GestureDetector(
-        onTap: () => Get.to(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 4),
+          child: GestureDetector(
+            onTap: () => Get.to(
               () => const QRScreen(),
-          arguments: order,
-          transition: Transition.downToUp,
-        ),
-        child: Container(
-          padding:
-          const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xffEEEDFE), Color(0xffE3F2FD)],
+              arguments: order,
+              transition: Transition.downToUp,
             ),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: AppColor.statOrders.withOpacity(0.3),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xffEEEDFE), Color(0xffE3F2FD)],
+                ),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: AppColor.statOrders.withOpacity(0.3)),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(
+                      color: AppColor.statOrdersLight,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.qr_code_2_rounded,
+                      size: 24,
+                      color: AppColor.statOrders,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'qr_show_driver'.tr,
+                          style: AppTextStyle.labelLarge.copyWith(
+                            color: AppColor.statOrders,
+                            fontSize: 13,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'qr_card_sub'.tr,
+                          style: AppTextStyle.labelSmall.copyWith(
+                            fontSize: 10.5,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size: 13,
+                    color: AppColor.statOrders,
+                  ),
+                ],
+              ),
             ),
           ),
-          child: Row(
-            children: [
-              Container(
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
-                  color: AppColor.statOrdersLight,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(
-                  Icons.qr_code_2_rounded,
-                  size: 24,
-                  color: AppColor.statOrders,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'qr_show_driver'.tr,
-                      style: AppTextStyle.labelLarge.copyWith(
-                        color: AppColor.statOrders,
-                        fontSize: 13,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'qr_card_sub'.tr,
-                      style: AppTextStyle.labelSmall.copyWith(
-                        fontSize: 10.5,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Icon(
-                Icons.arrow_forward_ios_rounded,
-                size: 13,
-                color: AppColor.statOrders,
-              ),
-            ],
-          ),
         ),
-      ),
+        TextButton.icon(
+          onPressed: () =>
+              Get.to(() => SellerPaymentQrScreen(subOrderId: order.subOrderId)),
+          icon: const Icon(Icons.payments_outlined),
+          label: Text('order_payment_qr'.tr),
+        ),
+      ],
     );
   }
 }
@@ -814,8 +833,7 @@ class _DetailActions extends StatelessWidget {
             ),
             child: Text(
               'order_reject_title'.tr,
-              style:
-              AppTextStyle.buttonMedium.copyWith(color: AppColor.grey),
+              style: AppTextStyle.buttonMedium.copyWith(color: AppColor.grey),
             ),
           ),
         ),
@@ -918,10 +936,7 @@ class _SectionCard extends StatelessWidget {
             children: [
               Icon(icon, size: 18, color: AppColor.primaryColor),
               const SizedBox(width: 8),
-              Text(
-                title,
-                style: AppTextStyle.heading3.copyWith(fontSize: 14),
-              ),
+              Text(title, style: AppTextStyle.heading3.copyWith(fontSize: 14)),
             ],
           ),
           const Divider(height: 16, color: AppColor.greyBorder),
@@ -978,11 +993,7 @@ class _PriceRow extends StatelessWidget {
   final String value;
   final Color? valueColor;
 
-  const _PriceRow({
-    required this.label,
-    required this.value,
-    this.valueColor,
-  });
+  const _PriceRow({required this.label, required this.value, this.valueColor});
 
   @override
   Widget build(BuildContext context) {
@@ -991,10 +1002,7 @@ class _PriceRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: AppTextStyle.bodyMedium.copyWith(fontSize: 13),
-          ),
+          Text(label, style: AppTextStyle.bodyMedium.copyWith(fontSize: 13)),
           Text(
             value,
             style: AppTextStyle.labelLarge.copyWith(
@@ -1021,11 +1029,7 @@ class QRScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(
-            Icons.close_rounded,
-            color: Colors.white,
-            size: 24,
-          ),
+          icon: const Icon(Icons.close_rounded, color: Colors.white, size: 24),
           onPressed: () => Get.back(),
         ),
         title: Text('qr_screen_title'.tr, style: AppTextStyle.appBarTitle),
@@ -1102,9 +1106,7 @@ class QRScreen extends StatelessWidget {
               const SizedBox(height: 6),
               Text(
                 order.buyerName,
-                style: AppTextStyle.bodyMedium.copyWith(
-                  color: Colors.white60,
-                ),
+                style: AppTextStyle.bodyMedium.copyWith(color: Colors.white60),
               ),
               const SizedBox(height: 20),
               Container(
@@ -1116,9 +1118,7 @@ class QRScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.06),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.1),
-                  ),
+                  border: Border.all(color: Colors.white.withOpacity(0.1)),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -1145,4 +1145,64 @@ class QRScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+class SellerPaymentQrScreen extends StatefulWidget {
+  final String subOrderId;
+  const SellerPaymentQrScreen({super.key, required this.subOrderId});
+
+  @override
+  State<SellerPaymentQrScreen> createState() => _SellerPaymentQrScreenState();
+}
+
+class _SellerPaymentQrScreenState extends State<SellerPaymentQrScreen> {
+  String? payload;
+  bool loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final token =
+        Get.find<MyServices>().sharedPreferences.getString('token') ?? '';
+    final result = await WalletDataSource(
+      Get.find<Crud>(),
+    ).orderPaymentQr(token, widget.subOrderId);
+    if (!mounted) return;
+    result.fold((_) {}, (body) {
+      if (body['success'] == true) payload = body['payload']?.toString();
+    });
+    setState(() => loading = false);
+  }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(
+      title: Text('order_payment_qr'.tr),
+      backgroundColor: AppColor.primaryColor,
+    ),
+    body: Center(
+      child: loading
+          ? const CircularProgressIndicator()
+          : payload == null
+          ? Text('server_error'.tr)
+          : Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('wallet_qr_show'.tr, style: AppTextStyle.heading3),
+                const SizedBox(height: 20),
+                Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.all(18),
+                  child: QrImageView(data: payload!, size: 260),
+                ),
+                const SizedBox(height: 14),
+                Text('wallet_qr_safe_note'.tr, textAlign: TextAlign.center),
+              ],
+            ),
+    ),
+  );
 }
