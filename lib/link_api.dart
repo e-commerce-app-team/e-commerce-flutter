@@ -1,6 +1,6 @@
 class AppLink {
   static String? cachedUserId;
-  static const String server = "http://192.168.1.12:8000/api";
+  static const String server = "http://10.19.5.93:8000/api";
 
   // ─── Auth ─────────────────────────────────────────────────────────────────
   static const String signUpBuyer = "$server/register/buyer";

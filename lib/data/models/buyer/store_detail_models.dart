@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:e_commerce/link_api.dart';
+import 'package:get/get.dart';
 
 num _numValue(dynamic value) {
   if (value is num) return value;
@@ -21,9 +24,28 @@ bool _boolValue(dynamic value, {bool fallback = false}) {
 }
 
 String _imageUrl(dynamic value) {
-  final raw = value?.toString() ?? '';
+  final source = value is Map
+      ? (value['url'] ?? value['image_url'] ?? value['path'] ?? value['image'])
+      : value;
+  final raw = source?.toString() ?? '';
   if (raw.isEmpty || raw.startsWith('http')) return raw;
   return AppLink.storageUrl(raw);
+}
+
+String _localizedText(dynamic value) {
+  if (value is Map) {
+    final locale = Get.locale?.languageCode ?? 'ar';
+    return (value[locale] ?? value['ar'] ?? value['en'] ?? '').toString();
+  }
+
+  final raw = value?.toString() ?? '';
+  if (raw.trim().startsWith('{')) {
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is Map) return _localizedText(decoded);
+    } catch (_) {}
+  }
+  return raw;
 }
 
 class BuyerStoreDetailModel {
@@ -44,6 +66,7 @@ class BuyerStoreDetailModel {
   final int productsCount;
   final bool isFollowing;
   final bool isOpen;
+  final bool canReview;
 
   const BuyerStoreDetailModel({
     required this.id,
@@ -63,6 +86,7 @@ class BuyerStoreDetailModel {
     this.productsCount = 0,
     this.isFollowing = false,
     this.isOpen = true,
+    this.canReview = false,
   });
 
   factory BuyerStoreDetailModel.fromJson(Map<String, dynamic> json) {
@@ -85,27 +109,45 @@ class BuyerStoreDetailModel {
     return BuyerStoreDetailModel(
       id: (source['id'] ?? source['store_id'] ?? source['seller_id'] ?? '')
           .toString(),
-      sellerId: _intValue(source['seller_id'] ??
-          (seller is Map ? seller['id'] : null) ??
-          source['merchant_id']),
-      name: (source['store_name'] ?? source['name'] ?? '').toString(),
-      description:
-          (source['description'] ?? source['bio'] ?? source['about'] ?? '')
-              .toString(),
+      sellerId: _intValue(
+        source['seller_id'] ??
+            (seller is Map ? seller['id'] : null) ??
+            source['merchant_id'],
+      ),
+      name: _localizedText(source['store_name'] ?? source['name']),
+      description: _localizedText(
+        source['store_description'] ??
+            source['description'] ??
+            source['bio'] ??
+            source['about'],
+      ),
       category: (source['category'] ?? source['store_type'] ?? '').toString(),
-      logoUrl: _imageUrl(source['store_logo'] ?? source['logo_url'] ?? source['logo']),
-      coverUrl:
-          _imageUrl(source['store_cover'] ?? source['cover_url'] ?? source['cover']),
+      logoUrl: _imageUrl(
+        source['store_logo'] ?? source['logo_url'] ?? source['logo'],
+      ),
+      coverUrl: _imageUrl(
+        source['store_cover'] ??
+            source['store_cover_photo'] ??
+            source['cover_url'] ??
+            source['cover'],
+      ),
       phone: (source['phone'] ?? source['mobile'] ?? '').toString(),
       email: (source['email'] ?? '').toString(),
       address: (source['address'] ?? source['location'] ?? '').toString(),
       socialLinks: socialLinks,
       rating: _doubleValue(source['rating'] ?? source['average_rating']),
-      reviewsCount: _intValue(source['reviews_count'] ?? source['rating_count']),
-      followersCount: _intValue(source['followers_count']),
-      productsCount: _intValue(source['products_count'] ?? source['product_count']),
+      reviewsCount: _intValue(
+        source['reviews_count'] ?? source['rating_count'],
+      ),
+      followersCount: _intValue(
+        source['followers_count'] ?? source['followers'],
+      ),
+      productsCount: _intValue(
+        source['products_count'] ?? source['product_count'],
+      ),
       isFollowing: _boolValue(source['is_following']),
       isOpen: _boolValue(source['is_open'], fallback: true),
+      canReview: _boolValue(source['can_review']),
     );
   }
 
@@ -114,6 +156,7 @@ class BuyerStoreDetailModel {
     int? followersCount,
     double? rating,
     int? reviewsCount,
+    bool? canReview,
   }) {
     return BuyerStoreDetailModel(
       id: id,
@@ -133,6 +176,7 @@ class BuyerStoreDetailModel {
       productsCount: productsCount,
       isFollowing: isFollowing ?? this.isFollowing,
       isOpen: isOpen,
+      canReview: canReview ?? this.canReview,
     );
   }
 }
@@ -145,6 +189,7 @@ class BuyerStoreDepartmentModel {
   final bool isVisible;
   final String imageUrl;
   final List<BuyerStoreDepartmentModel> children;
+  final bool hasNestedChildren;
 
   const BuyerStoreDepartmentModel({
     required this.id,
@@ -154,25 +199,33 @@ class BuyerStoreDepartmentModel {
     this.isVisible = true,
     this.imageUrl = '',
     this.children = const [],
+    this.hasNestedChildren = false,
   });
 
-  bool get hasChildren => children.isNotEmpty;
+  bool get hasChildren => hasNestedChildren || children.isNotEmpty;
 
   factory BuyerStoreDepartmentModel.fromJson(Map<String, dynamic> json) {
     final childrenRaw =
-        json['recursive_children'] ?? json['recursiveChildren'] ?? json['children'];
+        json['recursive_children'] ??
+        json['recursiveChildren'] ??
+        json['children'];
     return BuyerStoreDepartmentModel(
       id: _intValue(json['id']),
-      name: (json['name'] ?? '').toString(),
+      name: _localizedText(json['name']),
       parentId: json['parent_id'] == null ? null : _intValue(json['parent_id']),
       productsCount: _intValue(json['products_count'] ?? json['product_count']),
       isVisible: _boolValue(json['is_visible'], fallback: true),
-      imageUrl: _imageUrl(json['image_url'] ?? json['image'] ?? json['icon_url']),
+      imageUrl: _imageUrl(
+        json['image_url'] ?? json['image'] ?? json['icon_url'],
+      ),
+      hasNestedChildren: _boolValue(json['has_children']),
       children: (childrenRaw is List ? childrenRaw : const [])
           .whereType<Map>()
-          .map((e) => BuyerStoreDepartmentModel.fromJson(
-                Map<String, dynamic>.from(e),
-              ))
+          .map(
+            (e) => BuyerStoreDepartmentModel.fromJson(
+              Map<String, dynamic>.from(e),
+            ),
+          )
           .toList(),
     );
   }
@@ -213,17 +266,20 @@ class BuyerStoreProductModel {
     final original = _numValue(json['original_price'] ?? json['price']);
     final offer = json['offer_price'] ?? json['sale_price'];
     final price = offer == null ? original : _numValue(offer);
-    final oldPrice =
-        offer != null && original > price ? original : _numValue(json['old_price']);
+    final oldPrice = offer != null && original > price
+        ? original
+        : _numValue(json['old_price']);
 
     return BuyerStoreProductModel(
       id: (json['id'] ?? '').toString(),
-      name: (json['name'] ?? '').toString(),
-      imageUrl: _imageUrl(json['image'] ??
-          json['image_url'] ??
-          (json['images'] is List && (json['images'] as List).isNotEmpty
-              ? (json['images'] as List).first
-              : null)),
+      name: _localizedText(json['name']),
+      imageUrl: _imageUrl(
+        json['image'] ??
+            json['image_url'] ??
+            (json['images'] is List && (json['images'] as List).isNotEmpty
+                ? (json['images'] as List).first
+                : null),
+      ),
       price: price,
       oldPrice: oldPrice > 0 ? oldPrice : null,
       rating: _doubleValue(json['rating'] ?? json['average_rating']),
@@ -243,6 +299,7 @@ class BuyerStoreReviewModel {
   final double rating;
   final String comment;
   final DateTime? createdAt;
+  final int? reviewerId;
 
   const BuyerStoreReviewModel({
     required this.id,
@@ -250,20 +307,25 @@ class BuyerStoreReviewModel {
     required this.rating,
     required this.comment,
     this.createdAt,
+    this.reviewerId,
   });
 
   factory BuyerStoreReviewModel.fromJson(Map<String, dynamic> json) {
     final buyer = json['buyer'] ?? json['user'];
     return BuyerStoreReviewModel(
       id: (json['id'] ?? '').toString(),
-      buyerName: (json['buyer_name'] ??
-              json['user_name'] ??
-              (buyer is Map ? buyer['name'] : null) ??
-              '')
-          .toString(),
+      buyerName:
+          (json['buyer_name'] ??
+                  json['user_name'] ??
+                  (buyer is Map ? buyer['name'] : null) ??
+                  '')
+              .toString(),
       rating: _doubleValue(json['rating']),
       comment: (json['comment'] ?? json['review'] ?? '').toString(),
       createdAt: DateTime.tryParse((json['created_at'] ?? '').toString()),
+      reviewerId: int.tryParse(
+        (json['user_id'] ?? json['buyer_id'] ?? '').toString(),
+      ),
     );
   }
 }

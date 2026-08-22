@@ -1397,6 +1397,13 @@ class MyTranslation extends Translations {
       'buyer_following_title': 'المتاجر التي أتابعها',
       'buyer_reviews_title': 'تقييماتي',
       'buyer_no_reviews': 'لا توجد تقييمات بعد',
+      'buyer_store_not_selected': 'لم يتم تحديد المتجر',
+      'buyer_store_not_found': 'المتجر غير موجود أو لم يعد متاحاً',
+      'buyer_store_load_failed':
+          'تعذر تحميل بيانات المتجر، تحقق من الاتصال وحاول مجدداً',
+      'buyer_store_no_departments': 'لا توجد أقسام متاحة لهذا المتجر',
+      'buyer_store_no_products': 'لا توجد منتجات متاحة حالياً',
+      'buyer_store_reviews_load_failed': 'تعذر تحميل تقييمات المتجر',
       'buyer_no_following': 'لا تتابع أي متجر بعد',
       'buyer_seller_reply_title': 'رد التاجر',
       'buyer_edit_review_title': 'تعديل التقييم',
@@ -1521,6 +1528,10 @@ class MyTranslation extends Translations {
       'rate_product': 'قيّم المنتج',
       'review_hint': 'اكتب رأيك عن المنتج (اختياري)',
       'publish_review': 'نشر المراجعة',
+      'buyer_store_review_not_eligible': 'يجب شراء منتج من المتجر قبل التقييم',
+      'buyer_store_review_error': 'تعذر حفظ تقييم المتجر، حاول لاحقاً',
+      'buyer_store_review_required': 'اكتب تعليقك قبل الإرسال',
+      'price': 'السعر',
       'review_sent_title': 'شكراً لرأيك',
       'review_sent_body': 'تم حفظ تقييمك ومراجعتك',
     },
@@ -3677,6 +3688,15 @@ class MyTranslation extends Translations {
       'buyer_following_title': 'Following stores',
       'buyer_reviews_title': 'My reviews',
       'buyer_no_reviews': 'No reviews yet',
+      'buyer_store_not_selected': 'No store was selected',
+      'buyer_store_not_found':
+          'The store was not found or is no longer available',
+      'buyer_store_load_failed':
+          'Could not load store data. Check your connection and try again.',
+      'buyer_store_no_departments':
+          'No departments are available for this store',
+      'buyer_store_no_products': 'No products are available right now',
+      'buyer_store_reviews_load_failed': 'Could not load store reviews',
       'buyer_no_following': 'You are not following any stores yet',
       'buyer_seller_reply_title': 'Seller reply',
       'buyer_edit_review_title': 'Edit review',
@@ -3808,6 +3828,12 @@ class MyTranslation extends Translations {
       'rate_product': 'Rate this product',
       'review_hint': 'Tell us what you think (optional)',
       'publish_review': 'Publish review',
+      'buyer_store_review_not_eligible':
+          'Purchase from this store before reviewing it.',
+      'buyer_store_review_error':
+          'Could not save the store review. Try again later.',
+      'buyer_store_review_required': 'Write a comment before submitting.',
+      'price': 'Price',
       'review_sent_title': 'Thanks for your feedback',
       'review_sent_body': 'Your rating and review were saved',
     },

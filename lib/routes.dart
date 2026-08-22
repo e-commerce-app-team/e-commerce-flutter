@@ -61,6 +61,7 @@ List<GetPage<dynamic>>? routes = [
     middlewares: [MyMiddleWare()],
   ),
 
+
   GetPage(name: AppRoute.login, page: () => const Login()),
 
   GetPage(
