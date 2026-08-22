@@ -137,72 +137,89 @@ class _StatusCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: AppColor.cardShadow,
-        border: Border.all(color: config.accent.withOpacity(0.2), width: 1),
+        border: Border.all(color: config.accent.withOpacity(0.2), width: 0.8),
       ),
-      child: Row(
+      child: Column(
         children: [
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: config.bg,
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Icon(
-              _statusIcon(order.status),
-              size: 26,
-              color: config.accent,
-            ),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  order.displayStatusKey.tr,
-                  style: AppTextStyle.heading3.copyWith(
-                    color: config.accent,
-                    fontSize: 15,
-                  ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: config.bg,
+                  borderRadius: BorderRadius.circular(14),
                 ),
-                const SizedBox(height: 3),
-                Text(
-                  _statusDesc(order),
-                  style: AppTextStyle.bodySmall.copyWith(fontSize: 12),
+                child: Icon(
+                  _statusIcon(order.status),
+                  size: 26,
+                  color: config.accent,
                 ),
-                if (order.estimatedReady != null) ...[
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.timer_outlined,
-                        size: 12,
-                        color: AppColor.grey,
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      order.displayStatusKey.tr,
+                      style: AppTextStyle.heading3.copyWith(
+                        color: config.accent,
+                        fontSize: 15,
                       ),
-                      const SizedBox(width: 4),
-                      Text(
-                        order.estimatedReady!,
-                        style: AppTextStyle.labelSmall.copyWith(fontSize: 11),
+                      softWrap: true,
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      _statusDesc(order),
+                      style: AppTextStyle.bodySmall.copyWith(fontSize: 12),
+                      softWrap: true,
+                    ),
+                    if (order.estimatedReady != null) ...[
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.timer_outlined,
+                            size: 12,
+                            color: AppColor.grey,
+                          ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              order.estimatedReady!,
+                              style: AppTextStyle.labelSmall.copyWith(
+                                fontSize: 11,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
-                  ),
-                ],
-              ],
-            ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            decoration: BoxDecoration(
-              color: config.bg,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Text(
-              order.displayStatusKey.tr,
-              style: AppTextStyle.chip.copyWith(
-                color: config.text,
-                fontWeight: FontWeight.w700,
-                fontSize: 11,
+          const SizedBox(height: 10),
+          Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: config.bg,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                order.displayStatusKey.tr,
+                textAlign: TextAlign.center,
+                style: AppTextStyle.chip.copyWith(
+                  color: config.text,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 11,
+                ),
               ),
             ),
           ),
@@ -1001,9 +1018,16 @@ class _SellerShippingQuoteDialog extends StatefulWidget {
 
 class _SellerShippingQuoteDialogState
     extends State<_SellerShippingQuoteDialog> {
-  String method = 'standard';
+  late final String method;
   final costCtrl = TextEditingController();
   final etaCtrl = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    method = widget.order.shippingMethod ?? 'standard';
+    etaCtrl.text = widget.order.estimatedDelivery ?? '';
+  }
 
   @override
   void dispose() {
@@ -1027,7 +1051,7 @@ class _SellerShippingQuoteDialogState
               DropdownMenuItem(value: 'express', child: Text('توصيل سريع')),
               DropdownMenuItem(value: 'pickup', child: Text('استلام شخصي')),
             ],
-            onChanged: (v) => setState(() => method = v ?? method),
+            onChanged: null,
           ),
           const SizedBox(height: 12),
           TextField(
@@ -1057,7 +1081,9 @@ class _SellerShippingQuoteDialogState
           final cost = method == 'pickup'
               ? 0.0
               : double.tryParse(costCtrl.text.trim());
-          if (cost == null || cost < 0 || etaCtrl.text.trim().isEmpty) {
+          if (cost == null ||
+              cost < 0 ||
+              (cost > 0 && etaCtrl.text.trim().isEmpty)) {
             Get.snackbar('error'.tr, 'أدخل تكلفة وموعد تسليم صحيحين');
             return;
           }

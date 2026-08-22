@@ -8,6 +8,8 @@ import 'package:e_commerce/data/model/seller/chat_models.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/functions/show_image_picker.dart';
+import 'package:e_commerce/core/class/crud.dart';
+import 'package:e_commerce/data/datasource/remote/notification_data.dart';
 
 class BuyerChatRoomController extends GetxController {
   BuyerChatRoomController({
@@ -69,8 +71,9 @@ class BuyerChatRoomController extends GetxController {
 
     messageController.clear();
     final firestore = FirebaseFirestore.instance;
-    final conversationRef =
-        firestore.collection('conversations').doc(conversationId);
+    final conversationRef = firestore
+        .collection('conversations')
+        .doc(conversationId);
     final messageRef = conversationRef.collection('messages').doc();
     final batch = firestore.batch();
 
@@ -83,30 +86,38 @@ class BuyerChatRoomController extends GetxController {
       'created_at': FieldValue.serverTimestamp(),
     });
 
-    batch.set(
-      conversationRef,
-      {
-        'seller_id': sellerId,
-        'buyer_id': buyerId,
-        'buyer_name': buyerName,
-        'store_name': storeName,
-        'store_logo': storeLogo,
-        'last_message': text,
-        'last_time': FieldValue.serverTimestamp(),
-        'unread_seller': FieldValue.increment(1),
-        'unread_buyer': 0,
-      },
-      SetOptions(merge: true),
-    );
+    batch.set(conversationRef, {
+      'seller_id': sellerId,
+      'buyer_id': buyerId,
+      'buyer_name': buyerName,
+      'store_name': storeName,
+      'store_logo': storeLogo,
+      'last_message': text,
+      'last_time': FieldValue.serverTimestamp(),
+      'unread_seller': FieldValue.increment(1),
+      'unread_buyer': 0,
+    }, SetOptions(merge: true));
 
     await batch.commit();
+    final token =
+        Get.find<MyServices>().sharedPreferences.getString('token') ?? '';
+    if (token.isNotEmpty) {
+      await NotificationData(Get.find<Crud>()).sendChatNotification(token, {
+        'recipient_id': sellerId,
+        'conversation_id': conversationId,
+        'preview': text,
+      });
+    }
   }
 
   Future<void> sendImage() async {
     if (buyerId == 0 || sellerId == 0) return;
     final source = await showImagePickerBottomSheet();
     if (source == null) return;
-    final picked = await ImagePicker().pickImage(source: source, imageQuality: 78);
+    final picked = await ImagePicker().pickImage(
+      source: source,
+      imageQuality: 78,
+    );
     if (picked == null) return;
 
     final ref = FirebaseStorage.instance.ref(
@@ -115,7 +126,9 @@ class BuyerChatRoomController extends GetxController {
     final upload = await ref.putFile(File(picked.path));
     final url = await upload.ref.getDownloadURL();
     final firestore = FirebaseFirestore.instance;
-    final conversationRef = firestore.collection('conversations').doc(conversationId);
+    final conversationRef = firestore
+        .collection('conversations')
+        .doc(conversationId);
     final messageRef = conversationRef.collection('messages').doc();
     final batch = firestore.batch();
     batch.set(messageRef, {
@@ -145,20 +158,17 @@ class BuyerChatRoomController extends GetxController {
     await FirebaseFirestore.instance
         .collection('conversations')
         .doc(conversationId)
-        .set(
-      {
-        'seller_id': sellerId,
-        'buyer_id': buyerId,
-        'buyer_name': buyerName,
-        'store_name': storeName,
-        'store_logo': storeLogo,
-        'last_message': '',
-        'last_time': FieldValue.serverTimestamp(),
-        'unread_seller': 0,
-        'unread_buyer': 0,
-      },
-      SetOptions(merge: true),
-    );
+        .set({
+          'seller_id': sellerId,
+          'buyer_id': buyerId,
+          'buyer_name': buyerName,
+          'store_name': storeName,
+          'store_logo': storeLogo,
+          'last_message': '',
+          'last_time': FieldValue.serverTimestamp(),
+          'unread_seller': 0,
+          'unread_buyer': 0,
+        }, SetOptions(merge: true));
   }
 
   void _listenToMessages() {
@@ -170,11 +180,11 @@ class BuyerChatRoomController extends GetxController {
         .orderBy('created_at', descending: true)
         .snapshots()
         .listen((snapshot) {
-      messages
-        ..clear()
-        ..addAll(snapshot.docs.map(MessageModel.fromFirestore));
-      update();
-    });
+          messages
+            ..clear()
+            ..addAll(snapshot.docs.map(MessageModel.fromFirestore));
+          update();
+        });
   }
 
   @override

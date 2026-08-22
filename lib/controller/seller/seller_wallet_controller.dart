@@ -116,6 +116,17 @@ class SellerWalletController extends GetxController {
       },
     );
 
+    final ledgerResult = await _walletData.getTransactions(_token);
+    ledgerResult.fold((_) {}, (data) {
+      final raw = data['data'];
+      if (raw is List) {
+        transactions = raw
+            .whereType<Map>()
+            .map(WalletTransaction.fromJson)
+            .toList();
+      }
+    });
+
     statusRequest = StatusRequest.success;
     update();
   }

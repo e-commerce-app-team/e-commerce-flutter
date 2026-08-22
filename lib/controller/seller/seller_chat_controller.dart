@@ -8,6 +8,8 @@ import 'package:e_commerce/core/services/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_commerce/data/datasource/remote/seller/chat_data.dart';
 import 'package:e_commerce/core/services/chat_service.dart';
+import 'package:e_commerce/core/class/crud.dart';
+import 'package:e_commerce/data/datasource/remote/notification_data.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // AutoReplyModel is defined in chat_models.dart
@@ -460,6 +462,13 @@ class SellerChatController extends GetxController {
       'unread_buyer': FieldValue.increment(1),
     }, SetOptions(merge: true));
     await batch.commit();
+    if (_token.isNotEmpty) {
+      await NotificationData(Get.find<Crud>()).sendChatNotification(_token, {
+        'recipient_id': conversation.buyerId,
+        'conversation_id': conversationRef.id,
+        'preview': reply.content,
+      });
+    }
   }
 
   @override
@@ -550,6 +559,8 @@ class ChatRoomController extends GetxController {
   MyServices myServices = Get.find();
   int get myId =>
       int.tryParse(myServices.sharedPreferences.getString('id') ?? '0') ?? 0;
+
+  String get _token => myServices.sharedPreferences.getString('token') ?? '';
 
   String get conversationId => ChatConversationId.forUsers(
     sellerId: conversation.sellerId,
@@ -656,6 +667,13 @@ class ChatRoomController extends GetxController {
     }, SetOptions(merge: true));
 
     await batch.commit();
+    if (_token.isNotEmpty) {
+      await NotificationData(Get.find<Crud>()).sendChatNotification(_token, {
+        'recipient_id': conversation.buyerId,
+        'conversation_id': conversationId,
+        'preview': text,
+      });
+    }
   }
 
   Future<void> sendImage() async {

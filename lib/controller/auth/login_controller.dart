@@ -8,6 +8,7 @@ import '../../core/functions/handling_data_controller.dart';
 import '../../core/services/services.dart';
 import '../../data/datasource/remote/auth/login_data.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import '../../core/services/fcm_service.dart';
 
 abstract class LoginController extends GetxController {
   login();
@@ -83,6 +84,10 @@ class LoginControllerImp extends LoginController {
               if (value.isNotEmpty) {
                 await myServices.sharedPreferences.setString(key, value);
               }
+            }
+
+            if (Get.isRegistered<FCMService>()) {
+              await Get.find<FCMService>().registerCurrentDevice();
             }
 
             // ─── Save permissions for staff members ───────────────────────

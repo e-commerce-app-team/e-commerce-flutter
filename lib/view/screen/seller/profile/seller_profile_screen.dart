@@ -230,9 +230,9 @@ class _AccountBody extends StatelessWidget {
                       iconBg: Get.isDarkMode
                           ? AppColor.darkSecondBackground
                           : AppColor.secondBackground,
-                      trailing: const ProfileComingSoonChip(),
+                      trailing: null,
                       showDivider: false,
-                      onTap: () {},
+                      onTap: () => Get.toNamed('/seller/notification-settings'),
                     ),
                   ],
                 ),

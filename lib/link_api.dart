@@ -15,6 +15,13 @@ class AppLink {
   static const String verifySignupOtp = "$server/auth/signup/verify-otp-pre";
 
   static const String fcmToken = "$server/auth/fcm-token";
+  static const String notifications = "$server/notifications";
+  static String notificationRead(String id) => "$server/notifications/$id/read";
+  static const String notificationReadAll = "$server/notifications/read-all";
+  static const String notificationPreferences =
+      "$server/notification-preferences";
+  static const String notificationDevices = "$server/notification-devices";
+  static const String chatNotification = "$server/chat/notifications";
   static const String changePassword = "$server/auth/change-password";
   static const String forgotPasswordOTP = "$server/auth/forgot-password";
   static const String verifyResetOTP = "$server/auth/verify-otp";
@@ -143,6 +150,8 @@ class AppLink {
   static const String buyerFeaturedStores = "$server/buyer/stores/featured";
   static const String buyerNearbyStores = "$server/buyer/stores/nearby";
   static const String buyerFeaturedProducts = "$server/buyer/products/featured";
+  static String adView(String id) => "$server/ads/$id/view";
+  static String adClick(String id) => "$server/ads/$id/click";
   static const String buyerFlashSale = "$server/buyer/products/flash-sale";
   static const String buyerTrending = "$server/buyer/products/trending";
   static const String buyerNewArrivals = "$server/buyer/products/new-arrivals";

@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:e_commerce/core/class/crud.dart';
 import 'package:e_commerce/core/class/status_request.dart';
 import 'package:e_commerce/link_api.dart';
+import 'package:get/get.dart';
 
 /// Remote datasource for all buyer home screen API calls.
 /// Every method falls through gracefully so the controller can
@@ -12,8 +13,28 @@ class BuyerHomeRemoteDataSource {
   Map<String, String> _auth(String? token) =>
       token == null || token.isEmpty ? {} : {'Authorization': 'Bearer $token'};
 
-  Future<Either<StatusRequest, Map>> getBanners() =>
-      _crud.getData(AppLink.buyerBanners);
+  Future<Either<StatusRequest, Map>> getBanners() => _crud.getData(
+        '${AppLink.buyerBanners}?locale=${Get.locale?.languageCode ?? 'en'}',
+      );
+
+  Future<Either<StatusRequest, Map>> trackAdView(
+    String adId, {
+    String? token,
+  }) =>
+      _crud.postData(
+        AppLink.adView(adId),
+        {},
+        headers: _auth(token),
+      );
+
+  Future<Either<StatusRequest, Map>> trackAdClick(
+    String adId, {
+    String? token,
+  }) =>
+      _crud.getData(
+        AppLink.adClick(adId),
+        headers: _auth(token),
+      );
 
   Future<Either<StatusRequest, Map>> getCategories() =>
       _crud.getData(AppLink.buyerCategories);
@@ -30,7 +51,10 @@ class BuyerHomeRemoteDataSource {
           '${AppLink.buyerNearbyStores}?lat=$lat&lng=$lng&radius=$radius');
 
   Future<Either<StatusRequest, Map>> getFeaturedProducts({String? token}) =>
-      _crud.getData(AppLink.buyerFeaturedProducts, headers: _auth(token));
+      _crud.getData(
+        '${AppLink.buyerFeaturedProducts}?locale=${Get.locale?.languageCode ?? 'en'}',
+        headers: _auth(token),
+      );
 
   Future<Either<StatusRequest, Map>> getFlashSaleProducts({String? token}) =>
       _crud.getData(AppLink.buyerFlashSale, headers: _auth(token));

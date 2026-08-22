@@ -46,6 +46,7 @@ class AppRoute {
   static const String buyerProductDetail = "/buyer/product";
   static const String buyerOrderDetail = "/buyer/order";
   static const String buyerProfile = "/buyer";
+  static const String notifications = "/notifications";
 
   // ─── Staff Invitation ──────────────────────────────────────────────────────
   /// Route opened when a staff member clicks the invitation link in their email.

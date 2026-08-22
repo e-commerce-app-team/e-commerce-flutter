@@ -30,6 +30,9 @@ class SellerWalletRemoteData {
     }
   }
 
+  Future<Either<StatusRequest, Map>> getTransactions(String token) async =>
+      await crud.getData(AppLink.walletTransactions, headers: _auth(token));
+
   /// POST /payouts/instant-withdraw
   /// يُرسل: { amount, payout_method, payout_account? OR sham_code + qr_image }
   Future<Either<StatusRequest, Map>> withdraw(

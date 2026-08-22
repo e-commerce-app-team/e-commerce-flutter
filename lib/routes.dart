@@ -50,6 +50,8 @@ import 'package:e_commerce/view/screen/wallet/buyer_wallet_screen.dart';
 import 'package:e_commerce/view/screen/wallet/wallet_qr_screen.dart';
 import 'package:e_commerce/view/screen/wallet/wallet_scanner_screen.dart';
 import 'package:e_commerce/view/screen/buyer/cart/address/buyer_address_map_screen.dart';
+import 'package:e_commerce/view/screen/notifications/notifications_screen.dart';
+import 'package:e_commerce/view/screen/notifications/notification_settings_screen.dart';
 import 'package:get/get.dart';
 
 List<GetPage<dynamic>>? routes = [
@@ -112,7 +114,10 @@ List<GetPage<dynamic>>? routes = [
     name: AppRoute.shippingSettings,
     page: () => const ShippingSettingsScreen(),
   ),
-  GetPage(name: '/seller/store-location', page: () => const StoreLocationSetupScreen()),
+  GetPage(
+    name: '/seller/store-location',
+    page: () => const StoreLocationSetupScreen(),
+  ),
   GetPage(name: AppRoute.sellerBranches, page: () => const BranchesScreen()),
   GetPage(name: AppRoute.branchForm, page: () => const BranchFormScreen()),
   GetPage(
@@ -148,6 +153,14 @@ List<GetPage<dynamic>>? routes = [
     page: () => const ThemeSettingsScreen(),
   ),
   GetPage(name: AppRoute.buyerMain, page: () => const BuyerMainScreen()),
+  GetPage(
+    name: AppRoute.notifications,
+    page: () => const NotificationsScreen(),
+  ),
+  GetPage(
+    name: '/seller/notification-settings',
+    page: () => const NotificationSettingsScreen(),
+  ),
   GetPage(name: AppRoute.explore, page: () => const ExploreScreen()),
   GetPage(
     name: AppRoute.buyerStoreDetail,

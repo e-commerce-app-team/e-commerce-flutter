@@ -162,6 +162,7 @@ class SellerCouponsController extends GetxController {
     update();
 
     Map<String, dynamic> data = {
+      'code': codeCtrl.text.trim().toUpperCase(),
       'title': '', // UI might not have a title field but backend accepts it
       'type': formType,
       'value': valueCtrl.text.isNotEmpty ? valueCtrl.text : '0',

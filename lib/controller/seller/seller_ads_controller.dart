@@ -6,11 +6,15 @@ import 'package:e_commerce/core/functions/custom_snackbar.dart';
 import 'package:e_commerce/core/functions/handling_data_controller.dart';
 import 'package:e_commerce/data/model/seller/ads_models.dart';
 import 'package:e_commerce/data/model/seller/inventory_models.dart';
+import 'package:e_commerce/data/datasource/remote/seller/inventory_data.dart';
 import 'package:e_commerce/data/datasource/remote/seller/seller_ads_data.dart';
+import 'package:e_commerce/data/datasource/remote/seller/seller_wallet_data.dart';
 import 'package:e_commerce/core/services/services.dart';
 
 class SellerAdsController extends GetxController {
   SellerAdsData adsData = SellerAdsData(Get.find());
+  late final SellerWalletRemoteData walletData;
+  late final InventoryData inventoryData;
   MyServices myServices = Get.find();
   String get token => myServices.sharedPreferences.getString('token') ?? "";
 
@@ -20,6 +24,7 @@ class SellerAdsController extends GetxController {
   List<AdModel> ads = [];
   List<ProductModel> products = [];
   int walletBalance = 0;
+  int walletLockedBalance = 0;
   List<AdTypeModel> adTypes = AdTypeModel.all();
 
   String selectedTab = 'all';
@@ -66,13 +71,32 @@ class SellerAdsController extends GetxController {
     var status = handlingData(response);
     if (StatusRequest.success == status) {
       if (response['success'] == true) {
-        walletBalance = (response['balance'] ?? 0).toInt();
         if (response['types'] != null) {
           adTypes = (response['types'] as List).map((t) => AdTypeModel.fromJson(t)).toList();
         }
+        await loadWalletBalance();
         update();
       }
     }
+  }
+
+  Future<void> loadWalletBalance() async {
+    final result = await walletData.getBalance(token);
+    result.fold((_) {}, (body) {
+      final available = body['available_balance'] ?? body['balance'] ?? 0;
+      final locked = body['locked_balance'] ?? 0;
+      walletBalance = available is num
+          ? available.round()
+          : int.tryParse('$available') ?? 0;
+      walletLockedBalance = locked is num
+          ? locked.round()
+          : int.tryParse('$locked') ?? 0;
+      update();
+    });
+  }
+
+  Future<void> refreshAll() async {
+    await Future.wait([loadAds(), loadWalletBalance()]);
   }
 
   Future<void> loadAds() async {
@@ -103,7 +127,7 @@ class SellerAdsController extends GetxController {
 
   void selectAdType(String type) {
     selectedAdType = type;
-    if (type != 'product') {
+    if (type != 'promoted_product') {
       selectedProductId = null;
       selectedProductName = null;
     }
@@ -185,6 +209,7 @@ class SellerAdsController extends GetxController {
       'title': titleCtrl.text.trim(),
       'description': descCtrl.text.trim(),
       'duration': selectedDuration,
+      if (selectedProductId != null) 'product_id': selectedProductId,
       if (link != null) 'link': link,
     };
 
@@ -193,7 +218,7 @@ class SellerAdsController extends GetxController {
 
     if (StatusRequest.success == submitStatus) {
       if (response['success'] == true) {
-        walletBalance -= computedPrice;
+        await loadWalletBalance();
         customSnackbar('ads_success_sent'.tr, 'ads_success_msg'.tr, isError: false);
         resetForm();
         Get.back();
@@ -211,8 +236,23 @@ class SellerAdsController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    walletData = SellerWalletRemoteData(Get.find());
+    inventoryData = InventoryData(Get.find());
     loadAdTypesAndBalance();
+    loadSellerProducts();
     loadAds();
+  }
+
+  Future<void> loadSellerProducts() async {
+    final result = await inventoryData.getProducts(token);
+    result.fold((_) {}, (body) {
+      final raw = body['data'];
+      final list = raw is Map ? raw['data'] : raw;
+      if (list is List) {
+        products = list.whereType<Map>().map(ProductModel.fromJson).toList();
+        update();
+      }
+    });
   }
 
   @override

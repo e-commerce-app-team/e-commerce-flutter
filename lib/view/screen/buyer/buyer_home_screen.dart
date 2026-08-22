@@ -1,9 +1,10 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_commerce/core/constant/color.dart';
 import 'package:e_commerce/core/constant/routes.dart';
 import 'package:e_commerce/controller/buyer/buyer_home_controller.dart';
 import 'package:e_commerce/data/models/buyer/home_models.dart';
+import 'package:e_commerce/controller/notification_controller.dart';
 
 // Header
 import 'package:e_commerce/view/widget/buyer/home/buyer_home_header.dart';
@@ -82,16 +83,19 @@ class BuyerHomeScreen extends StatelessWidget {
                   // â‘  Header
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
-                    child: BuyerHomeHeader(
-                      userName: 'Ø®Ø§Ù„Ø¯',
-                      deliveryLocation: 'Ø¯Ù…Ø´Ù‚ - Ø§Ù„Ù…Ø²Ø©ØŒ Ø´Ø§Ø±Ø¹ Ø§Ù„Ø´ÙŠØ® Ø³Ø¹Ø¯',
-                      notificationCount: 0,
-                      cartCount: 0,
-                      searchHint: 'search_hint_home'.tr,
-                      onNotificationTap: null,
-                      onCartTap: null,
-                      onSearchTap: () => Get.toNamed(AppRoute.explore),
-                      onLocationTap: () {},
+                    child: GetBuilder<NotificationController>(
+                      builder: (notificationController) => BuyerHomeHeader(
+                        userName: 'buyer_home_guest'.tr,
+                        deliveryLocation: 'buyer_home_location_placeholder'.tr,
+                        notificationCount: notificationController.unreadCount,
+                        cartCount: 0,
+                        searchHint: 'search_hint_home'.tr,
+                        onNotificationTap: () =>
+                            Get.toNamed(AppRoute.notifications),
+                        onCartTap: null,
+                        onSearchTap: () => Get.toNamed(AppRoute.explore),
+                        onLocationTap: () {},
+                      ),
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -100,7 +104,15 @@ class BuyerHomeScreen extends StatelessWidget {
                   if (controller.banners.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: HeroBannerCarousel(banners: controller.banners),
+                      child: HeroBannerCarousel(
+                        banners: controller.banners,
+                        onBannerTap: (index) => controller.trackAdClick(
+                          controller.banners[index].id,
+                        ),
+                        onBannerView: (index) => controller.trackAdView(
+                          controller.banners[index].id,
+                        ),
+                      ),
                     ),
                   const SizedBox(height: 28),
 
@@ -120,8 +132,10 @@ class BuyerHomeScreen extends StatelessWidget {
                       products: controller.flashSaleProducts,
                       remaining: controller.flashSaleRemaining,
                       onSeeAll: () {},
-                      onProductTap: (i) => _openProduct(controller.flashSaleProducts[i]),
-                      onAddToCart: (i) => controller.addToCart(controller.flashSaleProducts[i]),
+                      onProductTap: (i) =>
+                          _openProduct(controller.flashSaleProducts[i]),
+                      onAddToCart: (i) =>
+                          controller.addToCart(controller.flashSaleProducts[i]),
                     ),
                   if (controller.flashSaleProducts.isNotEmpty)
                     const SizedBox(height: 32),
@@ -132,6 +146,9 @@ class BuyerHomeScreen extends StatelessWidget {
                       stores: controller.featuredStores,
                       onSeeAll: () {},
                       onStoreTap: (index) {
+                        controller.trackAdClick(
+                          controller.featuredStores[index].adId,
+                        );
                         final id = controller.featuredStores[index].id;
                         if (id != null && id.isNotEmpty) {
                           Get.toNamed(
@@ -149,10 +166,16 @@ class BuyerHomeScreen extends StatelessWidget {
                     FeaturedProductsSection(
                       products: controller.featuredProducts,
                       onSeeAll: () {},
-                      onProductTap: (i) => _openProduct(controller.featuredProducts[i]),
+                      onProductTap: (i) {
+                        controller.trackAdClick(
+                          controller.featuredProducts[i].adId,
+                        );
+                        _openProduct(controller.featuredProducts[i]);
+                      },
                       onFavoriteToggle: (i) =>
                           controller.toggleFavorite(i, 'featured'),
-                      onAddToCart: (i) => controller.addToCart(controller.featuredProducts[i]),
+                      onAddToCart: (i) =>
+                          controller.addToCart(controller.featuredProducts[i]),
                     ),
                   if (controller.featuredProducts.isNotEmpty)
                     const SizedBox(height: 32),
@@ -180,10 +203,12 @@ class BuyerHomeScreen extends StatelessWidget {
                     NewArrivalsSection(
                       products: controller.newArrivals,
                       onSeeAll: () {},
-                      onProductTap: (i) => _openProduct(controller.newArrivals[i]),
+                      onProductTap: (i) =>
+                          _openProduct(controller.newArrivals[i]),
                       onFavoriteToggle: (i) =>
                           controller.toggleFavorite(i, 'new'),
-                      onAddToCart: (i) => controller.addToCart(controller.newArrivals[i]),
+                      onAddToCart: (i) =>
+                          controller.addToCart(controller.newArrivals[i]),
                     ),
                   if (controller.newArrivals.isNotEmpty)
                     const SizedBox(height: 32),
@@ -193,10 +218,13 @@ class BuyerHomeScreen extends StatelessWidget {
                     RecommendedSection(
                       products: controller.recommendedProducts,
                       onSeeAll: () {},
-                      onProductTap: (i) => _openProduct(controller.recommendedProducts[i]),
+                      onProductTap: (i) =>
+                          _openProduct(controller.recommendedProducts[i]),
                       onFavoriteToggle: (i) =>
                           controller.toggleFavorite(i, 'recommended'),
-                      onAddToCart: (i) => controller.addToCart(controller.recommendedProducts[i]),
+                      onAddToCart: (i) => controller.addToCart(
+                        controller.recommendedProducts[i],
+                      ),
                     ),
                   if (controller.recommendedProducts.isNotEmpty)
                     const SizedBox(height: 32),
@@ -206,10 +234,12 @@ class BuyerHomeScreen extends StatelessWidget {
                     OffersSection(
                       products: controller.offerProducts,
                       onSeeAll: () {},
-                      onProductTap: (i) => _openProduct(controller.offerProducts[i]),
+                      onProductTap: (i) =>
+                          _openProduct(controller.offerProducts[i]),
                       onFavoriteToggle: (i) =>
                           controller.toggleFavorite(i, 'offers'),
-                      onAddToCart: (i) => controller.addToCart(controller.offerProducts[i]),
+                      onAddToCart: (i) =>
+                          controller.addToCart(controller.offerProducts[i]),
                     ),
                   if (controller.offerProducts.isNotEmpty)
                     const SizedBox(height: 32),
@@ -219,10 +249,12 @@ class BuyerHomeScreen extends StatelessWidget {
                     TrendingProductsSection(
                       products: controller.trendingProducts,
                       onSeeAll: () {},
-                      onProductTap: (i) => _openProduct(controller.trendingProducts[i]),
+                      onProductTap: (i) =>
+                          _openProduct(controller.trendingProducts[i]),
                       onFavoriteToggle: (i) =>
                           controller.toggleFavorite(i, 'trending'),
-                      onAddToCart: (i) => controller.addToCart(controller.trendingProducts[i]),
+                      onAddToCart: (i) =>
+                          controller.addToCart(controller.trendingProducts[i]),
                     ),
                   if (controller.trendingProducts.isNotEmpty)
                     const SizedBox(height: 32),
@@ -231,10 +263,12 @@ class BuyerHomeScreen extends StatelessWidget {
                   FavoritesSection(
                     products: controller.favoriteProducts,
                     onSeeAll: () {},
-                    onProductTap: (i) => _openProduct(controller.favoriteProducts[i]),
+                    onProductTap: (i) =>
+                        _openProduct(controller.favoriteProducts[i]),
                     onFavoriteToggle: (i) =>
                         controller.toggleFavorite(i, 'favorites'),
-                    onAddToCart: (i) => controller.addToCart(controller.favoriteProducts[i]),
+                    onAddToCart: (i) =>
+                        controller.addToCart(controller.favoriteProducts[i]),
                   ),
                   const SizedBox(height: 32),
 
@@ -276,10 +310,12 @@ class BuyerHomeScreen extends StatelessWidget {
                     isLoading: controller.isAllProductsLoading,
                     hasMore: controller.hasMoreProducts,
                     onLoadMore: () => controller.loadAllProducts(),
-                    onProductTap: (i) => _openProduct(controller.allProducts[i]),
+                    onProductTap: (i) =>
+                        _openProduct(controller.allProducts[i]),
                     onFavoriteToggle: (i) =>
                         controller.toggleFavorite(i, 'all'),
-                    onAddToCart: (i) => controller.addToCart(controller.allProducts[i]),
+                    onAddToCart: (i) =>
+                        controller.addToCart(controller.allProducts[i]),
                   ),
 
                   // Bottom padding for nav bar
@@ -334,11 +370,7 @@ class _HomeLoadingShimmer extends StatelessWidget {
     );
   }
 
-  Widget _shimmer({
-    double? height,
-    double? width,
-    double radius = 12,
-  }) {
+  Widget _shimmer({double? height, double? width, double radius = 12}) {
     return Container(
       width: width ?? double.infinity,
       height: height,

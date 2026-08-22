@@ -26,10 +26,15 @@ class BuyerOrdersScreen extends StatelessWidget {
       value: SystemUiOverlayStyle.light,
       child: Scaffold(
         backgroundColor: AppColor.secondBackground,
-        body: GetBuilder<BuyerOrdersController>(
-          builder: (ctrl) => RefreshIndicator(
+        body: Obx(() {
+          // Read only the controller registered by BuyerMainScreen. Using a
+          // direct Obx here prevents GetBuilder from creating/removing a
+          // second lifecycle around the permanent orders controller.
+          final ctrl = Get.find<BuyerOrdersController>();
+          ctrl.viewRevision.value;
+          return RefreshIndicator(
             color: AppColor.primaryColor,
-            onRefresh: ctrl.refresh,
+            onRefresh: ctrl.reloadOrders,
             child: CustomScrollView(
               physics: const BouncingScrollPhysics(
                 parent: AlwaysScrollableScrollPhysics(),
@@ -42,17 +47,20 @@ class BuyerOrdersScreen extends StatelessWidget {
                   onFilterTap: () => _openFilterSheet(context),
                 ),
                 if (ctrl.isLoading)
-                  const _OrdersShimmer()
+                  const _OrdersLoading()
                 else if (ctrl.loadError != null)
-                  _OrdersError(onRetry: ctrl.refresh, message: ctrl.loadError!)
+                  _OrdersError(
+                    onRetry: ctrl.reloadOrders,
+                    message: ctrl.loadError!,
+                  )
                 else if (ctrl.filteredOrders.isEmpty)
                   const _EmptyOrders()
                 else
                   _OrdersSliverList(controller: ctrl),
               ],
             ),
-          ),
-        ),
+          );
+        }),
       ),
     );
   }
@@ -209,115 +217,14 @@ class _OrdersSliverList extends StatelessWidget {
   }
 }
 
-class _OrdersShimmer extends StatelessWidget {
-  const _OrdersShimmer();
+class _OrdersLoading extends StatelessWidget {
+  const _OrdersLoading();
 
   @override
   Widget build(BuildContext context) {
-    return SliverFillRemaining(
-      child: ListView.builder(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: 4,
-        itemBuilder: (_, __) => const Padding(
-          padding: EdgeInsets.only(bottom: 14),
-          child: _OrderCardSkeleton(),
-        ),
-      ),
-    );
-  }
-}
-
-class _OrderCardSkeleton extends StatefulWidget {
-  const _OrderCardSkeleton();
-
-  @override
-  State<_OrderCardSkeleton> createState() => _OrderCardSkeletonState();
-}
-
-class _OrderCardSkeletonState extends State<_OrderCardSkeleton>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _ctrl;
-  late final Animation<double> _opacity;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 900),
-    )..repeat(reverse: true);
-    _opacity = Tween<double>(
-      begin: 0.4,
-      end: 1.0,
-    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
-  }
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _opacity,
-      child: Container(
-        height: 140,
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: AppColor.cardBackground,
-          borderRadius: BorderRadius.circular(18),
-          boxShadow: AppColor.cardShadow,
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 46,
-              height: 46,
-              decoration: BoxDecoration(
-                color: AppColor.secondBackground,
-                shape: BoxShape.circle,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    height: 14,
-                    width: 120,
-                    decoration: BoxDecoration(
-                      color: AppColor.secondBackground,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Container(
-                    height: 11,
-                    width: 160,
-                    decoration: BoxDecoration(
-                      color: AppColor.secondBackground,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                  ),
-                  const Spacer(),
-                  Container(
-                    height: 12,
-                    width: 90,
-                    decoration: BoxDecoration(
-                      color: AppColor.secondBackground,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+    return const SliverFillRemaining(
+      hasScrollBody: false,
+      child: Center(child: CircularProgressIndicator()),
     );
   }
 }

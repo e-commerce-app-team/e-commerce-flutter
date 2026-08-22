@@ -9,7 +9,8 @@ class MyTranslation extends Translations {
       'seller_cancel_order': 'إلغاء الطلب',
       'seller_cancel_order_title': 'إلغاء الطلب',
       'seller_cancel_order_confirm': 'تأكيد إلغاء الطلب',
-      'seller_cancel_order_note': 'سيتم إعلام المشتري بسبب الإلغاء وإعادة المبلغ إن وُجد.',
+      'seller_cancel_order_note':
+          'سيتم إعلام المشتري بسبب الإلغاء وإعادة المبلغ إن وُجد.',
       //من 1 لل 10 لواجهات onboarding
       "1": "",
       "2": "اختر المنتجات",
@@ -277,6 +278,7 @@ class MyTranslation extends Translations {
       'ads_choose_type_hint': 'اختر نوع الإعلان المناسب لهدفك',
       'ads_product_label': 'المنتج المُعلَن عنه',
       'ads_product_hint': 'اختر المنتج',
+      'ads_no_products': 'لا توجد منتجات نشطة متاحة للإعلان',
       'ads_title_label': 'عنوان الإعلان *',
       'ads_title_hint': 'مثال: تخفيض 30% على المنتجات',
       'ads_notif_title_hint': 'مثال: عرض حصري لفترة محدودة!',
@@ -1221,6 +1223,8 @@ class MyTranslation extends Translations {
 
       // ─── Buyer Home Screen ─────────────────────────────────────────────────
       'search_hint_home': 'ابحث عن منتجات، متاجر...',
+      'buyer_home_guest': 'مرحباً بك',
+      'buyer_home_location_placeholder': 'اختر موقع التوصيل',
       'flash_sale_title': 'عروض محدودة',
       'flash_sale_ends_in': 'تنتهي خلال',
       'featured_stores_title': 'متاجر مميزة',
@@ -1447,6 +1451,54 @@ class MyTranslation extends Translations {
       'order_payment_qr': 'إنشاء رمز دفع الطلب',
       'wallet_deposit_requests': 'طلبات الإيداع',
       'enable_all_notifications': 'تفعيل الكل',
+      'notifications_title': 'الإشعارات',
+      'notifications_mark_all': 'قراءة الكل',
+      'notifications_empty': 'لا توجد إشعارات',
+      'notifications_settings': 'إعدادات الإشعارات',
+      'notifications_orders': 'إشعارات الطلبات',
+      'notifications_chat': 'إشعارات المحادثات',
+      'notifications_marketing': 'إشعارات العروض والإعلانات',
+      'notification_order_created_title': 'تم إنشاء الطلب',
+      'notification_order_created_message':
+          'تم استلام طلبك رقم @order_id بنجاح',
+      'notification_new_order_title': 'طلب جديد',
+      'notification_new_order_message': 'وصل طلب جديد رقم @order_id',
+      'notification_shipping_quote_title': 'تكلفة شحن جديدة',
+      'notification_shipping_quote_message':
+          'حدد التاجر تكلفة شحن الطلب @order_id',
+      'notification_shipping_approved_title': 'تمت الموافقة على الشحن',
+      'notification_shipping_approved_message':
+          'وافق المشتري على شحن الطلب @order_id',
+      'notification_payment_success_title': 'نجاح الدفع',
+      'notification_payment_success_message':
+          'تم الدفع للطلب @order_id وحجز المبلغ بأمان',
+      'notification_seller_payment_success_message':
+          'تم دفع الطلب @order_id وحجز المبلغ',
+      'notification_order_preparing_title': 'بدأ تجهيز الطلب',
+      'notification_order_preparing_message': 'بدأ تجهيز الطلب @order_id',
+      'notification_order_shipped_title': 'تم شحن الطلب',
+      'notification_order_shipped_message': 'تم شحن الطلب @order_id',
+      'notification_delivery_confirmation_title': 'تأكيد الاستلام مطلوب',
+      'notification_delivery_confirmation_message':
+          'يرجى تأكيد استلام الطلب @order_id',
+      'notification_delivery_confirmed_title': 'تم تأكيد الاستلام',
+      'notification_delivery_confirmed_message':
+          'أكد المشتري استلام الطلب @order_id',
+      'notification_payment_released_title': 'تم تحرير المستحقات',
+      'notification_payment_released_message':
+          'تم تحرير مستحقات الطلب @order_id',
+      'notification_auto_release_message':
+          'تم تحرير مستحقات الطلب @order_id تلقائياً',
+      'notification_order_cancelled_title': 'تم إلغاء الطلب',
+      'notification_order_cancelled_message': 'تم إلغاء الطلب @order_id',
+      'notification_refund_title': 'تم رد المبلغ',
+      'notification_refund_message': 'تم رد مبلغ الطلب @order_id',
+      'notification_chat_title': 'رسالة جديدة',
+      'notification_chat_message': 'لديك رسالة جديدة',
+      'notification_announcement_title': 'إعلان جديد',
+      'notification_announcement_message': 'لديك إعلان جديد',
+      'notification_generic_title': 'إشعار جديد',
+      'notification_generic_message': 'لديك إشعار جديد',
       'buyer_orders_load_failed': 'تعذر تحميل الطلبات، حاول مرة أخرى',
       'product_details': 'تفاصيل المنتج',
       'product_load_failed': 'تعذر تحميل بيانات المنتج',
@@ -1478,7 +1530,8 @@ class MyTranslation extends Translations {
       'seller_cancel_order': 'Cancel order',
       'seller_cancel_order_title': 'Cancel order',
       'seller_cancel_order_confirm': 'Confirm cancellation',
-      'seller_cancel_order_note': 'The buyer will be notified and any held amount will be refunded.',
+      'seller_cancel_order_note':
+          'The buyer will be notified and any held amount will be refunded.',
       "2": "Choose Product",
       "3":
           "We Have a 100k Product , Choose \n Your Product From  Our \n E-commerce Shop",
@@ -1709,9 +1762,9 @@ class MyTranslation extends Translations {
       'ads_active_count': 'Active',
       'ads_wallet_label': 'Available Ads Balance',
       'ads_add_balance': 'Add Balance',
-      'ads_pending_notice': 'Ad under review — will be activated within hours',
+      'ads_pending_notice': 'Ad under review - will be activated within hours',
       'ads_pending_notice_pl':
-          'Ads under review — will be activated within hours',
+          'Ads under review - will be activated within hours',
       'ads_tab_all': 'All',
       'ads_tab_active': 'Active',
       'ads_tab_pending': 'Pending',
@@ -1743,6 +1796,7 @@ class MyTranslation extends Translations {
       'ads_choose_type_hint': 'Choose the ad type that fits your goal',
       'ads_product_label': 'Advertised Product',
       'ads_product_hint': 'Choose a product',
+      'ads_no_products': 'No active products are available to advertise',
       'ads_title_label': 'Ad Title *',
       'ads_title_hint': 'Example: 30% off on all products',
       'ads_notif_title_hint': 'Example: Exclusive offer for a limited time!',
@@ -1767,9 +1821,9 @@ class MyTranslation extends Translations {
       'ads_review_placement': 'Placement',
       'ads_total_cost': 'Total Cost',
       'ads_wallet_balance': 'Wallet Balance',
-      'ads_insufficient': 'Insufficient balance — please add funds to continue',
+      'ads_insufficient': 'Insufficient balance - please add funds to continue',
       'ads_review_notice':
-          'Your ad will be reviewed by the admin before publishing. Usually activated within 2–6 hours.',
+          'Your ad will be reviewed by the admin before publishing. Usually activated within 2-6 hours.',
       'ads_btn_next': 'Next',
       'ads_btn_confirm': 'Confirm & Pay',
       'ads_stat_views': 'Views',
@@ -1788,7 +1842,7 @@ class MyTranslation extends Translations {
       'ads_warn_upload_image': 'Please upload a banner image',
       'ads_warn_no_balance': 'Insufficient Balance',
       'ads_warn_no_balance_msg':
-          'Your wallet balance is not enough for this ad — please add funds',
+          'Your wallet balance is not enough for this ad - please add funds',
       'ads_success_sent': 'Ad Submitted',
       'ads_success_msg':
           'Your ad is under review, it will be activated within a few hours',
@@ -3443,6 +3497,8 @@ class MyTranslation extends Translations {
 
       // ─── Buyer Home Screen ─────────────────────────────────────────────────
       'search_hint_home': 'Search products, stores...',
+      'buyer_home_guest': 'Welcome',
+      'buyer_home_location_placeholder': 'Choose a delivery location',
       'flash_sale_title': 'Flash Sale',
       'flash_sale_ends_in': 'Ends in',
       'featured_stores_title': 'Featured Stores',
@@ -3678,6 +3734,58 @@ class MyTranslation extends Translations {
       'order_payment_qr': 'Create order payment QR',
       'wallet_deposit_requests': 'Deposit requests',
       'enable_all_notifications': 'Enable all',
+      'notifications_title': 'Notifications',
+      'notifications_mark_all': 'Mark all read',
+      'notifications_empty': 'No notifications',
+      'notifications_settings': 'Notification settings',
+      'notifications_orders': 'Order notifications',
+      'notifications_chat': 'Chat notifications',
+      'notifications_marketing': 'Offers and marketing notifications',
+      'notification_order_created_title': 'Order created',
+      'notification_order_created_message':
+          'Your order @order_id was received successfully',
+      'notification_new_order_title': 'New order',
+      'notification_new_order_message': 'A new order @order_id has arrived',
+      'notification_shipping_quote_title': 'Shipping cost set',
+      'notification_shipping_quote_message':
+          'The seller set a shipping cost for order @order_id',
+      'notification_shipping_approved_title': 'Shipping approved',
+      'notification_shipping_approved_message':
+          'The buyer approved shipping for order @order_id',
+      'notification_payment_success_title': 'Payment successful',
+      'notification_payment_success_message':
+          'Payment for order @order_id is safely held',
+      'notification_seller_payment_success_message':
+          'Order @order_id was paid and held in escrow',
+      'notification_order_preparing_title': 'Order preparation started',
+      'notification_order_preparing_message':
+          'The seller started preparing order @order_id',
+      'notification_order_shipped_title': 'Order shipped',
+      'notification_order_shipped_message':
+          'Your order @order_id has been shipped',
+      'notification_delivery_confirmation_title':
+          'Delivery confirmation required',
+      'notification_delivery_confirmation_message':
+          'Please confirm delivery for order @order_id',
+      'notification_delivery_confirmed_title': 'Delivery confirmed',
+      'notification_delivery_confirmed_message':
+          'The buyer confirmed delivery for order @order_id',
+      'notification_payment_released_title': 'Payment released',
+      'notification_payment_released_message':
+          'Payment for order @order_id was released',
+      'notification_auto_release_message':
+          'Payment for order @order_id was released automatically',
+      'notification_order_cancelled_title': 'Order cancelled',
+      'notification_order_cancelled_message': 'Order @order_id was cancelled',
+      'notification_refund_title': 'Refund completed',
+      'notification_refund_message':
+          'The amount for order @order_id was refunded',
+      'notification_chat_title': 'New message',
+      'notification_chat_message': 'You have a new message',
+      'notification_announcement_title': 'New announcement',
+      'notification_announcement_message': 'You have a new announcement',
+      'notification_generic_title': 'New notification',
+      'notification_generic_message': 'You have a new notification',
       'buyer_orders_load_failed': 'Could not load orders. Try again.',
       'product_details': 'Product Details',
       'product_load_failed': 'Could not load product details',

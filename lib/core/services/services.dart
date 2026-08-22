@@ -6,9 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../class/crud.dart';
 import 'fcm_service.dart';
 
-class MyServices extends GetxService{
-
- late SharedPreferences sharedPreferences ;
+class MyServices extends GetxService {
+  late SharedPreferences sharedPreferences;
 
   Future<MyServices> init() async {
     await Firebase.initializeApp();
@@ -18,16 +17,14 @@ class MyServices extends GetxService{
 
   // ─── User Role & Identity ─────────────────────────────────────────────────
   String get userRole => sharedPreferences.getString('role') ?? '';
-  String get userId   => sharedPreferences.getString('id')   ?? '';
-  String get userEmail=> sharedPreferences.getString('email')  ?? '';
+  String get userId => sharedPreferences.getString('id') ?? '';
+  String get userEmail => sharedPreferences.getString('email') ?? '';
 
   /// Returns true if the logged-in user is a staff member (not the store owner)
-  bool get isStaff =>
-      userRole == 'staff';
+  bool get isStaff => userRole == 'staff';
 
   /// Returns true if the logged-in user is a store owner (vendor / wholesale)
-  bool get isOwner =>
-      userRole == 'vendor' || userRole == 'wholesale';
+  bool get isOwner => userRole == 'vendor' || userRole == 'wholesale';
 
   // ─── Permissions ──────────────────────────────────────────────────────────
   /// The list of permissions granted to this staff member.
@@ -42,8 +39,8 @@ class MyServices extends GetxService{
   /// Returns true if the current user has the given permission.
   /// Store owners always return true (full access).
   bool hasPermission(String permission) {
-    if (isOwner) return true;    // Owners have all permissions
-    if (!isStaff) return false;  // Unknown role → deny
+    if (isOwner) return true; // Owners have all permissions
+    if (!isStaff) return false; // Unknown role → deny
     return userPermissions.contains(permission);
   }
 
@@ -77,6 +74,5 @@ Future<void> initialServices() async {
 
   Get.put(Crud());
 
-
-  Get.put(FCMService()).init();
-}
+  await Get.put(FCMService()).init();
+}

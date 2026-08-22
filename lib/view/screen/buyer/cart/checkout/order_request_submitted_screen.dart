@@ -30,7 +30,7 @@ class OrderRequestSubmittedScreen extends StatelessWidget {
     Get.until((route) => route.isFirst);
     controller.changeTab(index);
     if (index == 3 && Get.isRegistered<BuyerOrdersController>()) {
-      await Get.find<BuyerOrdersController>().refresh();
+      await Get.find<BuyerOrdersController>().reloadOrders();
     }
   }
 

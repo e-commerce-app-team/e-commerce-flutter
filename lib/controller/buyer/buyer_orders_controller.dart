@@ -1,5 +1,6 @@
 // lib/controller/buyer/buyer_orders_controller.dart
 
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:dartz/dartz.dart';
 import 'package:get/get.dart';
@@ -22,6 +23,11 @@ class BuyerOrdersController extends GetxController {
   bool isLoading = false;
   String? loadError;
   bool _isLoadingOrders = false;
+
+  // GetBuilder is still used by the other order screens, but the list screen
+  // also listens to this revision so a fast request cannot finish before its
+  // widget subscription is attached.
+  final RxInt viewRevision = 0.obs;
 
   int selectedTabIndex = 0;
   BuyerOrderSort sortBy = BuyerOrderSort.newest;
@@ -66,13 +72,19 @@ class BuyerOrdersController extends GetxController {
     _loadOrders();
   }
 
-  Future<void> refresh() => _loadOrders();
+  void _notifyUi() {
+    viewRevision.value++;
+    update();
+  }
+
+  Future<void> reloadOrders() => _loadOrders();
 
   void changeTab(int index) {
+    debugPrint('Buyer orders tab tapped: $index');
     if (selectedTabIndex == index) return;
     selectedTabIndex = index;
     _applyFilters();
-    update();
+    _notifyUi();
   }
 
   void applyFilterSheet({
@@ -82,14 +94,14 @@ class BuyerOrdersController extends GetxController {
     sortBy = sort;
     priceRange = price;
     _applyFilters();
-    update();
+    _notifyUi();
   }
 
   void resetFilters() {
     sortBy = BuyerOrderSort.newest;
     priceRange = const RangeValues(0, 5000000);
     _applyFilters();
-    update();
+    _notifyUi();
   }
 
   BuyerOrderModel? findOrder(String id) {
@@ -105,7 +117,7 @@ class BuyerOrdersController extends GetxController {
         .map((o) => o.id == updated.id ? updated : o)
         .toList();
     _applyFilters();
-    update();
+    _notifyUi();
   }
 
   Future<bool> confirmDelivery(String orderId, {String? subOrderId}) async {
@@ -243,14 +255,15 @@ class BuyerOrdersController extends GetxController {
       loadError = 'login_required'.tr;
       isLoading = false;
       _isLoadingOrders = false;
-      update();
+      _notifyUi();
       return;
     }
 
     _isLoadingOrders = true;
     isLoading = true;
     loadError = null;
-    update();
+    debugPrint('Buyer orders loading started');
+    _notifyUi();
     try {
       final result = await _dataSource
           .getOrders(token)
@@ -259,7 +272,10 @@ class BuyerOrdersController extends GetxController {
             onTimeout: () => const Left(StatusRequest.serverfailure),
           );
       result.fold(
-        (_) {
+        (status) {
+          debugPrint(
+            'Buyer orders request failed with status request: $status',
+          );
           _allOrders = [];
           loadError = 'buyer_orders_load_failed'.tr;
         },
@@ -274,24 +290,39 @@ class BuyerOrdersController extends GetxController {
                     (response['data'] as Map)['data'] is List);
             if (httpStatus >= 400 || !hasOrderList) {
               _allOrders = [];
-              loadError = 'buyer_orders_load_failed'.tr;
+              loadError = httpStatus >= 400
+                  ? '${'buyer_orders_load_failed'.tr} (HTTP $httpStatus)'
+                  : 'buyer_orders_load_failed'.tr;
             } else {
               _allOrders = _parseOrdersResponse(response);
             }
-          } catch (_) {
+          } catch (e, stackTrace) {
+            debugPrint('Buyer orders parsing exception: $e');
+            debugPrintStack(stackTrace: stackTrace);
             _allOrders = [];
             loadError = 'buyer_orders_load_failed'.tr;
           }
         },
       );
-    } catch (_) {
+    } on TimeoutException catch (e, stackTrace) {
+      debugPrint('Buyer orders timeout exception: $e');
+      debugPrintStack(stackTrace: stackTrace);
+      _allOrders = [];
+      loadError = 'buyer_orders_load_failed'.tr;
+    } catch (e, stackTrace) {
+      debugPrint('Buyer orders exception: $e');
+      debugPrintStack(stackTrace: stackTrace);
       _allOrders = [];
       loadError = 'buyer_orders_load_failed'.tr;
     } finally {
       _applyFilters();
       isLoading = false;
       _isLoadingOrders = false;
-      update();
+      debugPrint(
+        'Buyer orders loading finished: '
+        'orders=${_allOrders.length}, error=$loadError',
+      );
+      _notifyUi();
     }
   }
 

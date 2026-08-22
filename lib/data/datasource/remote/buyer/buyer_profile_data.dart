@@ -73,10 +73,10 @@ class BuyerProfileData {
       await crud.putData('${AppLink.server}/buyer/reviews/$id', data, headers: _auth(token));
 
   Future<Either<StatusRequest, Map>> getNotificationPreferences(String token) async =>
-      await crud.getData('${AppLink.server}/buyer/notification-settings', headers: _auth(token));
+      await crud.getData(AppLink.notificationPreferences, headers: _auth(token));
 
   Future<Either<StatusRequest, Map>> updateNotificationPreferences(String token, Map<String, dynamic> data) async =>
-      await crud.putData('${AppLink.server}/buyer/notification-settings', data, headers: _auth(token));
+      await crud.putData(AppLink.notificationPreferences, data, headers: _auth(token));
 
   Future<Either<StatusRequest, Map>> getConversations(String token) async =>
       await crud.getData('${AppLink.server}/buyer/conversations', headers: _auth(token));

@@ -13,6 +13,8 @@ import 'package:e_commerce/view/widget/seller/dashboard/recent_order_card.dart';
 import 'package:e_commerce/view/widget/seller/dashboard/sales_chart_widget.dart';
 import 'package:e_commerce/view/widget/seller/dashboard/shimmer_box.dart';
 import 'package:e_commerce/view/widget/seller/dashboard/stats_card.dart';
+import 'package:e_commerce/core/constant/routes.dart';
+import 'package:e_commerce/controller/notification_controller.dart';
 
 import '../../../widget/seller/seller_drawer.dart';
 
@@ -32,24 +34,26 @@ class SellerDashboardScreen extends StatelessWidget {
           drawer: const SellerDrawer(),
 
           appBar: DashboardAppBar(
-            greeting:          ctrl.greeting,
-            storeName:         mainCtrl.sellerName,
-            rating:            4.8,
-            reviewCount:       312,
+            greeting: ctrl.greeting,
+            storeName: mainCtrl.sellerName,
+            rating: 4.8,
+            reviewCount: 312,
             onNotificationTap: () {
-              // TODO: Get.toNamed(AppRoute.notifications)
+              Get.toNamed(AppRoute.notifications);
             },
-            notificationCount: mainCtrl.newOrdersCount,
+            notificationCount: Get.isRegistered<NotificationController>()
+                ? Get.find<NotificationController>().unreadCount
+                : mainCtrl.newOrdersCount,
           ),
 
           body: ctrl.statusRequest == StatusRequest.loading
               ? const DashboardShimmer()
               : ctrl.statusRequest == StatusRequest.offlinefailure ||
-              ctrl.statusRequest == StatusRequest.serverfailure
+                    ctrl.statusRequest == StatusRequest.serverfailure
               ? HandlingDataView(
-            statusRequest: ctrl.statusRequest,
-            widget: const SizedBox.shrink(),
-          )
+                  statusRequest: ctrl.statusRequest,
+                  widget: const SizedBox.shrink(),
+                )
               : _DashboardBody(ctrl: ctrl, mainCtrl: mainCtrl),
         );
       },
@@ -61,10 +65,7 @@ class _DashboardBody extends StatelessWidget {
   final SellerDashboardController ctrl;
   final SellerMainController mainCtrl;
 
-  const _DashboardBody({
-    required this.ctrl,
-    required this.mainCtrl,
-  });
+  const _DashboardBody({required this.ctrl, required this.mainCtrl});
 
   @override
   Widget build(BuildContext context) {
@@ -82,24 +83,19 @@ class _DashboardBody extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'overview'.tr,
-                        style: AppTextStyle.heading3,
-                      ),
+                      Text('overview'.tr, style: AppTextStyle.heading3),
                       PeriodSelector(
-                        selected :  ctrl.selectedPeriod,
+                        selected: ctrl.selectedPeriod,
                         onChanged: ctrl.changePeriod,
                       ),
                     ],
                   ),
                   const SizedBox(height: 14),
 
-                  if (ctrl.stats != null)
-                    _StatsGrid(stats: ctrl.stats!),
+                  if (ctrl.stats != null) _StatsGrid(stats: ctrl.stats!),
 
                   const SizedBox(height: 16),
 
@@ -108,15 +104,15 @@ class _DashboardBody extends StatelessWidget {
 
                   if (ctrl.chartData != null)
                     SalesChartWidget(
-                      data:         ctrl.chartData!,
+                      data: ctrl.chartData!,
                       totalRevenue: ctrl.chartData!.totalRevenue,
                     ),
                   const SizedBox(height: 16),
 
                   SectionHeader(
-                    title:       'recent_orders'.tr,
+                    title: 'recent_orders'.tr,
                     actionLabel: 'see_all'.tr,
-                    onAction:    () => mainCtrl.changeTab(2),
+                    onAction: () => mainCtrl.changeTab(2),
                   ),
                   const SizedBox(height: 10),
                 ],
@@ -125,59 +121,55 @@ class _DashboardBody extends StatelessWidget {
           ),
 
           ctrl.recentOrders.isEmpty
-              ? SliverToBoxAdapter(
-            child: _EmptyOrders(),
-          )
+              ? SliverToBoxAdapter(child: _EmptyOrders())
               : SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                  final order = ctrl.recentOrders[index];
-                  return Column(
-                    children: [
-                      RecentOrderCard(
-                        order: order,
-                        index: index,
-                        onAccept: order.status == 'pending'
-                            ? () => ctrl.acceptOrder(order.subOrderId)
-                            : null,
-                        onReject: order.status == 'pending'
-                            ? () => ctrl.rejectOrder(order.subOrderId)
-                            : null,
-                      ),
-                      if (order.status == 'pending')
-                        Transform.translate(
-                          offset: const Offset(0, -10),
-                          child: Container(
-                            margin: const EdgeInsets.only(bottom: 4),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: const BorderRadius.only(
-                                bottomLeft:  Radius.circular(14),
-                                bottomRight: Radius.circular(14),
-                              ),
-                              boxShadow: AppColor.cardShadow,
-                              border: Border.all(
-                                color: AppColor.primaryColor
-                                    .withOpacity(0.15),
-                              ),
-                            ),
-                            child: OrderActionButtons(
-                              onAccept: () =>
-                                  ctrl.acceptOrder(order.subOrderId),
-                              onReject: () =>
-                                  ctrl.rejectOrder(order.subOrderId),
-                            ),
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      final order = ctrl.recentOrders[index];
+                      return Column(
+                        children: [
+                          RecentOrderCard(
+                            order: order,
+                            index: index,
+                            onAccept: order.status == 'pending'
+                                ? () => ctrl.acceptOrder(order.subOrderId)
+                                : null,
+                            onReject: order.status == 'pending'
+                                ? () => ctrl.rejectOrder(order.subOrderId)
+                                : null,
                           ),
-                        ),
-                    ],
-                  );
-                },
-                childCount: ctrl.recentOrders.length,
-              ),
-            ),
-          ),
+                          if (order.status == 'pending')
+                            Transform.translate(
+                              offset: const Offset(0, -10),
+                              child: Container(
+                                margin: const EdgeInsets.only(bottom: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: const BorderRadius.only(
+                                    bottomLeft: Radius.circular(14),
+                                    bottomRight: Radius.circular(14),
+                                  ),
+                                  boxShadow: AppColor.cardShadow,
+                                  border: Border.all(
+                                    color: AppColor.primaryColor.withOpacity(
+                                      0.15,
+                                    ),
+                                  ),
+                                ),
+                                child: OrderActionButtons(
+                                  onAccept: () =>
+                                      ctrl.acceptOrder(order.subOrderId),
+                                  onReject: () =>
+                                      ctrl.rejectOrder(order.subOrderId),
+                                ),
+                              ),
+                            ),
+                        ],
+                      );
+                    }, childCount: ctrl.recentOrders.length),
+                  ),
+                ),
         ],
       ),
     );
@@ -190,7 +182,7 @@ class _StatsGrid extends StatelessWidget {
 
   String _formatVal(int val) {
     if (val >= 1000000) return '${(val / 1000000).toStringAsFixed(1)}م';
-    if (val >= 1000)    return '${(val / 1000).toStringAsFixed(0)}k';
+    if (val >= 1000) return '${(val / 1000).toStringAsFixed(0)}k';
     return val.toString();
   }
 
@@ -199,49 +191,49 @@ class _StatsGrid extends StatelessWidget {
     return GridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount:  2,
+      crossAxisCount: 2,
       crossAxisSpacing: 10,
-      mainAxisSpacing:  10,
+      mainAxisSpacing: 10,
       childAspectRatio: 1.25,
       children: [
         StatsCard(
-          label:          'total_revenue'.tr,
-          value:          'SP ${_formatVal(stats.revenue)}',
-          change:         stats.revenueChange,
-          period:         'vs_yesterday'.tr,
-          icon:           Icons.account_balance_wallet_outlined,
-          accentColor:    AppColor.statRevenue,
-          accentLight:    AppColor.statRevenueLight,
+          label: 'total_revenue'.tr,
+          value: 'SP ${_formatVal(stats.revenue)}',
+          change: stats.revenueChange,
+          period: 'vs_yesterday'.tr,
+          icon: Icons.account_balance_wallet_outlined,
+          accentColor: AppColor.statRevenue,
+          accentLight: AppColor.statRevenueLight,
           animationDelay: 0,
         ),
         StatsCard(
-          label:          'new_orders'.tr,
-          value:          stats.ordersNew.toString(),
-          change:         stats.revenueChange,
-          period:         'vs_yesterday'.tr,
-          icon:           Icons.shopping_cart_outlined,
-          accentColor:    AppColor.statOrders,
-          accentLight:    AppColor.statOrdersLight,
+          label: 'new_orders'.tr,
+          value: stats.ordersNew.toString(),
+          change: stats.revenueChange,
+          period: 'vs_yesterday'.tr,
+          icon: Icons.shopping_cart_outlined,
+          accentColor: AppColor.statOrders,
+          accentLight: AppColor.statOrdersLight,
           animationDelay: 80,
         ),
         StatsCard(
-          label:          'views_count'.tr,
-          value:          _formatVal(stats.viewsCount),
-          change:         stats.viewsChange,
-          period:         'vs_yesterday'.tr,
-          icon:           Icons.remove_red_eye_outlined,
-          accentColor:    AppColor.statViews,
-          accentLight:    AppColor.statViewsLight,
+          label: 'views_count'.tr,
+          value: _formatVal(stats.viewsCount),
+          change: stats.viewsChange,
+          period: 'vs_yesterday'.tr,
+          icon: Icons.remove_red_eye_outlined,
+          accentColor: AppColor.statViews,
+          accentLight: AppColor.statViewsLight,
           animationDelay: 160,
         ),
         StatsCard(
-          label:          'inventory_value'.tr,
-          value:          'SP ${_formatVal(stats.inventoryValue)}',
-          change:         12.0,
-          period:         'vs_last_week'.tr,
-          icon:           Icons.trending_up_rounded,
-          accentColor:    AppColor.statAvg,
-          accentLight:    AppColor.statAvgLight,
+          label: 'inventory_value'.tr,
+          value: 'SP ${_formatVal(stats.inventoryValue)}',
+          change: 12.0,
+          period: 'vs_last_week'.tr,
+          icon: Icons.trending_up_rounded,
+          accentColor: AppColor.statAvg,
+          accentLight: AppColor.statAvgLight,
           animationDelay: 240,
         ),
       ],
@@ -264,9 +256,7 @@ class _EmptyOrders extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             'no_orders_yet'.tr,
-            style: AppTextStyle.bodyMedium.copyWith(
-              color: AppColor.greyLight,
-            ),
+            style: AppTextStyle.bodyMedium.copyWith(color: AppColor.greyLight),
           ),
         ],
       ),

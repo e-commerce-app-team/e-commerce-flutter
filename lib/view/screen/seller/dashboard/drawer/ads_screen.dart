@@ -29,7 +29,7 @@ class AdsScreen extends StatelessWidget {
             : ctrl.statusRequest == StatusRequest.failure
                 ? _ErrorState(onRetry: ctrl.loadAds)
                 : RefreshIndicator(
-                    onRefresh: ctrl.loadAds,
+                    onRefresh: ctrl.refreshAll,
                     color: AppColor.primaryColor,
                     backgroundColor: AppColor.backgroundcolor,
                     child: CustomScrollView(
@@ -228,8 +228,9 @@ class _WalletBanner extends StatelessWidget {
                 ]),
               ),
               GestureDetector(
-                onTap: () {
-                  Get.toNamed(AppRoute.sellerWallet);
+                  onTap: () async {
+                   await Get.toNamed(AppRoute.sellerWallet);
+                   await ctrl.loadWalletBalance();
                 },
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
@@ -1046,6 +1047,10 @@ class _StepType extends StatelessWidget {
       );
 
   List<Widget> _buildTypeCards() {
+    Map<String, int> pricingFor(String id) => ctrl.adTypes
+        .firstWhere((type) => type.id == id, orElse: () => ctrl.adTypes.first)
+        .pricing;
+
     final types = [
       (
         'banner',
@@ -1054,7 +1059,7 @@ class _StepType extends StatelessWidget {
         'ads_placement_home',
         Icons.view_carousel_rounded,
         [const Color(0xffFF6300), AppColor.primaryColor],
-        {'1_day': 5000, '3_days': 12000, '1_week': 25000, '1_month': 80000},
+        pricingFor('banner'),
       ),
       (
         'promoted_product',
@@ -1063,7 +1068,7 @@ class _StepType extends StatelessWidget {
         'ads_placement_search',
         Icons.inventory_2_rounded,
         [const Color(0xff553C9A), const Color(0xff7E57C2)],
-        {'1_day': 3000, '3_days': 8000, '1_week': 15000, '1_month': 50000},
+        pricingFor('promoted_product'),
       ),
       (
         'featured_store',
@@ -1072,7 +1077,7 @@ class _StepType extends StatelessWidget {
         'ads_placement_stores',
         Icons.storefront_rounded,
         [const Color(0xff185FA5), const Color(0xff1E88E5)],
-        {'1_day': 4000, '3_days': 10000, '1_week': 20000, '1_month': 65000},
+        pricingFor('featured_store'),
       ),
       (
         'paid_notification',
@@ -1081,7 +1086,7 @@ class _StepType extends StatelessWidget {
         'ads_placement_notif',
         Icons.notifications_active_rounded,
         [const Color(0xff1B5E20), AppColor.success],
-        {'1_day': 15000, '3_days': 35000, '1_week': 60000, '1_month': 180000},
+        pricingFor('paid_notification'),
       ),
     ];
 
@@ -1430,7 +1435,7 @@ class _ProductDropdown extends StatelessWidget {
                   const Icon(Icons.info_outline_rounded,
                       size: 16, color: AppColor.warning),
                   const SizedBox(width: 8),
-                  Text('Ù„Ø§ ØªÙˆØ¬Ø¯ Ù…Ù†ØªØ¬Ø§Øª Ù…ØªØ§Ø­Ø©',
+                  Text('ads_no_products'.tr,
                       style: AppTextStyle.bodyMedium),
                 ]),
               )

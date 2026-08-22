@@ -13,6 +13,7 @@ class HeroBannerCarousel extends StatefulWidget {
   final List<BuyerBannerItem> banners;
   final double height;
   final ValueChanged<int>? onBannerTap;
+  final ValueChanged<int>? onBannerView;
   final Duration autoPlayInterval;
 
   const HeroBannerCarousel({
@@ -20,6 +21,7 @@ class HeroBannerCarousel extends StatefulWidget {
     required this.banners,
     this.height = 190,
     this.onBannerTap,
+    this.onBannerView,
     this.autoPlayInterval = const Duration(seconds: 5),
   }) : super(key: key);
 
@@ -37,6 +39,9 @@ class _HeroBannerCarouselState extends State<HeroBannerCarousel> {
     super.initState();
     _controller = PageController(viewportFraction: 0.9);
     _startAutoPlay();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && widget.banners.isNotEmpty) widget.onBannerView?.call(0);
+    });
   }
 
   void _startAutoPlay() {
@@ -74,7 +79,10 @@ class _HeroBannerCarouselState extends State<HeroBannerCarousel> {
           child: PageView.builder(
             controller: _controller,
             itemCount: widget.banners.length,
-            onPageChanged: (i) => setState(() => _currentPage = i),
+            onPageChanged: (i) {
+              setState(() => _currentPage = i);
+              widget.onBannerView?.call(i);
+            },
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 6),

@@ -59,6 +59,16 @@ class BuyerHomeController extends GetxController {
 
   Future<void> refreshAll() => _loadAllData();
 
+  void trackAdView(String? adId) {
+    if (adId == null || adId.isEmpty) return;
+    _ds.trackAdView(adId, token: _token);
+  }
+
+  void trackAdClick(String? adId) {
+    if (adId == null || adId.isEmpty) return;
+    _ds.trackAdClick(adId, token: _token);
+  }
+
   void changeCategory(String categoryId) {
     selectedCategoryId = categoryId;
     update();

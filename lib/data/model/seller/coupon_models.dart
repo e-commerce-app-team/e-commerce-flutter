@@ -32,7 +32,10 @@ class CouponModel {
     this.productIds,
   });
 
-  bool get isExpired => false; // We would need current date to check this, simplify for now
+  bool get isExpired {
+    final expiry = expiresAt == null ? null : DateTime.tryParse(expiresAt!);
+    return expiry != null && expiry.isBefore(DateTime.now());
+  }
   bool get isPaused => !isActive;
   bool get isFullyUsed => maxUses != null && usedCount >= maxUses!;
 

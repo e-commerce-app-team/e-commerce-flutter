@@ -9,6 +9,7 @@ import 'package:e_commerce/view/widget/buyer/shared/buyer_bottom_nav.dart';
 import 'package:e_commerce/controller/buyer/buyer_orders_controller.dart';
 import 'package:e_commerce/view/screen/buyer/cart/cart_screen.dart';
 import 'package:e_commerce/view/screen/buyer/profile/buyer_profile_screen.dart';
+import 'package:e_commerce/controller/notification_controller.dart';
 
 class BuyerMainScreen extends StatefulWidget {
   const BuyerMainScreen({super.key});
@@ -23,10 +24,11 @@ class _BuyerMainScreenState extends State<BuyerMainScreen> {
     super.initState();
     Get.put(BuyerMainController());
     Get.put(CartController(), permanent: true);
+    if (!Get.isRegistered<NotificationController>()) {
+      Get.put(NotificationController(), permanent: true);
+    }
 
-    if (Get.isRegistered<BuyerOrdersController>()) {
-      Get.find<BuyerOrdersController>().refresh();
-    } else {
+    if (!Get.isRegistered<BuyerOrdersController>()) {
       Get.put(BuyerOrdersController(), permanent: true);
     }
   }

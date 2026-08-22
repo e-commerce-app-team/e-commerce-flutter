@@ -84,6 +84,7 @@ class BuyerStoreItem {
   final bool isFeatured;
   final int? productsCount;
   final double? distance; // km, for nearby stores
+  final String? adId;
 
   const BuyerStoreItem({
     this.id,
@@ -96,6 +97,7 @@ class BuyerStoreItem {
     this.isFeatured = false,
     this.productsCount,
     this.distance,
+    this.adId,
   });
 
   factory BuyerStoreItem.fromJson(Map<String, dynamic> json) {
@@ -112,6 +114,7 @@ class BuyerStoreItem {
       distance: json['distance'] != null
           ? (json['distance'] as num).toDouble()
           : null,
+      adId: json['ad_id']?.toString(),
     );
   }
 }
@@ -130,6 +133,7 @@ class BuyerProductItem {
   final bool isFavorite;
   final String? storeId;
   final String? storeName;
+  final String? adId;
 
   const BuyerProductItem({
     this.id,
@@ -143,6 +147,7 @@ class BuyerProductItem {
     this.isFavorite = false,
     this.storeId,
     this.storeName,
+    this.adId,
   });
 
   double? get discountPercent {
@@ -184,6 +189,7 @@ class BuyerProductItem {
       isFavorite: json['is_favorite'] == true || json['is_favorite'] == 1,
       storeId: json['store_id']?.toString(),
       storeName: json['store_name'],
+      adId: json['ad_id']?.toString(),
     );
   }
 
@@ -199,6 +205,7 @@ class BuyerProductItem {
     bool? isFavorite,
     String? storeId,
     String? storeName,
+    String? adId,
   }) {
     return BuyerProductItem(
       id: id ?? this.id,
@@ -212,6 +219,7 @@ class BuyerProductItem {
       isFavorite: isFavorite ?? this.isFavorite,
       storeId: storeId ?? this.storeId,
       storeName: storeName ?? this.storeName,
+      adId: adId ?? this.adId,
     );
   }
 }

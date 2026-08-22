@@ -38,11 +38,11 @@ class AdTypeModel {
           title: 'بانر رئيسي',
           description: 'ظهور في أعلى الشاشة الرئيسية للمشترين',
           icon: 'banner',
-          pricing: {'1_day': 3000, '3_days': 8000, '1_week': 15000, '1_month': 50000},
+          pricing: {'1_day': 2000, '3_days': 8000, '1_week': 15000, '1_month': 50000},
           placement: 'الشاشة الرئيسية',
         ),
         AdTypeModel(
-          id: 'product',
+          id: 'promoted_product',
           title: 'منتج معزَّز',
           description: 'منتجك يظهر أول نتائج البحث والاستكشاف',
           icon: 'product',
@@ -50,7 +50,7 @@ class AdTypeModel {
           placement: 'نتائج البحث والاستكشاف',
         ),
         AdTypeModel(
-          id: 'store',
+          id: 'featured_store',
           title: 'متجر مميز',
           description: 'متجرك يظهر في قسم "متاجر مميزة" للمشترين',
           icon: 'store',
@@ -58,11 +58,11 @@ class AdTypeModel {
           placement: 'قسم المتاجر المميزة',
         ),
         AdTypeModel(
-          id: 'notification',
+          id: 'paid_notification',
           title: 'إشعار مُدفوع',
           description: 'إشعار يصل لجميع مستخدمي التطبيق مباشرة',
           icon: 'notification',
-          pricing: {'1_day': 15000, '3_days': 35000, '1_week': 60000, '1_month': 180000},
+          pricing: {'1_day': 15000, '3_days': 40000, '1_week': 80000, '1_month': 250000},
           placement: 'إشعارات التطبيق',
         ),
       ];

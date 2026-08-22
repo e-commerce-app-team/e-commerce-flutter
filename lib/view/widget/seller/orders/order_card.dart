@@ -71,7 +71,7 @@ class _OrderCardState extends State<OrderCard>
                 color: order.isPending
                     ? config.accent.withOpacity(0.25)
                     : AppColor.greyBorder,
-                width: order.isPending ? 1.2 : 0.8,
+                width: 0.8,
               ),
             ),
             child: Column(

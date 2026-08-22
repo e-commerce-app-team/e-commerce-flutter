@@ -68,14 +68,12 @@ class SellerOrdersController extends GetxController {
         .toList();
   }
 
-  int get newCount =>
-      _allOrders
-          .where(
-            (o) =>
-                o.isPending &&
-                (o.isShippingQuotePending || o.canStartPreparation),
-          )
-          .length;
+  int get newCount => _allOrders
+      .where(
+        (o) =>
+            o.isPending && (o.isShippingQuotePending || o.canStartPreparation),
+      )
+      .length;
   int get awaitingBuyerApprovalCount =>
       _allOrders.where((o) => o.isPending && o.isAwaitingBuyerApproval).length;
   int get awaitingPaymentCount =>

@@ -25,19 +25,32 @@ class Crud {
   }) async {
     try {
       if (await checkInternet()) {
+        print("=========== API REQUEST TO: $linkurl ===========");
+        print(
+          "=========== API BEARER TOKEN PRESENT: "
+          "${headers?['Authorization']?.startsWith('Bearer ') == true} "
+          "===========",
+        );
         var response = await http
             .get(Uri.parse(linkurl), headers: _setHeaders(headers))
             .timeout(const Duration(seconds: 15));
+        print(
+          "=========== API STATUS CODE: ${response.statusCode} ===========",
+        );
+        print("=========== API RESPONSE BODY: ${response.body} ===========");
 
         return _handleResponse(response);
       } else {
         return const Left(StatusRequest.offlinefailure);
       }
     } on TimeoutException {
+      print("=========== API TIMEOUT: $linkurl ===========");
       return const Left(StatusRequest.serverfailure);
     } on SocketException {
+      print("=========== API SOCKET EXCEPTION: $linkurl ===========");
       return const Left(StatusRequest.offlinefailure);
     } catch (e) {
+      print("=========== API EXCEPTION (getData): $e ===========");
       return const Left(StatusRequest.serverfailure);
     }
   }
